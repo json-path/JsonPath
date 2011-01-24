@@ -1,0 +1,10 @@
+.idea/
+target
+*.iws
+*.ipr
+*.iml
+.classpath
+.project
+.settings
+.springBeans
+.DS_Store
