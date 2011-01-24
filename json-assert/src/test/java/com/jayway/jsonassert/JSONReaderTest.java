@@ -4,6 +4,7 @@ import com.jayway.jsonassert.impl.JSONReader;
 import org.junit.Test;
 
 import java.text.ParseException;
+import java.util.List;
 
 import static org.junit.Assert.*;
 
@@ -87,7 +88,9 @@ public class JSONReaderTest {
     public void a_list_can_be_accessed_in_a_document() throws Exception {
         JSONReader reader = JSONReader.parse(TEST_DOCUMENT);
 
-        assertEquals(2, reader.getList("stringList").size());
+        List<String> l = reader.<String>getList("stringList");
+
+        assertEquals(2, l.size());
     }
 
     @Test
@@ -189,7 +192,9 @@ public class JSONReaderTest {
     public void array_wildcard_property_extract() throws Exception {
         JSONReader reader = JSONReader.parse(TEST_DOCUMENT);
 
-        assertEquals(2, reader.getList("objectList[*].subField").size());
+        List<String> l = reader.<String>getList("objectList[*].subField");
+
+        assertEquals(2, l.size());
 
         /*
 

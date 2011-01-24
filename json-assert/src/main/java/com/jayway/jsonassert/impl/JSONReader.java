@@ -63,7 +63,7 @@ public class JSONReader {
         return getByPath(Boolean.class, path);
     }
 
-    public List getList(String path) {
+    public <T> List<T> getList(String path) {
         return getByPath(List.class, path);
     }
 

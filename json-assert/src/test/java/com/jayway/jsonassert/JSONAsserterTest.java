@@ -22,6 +22,18 @@ public class JSONAsserterTest {
     }
 
     @Test
+    public void array_content_can_be_asserted_with_matcher() throws Exception {
+
+        JSONAsserter.with(TEST_DOCUMENT).assertThat("stringList", hasItems("ONE", "TWO"));
+    }
+
+    @Test
+    public void map_content_can_be_asserted_with_matcher() throws Exception {
+
+        JSONAsserter.with(TEST_DOCUMENT).assertThat("subDocument", hasEntry("subField", "sub-field"));
+    }
+
+    @Test
     public void a_path_can_be_asserted_equal_to() throws Exception {
 
         JSONAsserter.with(TEST_DOCUMENT).assertEquals("stringField", "string-field");
@@ -52,8 +64,6 @@ public class JSONAsserterTest {
                 .assertEquals("stringField", "string-field");
 
     }
-
-
 
 
 }
