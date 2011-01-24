@@ -16,11 +16,11 @@ class JSONPath {
         this.path = compilePathFragments(path);
     }
 
-    public boolean hasMoreFragments(){
+    boolean hasMoreFragments(){
         return !path.isEmpty();
     }
 
-    public JSONPathFragment nextFragment(){
+    JSONPathFragment nextFragment(){
         return path.poll();
     }
 

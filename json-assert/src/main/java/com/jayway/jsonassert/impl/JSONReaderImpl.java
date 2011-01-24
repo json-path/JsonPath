@@ -1,6 +1,7 @@
 package com.jayway.jsonassert.impl;
 
 import com.jayway.jsonassert.InvalidPathException;
+import com.jayway.jsonassert.JSONReader;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
@@ -17,7 +18,7 @@ import static org.apache.commons.lang.Validate.notNull;
  * Date: 1/20/11
  * Time: 4:27 PM
  */
-public class JSONReader {
+public class JSONReaderImpl implements JSONReader {
 
 
     private static final JSONParser JSON_PARSER = new JSONParser();
@@ -27,12 +28,15 @@ public class JSONReader {
 
     public static JSONReader parse(String jsonDoc) throws java.text.ParseException {
         try {
-            return new JSONReader(JSON_PARSER.parse(jsonDoc));
+            return new JSONReaderImpl(JSON_PARSER.parse(jsonDoc));
         } catch (ParseException e) {
             throw new java.text.ParseException(e.getMessage(), e.getPosition());
         }
     }
 
+    /**
+     * {@inheritDoc}
+     */
     public boolean hasJsonPath(String path) {
         boolean contains = true;
         try {
@@ -43,30 +47,51 @@ public class JSONReader {
         return contains;
     }
 
-    public boolean isNull(String path){
+    /**
+     * {@inheritDoc}
+     */
+    public boolean isNull(String path) {
         return (null == get(path));
     }
 
+    /**
+     * {@inheritDoc}
+     */
     public Object get(String path) {
         return getByPath(Object.class, path);
     }
 
+    /**
+     * {@inheritDoc}
+     */
     public String getString(String path) {
         return getByPath(String.class, path);
     }
 
+    /**
+     * {@inheritDoc}
+     */
     public Long getLong(String path) {
         return getByPath(Long.class, path);
     }
 
+    /**
+     * {@inheritDoc}
+     */
     public Boolean getBoolean(String path) {
         return getByPath(Boolean.class, path);
     }
 
+    /**
+     * {@inheritDoc}
+     */
     public <T> List<T> getList(String path) {
         return getByPath(List.class, path);
     }
 
+    /**
+     * {@inheritDoc}
+     */
     public Map getMap(String path) {
         return getByPath(Map.class, path);
     }
@@ -77,7 +102,7 @@ public class JSONReader {
     // private methods
     //
     //------------------------------------------------------------
-    private JSONReader(Object root) {
+    private JSONReaderImpl(Object root) {
         notNull(root, "root object can not be null");
         this.root = root;
     }
@@ -130,7 +155,7 @@ public class JSONReader {
         } else if (container instanceof JSONObject) {
             JSONObject document = getDocument(container);
 
-            if(!document.containsKey(field)){
+            if (!document.containsKey(field)) {
                 throw new InvalidPathException();
             }
 

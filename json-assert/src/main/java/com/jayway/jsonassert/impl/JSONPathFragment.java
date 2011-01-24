@@ -22,19 +22,19 @@ class JSONPathFragment {
         this.fragment = fragment;
     }
 
-    public String fragment() {
+    String fragment() {
         return fragment;
     }
 
-    public boolean isArrayIndex() {
+    boolean isArrayIndex() {
         return ARRAY_POSITION_PATTER.matcher(fragment).matches() || GROOVY_POSITION_PATTER.matcher(fragment).matches();
     }
 
-    public boolean isArrayWildcard() {
+    boolean isArrayWildcard() {
         return ARRAY_WILDCARD_PATTER.matcher(fragment).matches() || GROOVY_WILDCARD_PATTER.matcher(fragment).matches();
     }
 
-    public int getArrayIndex() {
+    int getArrayIndex() {
         Matcher matcher = ARRAY_POSITION_PATTER.matcher(fragment);
         if (matcher.matches()) {
             return Integer.parseInt(matcher.group(1));

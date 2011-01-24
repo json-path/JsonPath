@@ -1,42 +1,21 @@
-package com.jayway.jsonassert.impl;
-
+package com.jayway.jsonassert;
 
 import org.hamcrest.Matcher;
-import org.hamcrest.MatcherAssert;
-
-import java.text.ParseException;
-
-import static org.hamcrest.Matchers.*;
 
 /**
- * User: kalle stenflo
- * Date: 1/21/11
- * Time: 3:43 PM
+ * Created by IntelliJ IDEA.
+ * User: kallestenflo
+ * Date: 1/24/11
+ * Time: 9:22 PM
  */
-public class JSONAsserter {
-
-    private final JSONReader reader;
+public interface JSONAsserter {
 
     /**
-     * Creates a new instance of a JSONAsserter that can be used to make
-     * assertions on the provided JSON document or array.
+     * Gives access to the {@link JSONReader} used to base the assertions on
      *
-     * @param json the JSON document to create a JSONAsserter for
-     * @return a JSON asserter initialized with the provided document
-     * @throws ParseException
+     * @return the underlying reader
      */
-    public static JSONAsserter with(String json) throws ParseException {
-        return new JSONAsserter(JSONReader.parse(json));
-    }
-
-    /**
-     * Instantiates a new JSONAsserter
-     *
-     * @param reader initialized with the JSON document to be asserted upon
-     */
-    private JSONAsserter(JSONReader reader) {
-        this.reader = reader;
-    }
+    JSONReader reader();
 
     /**
      * Asserts that object specified by path satisfies the condition specified by matcher.
@@ -53,10 +32,7 @@ public class JSONAsserter {
      * @param <T>     the static type accepted by the matcher
      * @return this to allow fluent assertion chains
      */
-    public <T> JSONAsserter assertThat(String path, Matcher<T> matcher) {
-        MatcherAssert.assertThat((T) reader.get(path), matcher);
-        return this;
-    }
+    <T> JSONAsserter assertThat(String path, Matcher<T> matcher);
 
     /**
      * Asserts that object specified by path is equal to the expected value.
@@ -67,9 +43,7 @@ public class JSONAsserter {
      * @param <T>      the static type that should be returned by the path
      * @return this to allow fluent assertion chains
      */
-    public <T> JSONAsserter assertEquals(String path, T expected) {
-        return assertThat(path, equalTo(expected));
-    }
+    <T> JSONAsserter assertEquals(String path, T expected);
 
     /**
      * Asserts that object specified by path is null. If it is not, an AssertionError
@@ -78,9 +52,7 @@ public class JSONAsserter {
      * @param path the json path specifying the value that should be null
      * @return this to allow fluent assertion chains
      */
-    public JSONAsserter assertNull(String path) {
-        return assertThat(path, nullValue());
-    }
+    JSONAsserter assertNull(String path);
 
     /**
      * Asserts that object specified by path is NOT null. If it is, an AssertionError
@@ -89,9 +61,7 @@ public class JSONAsserter {
      * @param path the json path specifying the value that should be NOT null
      * @return this to allow fluent assertion chains
      */
-    public <T> JSONAsserter assertNotNull(String path) {
-        return assertThat(path, notNullValue());
-    }
+    <T> JSONAsserter assertNotNull(String path);
 
     /**
      * Syntactic sugar to allow chaining assertions with a separating and() statement
@@ -103,8 +73,5 @@ public class JSONAsserter {
      *
      * @return this to allow fluent assertion chains
      */
-    public JSONAsserter and() {
-        return this;
-    }
-
+    JSONAsserter and();
 }
