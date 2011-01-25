@@ -26,6 +26,7 @@ public class JSONReaderImpl implements JSONReader {
     private static final JSONParser JSON_PARSER = new JSONParser();
 
     private Object root;
+    private String currentPath;
 
 
     public static synchronized JSONReader parse(Reader reader) throws java.text.ParseException, IOException {
@@ -130,27 +131,32 @@ public class JSONReaderImpl implements JSONReader {
 
 
     private <T> T getByPath(Class<T> clazz, String stringPath) {
+        currentPath = "";
         Object current = this.root;
         JSONPath path = new JSONPath(stringPath);
 
         while (path.hasMoreFragments()) {
+
             JSONPathFragment fragment = path.nextFragment();
+
+            currentPath = fragment.appendToPath(currentPath);
+
             if (fragment.isArrayIndex()) {
-                current = getArray(current).get(fragment.getArrayIndex());
+                current = toArray(current).get(fragment.getArrayIndex());
             } else if (fragment.isArrayWildcard()) {
-                current = getContainerValue(current, path.nextFragment().fragment());
+                current = getContainerValue(current, path.nextFragment());
             } else {
-                current = getContainerValue(current, fragment.fragment());
+                current = getContainerValue(current, fragment);
             }
         }
         return clazz.cast(current);
     }
 
-    private JSONArray getArray(Object array) {
+    private JSONArray toArray(Object array) {
         return (JSONArray) array;
     }
 
-    private JSONObject getDocument(Object document) {
+    private JSONObject toDocument(Object document) {
         return (JSONObject) document;
     }
 
@@ -161,32 +167,30 @@ public class JSONReaderImpl implements JSONReader {
      * will be returned in a List
      *
      * @param container a json document or array
-     * @param field     the field to extract from the document alt. the documents contained in the array
+     * @param fragment the field to extract from the document alt. the documents contained in the array
      * @return a single field value or a List of fields
      */
-    private Object getContainerValue(Object container, Object field) {
+    private Object getContainerValue(Object container, JSONPathFragment fragment) {
         Object result;
 
         if (container instanceof JSONArray) {
             List list = new LinkedList();
-            for (Object doc : getArray(container)) {
-                list.add(getContainerValue(doc, field));
+            for (Object doc : toArray(container)) {
+                list.add(getContainerValue(doc, fragment));
             }
             result = list;
 
         } else if (container instanceof JSONObject) {
-            JSONObject document = getDocument(container);
+            JSONObject document = toDocument(container);
 
-            if (!document.containsKey(field)) {
-                throw new InvalidPathException();
+            if (!document.containsKey(fragment.value())) {
+                throw new InvalidPathException("Invalid path element: " + currentPath + " <==");
             }
 
-            result = document.get(field);
+            result = document.get(fragment.value());
         } else {
-            throw new UnsupportedOperationException("can not get value from " + container.getClass().getName());
+            throw new InvalidPathException("Invalid path element: " + currentPath + " <==");
         }
-        //notNull(result, "invalid path: " + field);
-
         return result;
     }
 }

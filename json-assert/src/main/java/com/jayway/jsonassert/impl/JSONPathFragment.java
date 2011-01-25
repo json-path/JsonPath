@@ -22,8 +22,29 @@ class JSONPathFragment {
         this.fragment = fragment;
     }
 
-    String fragment() {
+    String value() {
         return fragment;
+    }
+
+    String appendToPath(String path){
+        StringBuilder builder = new StringBuilder(path);
+
+        if(ARRAY_POSITION_PATTER.matcher(fragment).matches()){
+            builder.append("[").append(getArrayIndex()).append("]");
+        }
+        else if(GROOVY_POSITION_PATTER.matcher(fragment).matches()){
+            builder.append(path.isEmpty()?"":".").append("get(").append(getArrayIndex()).append(")");
+        }
+        else if(ARRAY_WILDCARD_PATTER.matcher(fragment).matches()){
+            builder.append("[*]");
+        }
+        else if(GROOVY_WILDCARD_PATTER.matcher(fragment).matches()){
+            builder.append(path.isEmpty()?"":".").append("get(*)");
+        }
+        else {
+           builder.append(path.isEmpty()?"":".").append(fragment);
+        }
+        return builder.toString();
     }
 
     boolean isArrayIndex() {

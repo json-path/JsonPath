@@ -93,6 +93,9 @@ public class JSONReaderTest {
 
     @Test
     public void a_path_can_be_checked_for_non_existence() throws Exception {
+
+
+
         JSONReader reader = JSONAssert.parse(TEST_DEEP_PATH_DOCUMENT);
 
         assertFalse(reader.hasJsonPath("a.b.c.FOO"));
