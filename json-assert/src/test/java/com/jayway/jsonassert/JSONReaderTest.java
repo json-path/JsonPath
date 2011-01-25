@@ -1,8 +1,11 @@
 package com.jayway.jsonassert;
 
 import com.jayway.jsonassert.impl.JSONReaderImpl;
+import org.hamcrest.Matcher;
+import org.hamcrest.Matchers;
 import org.junit.Test;
 
+import java.io.InputStreamReader;
 import java.text.ParseException;
 import java.util.List;
 
@@ -16,7 +19,7 @@ import static org.junit.Assert.*;
 public class JSONReaderTest {
 
 
-    private static String TEST_DOCUMENT = "{  \"nullField\" : null \"stringField\" : \"string-field\" , \"numberField\" : 1234 , \"booleanField\" : true , \"subDocument\" : {\"subField\" : \"sub-field\"} , \"stringList\" : [\"ONE\", \"TWO\"], \"objectList\" : [{\"subField\" : \"sub-field-0\"}, {\"subField\" : \"sub-field-1\"}], \"listList\" : [[\"0.0\", \"0.1\"], [\"1.0\", \"1.1\"]], }";
+    private static String TEST_DOCUMENT = "{  \"nullField\" : null \"stringField\" : \"string-field\" , \"numberField\" : 1234 , \"doubleField\" : 12.34 , \"booleanField\" : true , \"subDocument\" : {\"subField\" : \"sub-field\"} , \"stringList\" : [\"ONE\", \"TWO\"], \"objectList\" : [{\"subField\" : \"sub-field-0\"}, {\"subField\" : \"sub-field-1\"}], \"listList\" : [[\"0.0\", \"0.1\"], [\"1.0\", \"1.1\"]], }";
     private static String TEST_DOCUMENT_ARRAY = "{  \"listList\" : [[\"0.0\", \"0.1\"], [\"1.0\", \"1.1\"]], }";
     private static String TEST_DEEP_PATH_DOCUMENT = "{  \"a\" :  {  \"b\" : {  \"c\" : {  \"say\" : \"hello\" } } }}";
     private static String TEST_ARRAY = "[{\"name\" : \"name0\"}, {\"name\" : \"name1\"}]";
@@ -26,6 +29,17 @@ public class JSONReaderTest {
     public void invalid_json_not_accepted() throws Exception {
         JSONReaderImpl.parse("not json");
     }
+
+    @Test
+    public void reader_can_be_created_with_input_stream() throws Exception {
+
+        JSONReader reader = JSONAssert.parse(getInputStreamReader("json-test-doc.json"), true);
+
+        assertEquals("donut", reader.getString("type"));
+
+        assertThat(reader.<String>getList("toppings"), Matchers.hasItems("Glazed", "Sugar"));
+    }
+
 
     @Test
     public void a_string_field_can_be_accessed() throws Exception {
@@ -54,6 +68,13 @@ public class JSONReaderTest {
         JSONReader reader = JSONAssert.parse(TEST_DOCUMENT);
 
         assertTrue(1234L == reader.getLong("numberField"));
+    }
+
+    @Test
+    public void a_double_field_can_be_accessed() throws Exception {
+        JSONReader reader = JSONAssert.parse(TEST_DOCUMENT);
+
+        assertEquals(12.34D, reader.getDouble("doubleField"), 0.001);
     }
 
     @Test
@@ -215,5 +236,15 @@ public class JSONReaderTest {
 
 
         assertEquals("[\"ONE\",\"TWO\"]", reader.getList("stringList").toString());
+    }
+
+
+    //----------------------------------------------------------
+    //
+    // helpers
+    //
+    //----------------------------------------------------------
+    private InputStreamReader getInputStreamReader(String resource) {
+        return new InputStreamReader(ClassLoader.getSystemResourceAsStream(resource));
     }
 }

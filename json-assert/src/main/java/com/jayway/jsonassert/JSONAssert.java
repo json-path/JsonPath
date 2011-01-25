@@ -34,7 +34,29 @@ public class JSONAssert {
      * @throws IOException
      */
     public static JSONReader parse(Reader reader) throws ParseException, IOException {
-        return JSONReaderImpl.parse(reader);
+        return parse(reader, false);
+    }
+
+    /**
+     * Creates a JSONReader
+     *
+     * @param reader he json document to read
+     * @return a new reader
+     * @throws ParseException document could not pe parsed
+     * @throws IOException
+     */
+    public static JSONReader parse(Reader reader, boolean closeReader) throws ParseException, IOException {
+        JSONReader jsonReader = null;
+        try {
+            jsonReader = JSONReaderImpl.parse(reader);
+        } finally {
+            if(closeReader){
+                try {
+                    reader.close();
+                } catch (IOException ignore) {}
+            }
+        }
+        return jsonReader;
     }
 
     /**

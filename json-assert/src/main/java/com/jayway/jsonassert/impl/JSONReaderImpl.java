@@ -96,6 +96,13 @@ public class JSONReaderImpl implements JSONReader {
     /**
      * {@inheritDoc}
      */
+    public Double getDouble(String path) {
+        return getByPath(Double.class, path);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
     public Boolean getBoolean(String path) {
         return getByPath(Boolean.class, path);
     }

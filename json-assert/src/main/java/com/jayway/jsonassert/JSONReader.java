@@ -12,49 +12,48 @@ import java.util.Map;
 public interface JSONReader {
 
     /**
-     *
      * @param path
      * @return
      */
     boolean hasJsonPath(String path);
 
     /**
-     *
      * @param path
      * @return
      */
     boolean isNull(String path);
 
     /**
-     *
      * @param path
      * @return
      */
     Object get(String path);
 
     /**
-     *
      * @param path
      * @return
      */
     String getString(String path);
 
     /**
-     *
      * @param path
      * @return
      */
     Long getLong(String path);
 
     /**
-     *
+     * @param path
+     * @return
+     */
+    Double getDouble(String path);
+
+    /**
      * @param path
      * @return
      */
     Boolean getBoolean(String path);
 
     /**
-     *
      * @param path
      * @param <T>
      * @return
@@ -62,7 +61,6 @@ public interface JSONReader {
     <T> List<T> getList(String path);
 
     /**
-     *
      * @param path
      * @return
      */
