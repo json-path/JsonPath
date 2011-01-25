@@ -6,8 +6,6 @@ import com.jayway.jsonassert.JSONReader;
 import org.hamcrest.Matcher;
 import org.hamcrest.MatcherAssert;
 
-import java.text.ParseException;
-
 import static org.hamcrest.Matchers.*;
 
 /**
@@ -19,24 +17,13 @@ public class JSONAsserterImpl implements JSONAsserter {
 
     private final JSONReader reader;
 
-    /**
-     * Creates a new instance of a JSONAsserter that can be used to make
-     * assertions on the provided JSON document or array.
-     *
-     * @param json the JSON document to create a JSONAsserter for
-     * @return a JSON asserter initialized with the provided document
-     * @throws ParseException
-     */
-    public static JSONAsserter with(String json) throws ParseException {
-        return new JSONAsserterImpl(JSONReaderImpl.parse(json));
-    }
 
     /**
      * Instantiates a new JSONAsserter
      *
      * @param reader initialized with the JSON document to be asserted upon
      */
-    private JSONAsserterImpl(JSONReader reader) {
+    public JSONAsserterImpl(JSONReader reader) {
         this.reader = reader;
     }
 

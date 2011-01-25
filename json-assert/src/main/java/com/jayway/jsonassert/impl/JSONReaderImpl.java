@@ -7,6 +7,8 @@ import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
 
+import java.io.IOException;
+import java.io.Reader;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -26,13 +28,29 @@ public class JSONReaderImpl implements JSONReader {
     private Object root;
 
 
-    public static JSONReader parse(String jsonDoc) throws java.text.ParseException {
+    public static synchronized JSONReader parse(Reader reader) throws java.text.ParseException, IOException {
+        try {
+            return new JSONReaderImpl(JSON_PARSER.parse(reader));
+        } catch (IOException e) {
+            throw e;
+        } catch (ParseException e) {
+            throw new java.text.ParseException(e.getMessage(), e.getPosition());
+        }
+    }
+
+    public static synchronized JSONReader parse(String jsonDoc) throws java.text.ParseException {
         try {
             return new JSONReaderImpl(JSON_PARSER.parse(jsonDoc));
         } catch (ParseException e) {
             throw new java.text.ParseException(e.getMessage(), e.getPosition());
         }
     }
+
+    private JSONReaderImpl(Object root) {
+        notNull(root, "root object can not be null");
+        this.root = root;
+    }
+
 
     /**
      * {@inheritDoc}
@@ -102,10 +120,7 @@ public class JSONReaderImpl implements JSONReader {
     // private methods
     //
     //------------------------------------------------------------
-    private JSONReaderImpl(Object root) {
-        notNull(root, "root object can not be null");
-        this.root = root;
-    }
+
 
     private <T> T getByPath(Class<T> clazz, String stringPath) {
         Object current = this.root;
