@@ -1,7 +1,7 @@
 package com.jayway.jsonassert;
 
-import com.jayway.jsonassert.impl.JSONAsserterImpl;
-import com.jayway.jsonassert.impl.JSONReaderImpl;
+import com.jayway.jsonassert.impl.JsonAsserterImpl;
+import com.jayway.jsonassert.impl.JsonReaderImpl;
 
 import java.io.IOException;
 import java.io.Reader;
@@ -12,7 +12,7 @@ import java.text.ParseException;
  * Date: 1/24/11
  * Time: 9:31 PM
  */
-public class JSONAssert {
+public class JsonAssert {
 
     /**
      * Creates a JSONReader
@@ -21,8 +21,8 @@ public class JSONAssert {
      * @return a new reader
      * @throws ParseException
      */
-    public static JSONReader parse(String jsonDoc) throws ParseException {
-        return JSONReaderImpl.parse(jsonDoc);
+    public static JsonPath parse(String jsonDoc) throws ParseException {
+        return JsonReaderImpl.parse(jsonDoc);
     }
 
     /**
@@ -33,7 +33,7 @@ public class JSONAssert {
      * @throws ParseException document could not pe parsed
      * @throws IOException
      */
-    public static JSONReader parse(Reader reader) throws ParseException, IOException {
+    public static JsonPath parse(Reader reader) throws ParseException, IOException {
         return parse(reader, false);
     }
 
@@ -45,10 +45,10 @@ public class JSONAssert {
      * @throws ParseException document could not pe parsed
      * @throws IOException
      */
-    public static JSONReader parse(Reader reader, boolean closeReader) throws ParseException, IOException {
-        JSONReader jsonReader = null;
+    public static JsonPath parse(Reader reader, boolean closeReader) throws ParseException, IOException {
+        JsonPath jsonReader = null;
         try {
-            jsonReader = JSONReaderImpl.parse(reader);
+            jsonReader = JsonReaderImpl.parse(reader);
         } finally {
             if(closeReader){
                 try {
@@ -66,8 +66,8 @@ public class JSONAssert {
      * @return a JSON asserter initialized with the provided document
      * @throws ParseException when the given JSON could not be parsed
      */
-    public static JSONAsserter with(String json) throws ParseException {
-        return new JSONAsserterImpl(JSONReaderImpl.parse(json));
+    public static JsonAsserter with(String json) throws ParseException {
+        return new JsonAsserterImpl(JsonReaderImpl.parse(json));
     }
 
     /**
@@ -77,8 +77,8 @@ public class JSONAssert {
      * @return a JSON asserter initialized with the provided document
      * @throws ParseException when the given JSON could not be parsed
      */
-    public static JSONAsserter with(Reader reader) throws ParseException, IOException {
-        return new JSONAsserterImpl(JSONReaderImpl.parse(reader));
+    public static JsonAsserter with(Reader reader) throws ParseException, IOException {
+        return new JsonAsserterImpl(JsonReaderImpl.parse(reader));
     }
 
 }

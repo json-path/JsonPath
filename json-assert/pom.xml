@@ -30,6 +30,10 @@
     <url>http://maven.apache.org</url>
     <dependencies>
 
+        <dependency>
+            <groupId>commons-jxpath</groupId>
+            <artifactId>commons-jxpath</artifactId>
+        </dependency>
 
         <dependency>
             <groupId>com.googlecode.json-simple</groupId>

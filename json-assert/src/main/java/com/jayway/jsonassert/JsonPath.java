@@ -4,12 +4,19 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * Created by IntelliJ IDEA.
  * User: kallestenflo
  * Date: 1/24/11
  * Time: 9:29 PM
  */
-public interface JSONReader {
+public interface JsonPath {
+
+    /**
+     * Get a new reader with the given path as root
+     *
+     * @param path to extract a reader for
+     * @return new reader
+     */
+    JsonPath getReader(String path);
 
     /**
      * @param path
@@ -25,9 +32,9 @@ public interface JSONReader {
 
     /**
      * @param path
-     * @return
+     * @return                
      */
-    Object get(String path);
+    <T> T get(String path);
 
     /**
      * @param path
@@ -64,5 +71,5 @@ public interface JSONReader {
      * @param path
      * @return
      */
-    Map getMap(String path);
+    Map<String, Object> getMap(String path);
 }

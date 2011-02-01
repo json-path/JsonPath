@@ -3,19 +3,18 @@ package com.jayway.jsonassert;
 import org.hamcrest.Matcher;
 
 /**
- * Created by IntelliJ IDEA.
  * User: kallestenflo
  * Date: 1/24/11
  * Time: 9:22 PM
  */
-public interface JSONAsserter {
+public interface JsonAsserter {
 
     /**
-     * Gives access to the {@link JSONReader} used to base the assertions on
+     * Gives access to the {@link JsonPath} used to base the assertions on
      *
      * @return the underlying reader
      */
-    JSONReader reader();
+    JsonPath reader();
 
     /**
      * Asserts that object specified by path satisfies the condition specified by matcher.
@@ -32,7 +31,7 @@ public interface JSONAsserter {
      * @param <T>     the static type accepted by the matcher
      * @return this to allow fluent assertion chains
      */
-    <T> JSONAsserter assertThat(String path, Matcher<T> matcher);
+    <T> JsonAsserter assertThat(String path, Matcher<T> matcher);
 
     /**
      * Asserts that object specified by path is equal to the expected value.
@@ -43,7 +42,7 @@ public interface JSONAsserter {
      * @param <T>      the static type that should be returned by the path
      * @return this to allow fluent assertion chains
      */
-    <T> JSONAsserter assertEquals(String path, T expected);
+    <T> JsonAsserter assertEquals(String path, T expected);
 
     /**
      * Asserts that object specified by path is null. If it is not, an AssertionError
@@ -52,7 +51,7 @@ public interface JSONAsserter {
      * @param path the json path specifying the value that should be null
      * @return this to allow fluent assertion chains
      */
-    JSONAsserter assertNull(String path);
+    JsonAsserter assertNull(String path);
 
     /**
      * Asserts that object specified by path is NOT null. If it is, an AssertionError
@@ -61,7 +60,7 @@ public interface JSONAsserter {
      * @param path the json path specifying the value that should be NOT null
      * @return this to allow fluent assertion chains
      */
-    <T> JSONAsserter assertNotNull(String path);
+    <T> JsonAsserter assertNotNull(String path);
 
     /**
      * Syntactic sugar to allow chaining assertions with a separating and() statement
@@ -73,5 +72,5 @@ public interface JSONAsserter {
      *
      * @return this to allow fluent assertion chains
      */
-    JSONAsserter and();
+    JsonAsserter and();
 }

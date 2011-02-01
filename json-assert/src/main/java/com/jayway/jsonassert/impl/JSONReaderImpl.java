@@ -1,7 +1,7 @@
 package com.jayway.jsonassert.impl;
 
 import com.jayway.jsonassert.InvalidPathException;
-import com.jayway.jsonassert.JSONReader;
+import com.jayway.jsonassert.JsonPath;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
@@ -20,7 +20,7 @@ import static org.apache.commons.lang.Validate.notNull;
  * Date: 1/20/11
  * Time: 4:27 PM
  */
-public class JSONReaderImpl implements JSONReader {
+public class JsonReaderImpl implements JsonPath {
 
 
     private static final JSONParser JSON_PARSER = new JSONParser();
@@ -29,9 +29,9 @@ public class JSONReaderImpl implements JSONReader {
     private String currentPath;
 
 
-    public static synchronized JSONReader parse(Reader reader) throws java.text.ParseException, IOException {
+    public static synchronized JsonPath parse(Reader reader) throws java.text.ParseException, IOException {
         try {
-            return new JSONReaderImpl(JSON_PARSER.parse(reader));
+            return new JsonReaderImpl(JSON_PARSER.parse(reader));
         } catch (IOException e) {
             throw e;
         } catch (ParseException e) {
@@ -39,19 +39,32 @@ public class JSONReaderImpl implements JSONReader {
         }
     }
 
-    public static synchronized JSONReader parse(String jsonDoc) throws java.text.ParseException {
+    public static synchronized JsonPath parse(String jsonDoc) throws java.text.ParseException {
         try {
-            return new JSONReaderImpl(JSON_PARSER.parse(jsonDoc));
+            return new JsonReaderImpl(JSON_PARSER.parse(jsonDoc));
         } catch (ParseException e) {
             throw new java.text.ParseException(e.getMessage(), e.getPosition());
         }
     }
 
-    private JSONReaderImpl(Object root) {
+    private JsonReaderImpl(Object root) {
         notNull(root, "root object can not be null");
         this.root = root;
     }
 
+    /**
+     * {@inheritDoc}
+     */
+    public JsonPath getReader(String path) {
+
+        Object jsonObject = get(path);
+
+        if (!isArray(jsonObject) && !isDocument(jsonObject)) {
+            throw new InvalidPathException("path points to a leaf that is not a JSON document or Array");
+        }
+
+        return new JsonReaderImpl(jsonObject);
+    }
 
     /**
      * {@inheritDoc}
@@ -76,8 +89,9 @@ public class JSONReaderImpl implements JSONReader {
     /**
      * {@inheritDoc}
      */
-    public Object get(String path) {
-        return getByPath(Object.class, path);
+    @SuppressWarnings("unchecked")
+    public <T> T get(String path) {
+        return (T) getByPath(Object.class, path);
     }
 
     /**
@@ -118,7 +132,7 @@ public class JSONReaderImpl implements JSONReader {
     /**
      * {@inheritDoc}
      */
-    public Map getMap(String path) {
+    public Map<String, Object> getMap(String path) {
         return getByPath(Map.class, path);
     }
 
@@ -129,7 +143,7 @@ public class JSONReaderImpl implements JSONReader {
     //
     //------------------------------------------------------------
 
-
+    /*
     private <T> T getByPath(Class<T> clazz, String stringPath) {
         currentPath = "";
         Object current = this.root;
@@ -137,19 +151,86 @@ public class JSONReaderImpl implements JSONReader {
 
         while (path.hasMoreFragments()) {
 
-            JSONPathFragment fragment = path.nextFragment();
+            JSONPathFragment fragment = path.poll();
 
             currentPath = fragment.appendToPath(currentPath);
 
             if (fragment.isArrayIndex()) {
                 current = toArray(current).get(fragment.getArrayIndex());
             } else if (fragment.isArrayWildcard()) {
-                current = getContainerValue(current, path.nextFragment());
+                current = getContainerValue(current, path.poll());
             } else {
                 current = getContainerValue(current, fragment);
             }
         }
         return clazz.cast(current);
+    }
+    */
+
+    ///*
+    private <T> T getByPath(Class<T> clazz, String stringPath) {
+        currentPath = "";
+        Object current = this.root;
+        Path path = new Path(stringPath);
+
+        while (path.hasMoreFragments()) {
+
+            PathFragment fragment = path.poll();
+
+            currentPath = fragment.appendToPath(currentPath);
+
+            if (fragment.isArrayIndex()) {
+                current = toArray(current).get(fragment.getArrayIndex());
+            } else if (fragment.isArrayWildcard()) {
+                current = getContainerValue(current, path.poll());
+            } else {
+
+                System.out.println("FRAGMENT " + fragment.toString());
+
+                current = getContainerValue(current, fragment);
+
+                if (isArray(current) && path.hasMoreFragments() && !path.peek().isArrayIndex() && !path.peek().isArrayWildcard()) {
+
+                    JSONArray array = new JSONArray();
+
+                    for (Object o : toArray(current)) {
+                        String newPath = path.toString();
+
+                        System.out.println("NEW PATH " + newPath);
+
+                        if (isDocument(o) || isArray(o)) {
+
+                            JsonReaderImpl sub = new JsonReaderImpl(o);
+
+                            Object o1 = sub.get(newPath);
+                            //if(o instanceof Collection){
+                                array.add(o1);
+                            //}
+                            //else {
+                            //    array.addAll(l)
+                            //}
+
+
+                        } else {
+                            System.out.println("hhhhhhh");
+                            array.add(o);
+                        }
+                    }
+                    current = array;
+                    break;
+                }
+            }
+        }
+        return clazz.cast(current);
+    }
+
+    //*/
+    private boolean isArray(Object obj) {
+        return (obj instanceof JSONArray);
+    }
+
+    private boolean isDocument(Object obj) {
+        return (obj instanceof JSONObject);
     }
 
     private JSONArray toArray(Object array) {
@@ -167,14 +248,14 @@ public class JSONReaderImpl implements JSONReader {
      * will be returned in a List
      *
      * @param container a json document or array
-     * @param fragment the field to extract from the document alt. the documents contained in the array
+     * @param fragment  the field to extract from the document alt. the documents contained in the array
      * @return a single field value or a List of fields
      */
-    private Object getContainerValue(Object container, JSONPathFragment fragment) {
+    private Object getContainerValue(Object container, PathFragment fragment) {
         Object result;
 
         if (container instanceof JSONArray) {
-            List list = new LinkedList();
+            List<Object> list = new LinkedList<Object>();
             for (Object doc : toArray(container)) {
                 list.add(getContainerValue(doc, fragment));
             }

@@ -1,8 +1,8 @@
 package com.jayway.jsonassert.impl;
 
 
-import com.jayway.jsonassert.JSONAsserter;
-import com.jayway.jsonassert.JSONReader;
+import com.jayway.jsonassert.JsonAsserter;
+import com.jayway.jsonassert.JsonPath;
 import org.hamcrest.Matcher;
 import org.hamcrest.MatcherAssert;
 
@@ -13,9 +13,9 @@ import static org.hamcrest.Matchers.*;
  * Date: 1/21/11
  * Time: 3:43 PM
  */
-public class JSONAsserterImpl implements JSONAsserter {
+public class JsonAsserterImpl implements JsonAsserter {
 
-    private final JSONReader reader;
+    private final JsonPath reader;
 
 
     /**
@@ -23,21 +23,22 @@ public class JSONAsserterImpl implements JSONAsserter {
      *
      * @param reader initialized with the JSON document to be asserted upon
      */
-    public JSONAsserterImpl(JSONReader reader) {
+    public JsonAsserterImpl(JsonPath reader) {
         this.reader = reader;
     }
 
     /**
      * {@inheritDoc}
      */
-    public JSONReader reader() {
+    public JsonPath reader() {
         return reader;
     }
 
     /**
      * {@inheritDoc}
      */
-    public <T> JSONAsserter assertThat(String path, Matcher<T> matcher) {
+    @SuppressWarnings("unchecked")
+	public <T> JsonAsserter assertThat(String path, Matcher<T> matcher) {
         MatcherAssert.assertThat((T) reader.get(path), matcher);
         return this;
     }
@@ -45,28 +46,28 @@ public class JSONAsserterImpl implements JSONAsserter {
     /**
      * {@inheritDoc}
      */
-    public <T> JSONAsserter assertEquals(String path, T expected) {
+    public <T> JsonAsserter assertEquals(String path, T expected) {
         return assertThat(path, equalTo(expected));
     }
 
     /**
      * {@inheritDoc}
      */
-    public JSONAsserter assertNull(String path) {
+    public JsonAsserter assertNull(String path) {
         return assertThat(path, nullValue());
     }
 
     /**
      * {@inheritDoc}
      */
-    public <T> JSONAsserter assertNotNull(String path) {
+    public <T> JsonAsserter assertNotNull(String path) {
         return assertThat(path, notNullValue());
     }
 
     /**
      * {@inheritDoc}
      */
-    public JSONAsserter and() {
+    public JsonAsserter and() {
         return this;
     }
 
