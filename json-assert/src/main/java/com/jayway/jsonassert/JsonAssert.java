@@ -1,7 +1,7 @@
 package com.jayway.jsonassert;
 
 import com.jayway.jsonassert.impl.JsonAsserterImpl;
-import com.jayway.jsonassert.impl.JsonReaderImpl;
+import com.jayway.jsonassert.impl.JsonPathImpl;
 
 import java.io.IOException;
 import java.io.Reader;
@@ -22,7 +22,7 @@ public class JsonAssert {
      * @throws ParseException
      */
     public static JsonPath parse(String jsonDoc) throws ParseException {
-        return JsonReaderImpl.parse(jsonDoc);
+        return JsonPathImpl.parse(jsonDoc);
     }
 
     /**
@@ -48,7 +48,7 @@ public class JsonAssert {
     public static JsonPath parse(Reader reader, boolean closeReader) throws ParseException, IOException {
         JsonPath jsonReader = null;
         try {
-            jsonReader = JsonReaderImpl.parse(reader);
+            jsonReader = JsonPathImpl.parse(reader);
         } finally {
             if(closeReader){
                 try {
@@ -67,7 +67,7 @@ public class JsonAssert {
      * @throws ParseException when the given JSON could not be parsed
      */
     public static JsonAsserter with(String json) throws ParseException {
-        return new JsonAsserterImpl(JsonReaderImpl.parse(json));
+        return new JsonAsserterImpl(JsonPathImpl.parse(json));
     }
 
     /**
@@ -78,7 +78,7 @@ public class JsonAssert {
      * @throws ParseException when the given JSON could not be parsed
      */
     public static JsonAsserter with(Reader reader) throws ParseException, IOException {
-        return new JsonAsserterImpl(JsonReaderImpl.parse(reader));
+        return new JsonAsserterImpl(JsonPathImpl.parse(reader));
     }
 
 }

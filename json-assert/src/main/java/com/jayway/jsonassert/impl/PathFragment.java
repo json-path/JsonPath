@@ -10,6 +10,9 @@ import java.util.regex.Pattern;
  */
 class PathFragment {
 
+
+    public static final PathFragment WILDCARD_FRAGMENT = new PathFragment("*", false);
+
     //matches array index accessers like : [1], [23]
     private static final Pattern ARRAY_POSITION_PATTER = Pattern.compile("\\[(\\d*)\\]");
 
@@ -100,6 +103,10 @@ class PathFragment {
      */
     boolean isArrayWildcard() {
         return ARRAY_WILDCARD_PATTER.matcher(value).matches() || GROOVY_WILDCARD_PATTER.matcher(value).matches();
+    }
+
+    boolean isWildcard(){
+        return "*".endsWith(value());
     }
 
     /**

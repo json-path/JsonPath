@@ -71,5 +71,5 @@ public interface JsonPath {
      * @param path
      * @return
      */
-    Map<String, Object> getMap(String path);
+    <T> Map<String, T> getMap(String path);
 }

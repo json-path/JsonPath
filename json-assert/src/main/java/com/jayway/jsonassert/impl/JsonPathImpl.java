@@ -16,7 +16,7 @@ import java.util.Map;
  * User: kalle stenflo
  * Date: 2/1/11
  * Time: 8:45 AM
- *
+ * <p/>
  * http://goessner.net/articles/JsonPath/
  */
 public class JsonPathImpl implements JsonPath {
@@ -43,8 +43,85 @@ public class JsonPathImpl implements JsonPath {
         }
     }
 
+    public static <T> T jsonPath(Object model, String path) {
+        JsonPathImpl p = new JsonPathImpl(model);
+
+        return (T) p.get(path);
+    }
+
+
     public JsonPathImpl(Object model) {
         this.model = model;
+    }
+
+
+    private void searchFragment(Object visit, PathFragment fragment, PathFragment filter, ReaderContext ctx) {
+        ctx.split();
+        if (isDocument(visit)) {
+            Map<String, Object> document = toDocument(visit);
+
+            for (Map.Entry<String, Object> entry : document.entrySet()) {
+
+                if (entry.getKey().equals(fragment.value())) {
+
+                    if (isArray(entry.getValue()) && filter.isArrayIndex()) {
+                        JSONArray array = toArray(entry.getValue());
+                        for (int i = 0; i < array.size(); i++) {
+                            boolean include = true;
+
+                            if (filter.isArrayIndex() && filter.getArrayIndex() != i) {
+                                include = false;
+                            }
+
+                            if (include) {
+                                ctx.addResult(array.get(i));
+                            }
+                        }
+                    } else {
+                        ctx.addResult(entry.getValue());
+                    }
+                }
+
+                if (isContainer(entry.getValue())) {
+                    searchFragment(entry.getValue(), fragment, filter, ctx);
+                }
+            }
+        } else {
+            JSONArray array = toArray(visit);
+
+            for (Object arrayItem : array) {
+                if (isContainer(arrayItem)) {
+                    searchFragment(arrayItem, fragment, filter, ctx);
+                }
+            }
+
+        }
+    }
+
+    private void extractFragment(Object visit, PathFragment fragment, PathFragment criteria, ReaderContext ctx) {
+        ctx.split();
+        if (isDocument(visit)) {
+            Map<String, Object> document = toDocument(visit);
+
+            for (Map.Entry<String, Object> entry : document.entrySet()) {
+
+                if (entry.getKey().equals(fragment.value()) || fragment.isWildcard()) {
+                    ctx.addResult(entry.getValue());
+                }
+
+                if (!fragment.isWildcard() && isContainer(entry.getValue())) {
+                    extractFragment(entry.getValue(), fragment, criteria, ctx);
+                }
+            }
+        } else {
+            JSONArray array = toArray(visit);
+
+            for (Object arrayItem : array) {
+                if (isContainer(arrayItem)) {
+                    extractFragment(arrayItem, fragment, criteria, ctx);
+                }
+            }
+        }
     }
 
     private void read(Object root, Path path, ReaderContext ctx, boolean strict) {
@@ -52,19 +129,35 @@ public class JsonPathImpl implements JsonPath {
             ctx.addResult(root);
             return;
         }
+        if (path.peek().isWildcard()) {
+            PathFragment wildcard = path.poll();
+            PathFragment extract = path.hasMoreFragments() ? path.poll() : wildcard;
+            PathFragment filter = path.hasMoreFragments() ? path.poll() : wildcard;
+            searchFragment(root, extract, filter, ctx);
+            return;
+        }
+
+
         if (isDocument(root)) {
             PathFragment fragment = path.poll();
 
-            if(strict && !toDocument(root).containsKey(fragment.value())){
+            if (strict && !toDocument(root).containsKey(fragment.value())) {
                 throw new InvalidPathException();
             }
 
-            Object extracted = toDocument(root).get(fragment.value());
+            Object current = toDocument(root).get(fragment.value());
 
-            if (fragment.isLeaf()) {
-                ctx.addResult(extracted);
+            if (path.hasMoreFragments() && path.peek().isWildcard()) {
+                PathFragment wildcard = path.poll();
+                PathFragment extract = path.hasMoreFragments() ? path.poll() : wildcard;
+                PathFragment filter = path.hasMoreFragments() ? path.poll() : wildcard;
+                extractFragment(current, extract, filter, ctx);
+                return;
+            }
+            else if (fragment.isLeaf()) {
+                ctx.addResult(current);
             } else {
-                read(extracted, path.clone(), ctx, strict);
+                read(current, path.clone(), ctx, strict);
             }
         } else {
             PathFragment fragment = path.poll();
@@ -163,8 +256,12 @@ public class JsonPathImpl implements JsonPath {
         return get(path);
     }
 
-    public Map<String, Object> getMap(String path) {
+    public <T> Map<String, T> getMap(String path) {
         return get(path);
+    }
+
+    private boolean isContainer(Object obj) {
+        return (isArray(obj) || isDocument(obj));
     }
 
     private boolean isArray(Object obj) {

@@ -55,6 +55,16 @@ class Path {
         //TODO: this needs some attention but will work for now
         Queue<PathFragment> processed = new LinkedList<PathFragment>();
 
+        //fix initial deep scan
+        if(path.startsWith("..")){
+           path = path.replaceFirst("\\.\\.", "\\*\\.");
+        }
+
+
+        //fix path scans
+        path = path.replace("..", ".*.");
+
+
         String[] split = path.split("[\\.|\\[]");
 
         for (int i = 0; i < split.length; i++) {
