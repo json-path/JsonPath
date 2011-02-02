@@ -10,6 +10,11 @@ import java.util.Map;
  */
 public interface JsonPath {
 
+    public enum ResultType {
+        PATH,
+        JSON
+    }
+
     /**
      * Get a new reader with the given path as root
      *
