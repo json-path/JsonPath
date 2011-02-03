@@ -12,11 +12,6 @@ import java.util.List;
  * Time: 2:33 PM
  */
 public class TraverseFilter extends JsonPathFilterBase {
-    private final String pathFragment;
-
-    public TraverseFilter(String pathFragment) {
-        this.pathFragment = pathFragment;
-    }
 
     @Override
     public List<Object> apply(List<Object> filter) {

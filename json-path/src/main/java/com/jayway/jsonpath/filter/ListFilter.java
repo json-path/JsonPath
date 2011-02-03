@@ -22,7 +22,7 @@ public class ListFilter extends JsonPathFilterBase {
 
     private static ScriptEngine SCRIPT_ENGINE = new ScriptEngineManager().getEngineByName("js");
 
-    private static final Pattern LIST_INDEX_PATTERN = Pattern.compile("\\[(\\s?\\d+\\s?,?)+\\]");
+    private static final Pattern LIST_INDEX_PATTERN = Pattern.compile("\\[(\\s?\\d+\\s?,?)+\\]"); //[1] OR [1,2,3]
     private static final Pattern LIST_PULL_PATTERN = Pattern.compile("\\[\\s?:(\\d+)\\s?\\]");   //[ :2 ]
     private static final Pattern LIST_WILDCARD_PATTERN = Pattern.compile("\\[\\*\\]");
     private static final Pattern LIST_TAIL_PATTERN_SHORT = Pattern.compile("\\[\\s*-\\s*(\\d+):\\s*\\]");   // [(@.length - 12)] OR [-13:]
