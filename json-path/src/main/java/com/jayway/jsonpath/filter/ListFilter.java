@@ -2,7 +2,11 @@ package com.jayway.jsonpath.filter;
 
 import com.jayway.jsonpath.PathUtil;
 import org.json.simple.JSONArray;
+import org.json.simple.JSONObject;
 
+import javax.script.ScriptEngine;
+import javax.script.ScriptEngineManager;
+import javax.script.ScriptException;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.regex.Matcher;
@@ -16,6 +20,8 @@ import java.util.regex.Pattern;
  */
 public class ListFilter extends JsonPathFilterBase {
 
+    private static ScriptEngine SCRIPT_ENGINE = new ScriptEngineManager().getEngineByName("js");
+
     private static final Pattern LIST_INDEX_PATTERN = Pattern.compile("\\[(\\s?\\d+\\s?,?)+\\]");
     private static final Pattern LIST_PULL_PATTERN = Pattern.compile("\\[\\s?:(\\d+)\\s?\\]");   //[ :2 ]
     private static final Pattern LIST_WILDCARD_PATTERN = Pattern.compile("\\[\\*\\]");
@@ -23,6 +29,7 @@ public class ListFilter extends JsonPathFilterBase {
     private static final Pattern LIST_TAIL_PATTERN_LONG = Pattern.compile("\\[\\s*\\(\\s*@\\.length\\s*-\\s*(\\d+)\\s*\\)\\s*\\]");
     private static final Pattern LIST_TAIL_PATTERN = Pattern.compile("(" + LIST_TAIL_PATTERN_SHORT.pattern() + "|" + LIST_TAIL_PATTERN_LONG.pattern() + ")");
     private static final Pattern LIST_ITEM_HAS_PROPERTY_PATTERN = Pattern.compile("\\[\\s?\\?\\s?\\(\\s?@\\.(\\w+)\\s?\\)\\s?\\]");
+    private static final Pattern LIST_ITEM_MATCHES_EVAL = Pattern.compile("\\[\\s?\\?\\s?\\(\\s?@.(\\w+)\\s?([=<>]+)\\s?(.*)\\s?\\)\\s?\\]");    //[ ?( @.title< 'ko' ) ]
 
     private final String pathFragment;
 
@@ -42,12 +49,29 @@ public class ListFilter extends JsonPathFilterBase {
             return filterByListTailIndex(items);
         } else if (LIST_PULL_PATTERN.matcher(pathFragment).matches()) {
             return filterByPullIndex(items);
-        } else if (LIST_ITEM_HAS_PROPERTY_PATTERN.matcher(pathFragment).matches()){
+        } else if (LIST_ITEM_HAS_PROPERTY_PATTERN.matcher(pathFragment).matches()) {
             return filterByItemProperty(items);
+        }
+        else if (LIST_ITEM_MATCHES_EVAL.matcher(pathFragment).matches()) {
+            return filterByItemEvalMatch(items);
         }
 
         return result;
     }
+
+    private List<Object> filterByItemEvalMatch(List<Object> items) {
+        List<Object> result = new JSONArray();
+
+        for (Object current : items) {
+            for (Object item : PathUtil.toArray(current)) {
+                if(isEvalMatch(item)){
+                    result.add(item);
+                }
+            }
+        }
+        return result;
+    }
+
 
     private List<Object> filterByItemProperty(List<Object> items) {
         List<Object> result = new JSONArray();
@@ -114,7 +138,52 @@ public class ListFilter extends JsonPathFilterBase {
         return result;
     }
 
-    private String getFilterProperty(){
+    private boolean isEvalMatch(Object check) {
+        Matcher matcher = LIST_ITEM_MATCHES_EVAL.matcher(pathFragment);
+
+        if (matcher.matches()) {
+            String property =  matcher.group(1);
+            String operator =  matcher.group(2);
+            String expected =  matcher.group(3);
+
+            if(!PathUtil.isDocument(check)){
+                return false;
+            }
+            JSONObject obj = PathUtil.toDocument(check);
+
+            if(!obj.containsKey(property)){
+                return false;
+            }
+
+            Object propertyValue = obj.get(property);
+
+            if(PathUtil.isContainer(propertyValue)){
+                return false;
+            }
+
+
+            if(propertyValue instanceof String){
+                propertyValue = "'" + propertyValue + "'";
+            }
+
+            if(operator.trim().equals("=")){
+                operator = "===";
+            }
+
+
+            String expression = propertyValue + " " + operator + " " + expected;
+            System.out.println("EVAL" + expression);
+
+            try {
+                return (Boolean) SCRIPT_ENGINE.eval(expression);
+            } catch (ScriptException e) {
+                return false;
+            }
+        }
+        return false;
+    }
+
+    private String getFilterProperty() {
         Matcher matcher = LIST_ITEM_HAS_PROPERTY_PATTERN.matcher(pathFragment);
         if (matcher.matches()) {
             return matcher.group(1);

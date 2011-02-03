@@ -10,13 +10,6 @@ import org.hamcrest.Matcher;
 public interface JsonAsserter {
 
     /**
-     * Gives access to the {@link JsonPath} used to base the assertions on
-     *
-     * @return the underlying reader
-     */
-    JsonPath reader();
-
-    /**
      * Asserts that object specified by path satisfies the condition specified by matcher.
      * If not, an AssertionError is thrown with information about the matcher
      * and failing value. Example:

@@ -13,7 +13,9 @@
   ~ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
   ~ See the License for the specific language governing permissions and
   ~ limitations under the License.
-  --><project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+  -->
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
     <modelVersion>4.0.0</modelVersion>
     <parent>
         <groupId>org.sonatype.oss</groupId>
@@ -24,9 +26,9 @@
     <artifactId>json-path-parent</artifactId>
     <packaging>pom</packaging>
     <version>1.0-SNAPSHOT</version>
-    <url>http://code.google.com/p/rest-assured</url>
+    <url>http://code.google.com/p/json-path</url>
     <name>json-path-parent-pom</name>
-    <description>Java DSL for easy testing and reading of JSON data</description>
+    <description>Java JsonPath implementation</description>
     <inceptionYear>2011</inceptionYear>
     <issueManagement>
         <system>GitHub Issue Tracking</system>
@@ -56,23 +58,23 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     </properties>
     <scm>
-        <url>http://github.com/jayway/json-assert/tree/${scm.branch}</url>
-        <connection>scm:git:git://github.com/jayway/json-assert.git</connection>
-        <developerConnection>scm:git:ssh://git@github.com/jayway/json-assert.git</developerConnection>
+        <url>http://github.com/jayway/JsonPath/tree/${scm.branch}</url>
+        <connection>scm:git:git://github.com/jayway/JsonPath.git</connection>
+        <developerConnection>scm:git:ssh://git@github.com/jayway/JsonPath.git</developerConnection>
     </scm>
 
     <mailingLists>
         <mailingList>
-            <name>json-assert mailing-list</name>
-            <archive>http://groups.google.com/group/rest-assured/topics</archive>
+            <name>JsonPath mailing-list</name>
+            <archive>http://groups.google.com/group/json-path/topics</archive>
         </mailingList>
     </mailingLists>
 
     <modules>
         <module>json-path</module>
         <module>examples</module>
-    <module>json-path-assert</module>
-  </modules>
+        <module>json-path-assert</module>
+    </modules>
 
     <build>
         <pluginManagement>
@@ -128,12 +130,6 @@
 
     <dependencyManagement>
         <dependencies>
-
-            <dependency>
-                <groupId>commons-jxpath</groupId>
-                <artifactId>commons-jxpath</artifactId>
-                <version>1.3</version>
-            </dependency>
 
             <dependency>
                 <groupId>com.googlecode.json-simple</groupId>

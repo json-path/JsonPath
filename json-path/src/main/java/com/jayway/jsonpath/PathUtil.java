@@ -14,6 +14,10 @@ import java.util.List;
  */
 public class PathUtil {
 
+    public static boolean isPathDefinite(String jsonPath) {
+        return !jsonPath.replaceAll("\"[^\"\\\\\\n\r]*\"", "").matches(".*(\\.\\.|\\*|\\[[\\\\/]|\\?|,|:|>|\\(|<|=|\\+).*");
+    }
+
     public static boolean isContainer(Object obj) {
         return (isArray(obj) || isDocument(obj));
     }
@@ -50,7 +54,7 @@ public class PathUtil {
         String[] split = jsonPath.split("\\.");
 
         for (int i = 0; i < split.length; i++) {
-            if(split[i].trim().isEmpty()){
+            if (split[i].trim().isEmpty()) {
                 continue;
             }
             fragments.add(split[i].replace("@", "@.").replace("~", ".."));

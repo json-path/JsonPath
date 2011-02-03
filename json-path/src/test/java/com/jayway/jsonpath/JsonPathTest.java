@@ -123,7 +123,6 @@ public class JsonPathTest {
         assertThat(JsonPath.<String>read(DOCUMENT, "$.store.book[0,1].author"), hasItems("Nigel Rees", "Evelyn Waugh"));
         assertTrue(JsonPath.<String>read(DOCUMENT, "$.store.book[0,1].author").size() == 2);
     }
-
     @Test
     public void read_store_book_pull_first_2() throws Exception {
 
@@ -131,11 +130,22 @@ public class JsonPathTest {
         assertTrue(JsonPath.<String>read(DOCUMENT, "$.store.book[:2].author").size() == 2);
     }
 
+
     @Test
     public void read_store_book_filter_by_isbn() throws Exception {
 
         assertThat(JsonPath.<String>read(DOCUMENT, "$.store.book[?(@.isbn)].isbn"), hasItems("0-553-21311-3", "0-395-19395-8"));
         assertTrue(JsonPath.<String>read(DOCUMENT, "$.store.book[?(@.isbn)].isbn").size() == 2);
+    }
+
+    @Test
+    public void all_books_cheapier_than_10() throws Exception {
+
+        assertThat(JsonPath.<String>read(DOCUMENT, "$.store.book[?(@.price < 10)].title"), hasItems("Sayings of the Century", "Moby Dick"));
+
+
+        assertThat(JsonPath.<String>read(DOCUMENT, "$.store.book[?(@.category = 'reference')].title"), hasItems("Sayings of the Century"));
+
     }
 
     @Test

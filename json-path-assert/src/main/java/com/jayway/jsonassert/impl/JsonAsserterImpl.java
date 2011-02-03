@@ -2,9 +2,13 @@ package com.jayway.jsonassert.impl;
 
 
 import com.jayway.jsonassert.JsonAsserter;
-import com.jayway.jsonassert.JsonPath;
+import com.jayway.jsonpath.JsonPath;
+import com.jayway.jsonpath.PathUtil;
 import org.hamcrest.Matcher;
 import org.hamcrest.MatcherAssert;
+
+import java.text.ParseException;
+import java.util.List;
 
 import static org.hamcrest.Matchers.*;
 
@@ -15,31 +19,34 @@ import static org.hamcrest.Matchers.*;
  */
 public class JsonAsserterImpl implements JsonAsserter {
 
-    private final JsonPath reader;
+
+
+    private final Object jsonObject;
 
 
     /**
      * Instantiates a new JSONAsserter
      *
-     * @param reader initialized with the JSON document to be asserted upon
+     * @param jsonObject the object to make asserts on
      */
-    public JsonAsserterImpl(JsonPath reader) {
-        this.reader = reader;
+    public JsonAsserterImpl(Object jsonObject) {
+        this.jsonObject = jsonObject;
     }
 
-    /**
-     * {@inheritDoc}
-     */
-    public JsonPath reader() {
-        return reader;
-    }
+
 
     /**
      * {@inheritDoc}
      */
     @SuppressWarnings("unchecked")
 	public <T> JsonAsserter assertThat(String path, Matcher<T> matcher) {
-        MatcherAssert.assertThat((T) reader.get(path), matcher);
+
+        if(PathUtil.isPathDefinite(path)){
+            MatcherAssert.assertThat(JsonPath.<T>readOne(jsonObject, path), matcher);
+        }
+        else {
+           MatcherAssert.assertThat((T) JsonPath.<T>read(jsonObject, path), matcher);
+        }
         return this;
     }
 
