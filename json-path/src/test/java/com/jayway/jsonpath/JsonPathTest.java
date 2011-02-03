@@ -139,12 +139,16 @@ public class JsonPathTest {
     }
 
     @Test
-    public void all_books_cheapier_than_10() throws Exception {
+    public void all_books_cheaper_than_10() throws Exception {
 
         assertThat(JsonPath.<String>read(DOCUMENT, "$.store.book[?(@.price < 10)].title"), hasItems("Sayings of the Century", "Moby Dick"));
 
+    }
 
-        assertThat(JsonPath.<String>read(DOCUMENT, "$.store.book[?(@.category = 'reference')].title"), hasItems("Sayings of the Century"));
+        @Test
+    public void all_books_with_category_reference() throws Exception {
+
+        assertThat(JsonPath.<String>read(DOCUMENT, "$..book[?(@.category = 'reference')].title"), hasItems("Sayings of the Century"));
 
     }
 

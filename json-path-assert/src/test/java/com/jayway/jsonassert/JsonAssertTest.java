@@ -56,6 +56,13 @@ public class JsonAssertTest {
     public void list_content_can_be_asserted_with_matcher() throws Exception {
 
         with(JSON).assertThat("$..book[*].author", hasItems("Nigel Rees", "Evelyn Waugh", "Herman Melville", "J. R. R. Tolkien"));
+
+        with(JSON).assertThat("$..author", hasItems("Nigel Rees", "Evelyn Waugh", "Herman Melville", "J. R. R. Tolkien"));
+    }
+
+    @Test
+    public void list_content_can_be_asserted_with_nested_matcher() throws Exception {
+        with(JSON).assertThat("$..book[*]", hasItems( hasEntry("author", "Nigel Rees"), hasEntry("author", "Evelyn Waugh")) );
     }
 
     @Test
@@ -63,6 +70,8 @@ public class JsonAssertTest {
 
         with(JSON).assertThat("$.store.book[0]", hasEntry("category", "reference"))
                   .assertThat("$.store.book[0]", hasEntry("title", "Sayings of the Century"));
+
+        with(JSON).assertThat("$..book[0]", hasItems(hasEntry("category", "reference")));
     }
 
     @Test

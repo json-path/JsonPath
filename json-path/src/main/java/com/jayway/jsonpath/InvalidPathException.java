@@ -1,4 +1,4 @@
-package com.jayway.jsonassert;
+package com.jayway.jsonpath;
 
 /**
  * User: kalle stenflo

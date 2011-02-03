@@ -27,6 +27,14 @@ public class JsonPath {
 
 
     private JsonPath(String jsonPath) {
+
+        if (jsonPath.matches("new ")) {
+            throw new InvalidPathException("Invalid path");
+
+        }
+        if (jsonPath.matches("[^\\?\\+\\=\\-\\*\\/\\!]\\(")) {
+            throw new InvalidPathException("Invalid path");
+        }
         this.filters = new JsonPathFilterChain(PathUtil.splitPath(jsonPath));
     }
 
