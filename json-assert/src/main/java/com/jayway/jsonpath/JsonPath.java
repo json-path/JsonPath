@@ -44,7 +44,6 @@ public class JsonPath {
         return (List<T>) filters.filter(root);
     }
 
-
     public static <T> List<T> read(String json, String jsonPath) throws java.text.ParseException {
         JsonPath path = compile(jsonPath);
 
