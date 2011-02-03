@@ -13,8 +13,6 @@ import java.util.List;
  */
 public class JsonPathFilterChain {
 
-    private static final List<Object> EMPTY_LIST = Collections.unmodifiableList(new JSONArray());
-
     private List<JsonPathFilterBase> filters;
 
     public JsonPathFilterChain(List<String> pathFragments) {

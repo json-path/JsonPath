@@ -6,6 +6,8 @@ import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
 
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import static java.lang.String.format;
 
@@ -17,7 +19,9 @@ import static java.lang.String.format;
  */
 public class JsonPath {
 
-    private static final JSONParser JSON_PARSER = new JSONParser();
+    private final static Logger log = Logger.getLogger(JsonPath.class.getName());
+
+    private static JSONParser JSON_PARSER = new JSONParser();
 
     private JsonPathFilterChain filters;
 
@@ -25,15 +29,18 @@ public class JsonPath {
         return new JsonPath(jsonPath);
     }
 
-
+    /**
+     * Creates a new JsonPath.
+     *
+     * @param jsonPath the path statement
+     */
     private JsonPath(String jsonPath) {
+        if(jsonPath == null ||
+           jsonPath.trim().isEmpty() ||
+           jsonPath.matches("new ") ||
+           jsonPath.matches("[^\\?\\+\\=\\-\\*\\/\\!]\\(")){
 
-        if (jsonPath.matches("new ")) {
-            throw new InvalidPathException("Invalid path");
-
-        }
-        if (jsonPath.matches("[^\\?\\+\\=\\-\\*\\/\\!]\\(")) {
-            throw new InvalidPathException("Invalid path");
+           throw new InvalidPathException("Invalid path");
         }
         this.filters = new JsonPathFilterChain(PathUtil.splitPath(jsonPath));
     }
@@ -43,48 +50,42 @@ public class JsonPath {
     }
 
     public <T> List<T> read(String json) throws java.text.ParseException {
-        Object root = null;
-        try {
-            root = JSON_PARSER.parse(json);
-        } catch (ParseException e) {
-            throw new java.text.ParseException(json, e.getPosition());
-        }
-        return (List<T>) filters.filter(root);
+        return read(parse(json));
     }
 
     public static <T> List<T> read(String json, String jsonPath) throws java.text.ParseException {
-        JsonPath path = compile(jsonPath);
-
-        return path.read(json);
+        return compile(jsonPath).read(json);
     }
 
     public static <T> List<T> read(Object json, String jsonPath) {
-        JsonPath path = compile(jsonPath);
-
-        return path.read(json);
-    }
-
-    public static <T> T readOne(String json, String jsonPath) throws java.text.ParseException {
-        JsonPath path = compile(jsonPath);
-
-        List<Object> result = read(json, jsonPath);
-
-        if (result.size() != 1) {
-            throw new RuntimeException(format("Expected one result when reading path: %s  but was: ", jsonPath, result.size()));
-        }
-
-        return (T) result.get(0);
+        return compile(jsonPath).read(json);
     }
 
     public static <T> T readOne(Object json, String jsonPath) {
-        JsonPath path = compile(jsonPath);
+        List<Object> result = compile(jsonPath).read(json, jsonPath);
 
-        List<Object> result = read(json, jsonPath);
+        if(log.isLoggable(Level.WARNING)){
+            if(!PathUtil.isPathDefinite(jsonPath)){
+                log.warning("Using readOne(...) on a not definite json path may give incorrect results.");
+            }
+        }
 
         if (result.size() != 1) {
             throw new RuntimeException(format("Expected one result when reading path: %s  but was: ", jsonPath, result.size()));
         }
 
         return (T) result.get(0);
+    }
+
+    public static <T> T readOne(String json, String jsonPath) throws java.text.ParseException {
+        return (T)readOne(parse(json), jsonPath);
+    }
+
+    private static Object parse(String json) throws java.text.ParseException {
+        try {
+            return JSON_PARSER.parse(json);
+        } catch (ParseException e) {
+            throw new java.text.ParseException(json, e.getPosition());
+        }
     }
 }
