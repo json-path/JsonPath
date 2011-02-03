@@ -23,11 +23,11 @@
         <version>5</version>
     </parent>
     <groupId>com.jayway.jsonassert</groupId>
-    <artifactId>json-assert-parent</artifactId>
+    <artifactId>json-path-parent</artifactId>
     <packaging>pom</packaging>
     <version>1.0-SNAPSHOT</version>
     <url>http://code.google.com/p/rest-assured</url>
-    <name>json-assert-parent-pom</name>
+    <name>json-path-parent-pom</name>
     <description>Java DSL for easy testing and reading of JSON data</description>
     <inceptionYear>2011</inceptionYear>
     <issueManagement>
@@ -71,7 +71,7 @@
     </mailingLists>
 
     <modules>
-        <module>json-assert</module>
+        <module>json-path</module>
         <module>examples</module>
     </modules>
 

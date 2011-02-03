@@ -19,14 +19,14 @@
     <modelVersion>4.0.0</modelVersion>
     <parent>
         <groupId>com.jayway.jsonassert</groupId>
-        <artifactId>json-assert-parent</artifactId>
+        <artifactId>json-path-parent</artifactId>
         <version>1.0-SNAPSHOT</version>
     </parent>
     <groupId>com.jayway.jsonassert</groupId>
-    <artifactId>json-assert</artifactId>
+    <artifactId>json-path</artifactId>
     <packaging>jar</packaging>
     <version>1.0-SNAPSHOT</version>
-    <name>json-assert</name>
+    <name>json-path</name>
     <url>http://maven.apache.org</url>
     <dependencies>
 
