@@ -1,8 +1,5 @@
 package com.jayway.jsonpath;
 
-import org.json.simple.JSONArray;
-import org.json.simple.JSONObject;
-
 /**
  * Created by IntelliJ IDEA.
  * User: kallestenflo

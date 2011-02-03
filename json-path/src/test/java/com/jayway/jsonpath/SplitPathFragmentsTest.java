@@ -1,6 +1,5 @@
 package com.jayway.jsonpath;
 
-import org.apache.commons.lang.StringUtils;
 import org.junit.Test;
 
 import static org.hamcrest.Matchers.hasItemInArray;
