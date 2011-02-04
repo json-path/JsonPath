@@ -1,6 +1,6 @@
 package com.jayway.jsonpath.filter;
 
-import com.jayway.jsonpath.PathUtil;
+import com.jayway.jsonpath.JsonUtil;
 import org.json.simple.JSONArray;
 
 import java.util.List;
@@ -28,15 +28,15 @@ public class PropertyFilter extends JsonPathFilterBase {
 
         if (WILDCARD.equals(pathFragment)) {
             for (Object current : filter) {
-                for (Object value : PathUtil.toDocument(current).values()) {
+                for (Object value : JsonUtil.toMap(current).values()) {
                     result.add(value);
                 }
             }
         }
         else {
             for (Object current : filter) {
-                if (PathUtil.toDocument(current).containsKey(pathFragment)) {
-                    result.add(PathUtil.toDocument(current).get(pathFragment));
+                if (JsonUtil.toMap(current).containsKey(pathFragment)) {
+                    result.add(JsonUtil.toMap(current).get(pathFragment));
                 }
             }
         }

@@ -1,43 +1,48 @@
 package com.jayway.jsonpath;
 
-import org.json.simple.JSONArray;
-import org.json.simple.JSONObject;
-
 import java.util.LinkedList;
 import java.util.List;
 
 /**
- * User: kallestenflo
+ * User: kalle stenflo
  * Date: 2/2/11
  * Time: 2:08 PM
  */
 public class PathUtil {
 
+    /**
+     * Checks if a path points to a single item or if it potentially returns multiple items
+     *
+     * a path is considered <strong>not</strong> definite if it contains a scan fragment ".."
+     * or an array position fragment that is not based on a single index
+     *
+     *
+     * absolute path examples:
+     *
+     * $store.book
+     * $store.book[1].value
+     *
+     * not absolute path examples
+     *
+     * $..book
+     * $.store.book[1,2]
+     * $.store.book[?(@.category = 'fiction')]
+     *
+     * @param jsonPath the path to check
+     * @return true if path is definite (points to single item)
+     */
     public static boolean isPathDefinite(String jsonPath) {
         return !jsonPath.replaceAll("\"[^\"\\\\\\n\r]*\"", "").matches(".*(\\.\\.|\\*|\\[[\\\\/]|\\?|,|:|>|\\(|<|=|\\+).*");
     }
 
-    public static boolean isContainer(Object obj) {
-        return (isArray(obj) || isDocument(obj));
-    }
-
-    public static boolean isArray(Object obj) {
-        return (obj instanceof JSONArray);
-    }
-
-    public static boolean isDocument(Object obj) {
-        return (obj instanceof JSONObject);
-    }
-
-    public static JSONArray toArray(Object array) {
-        return (JSONArray) array;
-    }
-
-    public static JSONObject toDocument(Object document) {
-        return (JSONObject) document;
-    }
-
-
+    /**
+     * Splits a path into fragments
+     *
+     * the path <code>$.store.book[1].category</code> returns ["$", "store", "book", "[1]", "value"]
+     *
+     * @param jsonPath path to split
+     * @return fragments
+     */
     public static List<String> splitPath(String jsonPath) {
 
         LinkedList<String> fragments = new LinkedList<String>();

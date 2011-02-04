@@ -9,11 +9,5 @@ import java.util.List;
  * Time: 2:01 PM
  */
 public abstract class JsonPathFilterBase {
-
-
-
-
     public abstract List<Object> apply(List<Object> filter);
-
-
 }

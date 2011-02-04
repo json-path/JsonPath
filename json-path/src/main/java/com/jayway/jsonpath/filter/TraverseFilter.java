@@ -1,6 +1,6 @@
 package com.jayway.jsonpath.filter;
 
-import com.jayway.jsonpath.PathUtil;
+import com.jayway.jsonpath.JsonUtil;
 import org.json.simple.JSONArray;
 
 import java.util.List;
@@ -24,18 +24,18 @@ public class TraverseFilter extends JsonPathFilterBase {
 
     private void traverse(Object container, List<Object> result) {
 
-        if (PathUtil.isDocument(container)) {
+        if (JsonUtil.isMap(container)) {
             result.add(container);
 
-            for (Object value : PathUtil.toDocument(container).values()) {
-                if (PathUtil.isContainer(value)) {
+            for (Object value : JsonUtil.toMap(container).values()) {
+                if (JsonUtil.isContainer(value)) {
                     traverse(value, result);
                 }
             }
-        } else if (PathUtil.isArray(container)) {
+        } else if (JsonUtil.isList(container)) {
 
-            for (Object value : PathUtil.toArray(container)) {
-                if (PathUtil.isContainer(value)) {
+            for (Object value : JsonUtil.toList(container)) {
+                if (JsonUtil.isContainer(value)) {
                     traverse(value, result);
                 }
             }

@@ -1,14 +1,14 @@
 package com.jayway.jsonpath.filter;
 
-import com.jayway.jsonpath.PathUtil;
+import com.jayway.jsonpath.JsonUtil;
 import org.json.simple.JSONArray;
-import org.json.simple.JSONObject;
 
 import javax.script.ScriptEngine;
 import javax.script.ScriptEngineManager;
 import javax.script.ScriptException;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -63,7 +63,7 @@ public class ListFilter extends JsonPathFilterBase {
         List<Object> result = new JSONArray();
 
         for (Object current : items) {
-            for (Object item : PathUtil.toArray(current)) {
+            for (Object item : JsonUtil.toList(current)) {
                 if(isEvalMatch(item)){
                     result.add(item);
                 }
@@ -79,10 +79,10 @@ public class ListFilter extends JsonPathFilterBase {
         String prop = getFilterProperty();
 
         for (Object current : items) {
-            for (Object item : PathUtil.toArray(current)) {
+            for (Object item : JsonUtil.toList(current)) {
 
-                if(PathUtil.isDocument(item)){
-                    if(PathUtil.toDocument(item).containsKey(prop)) {
+                if(JsonUtil.isMap(item)){
+                    if(JsonUtil.toMap(item).containsKey(prop)) {
                         result.add(item);
                     }
                 }
@@ -96,7 +96,7 @@ public class ListFilter extends JsonPathFilterBase {
         List<Object> result = new JSONArray();
 
         for (Object current : items) {
-            result.addAll(PathUtil.toArray(current));
+            result.addAll(JsonUtil.toList(current));
         }
         return result;
     }
@@ -106,7 +106,7 @@ public class ListFilter extends JsonPathFilterBase {
 
 
         for (Object current : items) {
-            List array = PathUtil.toArray(current);
+            List array = JsonUtil.toList(current);
             result.add(array.get(getTailIndex(array.size())));
         }
         return result;
@@ -119,7 +119,7 @@ public class ListFilter extends JsonPathFilterBase {
             Integer[] index = getArrayIndex();
             for (int i : index) {
 
-                result.add(PathUtil.toArray(current).get(i));
+                result.add(JsonUtil.toList(current).get(i));
             }
         }
         return result;
@@ -132,7 +132,7 @@ public class ListFilter extends JsonPathFilterBase {
             Integer[] index = getListPullIndex();
             for (int i : index) {
 
-                result.add(PathUtil.toArray(current).get(i));
+                result.add(JsonUtil.toList(current).get(i));
             }
         }
         return result;
@@ -146,10 +146,10 @@ public class ListFilter extends JsonPathFilterBase {
             String operator =  matcher.group(2);
             String expected =  matcher.group(3);
 
-            if(!PathUtil.isDocument(check)){
+            if(!JsonUtil.isMap(check)){
                 return false;
             }
-            JSONObject obj = PathUtil.toDocument(check);
+            Map obj = JsonUtil.toMap(check);
 
             if(!obj.containsKey(property)){
                 return false;
@@ -157,7 +157,7 @@ public class ListFilter extends JsonPathFilterBase {
 
             Object propertyValue = obj.get(property);
 
-            if(PathUtil.isContainer(propertyValue)){
+            if(JsonUtil.isContainer(propertyValue)){
                 return false;
             }
 
