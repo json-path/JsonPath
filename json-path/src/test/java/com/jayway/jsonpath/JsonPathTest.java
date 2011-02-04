@@ -86,6 +86,7 @@ public class JsonPathTest {
     @Test
     public void read_store_book_author() throws Exception {
         assertThat(JsonPath.<String>read(DOCUMENT, "$.store.book[*].author"), hasItems("Nigel Rees", "Evelyn Waugh", "Herman Melville", "J. R. R. Tolkien"));
+        assertThat(JsonPath.<String>read(DOCUMENT, "$.['store'].['book'][*].['author']"), hasItems("Nigel Rees", "Evelyn Waugh", "Herman Melville", "J. R. R. Tolkien"));
     }
 
 

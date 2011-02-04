@@ -1,11 +1,11 @@
 package com.jayway.jsonpath.filter;
 
 import com.jayway.jsonpath.JsonUtil;
+import com.jayway.jsonpath.eval.Expression;
 import org.json.simple.JSONArray;
 
-import javax.script.ScriptEngine;
-import javax.script.ScriptEngineManager;
-import javax.script.ScriptException;
+//import javax.script.ScriptEngine;
+//import javax.script.ScriptEngineManager;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -20,7 +20,7 @@ import java.util.regex.Pattern;
  */
 public class ListFilter extends JsonPathFilterBase {
 
-    private static ScriptEngine SCRIPT_ENGINE = new ScriptEngineManager().getEngineByName("js");
+    //private static ScriptEngine SCRIPT_ENGINE = new ScriptEngineManager().getEngineByName("js");
 
     private static final Pattern LIST_INDEX_PATTERN = Pattern.compile("\\[(\\s?\\d+\\s?,?)+\\]"); //[1] OR [1,2,3]
     private static final Pattern LIST_PULL_PATTERN = Pattern.compile("\\[\\s?:(\\d+)\\s?\\]");   //[ :2 ]
@@ -51,8 +51,7 @@ public class ListFilter extends JsonPathFilterBase {
             return filterByPullIndex(items);
         } else if (LIST_ITEM_HAS_PROPERTY_PATTERN.matcher(pathFragment).matches()) {
             return filterByItemProperty(items);
-        }
-        else if (LIST_ITEM_MATCHES_EVAL.matcher(pathFragment).matches()) {
+        } else if (LIST_ITEM_MATCHES_EVAL.matcher(pathFragment).matches()) {
             return filterByItemEvalMatch(items);
         }
 
@@ -64,7 +63,7 @@ public class ListFilter extends JsonPathFilterBase {
 
         for (Object current : items) {
             for (Object item : JsonUtil.toList(current)) {
-                if(isEvalMatch(item)){
+                if (isEvalMatch(item)) {
                     result.add(item);
                 }
             }
@@ -81,8 +80,8 @@ public class ListFilter extends JsonPathFilterBase {
         for (Object current : items) {
             for (Object item : JsonUtil.toList(current)) {
 
-                if(JsonUtil.isMap(item)){
-                    if(JsonUtil.toMap(item).containsKey(prop)) {
+                if (JsonUtil.isMap(item)) {
+                    if (JsonUtil.toMap(item).containsKey(prop)) {
                         result.add(item);
                     }
                 }
@@ -142,43 +141,31 @@ public class ListFilter extends JsonPathFilterBase {
         Matcher matcher = LIST_ITEM_MATCHES_EVAL.matcher(pathFragment);
 
         if (matcher.matches()) {
-            String property =  matcher.group(1);
-            String operator =  matcher.group(2);
-            String expected =  matcher.group(3);
+            String property = matcher.group(1);
+            String operator = matcher.group(2);
+            String expected = matcher.group(3);
 
-            if(!JsonUtil.isMap(check)){
+            if (!JsonUtil.isMap(check)) {
                 return false;
             }
             Map obj = JsonUtil.toMap(check);
 
-            if(!obj.containsKey(property)){
+            if (!obj.containsKey(property)) {
                 return false;
             }
 
             Object propertyValue = obj.get(property);
 
-            if(JsonUtil.isContainer(propertyValue)){
+            if (JsonUtil.isContainer(propertyValue)) {
                 return false;
             }
-
-
-            if(propertyValue instanceof String){
-                propertyValue = "'" + propertyValue + "'";
-            }
-
-            if(operator.trim().equals("=")){
-                operator = "===";
-            }
-
 
             String expression = propertyValue + " " + operator + " " + expected;
             System.out.println("EVAL" + expression);
 
-            try {
-                return (Boolean) SCRIPT_ENGINE.eval(expression);
-            } catch (ScriptException e) {
-                return false;
-            }
+
+            return Expression.eval(propertyValue, operator, expected);
+
         }
         return false;
     }
