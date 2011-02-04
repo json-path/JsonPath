@@ -72,7 +72,6 @@
 
     <modules>
         <module>json-path</module>
-        <module>examples</module>
         <module>json-path-assert</module>
     </modules>
 

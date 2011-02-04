@@ -4,6 +4,7 @@ package com.jayway.jsonassert.impl;
 import com.jayway.jsonassert.JsonAsserter;
 import com.jayway.jsonpath.JsonPath;
 import com.jayway.jsonpath.PathUtil;
+import org.hamcrest.Description;
 import org.hamcrest.Matcher;
 import org.hamcrest.MatcherAssert;
 
@@ -41,11 +42,13 @@ public class JsonAsserterImpl implements JsonAsserter {
     @SuppressWarnings("unchecked")
 	public <T> JsonAsserter assertThat(String path, Matcher<T> matcher) {
 
+        String reason = "When processing json path: " + path;
+
         if(PathUtil.isPathDefinite(path)){
-            MatcherAssert.assertThat(JsonPath.<T>readOne(jsonObject, path), matcher);
+            MatcherAssert.assertThat(reason, JsonPath.<T>readOne(jsonObject, path), matcher);
         }
         else {
-           MatcherAssert.assertThat((T) JsonPath.<T>read(jsonObject, path), matcher);
+           MatcherAssert.assertThat(reason, (T) JsonPath.<T>read(jsonObject, path), matcher);
         }
         return this;
     }
