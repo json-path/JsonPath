@@ -64,13 +64,9 @@ public class JsonPathTest {
     @Test
     public void read_store_book_1() throws Exception {
 
-
         JsonPath path = JsonPath.compile("$.store.book[1]");
 
         List<Map> list = path.read(DOCUMENT);
-
-        System.out.println(list.toString());
-
     }
 
     @Test
@@ -79,7 +75,6 @@ public class JsonPathTest {
 
         List<Object> list = path.read(DOCUMENT);
 
-        System.out.println(list.toString());
     }
 
     @Test
@@ -155,12 +150,7 @@ public class JsonPathTest {
 
     @Test
     public void all_members_of_all_documents() throws Exception {
-
         List<String> all = JsonPath.read(DOCUMENT, "$..*");
-
-        System.out.println(StringUtils.join(all, "\n"));
-        System.out.println(all.toString());
-
     }
 
     @Test
