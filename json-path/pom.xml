@@ -37,7 +37,7 @@
             <groupId>commons-lang</groupId>
             <artifactId>commons-lang</artifactId>
         </dependency>
-        <!-- ~~~ß~~~~~~~~~~~~~~~~~~~~~~~~~ -->
+        <!-- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~ -->
         <!-- test dependencies            -->
         <!-- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~ -->
         <dependency>
