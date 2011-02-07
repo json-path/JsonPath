@@ -1,7 +1,7 @@
 package com.jayway.jsonpath.filter;
 
 import com.jayway.jsonpath.JsonUtil;
-import com.jayway.jsonpath.eval.Expression;
+import com.jayway.jsonpath.eval.ExpressionEvaluator;
 import org.json.simple.JSONArray;
 
 //import javax.script.ScriptEngine;
@@ -13,8 +13,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 /**
- * Created by IntelliJ IDEA.
- * User: kallestenflo
+ * User: kalle stenflo
  * Date: 2/2/11
  * Time: 2:32 PM
  */
@@ -22,14 +21,14 @@ public class ListFilter extends JsonPathFilterBase {
 
     //private static ScriptEngine SCRIPT_ENGINE = new ScriptEngineManager().getEngineByName("js");
 
-    private static final Pattern LIST_INDEX_PATTERN = Pattern.compile("\\[(\\s?\\d+\\s?,?)+\\]"); //[1] OR [1,2,3]
-    private static final Pattern LIST_PULL_PATTERN = Pattern.compile("\\[\\s?:(\\d+)\\s?\\]");   //[ :2 ]
-    private static final Pattern LIST_WILDCARD_PATTERN = Pattern.compile("\\[\\*\\]");
+    private static final Pattern LIST_INDEX_PATTERN = Pattern.compile("\\[(\\s?\\d+\\s?,?)+\\]");               //[1] OR [1,2,3]
+    private static final Pattern LIST_PULL_PATTERN = Pattern.compile("\\[\\s?:(\\d+)\\s?\\]");               //[ :2 ]
+    private static final Pattern LIST_WILDCARD_PATTERN = Pattern.compile("\\[\\*\\]");                      //[*]
     private static final Pattern LIST_TAIL_PATTERN_SHORT = Pattern.compile("\\[\\s*-\\s*(\\d+):\\s*\\]");   // [(@.length - 12)] OR [-13:]
-    private static final Pattern LIST_TAIL_PATTERN_LONG = Pattern.compile("\\[\\s*\\(\\s*@\\.length\\s*-\\s*(\\d+)\\s*\\)\\s*\\]");
+    private static final Pattern LIST_TAIL_PATTERN_LONG = Pattern.compile("\\[\\s*\\(\\s*@\\.length\\s*-\\s*(\\d+)\\s*\\)\\s*\\]"); //[(@.length-1)]
     private static final Pattern LIST_TAIL_PATTERN = Pattern.compile("(" + LIST_TAIL_PATTERN_SHORT.pattern() + "|" + LIST_TAIL_PATTERN_LONG.pattern() + ")");
-    private static final Pattern LIST_ITEM_HAS_PROPERTY_PATTERN = Pattern.compile("\\[\\s?\\?\\s?\\(\\s?@\\.(\\w+)\\s?\\)\\s?\\]");
-    private static final Pattern LIST_ITEM_MATCHES_EVAL = Pattern.compile("\\[\\s?\\?\\s?\\(\\s?@.(\\w+)\\s?([=<>]+)\\s?(.*)\\s?\\)\\s?\\]");    //[ ?( @.title< 'ko' ) ]
+    private static final Pattern LIST_ITEM_HAS_PROPERTY_PATTERN = Pattern.compile("\\[\\s?\\?\\s?\\(\\s?@\\.(\\w+)\\s?\\)\\s?\\]");  //[?(@.title)]
+    private static final Pattern LIST_ITEM_MATCHES_EVAL = Pattern.compile("\\[\\s?\\?\\s?\\(\\s?@.(\\w+)\\s?([=<>]+)\\s?(.*)\\s?\\)\\s?\\]");    //[?( @.title< 'ko')]
 
     private final String pathFragment;
 
@@ -106,6 +105,7 @@ public class ListFilter extends JsonPathFilterBase {
 
         for (Object current : items) {
             List array = JsonUtil.toList(current);
+
             result.add(array.get(getTailIndex(array.size())));
         }
         return result;
@@ -115,10 +115,12 @@ public class ListFilter extends JsonPathFilterBase {
         List<Object> result = new JSONArray();
 
         for (Object current : items) {
+            List target = JsonUtil.toList(current);
             Integer[] index = getArrayIndex();
             for (int i : index) {
-
-                result.add(JsonUtil.toList(current).get(i));
+                if(indexIsInRange(target, i)){
+                    result.add(target.get(i));
+                }
             }
         }
         return result;
@@ -128,10 +130,12 @@ public class ListFilter extends JsonPathFilterBase {
         List<Object> result = new JSONArray();
 
         for (Object current : items) {
+            List target = JsonUtil.toList(current);
             Integer[] index = getListPullIndex();
             for (int i : index) {
-
-                result.add(JsonUtil.toList(current).get(i));
+                if(indexIsInRange(target, i)){
+                    result.add(target.get(i));
+                }
             }
         }
         return result;
@@ -164,7 +168,7 @@ public class ListFilter extends JsonPathFilterBase {
             System.out.println("EVAL" + expression);
 
 
-            return Expression.eval(propertyValue, operator, expected);
+            return ExpressionEvaluator.eval(propertyValue, operator, expected);
 
         }
         return false;
@@ -228,6 +232,16 @@ public class ListFilter extends JsonPathFilterBase {
             index.add(Integer.parseInt(s));
         }
         return index.toArray(new Integer[0]);
+    }
+
+    private boolean indexIsInRange(List list, int index){
+        if(index < 0){
+            return false;
+        }else if(index > list.size() -1){
+            return false;
+        }else {
+            return true;
+        }
     }
 
 }

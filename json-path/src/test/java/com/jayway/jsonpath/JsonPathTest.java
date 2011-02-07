@@ -7,7 +7,6 @@ import java.util.List;
 import java.util.Map;
 
 import static org.hamcrest.Matchers.equalTo;
-import static org.hamcrest.Matchers.hasEntry;
 import static org.hamcrest.Matchers.hasItems;
 import static org.junit.Assert.*;
 
@@ -57,7 +56,7 @@ public class JsonPathTest {
 
         List<Object> list = JsonPath.read(DOCUMENT, "$.store");
 
-        assertEquals(2, ((Map)list.get(0)).values().size());
+        assertEquals(2, ((Map) list.get(0)).values().size());
 
 
     }
@@ -68,7 +67,7 @@ public class JsonPathTest {
 
         JsonPath path = JsonPath.compile("$.store.book[1]");
 
-        List<Object> list = path.read(DOCUMENT);
+        List<Map> list = path.read(DOCUMENT);
 
         System.out.println(list.toString());
 
@@ -124,6 +123,7 @@ public class JsonPathTest {
         assertThat(JsonPath.<String>read(DOCUMENT, "$.store.book[0,1].author"), hasItems("Nigel Rees", "Evelyn Waugh"));
         assertTrue(JsonPath.<String>read(DOCUMENT, "$.store.book[0,1].author").size() == 2);
     }
+
     @Test
     public void read_store_book_pull_first_2() throws Exception {
 
@@ -146,7 +146,7 @@ public class JsonPathTest {
 
     }
 
-        @Test
+    @Test
     public void all_books_with_category_reference() throws Exception {
 
         assertThat(JsonPath.<String>read(DOCUMENT, "$..book[?(@.category = 'reference')].title"), hasItems("Sayings of the Century"));
@@ -161,5 +161,28 @@ public class JsonPathTest {
         System.out.println(StringUtils.join(all, "\n"));
         System.out.println(all.toString());
 
+    }
+
+    @Test
+    public void access_index_out_of_bounds_does_not_throw_exception() throws Exception {
+
+        List<Object> res = JsonPath.read(DOCUMENT, "$.store.book[100].author");
+
+        assertTrue(res.isEmpty());
+
+        res = JsonPath.read(DOCUMENT, "$.store.book[100, 200].author");
+
+        assertTrue(res.isEmpty());
+    }
+
+
+    @Test(expected = InvalidPathException.class)
+    public void invalid_space_path_throws_exception() throws Exception {
+        JsonPath.read(DOCUMENT, "space is not good");
+    }
+
+    @Test(expected = InvalidPathException.class)
+    public void invalid_new_path_throws_exception() throws Exception {
+        JsonPath.read(DOCUMENT, "new ");
     }
 }

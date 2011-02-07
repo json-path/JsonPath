@@ -168,7 +168,7 @@ public class JsonPath {
 
         if (log.isLoggable(Level.WARNING)) {
             if (!PathUtil.isPathDefinite(jsonPath)) {
-                log.warning("Using readOne(...) on a not definite json path may give incorrect results.");
+                log.warning("Using readOne() on a not definite json path may give incorrect results. Path : " + jsonPath);
             }
         }
 
