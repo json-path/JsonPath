@@ -19,12 +19,12 @@
     <parent>
         <groupId>com.jayway.jsonpath</groupId>
         <artifactId>json-path-parent</artifactId>
-        <version>0.5.2-SNAPSHOT</version>
+        <version>0.5.2</version>
     </parent>
     <groupId>com.jayway.jsonpath</groupId>
     <artifactId>json-path</artifactId>
     <packaging>jar</packaging>
-    <version>0.5.2-SNAPSHOT</version>
+    <version>0.5.2</version>
     <name>json-path</name>
     <url>http://maven.apache.org</url>
     <dependencies>
