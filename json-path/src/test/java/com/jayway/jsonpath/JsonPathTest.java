@@ -1,6 +1,5 @@
 package com.jayway.jsonpath;
 
-import org.apache.commons.lang.StringUtils;
 import org.junit.Test;
 
 import java.util.List;
@@ -46,10 +45,18 @@ public class JsonPathTest {
                     "    ],\n" +
                     "    \"bicycle\": {\n" +
                     "      \"color\": \"red\",\n" +
-                    "      \"price\": 19.95\n" +
+                    "      \"price\": 19.95,\n" +
+                    "      \"foo:bar\": \"fooBar\"\n" +
                     "    }\n" +
                     "  }\n" +
                     "}";
+
+    @Test
+    public void read_path_with_colon() throws Exception {
+
+        assertEquals(JsonPath.readOne(DOCUMENT, "$.store.bicycle.foo:bar"), "fooBar");
+        assertEquals(JsonPath.readOne(DOCUMENT, "$.['store'].['bicycle'].['foo:bar']"), "fooBar");
+    }
 
     @Test
     public void read_document_from_root() throws Exception {
@@ -165,11 +172,12 @@ public class JsonPathTest {
         assertTrue(res.isEmpty());
     }
 
-
+    /*
     @Test(expected = InvalidPathException.class)
     public void invalid_space_path_throws_exception() throws Exception {
         JsonPath.read(DOCUMENT, "space is not good");
     }
+    */
 
     @Test(expected = InvalidPathException.class)
     public void invalid_new_path_throws_exception() throws Exception {

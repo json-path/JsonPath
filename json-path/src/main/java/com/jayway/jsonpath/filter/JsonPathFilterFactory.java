@@ -10,8 +10,8 @@ import java.util.regex.Pattern;
 public class JsonPathFilterFactory {
 
     private final static Pattern ROOT_FILTER_PATTERN = Pattern.compile("\\$");
-    private final static Pattern PROPERTY_FILTER_PATTERN = Pattern.compile("(\\w+)|\\['(\\w+)'\\]");
-    //private final static Pattern PROPERTY_FILTER_PATTERN = Pattern.compile("\\w+");
+    //private final static Pattern PROPERTY_FILTER_PATTERN = Pattern.compile("(\\w+)|\\['(\\w+)'\\]");
+    private final static Pattern PROPERTY_FILTER_PATTERN = Pattern.compile("(.*)|\\['(.*?)'\\]");
     private final static Pattern WILDCARD_PROPERTY_FILTER_PATTERN = Pattern.compile("\\*");
     private final static Pattern LIST_FILTER_PATTERN = Pattern.compile("\\[.*?\\]");
     private final static Pattern TRAVERSE_FILTER_PATTERN = Pattern.compile("\\.\\.");
@@ -26,14 +26,14 @@ public class JsonPathFilterFactory {
         if(ROOT_FILTER_PATTERN.matcher(pathFragment).matches()){
             return ROOT_FILTER;
         }
-        else if(PROPERTY_FILTER_PATTERN.matcher(pathFragment).matches() || WILDCARD_PROPERTY_FILTER_PATTERN.matcher(pathFragment).matches() ){
-            return new PropertyFilter(pathFragment);
-        }
         else if(LIST_FILTER_PATTERN.matcher(pathFragment).matches()){
             return new ListFilter(pathFragment);
         }
         else if(TRAVERSE_FILTER_PATTERN.matcher(pathFragment).matches()){
             return TRAVERSE_FILTER;
+        }
+        else if(PROPERTY_FILTER_PATTERN.matcher(pathFragment).matches() || WILDCARD_PROPERTY_FILTER_PATTERN.matcher(pathFragment).matches() ){
+            return new PropertyFilter(pathFragment);
         }
 
         return null;

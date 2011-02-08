@@ -16,7 +16,7 @@ public interface JsonAsserter {
      * <p/>
      * <code>
      * with(json).assertThat("items[0].name", equalTo("Bobby"))
-     *           .assertThat("items[0].age" , equalTo(24L))
+     * .assertThat("items[0].age" , equalTo(24L))
      * </code>
      *
      * @param path    the json path specifying the value being compared
@@ -36,6 +36,16 @@ public interface JsonAsserter {
      * @return this to allow fluent assertion chains
      */
     <T> JsonAsserter assertEquals(String path, T expected);
+
+    /**
+     * Checks that a path is not defined within a document. If the document contains the
+     * given path, an AssertionError is thrown
+     *
+     * @param path the path to make sure not exists
+     * @return this
+     */
+    JsonAsserter assertNotDefined(String path);
+
 
     /**
      * Asserts that object specified by path is null. If it is not, an AssertionError

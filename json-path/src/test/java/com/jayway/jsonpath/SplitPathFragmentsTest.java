@@ -60,6 +60,8 @@ public class SplitPathFragmentsTest {
         assertThat(PathUtil.splitPath("$.[0][1].author"), hasItems("$", "[0]", "[1]", "author"));
 
         assertThat(PathUtil.splitPath("$.[0].[1].author"), hasItems("$", "[0]", "[1]", "author"));
+
+        assertThat(PathUtil.splitPath("$.foo:bar.author"), hasItems("$", "foo:bar", "author"));
     }
 
 

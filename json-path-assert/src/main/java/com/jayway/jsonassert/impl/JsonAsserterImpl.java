@@ -4,13 +4,10 @@ package com.jayway.jsonassert.impl;
 import com.jayway.jsonassert.JsonAsserter;
 import com.jayway.jsonpath.JsonPath;
 import com.jayway.jsonpath.PathUtil;
-import org.hamcrest.Description;
 import org.hamcrest.Matcher;
 import org.hamcrest.MatcherAssert;
 
-import java.text.ParseException;
-import java.util.List;
-
+import static java.lang.String.format;
 import static org.hamcrest.Matchers.*;
 
 /**
@@ -19,7 +16,6 @@ import static org.hamcrest.Matchers.*;
  * Time: 3:43 PM
  */
 public class JsonAsserterImpl implements JsonAsserter {
-
 
 
     private final Object jsonObject;
@@ -35,20 +31,18 @@ public class JsonAsserterImpl implements JsonAsserter {
     }
 
 
-
     /**
      * {@inheritDoc}
      */
     @SuppressWarnings("unchecked")
-	public <T> JsonAsserter assertThat(String path, Matcher<T> matcher) {
+    public <T> JsonAsserter assertThat(String path, Matcher<T> matcher) {
 
         String reason = "When processing json path: " + path;
 
-        if(PathUtil.isPathDefinite(path)){
+        if (PathUtil.isPathDefinite(path)) {
             MatcherAssert.assertThat(reason, JsonPath.<T>readOne(jsonObject, path), matcher);
-        }
-        else {
-           MatcherAssert.assertThat(reason, (T) JsonPath.<T>read(jsonObject, path), matcher);
+        } else {
+            MatcherAssert.assertThat(reason, (T) JsonPath.<T>read(jsonObject, path), matcher);
         }
         return this;
     }
@@ -58,6 +52,18 @@ public class JsonAsserterImpl implements JsonAsserter {
      */
     public <T> JsonAsserter assertEquals(String path, T expected) {
         return assertThat(path, equalTo(expected));
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public JsonAsserter assertNotDefined(String path) {
+        Object o = JsonPath.readOne(jsonObject, path);
+
+        if(o != null){
+            throw new AssertionError(format("Document contains the path <%s> but was expected not to.", path));
+        }
+        return this;
     }
 
     /**

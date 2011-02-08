@@ -3,6 +3,8 @@ package com.jayway.jsonassert;
 import org.hamcrest.Matchers;
 import org.junit.Test;
 
+import java.io.InputStream;
+
 import static com.jayway.jsonassert.JsonAssert.*;
 import static org.hamcrest.Matchers.*;
 
@@ -41,10 +43,39 @@ public class JsonAssertTest {
                     "    ],\n" +
                     "    \"bicycle\": {\n" +
                     "      \"color\": \"red\",\n" +
-                    "      \"price\": 19.95\n" +
+                    "      \"price\": 19.95\n," +
+                    "      \"nullValue\": null\n" +
                     "    }\n" +
                     "  }\n" +
                     "}";
+
+
+    @Test
+    public void links_document() throws Exception {
+
+        with(getResourceAsStream("links.json")).assertEquals("count", 2L)
+                .assertThat("links.gc:this.href", endsWith("?pageNumber=1&pageSize=2"))
+                .assertNotDefined("links.gc:prev")
+                .assertNotDefined("links.gc:next")
+                .assertThat("rows", collectionWithSize(equalTo(2)));
+
+    }
+
+
+    @Test
+    public void a_document_can_be_expected_not_to_contain_a_path() throws Exception {
+        with(JSON).assertNotDefined("$.store.bicycle.cool");
+    }
+
+    @Test
+    public void a_value_can_asserted_to_be_null() throws Exception {
+        with(JSON).assertNull("$.store.bicycle.nullValue");
+    }
+
+    @Test
+    public void ends_with_evalueates() throws Exception {
+        with(JSON).assertThat("$.store.book[0].category", endsWith("nce"));
+    }
 
     @Test
     public void a_path_can_be_asserted_with_matcher() throws Exception {
@@ -78,6 +109,15 @@ public class JsonAssertTest {
                 .assertThat("$.store.book[0]", mapContainingKey(equalTo("category")))
                 .and()
                 .assertThat("$.store.book[0]", mapContainingValue(equalTo("reference")));
+
+        with(JSON).assertThat("$.['store'].['book'][0]", hasEntry("category", "reference"))
+                .assertThat("$.['store'].['book'][0]", hasEntry("title", "Sayings of the Century"))
+                .and()
+                .assertThat("$..['book'][0]", hasItems(hasEntry("category", "reference")))
+                .and()
+                .assertThat("$.['store'].['book'][0]", mapContainingKey(equalTo("category")))
+                .and()
+                .assertThat("$.['store'].['book'][0]", mapContainingValue(equalTo("reference")));
     }
 
     @Test
@@ -100,6 +140,11 @@ public class JsonAssertTest {
     @Test
     public void invalid_path() throws Exception {
         with(JSON).assertThat("$.store.book[*].fooBar", emptyCollection());
+    }
+
+
+    private InputStream getResourceAsStream(String resourceName) {
+        return getClass().getClassLoader().getResourceAsStream(resourceName);
     }
 
 }
