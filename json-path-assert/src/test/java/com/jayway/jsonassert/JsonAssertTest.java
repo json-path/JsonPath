@@ -1,9 +1,11 @@
 package com.jayway.jsonassert;
 
 import org.hamcrest.Matchers;
+import org.json.simple.parser.JSONParser;
 import org.junit.Test;
 
 import java.io.InputStream;
+import java.io.InputStreamReader;
 
 import static com.jayway.jsonassert.JsonAssert.*;
 import static org.hamcrest.Matchers.*;
@@ -140,6 +142,11 @@ public class JsonAssertTest {
     @Test
     public void invalid_path() throws Exception {
         with(JSON).assertThat("$.store.book[*].fooBar", emptyCollection());
+    }
+
+    @Test
+    public void path_including_wildcard_path_followed_by_another_path_concatenates_results_to_list() throws Exception {
+        with(getResourceAsStream("lotto.json")).assertThat("lotto.winners[*].winnerId", hasItems(23L, 54L));
     }
 
 

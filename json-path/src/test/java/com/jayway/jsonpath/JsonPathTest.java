@@ -1,7 +1,10 @@
 package com.jayway.jsonpath;
 
+import org.json.simple.parser.JSONParser;
 import org.junit.Test;
 
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.util.List;
 import java.util.Map;
 
