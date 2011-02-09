@@ -5,7 +5,6 @@ import com.jayway.jsonassert.JsonAsserter;
 import com.jayway.jsonpath.JsonPath;
 import com.jayway.jsonpath.PathUtil;
 import org.hamcrest.Matcher;
-import org.hamcrest.MatcherAssert;
 
 import static java.lang.String.format;
 import static org.hamcrest.Matchers.*;
@@ -40,9 +39,15 @@ public class JsonAsserterImpl implements JsonAsserter {
         String reason = "When processing json path: " + path;
 
         if (PathUtil.isPathDefinite(path)) {
-            MatcherAssert.assertThat(reason, JsonPath.<T>readOne(jsonObject, path), matcher);
+            if (!matcher.matches(JsonPath.<T>readOne(jsonObject, path))) {
+                throw new AssertionError(reason + matcher.toString());
+            }
+            //MatcherAssert.assertThat(reason, JsonPath.<T>readOne(jsonObject, path), matcher);
         } else {
-            MatcherAssert.assertThat(reason, (T) JsonPath.<T>read(jsonObject, path), matcher);
+            if (!matcher.matches(JsonPath.<T>read(jsonObject, path))) {
+                throw new AssertionError(reason + matcher.toString());
+            }
+            //MatcherAssert.assertThat(reason, (T) JsonPath.<T>read(jsonObject, path), matcher);
         }
         return this;
     }
@@ -60,7 +65,7 @@ public class JsonAsserterImpl implements JsonAsserter {
     public JsonAsserter assertNotDefined(String path) {
         Object o = JsonPath.readOne(jsonObject, path);
 
-        if(o != null){
+        if (o != null) {
             throw new AssertionError(format("Document contains the path <%s> but was expected not to.", path));
         }
         return this;
