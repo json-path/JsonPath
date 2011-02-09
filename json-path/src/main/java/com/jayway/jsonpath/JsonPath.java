@@ -1,6 +1,7 @@
 package com.jayway.jsonpath;
 
 
+import com.jayway.jsonpath.filter.FilterOutput;
 import com.jayway.jsonpath.filter.JsonPathFilterChain;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
@@ -104,8 +105,14 @@ public class JsonPath {
      * @param <T>
      * @return list of objects matched by the given path
      */
-    public <T> List<T> read(Object json) {
-        return (List<T>) filters.filter(json);
+    public <T> T read(Object json) {
+        FilterOutput filterOutput = filters.filter(json);
+
+        if(filterOutput == null || filterOutput.getResult() == null){
+            return null;
+        }
+
+        return (T)filterOutput.getResult();
     }
 
     /**
@@ -115,8 +122,8 @@ public class JsonPath {
      * @param <T>
      * @return list of objects matched by the given path
      */
-    public <T> List<T> read(String json) throws java.text.ParseException {
-        return read(parse(json));
+    public <T> T read(String json) throws java.text.ParseException {
+        return (T)read(parse(json));
     }
 
     /**
@@ -137,8 +144,8 @@ public class JsonPath {
      * @param <T>
      * @return list of objects matched by the given path
      */
-    public static <T> List<T> read(String json, String jsonPath) throws java.text.ParseException {
-        return compile(jsonPath).read(json);
+    public static <T> T read(String json, String jsonPath) throws java.text.ParseException {
+        return (T)compile(jsonPath).read(json);
     }
 
     /**
@@ -149,9 +156,10 @@ public class JsonPath {
      * @param <T>
      * @return list of objects matched by the given path
      */
-    public static <T> List<T> read(Object json, String jsonPath) {
-        return compile(jsonPath).read(json);
+    public static <T> T read(Object json, String jsonPath) {
+        return (T)compile(jsonPath).read(json);
     }
+
 
     /**
      * Creates a new JsonPath and applies it to the provided Json object. Note this method
@@ -163,23 +171,31 @@ public class JsonPath {
      * @param <T>
      * @return the object matched by the given path
      */
-    public static <T> T readOne(Object json, String jsonPath) {
-        List<Object> result = compile(jsonPath).read(json, jsonPath);
 
-        if (log.isLoggable(Level.WARNING)) {
-            if (!PathUtil.isPathDefinite(jsonPath)) {
-                log.warning("Using readOne() on a not definite json path may give incorrect results. Path : " + jsonPath);
-            }
-        }
+//    public static <T> T readOne(Object json, String jsonPath) {
+//        Object result = compile(jsonPath).read(json, jsonPath);
+//
+//        if (log.isLoggable(Level.WARNING)) {
+//            if (!PathUtil.isPathDefinite(jsonPath)) {
+//                log.warning("Using readOne() on a not definite json path may give incorrect results. Path : " + jsonPath);
+//            }
+//        }
+//
+//        return (T)result;
+//
+//        /*
+//        if(result instanceof List){
+//            if (result.size() > 1) {
+//                throw new RuntimeException(format("Expected one result when reading path: %s  but was: ", jsonPath, result.size()));
+//            }
+//            else if (result.isEmpty()){
+//                return null;
+//            }
+//            return (T) result.get(0);
+//        }
+//         */
+//    }
 
-        if (result.size() > 1) {
-            throw new RuntimeException(format("Expected one result when reading path: %s  but was: ", jsonPath, result.size()));
-        }
-        else if (result.isEmpty()){
-            return null;
-        }
-        return (T) result.get(0);
-    }
 
     /**
      * Creates a new JsonPath and applies it to the provided Json object. Note this method
@@ -191,9 +207,9 @@ public class JsonPath {
      * @param <T>
      * @return the object matched by the given path
      */
-    public static <T> T readOne(String json, String jsonPath) throws java.text.ParseException {
-        return (T) readOne(parse(json), jsonPath);
-    }
+//    public static <T> T readOne(String json, String jsonPath) throws java.text.ParseException {
+//        return (T) readOne(parse(json), jsonPath);
+//    }
 
     private static Object parse(String json) throws java.text.ParseException {
         try {

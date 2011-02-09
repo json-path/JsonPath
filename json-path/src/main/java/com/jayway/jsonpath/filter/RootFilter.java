@@ -11,7 +11,7 @@ import java.util.List;
 public class RootFilter extends JsonPathFilterBase{
 
     @Override
-    public List<Object> apply(List<Object>  filter) {
-        return filter;
+    public FilterOutput apply(FilterOutput  root) {
+        return root;
     }
 }

@@ -3,7 +3,6 @@ package com.jayway.jsonassert.impl;
 
 import com.jayway.jsonassert.JsonAsserter;
 import com.jayway.jsonpath.JsonPath;
-import com.jayway.jsonpath.PathUtil;
 import org.hamcrest.Matcher;
 
 import static java.lang.String.format;
@@ -38,17 +37,25 @@ public class JsonAsserterImpl implements JsonAsserter {
 
         String reason = "When processing json path: " + path;
 
-        if (PathUtil.isPathDefinite(path)) {
-            if (!matcher.matches(JsonPath.<T>readOne(jsonObject, path))) {
-                throw new AssertionError(reason + matcher.toString());
-            }
-            //MatcherAssert.assertThat(reason, JsonPath.<T>readOne(jsonObject, path), matcher);
-        } else {
-            if (!matcher.matches(JsonPath.<T>read(jsonObject, path))) {
-                throw new AssertionError(reason + matcher.toString());
-            }
-            //MatcherAssert.assertThat(reason, (T) JsonPath.<T>read(jsonObject, path), matcher);
+        if (!matcher.matches(JsonPath.<T>read(jsonObject, path))) {
+
+            System.out.println(JsonPath.read(jsonObject, path).toString());
+
+            throw new AssertionError(reason + matcher.toString());
         }
+
+        /*
+       if (PathUtil.isPathDefinite(path)) {
+           if (!matcher.matches(JsonPath.<T>readOne(jsonObject, path))) {
+               throw new AssertionError(reason + matcher.toString());
+           }
+           //MatcherAssert.assertThat(reason, JsonPath.<T>readOne(jsonObject, path), matcher);
+       } else {
+           if (!matcher.matches(JsonPath.<T>read(jsonObject, path))) {
+               throw new AssertionError(reason + matcher.toString());
+           }
+           //MatcherAssert.assertThat(reason, (T) JsonPath.<T>read(jsonObject, path), matcher);
+       } */
         return this;
     }
 
@@ -63,7 +70,7 @@ public class JsonAsserterImpl implements JsonAsserter {
      * {@inheritDoc}
      */
     public JsonAsserter assertNotDefined(String path) {
-        Object o = JsonPath.readOne(jsonObject, path);
+        Object o = JsonPath.read(jsonObject, path);
 
         if (o != null) {
             throw new AssertionError(format("Document contains the path <%s> but was expected not to.", path));

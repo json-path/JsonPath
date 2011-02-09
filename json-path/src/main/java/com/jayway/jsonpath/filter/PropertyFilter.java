@@ -22,25 +22,45 @@ public class PropertyFilter extends JsonPathFilterBase {
     }
 
     @Override
-    public List<Object> apply(List<Object> filter) {
+    public FilterOutput apply(FilterOutput filter) {
 
         List<Object> result = new JSONArray();
 
         if (WILDCARD.equals(pathFragment)) {
-            for (Object current : filter) {
-                for (Object value : JsonUtil.toMap(current).values()) {
+            if (filter.isList()) {
+                for (Object current : filter.getResultAsList()) {
+                    for (Object value : JsonUtil.toMap(current).values()) {
+                        result.add(value);
+                    }
+                }
+            } else {
+                for (Object value : JsonUtil.toMap(filter.getResult()).values()) {
                     result.add(value);
                 }
             }
-        }
-        else {
-            for (Object current : filter) {
-                if (JsonUtil.toMap(current).containsKey(pathFragment)) {
-                    result.add(JsonUtil.toMap(current).get(pathFragment));
+            return new FilterOutput(result);
+        } else {
+            if (filter.isList()) {
+                for (Object current : filter.getResultAsList()) {
+                    if (JsonUtil.toMap(current).containsKey(pathFragment)) {
+
+                        Object o = JsonUtil.toMap(current).get(pathFragment);
+                        if (JsonUtil.isList(o)) {
+                            result.addAll(JsonUtil.toList(o));
+
+                        } else {
+                            result.add(JsonUtil.toMap(current).get(pathFragment));
+                        }
+                    }
                 }
+                return new FilterOutput(result);
+            } else {
+                Object mapValue = null;
+                if (JsonUtil.toMap(filter.getResult()).containsKey(pathFragment)) {
+                    mapValue = JsonUtil.toMap(filter.getResult()).get(pathFragment);
+                }
+                return new FilterOutput(mapValue);
             }
         }
-
-        return result;
     }
 }
