@@ -4,6 +4,7 @@ import com.jayway.jsonpath.JsonUtil;
 import org.json.simple.JSONArray;
 
 import java.util.List;
+import java.util.regex.Pattern;
 
 /**
  * Created by IntelliJ IDEA.
@@ -12,6 +13,8 @@ import java.util.List;
  * Time: 2:33 PM
  */
 public class TraverseFilter extends JsonPathFilterBase {
+
+    public final static Pattern PATTERN = Pattern.compile("\\.\\.");
 
     @Override
     public FilterOutput apply(FilterOutput filter) {

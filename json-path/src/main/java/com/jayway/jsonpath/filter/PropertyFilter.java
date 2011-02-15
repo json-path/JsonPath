@@ -4,6 +4,7 @@ import com.jayway.jsonpath.JsonUtil;
 import org.json.simple.JSONArray;
 
 import java.util.List;
+import java.util.regex.Pattern;
 
 /**
  * Created by IntelliJ IDEA.
@@ -13,7 +14,8 @@ import java.util.List;
  */
 public class PropertyFilter extends JsonPathFilterBase {
 
-    private final static String WILDCARD = "*";
+    public final static Pattern PATTERN = Pattern.compile("(.*)|\\['(.*?)'\\]");
+
 
     private final String pathFragment;
 
@@ -26,41 +28,27 @@ public class PropertyFilter extends JsonPathFilterBase {
 
         List<Object> result = new JSONArray();
 
-        if (WILDCARD.equals(pathFragment)) {
-            if (filter.isList()) {
-                for (Object current : filter.getResultAsList()) {
-                    for (Object value : JsonUtil.toMap(current).values()) {
-                        result.add(value);
+
+        if (filter.isList()) {
+            for (Object current : filter.getResultAsList()) {
+                if (JsonUtil.toMap(current).containsKey(pathFragment)) {
+
+                    Object o = JsonUtil.toMap(current).get(pathFragment);
+                    if (JsonUtil.isList(o)) {
+                        result.addAll(JsonUtil.toList(o));
+
+                    } else {
+                        result.add(JsonUtil.toMap(current).get(pathFragment));
                     }
-                }
-            } else {
-                for (Object value : JsonUtil.toMap(filter.getResult()).values()) {
-                    result.add(value);
                 }
             }
             return new FilterOutput(result);
         } else {
-            if (filter.isList()) {
-                for (Object current : filter.getResultAsList()) {
-                    if (JsonUtil.toMap(current).containsKey(pathFragment)) {
-
-                        Object o = JsonUtil.toMap(current).get(pathFragment);
-                        if (JsonUtil.isList(o)) {
-                            result.addAll(JsonUtil.toList(o));
-
-                        } else {
-                            result.add(JsonUtil.toMap(current).get(pathFragment));
-                        }
-                    }
-                }
-                return new FilterOutput(result);
-            } else {
-                Object mapValue = null;
-                if (JsonUtil.toMap(filter.getResult()).containsKey(pathFragment)) {
-                    mapValue = JsonUtil.toMap(filter.getResult()).get(pathFragment);
-                }
-                return new FilterOutput(mapValue);
+            Object mapValue = null;
+            if (JsonUtil.toMap(filter.getResult()).containsKey(pathFragment)) {
+                mapValue = JsonUtil.toMap(filter.getResult()).get(pathFragment);
             }
+            return new FilterOutput(mapValue);
         }
     }
 }
