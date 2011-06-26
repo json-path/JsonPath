@@ -39,9 +39,15 @@
             <scope>test</scope>
         </dependency>
 
+        <!--
         <dependency>
             <groupId>com.googlecode.json-simple</groupId>
             <artifactId>json-simple</artifactId>
+        </dependency>
+        -->
+        <dependency>
+            <groupId>net.minidev</groupId>
+            <artifactId>json-smart</artifactId>
         </dependency>
 
         <dependency>

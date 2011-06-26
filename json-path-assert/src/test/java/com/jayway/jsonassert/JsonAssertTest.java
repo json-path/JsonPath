@@ -1,7 +1,6 @@
 package com.jayway.jsonassert;
 
 import org.hamcrest.Matchers;
-import org.json.simple.parser.JSONParser;
 import org.junit.Test;
 
 import java.io.InputStream;
@@ -55,7 +54,7 @@ public class JsonAssertTest {
     @Test
     public void links_document() throws Exception {
 
-        with(getResourceAsStream("links.json")).assertEquals("count", 2L)
+        with(getResourceAsStream("links.json")).assertEquals("count", 2)
                 .assertThat("links.gc:this.href", endsWith("?pageNumber=1&pageSize=2"))
                 .assertNotDefined("links.gc:prev")
                 .assertNotDefined("links.gc:next")
@@ -146,7 +145,7 @@ public class JsonAssertTest {
 
     @Test
     public void path_including_wildcard_path_followed_by_another_path_concatenates_results_to_list() throws Exception {
-        with(getResourceAsStream("lotto.json")).assertThat("lotto.winners[*].winnerId", hasItems(23L, 54L));
+        with(getResourceAsStream("lotto.json")).assertThat("lotto.winners[*].winnerId", hasItems(23, 54));
     }
 
 

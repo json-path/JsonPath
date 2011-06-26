@@ -1,6 +1,6 @@
 package com.jayway.jsonpath.filter;
 
-import org.json.simple.JSONArray;
+import net.minidev.json.JSONArray;
 
 import java.util.LinkedList;
 import java.util.List;

@@ -1,7 +1,7 @@
 package com.jayway.jsonpath.filter;
 
 import com.jayway.jsonpath.JsonUtil;
-import org.json.simple.JSONArray;
+import net.minidev.json.JSONArray;
 
 import java.util.List;
 import java.util.regex.Pattern;

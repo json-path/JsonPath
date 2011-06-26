@@ -3,14 +3,13 @@ package com.jayway.jsonpath;
 
 import com.jayway.jsonpath.filter.FilterOutput;
 import com.jayway.jsonpath.filter.JsonPathFilterChain;
-import org.json.simple.parser.JSONParser;
-import org.json.simple.parser.ParseException;
+import net.minidev.json.JSONArray;
+import net.minidev.json.JSONObject;
+import net.minidev.json.parser.JSONParser;
+import net.minidev.json.parser.ParseException;
 
-import java.util.List;
-import java.util.logging.Level;
+import java.io.IOException;
 import java.util.logging.Logger;
-
-import static java.lang.String.format;
 
 /**
  * User: kalle stenflo
@@ -76,11 +75,28 @@ import static java.lang.String.format;
  */
 public class JsonPath {
 
+    public final static int STRICT_MODE = 0;
+    public final static int SLACK_MODE = -1;
+
+    private static int mode = SLACK_MODE;
+
     private final static Logger log = Logger.getLogger(JsonPath.class.getName());
 
-    private static JSONParser JSON_PARSER = new JSONParser();
+    private static JSONParser JSON_PARSER = new JSONParser(JsonPath.mode);
 
     private JsonPathFilterChain filters;
+
+    public static void setMode(int mode){
+        if(mode != JsonPath.mode){
+            JsonPath.mode = mode;
+            JSON_PARSER = new JSONParser(JsonPath.mode);
+        }
+    }
+
+    public static int getMode(){
+        return mode;
+    }
+
 
     /**
      * Creates a new JsonPath.
@@ -108,11 +124,11 @@ public class JsonPath {
     public <T> T read(Object json) {
         FilterOutput filterOutput = filters.filter(json);
 
-        if(filterOutput == null || filterOutput.getResult() == null){
+        if (filterOutput == null || filterOutput.getResult() == null) {
             return null;
         }
 
-        return (T)filterOutput.getResult();
+        return (T) filterOutput.getResult();
     }
 
     /**
@@ -123,7 +139,7 @@ public class JsonPath {
      * @return list of objects matched by the given path
      */
     public <T> T read(String json) throws java.text.ParseException {
-        return (T)read(parse(json));
+        return (T) read(parse(json));
     }
 
     /**
@@ -145,7 +161,7 @@ public class JsonPath {
      * @return list of objects matched by the given path
      */
     public static <T> T read(String json, String jsonPath) throws java.text.ParseException {
-        return (T)compile(jsonPath).read(json);
+        return (T) compile(jsonPath).read(json);
     }
 
     /**
@@ -157,65 +173,17 @@ public class JsonPath {
      * @return list of objects matched by the given path
      */
     public static <T> T read(Object json, String jsonPath) {
-        return (T)compile(jsonPath).read(json);
+        return (T) compile(jsonPath).read(json);
     }
 
-
-    /**
-     * Creates a new JsonPath and applies it to the provided Json object. Note this method
-     * will throw an exception if the provided path returns more than one object. This method
-     * can be used with paths that are not definite but a warning will be generated.
-     *
-     * @param json     a json object
-     * @param jsonPath the json path
-     * @param <T>
-     * @return the object matched by the given path
-     */
-
-//    public static <T> T readOne(Object json, String jsonPath) {
-//        Object result = compile(jsonPath).read(json, jsonPath);
-//
-//        if (log.isLoggable(Level.WARNING)) {
-//            if (!PathUtil.isPathDefinite(jsonPath)) {
-//                log.warning("Using readOne() on a not definite json path may give incorrect results. Path : " + jsonPath);
-//            }
-//        }
-//
-//        return (T)result;
-//
-//        /*
-//        if(result instanceof List){
-//            if (result.size() > 1) {
-//                throw new RuntimeException(format("Expected one result when reading path: %s  but was: ", jsonPath, result.size()));
-//            }
-//            else if (result.isEmpty()){
-//                return null;
-//            }
-//            return (T) result.get(0);
-//        }
-//         */
-//    }
-
-
-    /**
-     * Creates a new JsonPath and applies it to the provided Json object. Note this method
-     * will throw an exception if the provided path returns more than one object. This method
-     * can be used with paths that are not definite but a warning will be generated.
-     *
-     * @param json     a json string
-     * @param jsonPath the json path
-     * @param <T>
-     * @return the object matched by the given path
-     */
-//    public static <T> T readOne(String json, String jsonPath) throws java.text.ParseException {
-//        return (T) readOne(parse(json), jsonPath);
-//    }
 
     private static Object parse(String json) throws java.text.ParseException {
         try {
             return JSON_PARSER.parse(json);
         } catch (ParseException e) {
             throw new java.text.ParseException(json, e.getPosition());
+        } catch (IOException e) {
+            throw new RuntimeException(e);
         }
     }
 }

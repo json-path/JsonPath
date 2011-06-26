@@ -1,7 +1,6 @@
 package com.jayway.jsonpath.filter;
 
 import com.jayway.jsonpath.InvalidPathException;
-import org.json.simple.JSONArray;
 
 import java.util.LinkedList;
 import java.util.List;

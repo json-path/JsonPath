@@ -1,15 +1,11 @@
 package com.jayway.jsonpath;
 
-import org.json.simple.parser.JSONParser;
 import org.junit.Test;
 
-import java.io.InputStream;
-import java.io.InputStreamReader;
 import java.util.List;
 import java.util.Map;
 
 import static org.hamcrest.Matchers.equalTo;
-import static org.hamcrest.Matchers.hasItem;
 import static org.hamcrest.Matchers.hasItems;
 import static org.junit.Assert.*;
 
@@ -20,6 +16,8 @@ import static org.junit.Assert.*;
  * Time: 3:07 PM
  */
 public class JsonPathTest {
+
+    public final static String ARRAY = "[{\"value\": 1},{\"value\": 2}, {\"value\": 3},{\"value\": 4}]";
 
     public final static String DOCUMENT =
             "{ \"store\": {\n" +
@@ -55,6 +53,15 @@ public class JsonPathTest {
                     "  }\n" +
                     "}";
 
+
+    @Test
+    public void filter_an_array() throws Exception {
+        List<Object> matches = JsonPath.read(ARRAY, "$.[?(@.value = 1)]");
+
+        assertEquals(1, matches.size());
+        System.out.println(matches);
+    }
+
     @Test
     public void read_path_with_colon() throws Exception {
 
@@ -71,6 +78,7 @@ public class JsonPathTest {
 
 
     }
+
 
     @Test
     public void read_store_book_1() throws Exception {
