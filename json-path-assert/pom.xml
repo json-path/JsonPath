@@ -19,11 +19,11 @@
     <parent>
         <artifactId>json-path-parent</artifactId>
         <groupId>com.jayway.jsonpath</groupId>
-        <version>0.5.5-SNAPSHOT</version>
+        <version>0.5.5</version>
     </parent>
     <groupId>com.jayway.jsonpath</groupId>
     <artifactId>json-path-assert</artifactId>
-    <version>0.5.5-SNAPSHOT</version>
+    <version>0.5.5</version>
     <name>json-path-assert</name>
     <url>http://code.google.com/p/json-path/</url>
     <dependencies>
