@@ -31,6 +31,18 @@ public class SplitPathFragmentsTest {
 
 
     @Test
+    public void bracket_notation_can_be_split() throws Exception {
+        assertThat(PathUtil.splitPath("$.['store'].['price']"), hasItems("$", "store", "price"));
+        assertThat(PathUtil.splitPath("$['store']['price']"), hasItems("$", "store", "price"));
+        assertThat(PathUtil.splitPath("['store']['price']"), hasItems("$", "store", "price"));
+        assertThat(PathUtil.splitPath("['store'].price"), hasItems("$", "store", "price"));
+
+        assertThat(PathUtil.splitPath("$.['store book'].['price list']"), hasItems("$", "store book", "price list"));
+
+        assertThat(PathUtil.splitPath("$.['store.book'].['price.list']"), hasItems("$", "store.book", "price.list"));
+    }
+
+    @Test
     public void fragments_are_split_correctly() throws Exception {
 
         assertThat(PathUtil.splitPath("$..book[-1:].foo.bar"), hasItems("$", "..", "[-1:]", "foo", "bar"));
@@ -62,6 +74,7 @@ public class SplitPathFragmentsTest {
         assertThat(PathUtil.splitPath("$.[0].[1].author"), hasItems("$", "[0]", "[1]", "author"));
 
         assertThat(PathUtil.splitPath("$.foo:bar.author"), hasItems("$", "foo:bar", "author"));
+
     }
 
 
