@@ -25,7 +25,7 @@
     <artifactId>json-path-assert</artifactId>
     <version>0.5.5-SNAPSHOT</version>
     <name>json-path-assert</name>
-    <url>http://maven.apache.org</url>
+    <url>http://code.google.com/p/json-path/</url>
     <dependencies>
         <dependency>
             <groupId>com.jayway.jsonpath</groupId>
