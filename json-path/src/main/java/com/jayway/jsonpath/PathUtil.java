@@ -2,6 +2,7 @@ package com.jayway.jsonpath;
 
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Scanner;
 
 /**
  * User: kalle stenflo
@@ -12,18 +13,18 @@ public class PathUtil {
 
     /**
      * Checks if a path points to a single item or if it potentially returns multiple items
-     *
+     * <p/>
      * a path is considered <strong>not</strong> definite if it contains a scan fragment ".."
      * or an array position fragment that is not based on a single index
-     *
-     *
+     * <p/>
+     * <p/>
      * absolute path examples:
-     *
+     * <p/>
      * $store.book
      * $store.book[1].value
-     *
+     * <p/>
      * not absolute path examples
-     *
+     * <p/>
      * $..book
      * $.store.book[1,2]
      * $.store.book[?(@.category = 'fiction')]
@@ -38,8 +39,8 @@ public class PathUtil {
 
     /**
      * Splits a path into fragments
-     *
-     * the path <code>$.store.book[1].category</code> returns ["$", "store", "book", "[1]", "value"]
+     * <p/>
+     * the path <code>$.store.book[1].category</code> returns ["$", "store", "book", "[1]", "category"]
      *
      * @param jsonPath path to split
      * @return fragments
@@ -52,7 +53,10 @@ public class PathUtil {
             jsonPath = "$." + jsonPath;
         }
 
-        jsonPath = jsonPath.replace("..", ".~.")
+        jsonPath = jsonPath.replace("$['","$.['")
+                .replaceAll("\\['(\\w+)\\.(\\w+)']", "['$1~$2']")
+                .replace("']['","'].['" )
+                .replace("..", ".~~.")
                 .replace("[", ".[")
                 .replace("@.", "@")
                 .replace("['", "")
@@ -64,8 +68,13 @@ public class PathUtil {
             if (split[i].trim().isEmpty()) {
                 continue;
             }
-            fragments.add(split[i].replace("@", "@.").replace("~", ".."));
+            fragments.add(split[i].replace("@", "@.").replace("~", "."));
         }
+
+        //for (String fragment : fragments) {
+        //    System.out.println(fragment);
+        //}
+
         return fragments;
     }
 }
