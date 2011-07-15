@@ -4,7 +4,6 @@ import org.hamcrest.Matchers;
 import org.junit.Test;
 
 import java.io.InputStream;
-import java.io.InputStreamReader;
 
 import static com.jayway.jsonassert.JsonAssert.*;
 import static org.hamcrest.Matchers.*;
@@ -131,6 +130,9 @@ public class JsonAssertTest {
 
         with(JSON).assertEquals("$.store.book[0].title", "Sayings of the Century")
                 .assertThat("$.store.book[0].title", equalTo("Sayings of the Century"));
+
+        with(JSON).assertEquals("$['store']['book'][0].['title']", "Sayings of the Century")
+                .assertThat("$['store'].book[0].title", equalTo("Sayings of the Century"));
     }
 
     @Test

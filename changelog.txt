@@ -1,6 +1,11 @@
 ------------------------------------------
 0.5.5
 ------------------------------------------
+- Improved JSON bracket notation. $['store']['book'][*]['author name']
+  properties can also contain '.' eg $['store']['book'][*]['author.name']
+------------------------------------------
+0.5.4
+------------------------------------------
 - Replaced com.googlecode.json-simple with net.minidev.json-smart
 - Introduced different parse modes, JsonPath.SLACK_MODE and JsonPath.STRICT_MODE (the slack mode lets you use single quotes or even no quotes at all)
 
