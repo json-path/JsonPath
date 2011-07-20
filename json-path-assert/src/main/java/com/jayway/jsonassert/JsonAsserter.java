@@ -2,6 +2,8 @@ package com.jayway.jsonassert;
 
 import org.hamcrest.Matcher;
 
+import com.jayway.jsonpath.json.JsonException;
+
 /**
  * User: kallestenflo
  * Date: 1/24/11
@@ -23,8 +25,10 @@ public interface JsonAsserter {
      * @param matcher an expression, built of Matchers, specifying allowed values
      * @param <T>     the static type accepted by the matcher
      * @return this to allow fluent assertion chains
+     * @throws AssertionError 
+     * @throws JsonException 
      */
-    <T> JsonAsserter assertThat(String path, Matcher<T> matcher);
+    <T> JsonAsserter assertThat(String path, Matcher<T> matcher) throws JsonException, AssertionError;
 
     /**
      * Asserts that object specified by path is equal to the expected value.
@@ -34,8 +38,10 @@ public interface JsonAsserter {
      * @param expected the expected value
      * @param <T>      the static type that should be returned by the path
      * @return this to allow fluent assertion chains
+     * @throws AssertionError 
+     * @throws JsonException 
      */
-    <T> JsonAsserter assertEquals(String path, T expected);
+    <T> JsonAsserter assertEquals(String path, T expected) throws JsonException, AssertionError;
 
     /**
      * Checks that a path is not defined within a document. If the document contains the
@@ -43,8 +49,9 @@ public interface JsonAsserter {
      *
      * @param path the path to make sure not exists
      * @return this
+     * @throws JsonException 
      */
-    JsonAsserter assertNotDefined(String path);
+    JsonAsserter assertNotDefined(String path) throws JsonException;
 
 
     /**
@@ -53,8 +60,10 @@ public interface JsonAsserter {
      *
      * @param path the json path specifying the value that should be null
      * @return this to allow fluent assertion chains
+     * @throws AssertionError 
+     * @throws JsonException 
      */
-    JsonAsserter assertNull(String path);
+    JsonAsserter assertNull(String path) throws JsonException, AssertionError;
 
     /**
      * Asserts that object specified by path is NOT null. If it is, an AssertionError
@@ -62,8 +71,10 @@ public interface JsonAsserter {
      *
      * @param path the json path specifying the value that should be NOT null
      * @return this to allow fluent assertion chains
+     * @throws AssertionError 
+     * @throws JsonException 
      */
-    <T> JsonAsserter assertNotNull(String path);
+    <T> JsonAsserter assertNotNull(String path) throws JsonException, AssertionError;
 
     /**
      * Syntactic sugar to allow chaining assertions with a separating and() statement

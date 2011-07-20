@@ -1,11 +1,17 @@
 package com.jayway.jsonpath.filter;
 
-import com.jayway.jsonpath.JsonUtil;
-import com.jayway.jsonpath.eval.ExpressionEvaluator;
-import net.minidev.json.JSONArray;
 
+import com.jayway.jsonpath.eval.ExpressionEvaluator;
+import com.jayway.jsonpath.json.JsonArray;
+import com.jayway.jsonpath.json.JsonElement;
+import com.jayway.jsonpath.json.JsonException;
+import com.jayway.jsonpath.json.JsonFactory;
+import com.jayway.jsonpath.json.JsonObject;
+
+
+
+import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -17,6 +23,8 @@ import java.util.regex.Pattern;
  */
 public class ListEvalFilter extends JsonPathFilterBase {
 
+	//@Autowired
+	public JsonFactory factory = com.jayway.jsonpath.json.minidev.MiniJsonFactory.getInstance();
 
     public static final Pattern PATTERN = Pattern.compile("\\[\\s?\\?\\s?\\(\\s?@.(\\w+)\\s?([=<>]+)\\s?(.*)\\s?\\)\\s?\\]");    //[?( @.title< 'ko')]
 
@@ -28,19 +36,22 @@ public class ListEvalFilter extends JsonPathFilterBase {
 
 
     @Override
-    public FilterOutput apply(FilterOutput filterItems) {
-
-        List<Object> result = new JSONArray();
-
-        for (Object item : filterItems.getResultAsList()) {
-            if (isMatch(item)) {
-                result.add(item);
-            }
-        }
-        return new FilterOutput(result);
+    public List<JsonElement> apply(JsonElement element) throws JsonException {
+    	List<JsonElement> result = new ArrayList<JsonElement>();
+    	
+    	if(element.isJsonArray()){
+    		for(JsonElement subElement: element.toJsonArray()){
+    			if (isMatch(subElement)) {
+    				result.add(subElement);
+    			}
+    		}
+    	}
+    	
+    	return result;
+        
     }
 
-    private boolean isMatch(Object check) {
+    private boolean isMatch(JsonElement check) throws JsonException {
         Matcher matcher = PATTERN.matcher(pathFragment);
 
         if (matcher.matches()) {
@@ -48,26 +59,33 @@ public class ListEvalFilter extends JsonPathFilterBase {
             String operator = matcher.group(2);
             String expected = matcher.group(3);
 
-            if (!JsonUtil.isMap(check)) {
+            if (!check.isJsonObject()) {
                 return false;
             }
-            Map obj = JsonUtil.toMap(check);
+            
+            JsonObject obj = check.toJsonObject();
 
-            if (!obj.containsKey(property)) {
-                return false;
-            }
-
-            Object propertyValue = obj.get(property);
-
-            if (JsonUtil.isContainer(propertyValue)) {
+            if (!obj.hasProperty(property)) {
                 return false;
             }
 
-            String expression = propertyValue + " " + operator + " " + expected;
+            JsonElement propertyValue = obj.getProperty(property);
 
-            return ExpressionEvaluator.eval(propertyValue, operator, expected);
+            if (propertyValue.isContainer()) {
+                return false;
+            }
+
+            String expression = propertyValue.toObject() + " " + operator + " " + expected;
+
+            return ExpressionEvaluator.eval(propertyValue.toObject(), operator, expected);
 
         }
         return false;
     }
+
+
+    @Override
+	public String getPathSegment() throws JsonException {
+		return pathFragment;
+	}
 }

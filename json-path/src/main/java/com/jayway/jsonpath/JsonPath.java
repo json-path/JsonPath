@@ -3,13 +3,18 @@ package com.jayway.jsonpath;
 
 import com.jayway.jsonpath.filter.FilterOutput;
 import com.jayway.jsonpath.filter.JsonPathFilterChain;
-import net.minidev.json.JSONArray;
-import net.minidev.json.JSONObject;
-import net.minidev.json.parser.JSONParser;
-import net.minidev.json.parser.ParseException;
+import com.jayway.jsonpath.json.JsonElement;
+import com.jayway.jsonpath.json.JsonException;
+import com.jayway.jsonpath.json.JsonFactory;
+import com.jayway.jsonpath.json.JsonParser;
+
+
 
 import java.io.IOException;
 import java.util.logging.Logger;
+
+import net.minidev.json.parser.ParseException;
+
 
 /**
  * User: kalle stenflo
@@ -78,25 +83,28 @@ public class JsonPath {
     public final static int STRICT_MODE = 0;
     public final static int SLACK_MODE = -1;
 
-    private static int mode = SLACK_MODE;
+//    private static int mode = SLACK_MODE;
+	private static JsonFactory factory;
 
     private final static Logger log = Logger.getLogger(JsonPath.class.getName());
 
-    private static JSONParser JSON_PARSER = new JSONParser(JsonPath.mode);
+
 
     private JsonPathFilterChain filters;
 
+    /*
     public static void setMode(int mode){
         if(mode != JsonPath.mode){
             JsonPath.mode = mode;
             JSON_PARSER = new JSONParser(JsonPath.mode);
         }
     }
-
+    */
+/*
     public static int getMode(){
         return mode;
     }
-
+*/
 
     /**
      * Creates a new JsonPath.
@@ -120,15 +128,17 @@ public class JsonPath {
      * @param json a json Object
      * @param <T>
      * @return list of objects matched by the given path
+     * @throws JsonException 
      */
-    public <T> T read(Object json) {
+    public JsonElement read(JsonElement json) throws JsonException {
         FilterOutput filterOutput = filters.filter(json);
-
+        
         if (filterOutput == null || filterOutput.getResult() == null) {
             return null;
         }
 
-        return (T) filterOutput.getResult();
+        return filterOutput.getResult();
+        
     }
 
     /**
@@ -137,9 +147,10 @@ public class JsonPath {
      * @param json a json string
      * @param <T>
      * @return list of objects matched by the given path
+     * @throws JsonException 
      */
-    public <T> T read(String json) throws java.text.ParseException {
-        return (T) read(parse(json));
+    public JsonElement read(String json) throws java.text.ParseException, JsonException {
+        return  read(parse(json));
     }
 
     /**
@@ -159,9 +170,10 @@ public class JsonPath {
      * @param jsonPath the json path
      * @param <T>
      * @return list of objects matched by the given path
+     * @throws JsonException 
      */
-    public static <T> T read(String json, String jsonPath) throws java.text.ParseException {
-        return (T) compile(jsonPath).read(json);
+    public static JsonElement read(String json, String jsonPath) throws java.text.ParseException, JsonException {
+        return compile(jsonPath).read(json);
     }
 
     /**
@@ -171,19 +183,21 @@ public class JsonPath {
      * @param jsonPath the json path
      * @param <T>
      * @return list of objects matched by the given path
+     * @throws JsonException 
      */
-    public static <T> T read(Object json, String jsonPath) {
-        return (T) compile(jsonPath).read(json);
+    public static JsonElement read(JsonElement json, String jsonPath) throws JsonException {
+        return  compile(jsonPath).read(json);
     }
 
 
-    private static Object parse(String json) throws java.text.ParseException {
+    public  static JsonElement parse(String json)  {
         try {
-            return JSON_PARSER.parse(json);
-        } catch (ParseException e) {
-            throw new java.text.ParseException(json, e.getPosition());
+            return JsonFactory.getInstance().parse(json);
         } catch (IOException e) {
             throw new RuntimeException(e);
-        }
+        } catch (com.jayway.jsonpath.json.ParseException e) {
+        	throw new RuntimeException(e);
+		}
     }
+
 }

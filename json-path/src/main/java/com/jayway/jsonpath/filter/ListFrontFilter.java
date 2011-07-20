@@ -1,11 +1,17 @@
 package com.jayway.jsonpath.filter;
 
-import net.minidev.json.JSONArray;
+import com.jayway.jsonpath.json.JsonArray;
+import com.jayway.jsonpath.json.JsonElement;
+import com.jayway.jsonpath.json.JsonException;
 
+
+import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+
+
 
 /**
  * Created by IntelliJ IDEA.
@@ -15,27 +21,34 @@ import java.util.regex.Pattern;
  */
 public class ListFrontFilter extends JsonPathFilterBase {
 
+	//@Autowired
+	public com.jayway.jsonpath.json.JsonFactory factory =  com.jayway.jsonpath.json.minidev.MiniJsonFactory.getInstance();
 
     public static final Pattern PATTERN = Pattern.compile("\\[\\s?:(\\d+)\\s?\\]");               //[ :2 ]
 
     private final String pathFragment;
 
+    
+    @Override
+	public String getPathSegment() throws JsonException {
+		return pathFragment;
+	}
     public ListFrontFilter(String pathFragment) {
         this.pathFragment = pathFragment;
     }
 
     @Override
-    public FilterOutput apply(FilterOutput filterItems) {
-
-        List<Object> result = new JSONArray();
-
-        Integer[] index = getListPullIndex();
-        for (int i : index) {
-            if (indexIsInRange(filterItems.getResultAsList(), i)) {
-                result.add(filterItems.getResultAsList().get(i));
-            }
-        }
-        return new FilterOutput(result);
+    public List<JsonElement> apply(JsonElement element) throws JsonException {
+    	List<JsonElement> result =  new ArrayList<JsonElement>();
+    	if(element.isJsonArray()){
+    		Integer[] index = getListPullIndex();
+    		for (int i : index) {
+    			if (indexIsInRange(element.toJsonArray(), i)) {
+    				result.add(element.toJsonArray().get(i));
+    			}
+    		}
+    	}
+        return result;
     }
 
 
@@ -64,4 +77,5 @@ public class ListFrontFilter extends JsonPathFilterBase {
             return true;
         }
     }
+
 }

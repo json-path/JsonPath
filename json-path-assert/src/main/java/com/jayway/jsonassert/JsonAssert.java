@@ -3,8 +3,11 @@ package com.jayway.jsonassert;
 
 import com.jayway.jsonassert.impl.JsonAsserterImpl;
 import com.jayway.jsonassert.impl.matcher.*;
+import com.jayway.jsonpath.json.JsonFactory;
+
 import net.minidev.json.parser.JSONParser;
 import org.hamcrest.Matcher;
+import org.hamcrest.core.IsNull;
 
 import java.io.*;
 import java.text.ParseException;
@@ -18,7 +21,7 @@ import java.util.Map;
  */
 public class JsonAssert {
 
-    private static JSONParser JSON_PARSER = new JSONParser();
+    private static JsonFactory JSON_PARSER = JsonFactory.getInstance();
 
     public final static int STRICT_MODE = 0;
     public final static int SLACK_MODE = -1;
@@ -28,7 +31,7 @@ public class JsonAssert {
     public static void setMode(int mode) {
         if (mode != JsonAssert.mode) {
             JsonAssert.mode = mode;
-            JSON_PARSER = new JSONParser(JsonAssert.mode);
+
         }
     }
 
@@ -42,12 +45,12 @@ public class JsonAssert {
      * @param json the JSON document to create a JSONAsserter for
      * @return a JSON asserter initialized with the provided document
      * @throws ParseException when the given JSON could not be parsed
+     * @throws com.jayway.jsonpath.json.ParseException 
+     * @throws com.jayway.jsonpath.json.ParseException 
      */
-    public static JsonAsserter with(String json) throws ParseException {
+    public static JsonAsserter with(String json) throws  com.jayway.jsonpath.json.ParseException {
         try {
             return new JsonAsserterImpl(JSON_PARSER.parse(json));
-        } catch (net.minidev.json.parser.ParseException e) {
-            throw new ParseException(json, e.getPosition());
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
@@ -59,13 +62,12 @@ public class JsonAssert {
      * @param reader the reader of the json document
      * @return a JSON asserter initialized with the provided document
      * @throws ParseException when the given JSON could not be parsed
+     * @throws com.jayway.jsonpath.json.ParseException 
      */
-    public static JsonAsserter with(Reader reader) throws ParseException, IOException {
-        try {
+    public static JsonAsserter with(Reader reader) throws ParseException, IOException, com.jayway.jsonpath.json.ParseException {
+      
             return new JsonAsserterImpl(JSON_PARSER.parse(convertReaderToString(reader)));
-        } catch (net.minidev.json.parser.ParseException e) {
-            throw new ParseException(e.toString(), e.getPosition());
-        }
+      
     }
 
     /**
@@ -74,8 +76,9 @@ public class JsonAssert {
      * @param is the input stream
      * @return a JSON asserter initialized with the provided document
      * @throws ParseException when the given JSON could not be parsed
+     * @throws com.jayway.jsonpath.json.ParseException 
      */
-    public static JsonAsserter with(InputStream is) throws ParseException, IOException {
+    public static JsonAsserter with(InputStream is) throws ParseException, IOException, com.jayway.jsonpath.json.ParseException {
         Reader reader = new InputStreamReader(is);
         return with(reader);
     }
@@ -96,6 +99,9 @@ public class JsonAssert {
 
     public static Matcher<Collection<Object>> emptyCollection() {
         return new IsEmptyCollection<Object>();
+    }
+    public static Matcher<Object> isnull() {
+        return new IsNull<Object>();
     }
 
     private static String convertReaderToString(Reader reader)

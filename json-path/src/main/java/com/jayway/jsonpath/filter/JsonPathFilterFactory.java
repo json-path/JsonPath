@@ -27,10 +27,16 @@ public class JsonPathFilterFactory {
             return new TraverseFilter();
         } else if (WildcardPropertyFilter.PATTERN.matcher(pathFragment).matches()) {
             return new WildcardPropertyFilter();
-        } else if (PropertyFilter.PATTERN.matcher(pathFragment).matches()) {
-            return new PropertyFilter(pathFragment);
+        }else if (M4PropertyFilter.PATTERN.matcher(pathFragment).matches()) {
+           return new M4PropertyFilter(pathFragment);
+        } 
+        else if (TypeFilter.PATTERN.matcher(pathFragment).matches()) {
+            return new TypeFilter(pathFragment);
+        }else if (PropertyFilter.PATTERN.matcher(pathFragment).matches()) {
+        	return new PropertyFilter(pathFragment);
         }
         return null;
+
 
     }
 
