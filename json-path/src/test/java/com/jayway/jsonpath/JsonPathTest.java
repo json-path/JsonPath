@@ -14,6 +14,7 @@ import com.jayway.jsonpath.json.JsonObject;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Scanner;
 
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.hasItems;
@@ -58,7 +59,8 @@ public abstract class JsonPathTest {
                     "    \"bicycle\": {\n" +
                     "      \"color\": \"red\",\n" +
                     "      \"price\": 19.95,\n" +
-                    "      \"foo:bar\": \"fooBar\"\n" +
+                    "      \"foo:bar\": \"fooBar\",\n" +
+                    "      \"dot.notation\": \"new\"\n" +
                     "    }\n" +
                     "  }\n" +
                     "}";
@@ -66,8 +68,16 @@ public abstract class JsonPathTest {
     @Before
     public void init_factory(){
     	
+    @Test
+    public void bracket_notation_can_be_used_in_path() throws Exception {
     }
     
+        assertEquals("new", JsonPath.read(DOCUMENT, "$.['store'].bicycle.['dot.notation']"));
+        assertEquals("new", JsonPath.read(DOCUMENT, "$['store']['bicycle']['dot.notation']"));
+        assertEquals("new", JsonPath.read(DOCUMENT, "$.['store']['bicycle']['dot.notation']"));
+        assertEquals("new", JsonPath.read(DOCUMENT, "$.['store'].['bicycle'].['dot.notation']"));
+    }
+
     @Test
     public void filter_an_array() throws Exception {
         JsonElement matches = JsonPath.read(ARRAY, "$.[?(@.value = 1)]");
@@ -79,8 +89,12 @@ public abstract class JsonPathTest {
     @Test
     public void read_path_with_colon() throws Exception {
 
+        assertEquals(JsonPath.read(DOCUMENT, "$.store.bicycle.foo:bar"), "fooBar");
+        assertEquals(JsonPath.read(DOCUMENT, "$.['store'].['bicycle'].['foo:bar']"), "fooBar");
         assertEquals(JsonPath.read(DOCUMENT, "$.store.bicycle.foo:bar").toObject(), "fooBar");
         assertEquals(JsonPath.read(DOCUMENT, "$.['store'].['bicycle'].['foo:bar']").toObject(), "fooBar");
+        assertEquals(JsonPath.read(DOCUMENT, "$.store.bicycle.foo:bar"), "fooBar");
+        assertEquals(JsonPath.read(DOCUMENT, "$['store']['bicycle']['foo:bar']"), "fooBar");
     }
 
     
@@ -270,7 +284,9 @@ public abstract class JsonPathTest {
         JsonElement res2 = JsonPath.read(DOCUMENT, "$.store.book[1, 200].author");
 
 
+        assertThat((List<String>)res, hasItems("Evelyn Waugh"));
         assertEquals(res2.toObject(), "Evelyn Waugh");
+        assertThat((List<String>) res, hasItems("Evelyn Waugh"));
         //assertNull(();
     }
 
@@ -285,4 +301,5 @@ public abstract class JsonPathTest {
     public void invalid_new_path_throws_exception() throws Exception {
         JsonPath.read(DOCUMENT, "new ");
     }
+
 }
