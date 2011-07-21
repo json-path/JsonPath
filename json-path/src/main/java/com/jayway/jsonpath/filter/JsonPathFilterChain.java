@@ -43,17 +43,17 @@ public class JsonPathFilterChain {
 
     public FilterOutput filter(JsonElement root) throws JsonException {
     	FilterOutput out = new FilterOutput(root);
-    	log.info(out.getResult().toString());
+    	log.info(out.getResultAsJson().toString());
         for (JsonPathFilterBase filter : filters) {
             if (filter == null) {
                 throw new InvalidPathException();
             }
-            if(out.getList() == null){
-                return null;
+            if(out.getResultAsJson().isJsonNull()){
+                break;
             }
             out = filter.apply(out);
-            if(out.getResult()!=null)
-            	log.info(out.getResult().toString());
+
+            log.info(out.getResultAsJson().toString());
         }
         
         

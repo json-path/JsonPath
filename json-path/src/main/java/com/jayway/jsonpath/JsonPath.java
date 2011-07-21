@@ -11,6 +11,7 @@ import com.jayway.jsonpath.json.JsonParser;
 
 
 import java.io.IOException;
+import java.util.List;
 import java.util.logging.Logger;
 
 import net.minidev.json.parser.ParseException;
@@ -132,12 +133,8 @@ public class JsonPath {
      */
     public JsonElement read(JsonElement json) throws JsonException {
         FilterOutput filterOutput = filters.filter(json);
-        
-        if (filterOutput == null || filterOutput.getResult() == null) {
-            return null;
-        }
 
-        return filterOutput.getResult();
+        return filterOutput.getResultAsJson();
         
     }
 

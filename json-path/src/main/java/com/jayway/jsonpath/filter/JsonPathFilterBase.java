@@ -14,13 +14,13 @@ import com.jayway.jsonpath.json.JsonException;
  */
 public abstract class JsonPathFilterBase {
 	public FilterOutput apply(FilterOutput element) throws JsonException{
-		List<JsonElement> result = new ArrayList<JsonElement>();
-		for(JsonElement el : element.getList()){
+		FilterOutput result = new FilterOutput();
+		for(JsonElement el : element){
     		List<JsonElement> out = apply(el);
     		if(out != null)
     			result.addAll(out);
     	}
-		return new FilterOutput(result);
+		return result;
     }
 	public abstract List<JsonElement> apply(JsonElement element) throws JsonException;
     public abstract String getPathSegment() throws JsonException;;

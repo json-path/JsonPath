@@ -4,6 +4,7 @@ import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
 
+import com.google.gson.JsonNull;
 import com.jayway.jsonpath.json.JsonArray;
 import com.jayway.jsonpath.json.JsonElement;
 import com.jayway.jsonpath.json.JsonException;
@@ -65,17 +66,19 @@ public abstract class JsonPathTest {
                     "  }\n" +
                     "}";
 
+    protected  JsonFactory factory = null;
     @Before
     public void init_factory(){
     	
+    }
     @Test
     public void bracket_notation_can_be_used_in_path() throws Exception {
-    }
     
-        assertEquals("new", JsonPath.read(DOCUMENT, "$.['store'].bicycle.['dot.notation']"));
-        assertEquals("new", JsonPath.read(DOCUMENT, "$['store']['bicycle']['dot.notation']"));
-        assertEquals("new", JsonPath.read(DOCUMENT, "$.['store']['bicycle']['dot.notation']"));
-        assertEquals("new", JsonPath.read(DOCUMENT, "$.['store'].['bicycle'].['dot.notation']"));
+    
+        assertEquals(w("new"), JsonPath.read(DOCUMENT, "$.['store'].bicycle.['dot.notation']"));
+        assertEquals(w("new"), JsonPath.read(DOCUMENT, "$['store']['bicycle']['dot.notation']"));
+        assertEquals(w("new"), JsonPath.read(DOCUMENT, "$.['store']['bicycle']['dot.notation']"));
+        assertEquals(w("new"), JsonPath.read(DOCUMENT, "$.['store'].['bicycle'].['dot.notation']"));
     }
 
     @Test
@@ -89,17 +92,25 @@ public abstract class JsonPathTest {
     @Test
     public void read_path_with_colon() throws Exception {
 
-        assertEquals(JsonPath.read(DOCUMENT, "$.store.bicycle.foo:bar"), "fooBar");
-        assertEquals(JsonPath.read(DOCUMENT, "$.['store'].['bicycle'].['foo:bar']"), "fooBar");
-        assertEquals(JsonPath.read(DOCUMENT, "$.store.bicycle.foo:bar").toObject(), "fooBar");
-        assertEquals(JsonPath.read(DOCUMENT, "$.['store'].['bicycle'].['foo:bar']").toObject(), "fooBar");
-        assertEquals(JsonPath.read(DOCUMENT, "$.store.bicycle.foo:bar"), "fooBar");
-        assertEquals(JsonPath.read(DOCUMENT, "$['store']['bicycle']['foo:bar']"), "fooBar");
+        assertEquals(JsonPath.read(DOCUMENT, "$.store.bicycle.foo:bar"), w("fooBar"));
+        assertEquals(JsonPath.read(DOCUMENT, "$.['store'].['bicycle'].['foo:bar']"), w("fooBar"));
     }
 
     
     
-    
+    private JsonElement w(Object obj) throws JsonException {
+    	return factory.createJsonPrimitive(obj);
+    	
+	}
+    private JsonElement[] w(Object ... objs) throws JsonException {
+    	JsonElement je[]= new JsonElement[objs.length]; 
+    	for(int i=0;i<objs.length;i++){
+    		je[i] = w(objs[i]);
+    	}
+    	return je;
+	}
+
+
     @Test
     public void parent_ref() throws Exception {
 
@@ -138,7 +149,7 @@ public abstract class JsonPathTest {
     	String doc = "{foo:{biz:{id:1}}}";
     	
     	assertEquals(JsonPath.read(doc, "$.foo.biz.(object)").toString(), "{\"id\":1}");
-    	assertEquals(JsonPath.read(doc, "$.foo.biz.(collection)"), null);
+    	assertTrue(JsonPath.read(doc, "$.foo.biz.(collection)").isJsonNull());
         
         
         doc = "{foo:{biz:[{Id:1},{Id:2},{Id:4,foo:1234}]}}";    	
@@ -277,16 +288,17 @@ public abstract class JsonPathTest {
     @Test
     public void access_index_out_of_bounds_does_not_throw_exception() throws Exception {
 
-        Object res = JsonPath.read(DOCUMENT, "$.store.book[100].author");
+        JsonElement res = JsonPath.read(DOCUMENT, "$.store.book[100].author");
 
-        assertNull(res);
+        assertTrue(res.isJsonNull());
 
         JsonElement res2 = JsonPath.read(DOCUMENT, "$.store.book[1, 200].author");
-
-
-        assertThat((List<String>)res, hasItems("Evelyn Waugh"));
+        JsonElement res3 = JsonPath.read(DOCUMENT, "$.store.book[1, 200]");
         assertEquals(res2.toObject(), "Evelyn Waugh");
-        assertThat((List<String>) res, hasItems("Evelyn Waugh"));
+        System.out.println(res3.toJsonArray().get(1));
+
+
+
         //assertNull(();
     }
 
