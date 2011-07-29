@@ -26,6 +26,7 @@ public class ListWildcardFilter extends JsonPathFilterBase{
 			}
 		}
 
+		
 		return result;
 	}
 

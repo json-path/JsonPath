@@ -50,7 +50,8 @@ public class JsonAssert {
      */
     public static JsonAsserter with(String json) throws  com.jayway.jsonpath.json.ParseException {
         try {
-            return new JsonAsserterImpl(JSON_PARSER.parse(json));
+
+        	return new JsonAsserterImpl(JSON_PARSER.parse(json));
         } catch (IOException e) {
             throw new RuntimeException(e);
         }

@@ -36,6 +36,11 @@ public class FilterOutput {
 
 
 	public JsonElement getResult() throws JsonException {
+		for(int i=result.size()-1;i>=0;i--){
+			if(result.get(i).isJsonNull())
+				result.remove(i);
+		}
+		
 		if(result.size()==0){
 			return null;
 		}
@@ -50,6 +55,7 @@ public class FilterOutput {
     		return ja;
 		}
     }
+	
 	
 	public JsonArray getResultAsList() throws JsonException {
 		return getResult().toJsonArray();

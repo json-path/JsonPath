@@ -51,6 +51,8 @@ public class JsonPathFilterChain {
             if(out.getList() == null){
                 return null;
             }
+
+            
             out = filter.apply(out);
             if(out.getResult()!=null)
             	log.info(out.getResult().toString());

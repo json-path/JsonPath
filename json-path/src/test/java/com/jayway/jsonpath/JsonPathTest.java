@@ -149,13 +149,10 @@ public abstract class JsonPathTest {
     	String doc = "{foo:{biz:{id:1}}}";
     	
     	assertEquals(JsonPath.read(doc, "$.foo.biz.(object)").toString(), "{\"id\":1}");
-    	try{
+    	
     		JsonPath.read(doc, "$.foo.biz.(collection)");
-    		fail();
-    	}
-    	catch(JsonException e){
-    		
-    	}
+
+  
         
         
         doc = "{foo:{biz:[{Id:1},{Id:2},{Id:4,foo:1234}]}}";    	
@@ -294,13 +291,9 @@ public abstract class JsonPathTest {
     @Test
     public void access_index_out_of_bounds_does_not_throw_exception() throws Exception {
 
-    	try{
+
     		JsonElement res = JsonPath.read(DOCUMENT, "$.store.book[100].author");
-    		fail();
-    	}
-    	catch(JsonException je){
-    		
-    	}
+
 
 
 

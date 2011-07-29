@@ -60,5 +60,10 @@ public  class JsonNull extends JsonElement {
 	}
 
 
-
+	@Override
+	public boolean equals(Object o1){
+		if(o1==null) return false;
+		return o1 instanceof JsonNull;
+	}
+	
 }
