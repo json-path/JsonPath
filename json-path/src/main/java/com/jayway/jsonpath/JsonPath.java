@@ -133,10 +133,36 @@ public class JsonPath {
      */
     public JsonElement read(JsonElement json) throws JsonException {
         FilterOutput filterOutput = filters.filter(json);
+        
+        if (filterOutput == null || filterOutput.getResult() == null) {
+             throw new JsonException("Element not found");
+        }
 
-        return filterOutput.getResultAsJson();
+        return filterOutput.getResult();
         
     }
+    
+    /**
+     * Applies this json path to the provided object
+     *
+     * @param json a json Object
+     * @param <T>
+     * @return list of objects matched by the given path
+     * @throws JsonException 
+     */
+    public List<JsonElement> readResultSet(JsonElement json) throws JsonException {
+        FilterOutput filterOutput = filters.filter(json);
+        
+        if (filterOutput == null || filterOutput.getResult() == null) {
+             throw new JsonException("Element not found");
+        }
+
+        return filterOutput.getList();
+        
+    }
+        
+    
+    
 
     /**
      * Applies this json path to the provided object
@@ -185,6 +211,13 @@ public class JsonPath {
     public static JsonElement read(JsonElement json, String jsonPath) throws JsonException {
         return  compile(jsonPath).read(json);
     }
+
+    
+    public static List<JsonElement> readResultSet(JsonElement json, String jsonPath) throws JsonException {
+        return  compile(jsonPath).readResultSet(json);
+    }
+
+
 
 
     public  static JsonElement parse(String json)  {
