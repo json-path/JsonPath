@@ -40,15 +40,10 @@ public class PropertyFilter extends JsonPathFilterBase {
 	public List<JsonElement> apply(JsonElement element) throws JsonException {
 	    
     	List<JsonElement> result = new ArrayList<JsonElement>();
-    	
+
     	if (element.isJsonObject() && element.toJsonObject().hasProperty(pathFragment)) {
     		JsonElement o = element.toJsonObject().getProperty(pathFragment);
-    		if(o != null){
-    			result.add(o);
-    		}
-    		else{
-    			result.add(factory.createJsonNull(pathFragment,element));
-    		}
+    		result.add(o);
     	}
     	else if(element.isJsonObject()){
     		result.add(factory.createJsonNull(pathFragment,element));

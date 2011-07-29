@@ -3,12 +3,10 @@ package com.jayway.jsonpath.filter;
 
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.regex.Pattern;
 
-import com.google.gson.JsonNull;
 import com.jayway.jsonpath.json.JsonArray;
 import com.jayway.jsonpath.json.JsonElement;
 import com.jayway.jsonpath.json.JsonException;
@@ -37,31 +35,19 @@ public class ListIndexFilter extends JsonPathFilterBase {
 
     @Override
     public List<JsonElement> apply(JsonElement element) throws JsonException {
-    	
+    	List<JsonElement> result = new ArrayList<JsonElement>();
+        
         Integer[] index = getArrayIndex();
+        if(element.isJsonArray()){
+            for (int i : index) {
+                if (indexIsInRange(element.toJsonArray(), i)) {
+                    result.add(element.toJsonArray().get(i));
+                }
+            }
+        }
         
-
-        ArrayList<JsonElement> result = new ArrayList<JsonElement>();
-        filterRange(result,element,index);
+        
         return result;
-        
-        
- 
-    }
-    
-    private <T extends Collection> void filterRange(T result,JsonElement element,Integer[] index) throws JsonException{
-    	  if(element.isJsonArray()){
-              for (int i : index) {
-                  if (indexIsInRange(element.toJsonArray(), i)) {
-                      result.add(element.toJsonArray().get(i));
-                  }
-                  else{
-                      com.jayway.jsonpath.json.JsonNull jn = factory.createJsonNull(i,element);
-                	  result.add(jn);
-                  }
-                  
-              }
-          }
     }
 
     private boolean indexIsInRange(List list, int index) {
