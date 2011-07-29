@@ -43,8 +43,10 @@ public class JsonAsserterImpl implements JsonAsserter {
         String reason = "When processing json path: " + path;
 
         JsonElement je = JsonPath.read(jsonObject, path);
-        if (! (matcher.matches(je)||matcher.matches(je.toObject()))){ 
+        if (!( (je == null && matcher.matches(je)) || (je.isContainer() && matcher.matches(je)) || matcher.matches(je.toObject()) )  ) {
+
             System.out.println(JsonPath.read(jsonObject, path).toString());
+
             throw new AssertionError(reason + matcher.toString());
         }
 
@@ -78,8 +80,8 @@ public class JsonAsserterImpl implements JsonAsserter {
      */
     public JsonAsserter assertNotDefined(String path) throws JsonException {
         JsonElement o = JsonPath.read(jsonObject, path);
-        
-        if (o!=null && !o.isJsonNull()) {
+
+        if (!o.isJsonNull()) {
             throw new AssertionError(format("Document contains the path <%s> but was expected not to.", path));
         }
         return this;

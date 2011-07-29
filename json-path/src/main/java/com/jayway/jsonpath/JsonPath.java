@@ -135,11 +135,9 @@ public class JsonPath {
         FilterOutput filterOutput = filters.filter(json);
         
         if (filterOutput == null || filterOutput.getResult() == null) {
-             return null;
+             throw new JsonException("Element not found");
         }
 
-        
-        
         return filterOutput.getResult();
         
     }

@@ -85,7 +85,7 @@ public abstract class JsonAssertTest {
 
     @Test
     public void a_value_can_asserted_to_be_null() throws Exception {
-        with(JSON).assertEquals("$.store.bicycle.nullValue",factory.createJsonPrimitive(null));
+        with(JSON).assertNull("$.store.bicycle.nullValue");
     }
 
     @Test
@@ -96,8 +96,8 @@ public abstract class JsonAssertTest {
     @Test
     public void a_path_can_be_asserted_with_matcher() throws Exception {
 
-        with(JSON).assertThat("$.store.bicycle.color", equalTo(w("red")))
-                .assertThat("$.store.bicycle.price", equalTo(w(19.95D)));
+        with(JSON).assertThat("$.store.bicycle.color", equalTo("red"))
+                .assertThat("$.store.bicycle.price", equalTo(19.95D));
     }
 
     @Test
@@ -158,22 +158,21 @@ public abstract class JsonAssertTest {
     @Test
     public void a_path_can_be_asserted_equal_to() throws Exception {
 
-        with(JSON).assertEquals("$.store.book[0].title", w("Sayings of the Century"))
-                .assertThat("$.store.book[0].title", equalTo(w("Sayings of the Century")));
+        with(JSON).assertEquals("$.store.book[0].title", "Sayings of the Century")
+                .assertThat("$.store.book[0].title", equalTo("Sayings of the Century"));
 
-        with(JSON).assertEquals("$['store']['book'][0].['title']", w("Sayings of the Century"))
-                .assertThat("$['store'].book[0].title", equalTo(w("Sayings of the Century")));
+        with(JSON).assertEquals("$['store']['book'][0].['title']", "Shttp://www.theregister.co.uk/public_sector/government/ayings of the Century")
+                .assertThat("$['store'].book[0].title", equalTo("Sayings of the Century"));
     }
 
     @Test
     public void no_hit_returns_null() throws Exception {
-        with(JSON).assertThat("$.store.book[1000]", equalTo(null));
+        with(JSON).assertThat("$.store.book[1000].title", Matchers.<Object>nullValue());
     }
 
     @Test
     public void invalid_path() throws Exception {
-    	
-        with(JSON).assertThat("$.store.book[*].fooBar", Matchers.<Object>nullValue());
+        with(JSON).assertThat("$.store.book[*].fooBar.(value)", Matchers.<Object>nullValue());
     }
 
     @Test
