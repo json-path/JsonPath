@@ -93,6 +93,13 @@ public class GsonJsonPrimitive extends com.jayway.jsonpath.json.JsonPrimitive{
 
 	@Override
 	public boolean equals(Object o1){
+		if (o1==null) return false;
+		if(o1 instanceof GsonJsonPrimitive){
+			if(value == null)
+				return ((GsonJsonPrimitive) o1).value == null;
+			else
+				return value.equals(((GsonJsonPrimitive) o1).value);
+		}
 		return (o1!=null) && o1.equals(wrappit(value));
 	}
 	@Override
@@ -101,6 +108,7 @@ public class GsonJsonPrimitive extends com.jayway.jsonpath.json.JsonPrimitive{
 	}
 	@Override
 	public String toString(){
+		if(value == null) return "null";
 		return wrappit(value).toString();
 	}
 

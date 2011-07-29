@@ -43,10 +43,13 @@ public class ListIndexFilter extends JsonPathFilterBase {
                 if (indexIsInRange(element.toJsonArray(), i)) {
                     result.add(element.toJsonArray().get(i));
                 }
+                else{
+                	result.add(factory.createJsonNull(i,element.toJsonArray()));
+                }
             }
         }
         
-        
+
         return result;
     }
 
