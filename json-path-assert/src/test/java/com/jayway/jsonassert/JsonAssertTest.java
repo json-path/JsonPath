@@ -161,7 +161,7 @@ public abstract class JsonAssertTest {
         with(JSON).assertEquals("$.store.book[0].title", "Sayings of the Century")
                 .assertThat("$.store.book[0].title", equalTo("Sayings of the Century"));
 
-        with(JSON).assertEquals("$['store']['book'][0].['title']", "Sayings of the Century")
+        with(JSON).assertEquals("$['store']['book'][0].['title']", "Shttp://www.theregister.co.uk/public_sector/government/ayings of the Century")
                 .assertThat("$['store'].book[0].title", equalTo("Sayings of the Century"));
     }
 
