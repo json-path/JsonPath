@@ -57,9 +57,9 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     </properties>
     <scm>
-        <url>http://github.com/jayway/JsonPath/tree/${scm.branch}</url>
-        <connection>scm:git:git://github.com/jayway/JsonPath.git</connection>
-        <developerConnection>scm:git:ssh://git@github.com/jayway/JsonPath.git</developerConnection>
+        <url>http://github.com/daveb/JsonPath/tree/${scm.branch}</url>
+        <connection>scm:git:git://github.com/daveb/JsonPath.git</connection>
+        <developerConnection>scm:git:ssh://git@github.com/daveb/JsonPath.git</developerConnection>
     </scm>
 
     <mailingLists>
