@@ -1,9 +1,17 @@
 package com.jayway.jsonassert;
 
+import org.hamcrest.Matcher;
 import org.hamcrest.Matchers;
+import org.junit.Before;
+import org.junit.BeforeClass;
 import org.junit.Test;
 
+import com.jayway.jsonpath.json.JsonElement;
+import com.jayway.jsonpath.json.JsonException;
+import com.jayway.jsonpath.json.JsonFactory;
+
 import java.io.InputStream;
+
 
 import static com.jayway.jsonassert.JsonAssert.*;
 import static org.hamcrest.Matchers.*;
@@ -13,7 +21,7 @@ import static org.hamcrest.Matchers.*;
  * Date: 1/21/11
  * Time: 4:04 PM
  */
-public class JsonAssertTest {
+public abstract class JsonAssertTest {
 
     public final static String JSON =
             "{ \"store\": {\n" +
@@ -48,8 +56,17 @@ public class JsonAssertTest {
                     "    }\n" +
                     "  }\n" +
                     "}";
+	
+    protected  JsonFactory factory = null;
+    @Before
+    public void init(){
+    	init_factory();
+    }
+	protected void init_factory(){
 
 
+	}
+    
     @Test
     public void links_document() throws Exception {
 
@@ -69,7 +86,7 @@ public class JsonAssertTest {
 
     @Test
     public void a_value_can_asserted_to_be_null() throws Exception {
-        with(JSON).assertNull("$.store.bicycle.nullValue");
+        with(JSON).assertEquals("$.store.bicycle.nullValue",factory.createJsonPrimitive(null));
     }
 
     @Test
@@ -80,74 +97,89 @@ public class JsonAssertTest {
     @Test
     public void a_path_can_be_asserted_with_matcher() throws Exception {
 
-        with(JSON).assertThat("$.store.bicycle.color", equalTo("red"))
-                .assertThat("$.store.bicycle.price", equalTo(19.95D));
+        with(JSON).assertThat("$.store.bicycle.color", equalTo(w("red")))
+                .assertThat("$.store.bicycle.price", equalTo(w(19.95D)));
     }
 
     @Test
     public void list_content_can_be_asserted_with_matcher() throws Exception {
 
-        with(JSON).assertThat("$..book[*].author", hasItems("Nigel Rees", "Evelyn Waugh", "Herman Melville", "J. R. R. Tolkien"));
+        with(JSON).assertThat("$..book[*].author", hasItems( factory.createJsonPrimitive("Nigel Rees"), factory.createJsonPrimitive("Evelyn Waugh"), factory.createJsonPrimitive("Herman Melville"),factory.createJsonPrimitive( "J. R. R. Tolkien")));
 
-        with(JSON).assertThat("$..author", hasItems("Nigel Rees", "Evelyn Waugh", "Herman Melville", "J. R. R. Tolkien"))
-                .assertThat("$..author", is(collectionWithSize(equalTo(4))));
+        with(JSON).assertThat("$..author.(value)", hasItems( factory.createJsonPrimitive("Nigel Rees"), factory.createJsonPrimitive("Evelyn Waugh"), factory.createJsonPrimitive("Herman Melville"),factory.createJsonPrimitive( "J. R. R. Tolkien")))
+                  .assertThat("$..author.(value)", is(collectionWithSize(equalTo(4))));
     }
 
     @Test
     public void list_content_can_be_asserted_with_nested_matcher() throws Exception {
-        with(JSON).assertThat("$..book[*]", hasItems(hasEntry("author", "Nigel Rees"), hasEntry("author", "Evelyn Waugh")));
+        with(JSON).assertThat("$..book[*]", hasItems(hasEntry("author", factory.createJsonPrimitive("Nigel Rees")), hasEntry("author", factory.createJsonPrimitive("Evelyn Waugh"))));
     }
 
     @Test
     public void map_content_can_be_asserted_with_matcher() throws Exception {
 
-        with(JSON).assertThat("$.store.book[0]", hasEntry("category", "reference"))
-                .assertThat("$.store.book[0]", hasEntry("title", "Sayings of the Century"))
+        with(JSON).assertThat("$.store.book[0]", hasEntry("category", w("reference")))
+                .assertThat("$.store.book[0]", hasEntry("title", w("Sayings of the Century")))
                 .and()
-                .assertThat("$..book[0]", hasEntry("category", "reference"))
+                .assertThat("$..book[0]", hasEntry("category", w("reference")))
                 .and()
                 .assertThat("$.store.book[0]", mapContainingKey(equalTo("category")))
                 .and()
-                .assertThat("$.store.book[0]", mapContainingValue(equalTo("reference")));
+                .assertThat("$.store.book[0]", mapContainingValue(equalTo( w("reference"))));
 
-        with(JSON).assertThat("$.['store'].['book'][0]", hasEntry("category", "reference"))
-                .assertThat("$.['store'].['book'][0]", hasEntry("title", "Sayings of the Century"))
+        with(JSON).assertThat("$.['store'].['book'][0]", hasEntry(w("category"), w("reference")))
+                .assertThat("$.['store'].['book'][0]", hasEntry("title", w("Sayings of the Century")))
                 .and()
-                .assertThat("$..['book'][0]", hasEntry("category", "reference"))
+                .assertThat("$..['book'][0]", hasEntry(w("category"), w("reference")))
                 .and()
-                .assertThat("$.['store'].['book'][0]", mapContainingKey(equalTo("category")))
+                .assertThat("$.['store'].['book'][0]", mapContainingKey(equalTo(("category"))))
                 .and()
-                .assertThat("$.['store'].['book'][0]", mapContainingValue(equalTo("reference")));
+                .assertThat("$.['store'].['book'][0]", mapContainingValue(equalTo(w("reference"))));
     }
 
-    @Test
+    
+    private JsonElement w(Object obj) throws JsonException {
+    	return factory.createJsonPrimitive(obj);
+    	
+	}
+    private JsonElement[] w(Object ... objs) throws JsonException {
+    	JsonElement je[]= new JsonElement[objs.length]; 
+    	for(int i=0;i<objs.length;i++){
+    		je[i] = w(objs[i]);
+    	}
+    	return je;
+	}
+
+
+	@Test
     public void an_empty_collection() throws Exception {
-        with(JSON).assertThat("$.store.book[?(@.category = 'x')]", emptyCollection());
+        with(JSON).assertThat("$.store.book[?(@.category = 'x')]", isnull());
     }
 
     @Test
     public void a_path_can_be_asserted_equal_to() throws Exception {
 
-        with(JSON).assertEquals("$.store.book[0].title", "Sayings of the Century")
-                .assertThat("$.store.book[0].title", equalTo("Sayings of the Century"));
+        with(JSON).assertEquals("$.store.book[0].title", w("Sayings of the Century"))
+                .assertThat("$.store.book[0].title", equalTo(w("Sayings of the Century")));
 
-        with(JSON).assertEquals("$['store']['book'][0].['title']", "Sayings of the Century")
-                .assertThat("$['store'].book[0].title", equalTo("Sayings of the Century"));
+        with(JSON).assertEquals("$['store']['book'][0].['title']", w("Sayings of the Century"))
+                .assertThat("$['store'].book[0].title", equalTo(w("Sayings of the Century")));
     }
 
     @Test
     public void no_hit_returns_null() throws Exception {
-        with(JSON).assertThat("$.store.book[1000].title", Matchers.<Object>nullValue());
+        with(JSON).assertThat("$.store.book[1000]", equalTo(null));
     }
 
     @Test
     public void invalid_path() throws Exception {
-        with(JSON).assertThat("$.store.book[*].fooBar", emptyCollection());
+    	
+        with(JSON).assertThat("$.store.book[*].fooBar", Matchers.<Object>nullValue());
     }
 
     @Test
     public void path_including_wildcard_path_followed_by_another_path_concatenates_results_to_list() throws Exception {
-        with(getResourceAsStream("lotto.json")).assertThat("lotto.winners[*].winnerId", hasItems(23, 54));
+        with(getResourceAsStream("lotto.json")).assertThat("lotto.winners[*].winnerId", hasItems( factory.createJsonPrimitive(23), factory.createJsonPrimitive(54)));
     }
 
 

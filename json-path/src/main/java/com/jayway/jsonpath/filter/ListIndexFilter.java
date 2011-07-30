@@ -1,10 +1,15 @@
 package com.jayway.jsonpath.filter;
 
-import net.minidev.json.JSONArray;
 
+
+import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.regex.Pattern;
+
+import com.jayway.jsonpath.json.JsonArray;
+import com.jayway.jsonpath.json.JsonElement;
+import com.jayway.jsonpath.json.JsonException;
 
 /**
  * Created by IntelliJ IDEA.
@@ -17,31 +22,32 @@ public class ListIndexFilter extends JsonPathFilterBase {
     public static final Pattern PATTERN = Pattern.compile("\\[(\\s?\\d+\\s?,?)+\\]");               //[1] OR [1,2,3]
 
     private final String pathFragment;
+    @Override
+	public String getPathSegment() throws JsonException {
+		return pathFragment;
+	}
+	//@Autowired
+	public com.jayway.jsonpath.json.JsonFactory factory = com.jayway.jsonpath.json.minidev.MiniJsonFactory.getInstance();
 
     public ListIndexFilter(String pathFragment) {
         this.pathFragment = pathFragment;
     }
 
     @Override
-    public FilterOutput apply(FilterOutput filterItems) {
-
-        Object result = null;
-
+    public List<JsonElement> apply(JsonElement element) throws JsonException {
+    	List<JsonElement> result = new ArrayList<JsonElement>();
+        
         Integer[] index = getArrayIndex();
-        if (index.length > 1) {
-            List<Object> tmp = new JSONArray();
+        if(element.isJsonArray()){
             for (int i : index) {
-                if (indexIsInRange(filterItems.getResultAsList(), i)) {
-                    tmp.add(filterItems.getResultAsList().get(i));
+                if (indexIsInRange(element.toJsonArray(), i)) {
+                    result.add(element.toJsonArray().get(i));
                 }
             }
-            result = tmp;
-        } else {
-            if (indexIsInRange(filterItems.getResultAsList(), index[0])) {
-                result = filterItems.getResultAsList().get(index[0]);
-            }
         }
-        return new FilterOutput(result);
+        
+        
+        return result;
     }
 
     private boolean indexIsInRange(List list, int index) {

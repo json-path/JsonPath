@@ -1,8 +1,13 @@
 package com.jayway.jsonpath.filter;
 
-import com.jayway.jsonpath.JsonUtil;
-import net.minidev.json.JSONArray;
+import com.jayway.jsonpath.json.JsonArray;
+import com.jayway.jsonpath.json.JsonElement;
+import com.jayway.jsonpath.json.JsonException;
+import com.jayway.jsonpath.json.JsonFactory;
+import com.jayway.jsonpath.json.JsonObject;
 
+
+import java.util.ArrayList;
 import java.util.List;
 import java.util.regex.Pattern;
 
@@ -15,34 +20,38 @@ import java.util.regex.Pattern;
 public class TraverseFilter extends JsonPathFilterBase {
 
     public final static Pattern PATTERN = Pattern.compile("\\.\\.");
+	
 
-    @Override
-    public FilterOutput apply(FilterOutput filter) {
-        List<Object> result = new JSONArray();
-
-        traverse(filter.getResult(), result);
-
-        return new FilterOutput(result);
+	public List<JsonElement> apply(JsonElement element) throws JsonException {
+    	List<JsonElement> result = new ArrayList<JsonElement>();
+        traverse(element, result);
+        return result;
     }
 
-    private void traverse(Object container, List<Object> result) {
+    private void traverse(JsonElement container, List<JsonElement> result) throws JsonException {
 
-        if (JsonUtil.isMap(container)) {
+        if (container.isJsonObject()) {
             result.add(container);
 
-            for (Object value : JsonUtil.toMap(container).values()) {
-                if (JsonUtil.isContainer(value)) {
+            for (JsonElement value : container.toJsonObject().getProperties()) {
+                if (value.isContainer()) {
                     traverse(value, result);
                 }
             }
-        } else if (JsonUtil.isList(container)) {
+        } else if (container.isJsonArray()) {
 
-            for (Object value : JsonUtil.toList(container)) {
-                if (JsonUtil.isContainer(value)) {
+            for (JsonElement value : container.toJsonArray()) {
+                if ( value.isContainer()) {
                     traverse(value, result);
                 }
             }
         }
     }
+
+	@Override
+	public String getPathSegment() throws JsonException {
+
+		return null;
+	}
 
 }

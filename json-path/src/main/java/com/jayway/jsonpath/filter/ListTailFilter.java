@@ -1,8 +1,12 @@
 package com.jayway.jsonpath.filter;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+
+import com.jayway.jsonpath.json.JsonElement;
+import com.jayway.jsonpath.json.JsonException;
 
 /**
  * Created by IntelliJ IDEA.
@@ -25,11 +29,20 @@ public class ListTailFilter extends JsonPathFilterBase {
     }
 
     @Override
-    public FilterOutput apply(FilterOutput filterItems) {
+	public String getPathSegment() throws JsonException {
+		return pathFragment;
+	}
+    @Override
+    public List<JsonElement> apply(JsonElement element) throws JsonException {
+    	List<JsonElement> result = new ArrayList<JsonElement>();
 
-        int index = getTailIndex(filterItems.getResultAsList().size());
+    	if(element.isJsonArray()){
+    		int index = getTailIndex(element.toJsonArray().size());
+    		result.add(element.toJsonArray().get(index));
+    	}
 
-        return new FilterOutput(filterItems.getResultAsList().get(index));
+    	return result;
+        
     }
 
 

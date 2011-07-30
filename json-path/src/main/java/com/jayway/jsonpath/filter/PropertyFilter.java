@@ -1,8 +1,13 @@
 package com.jayway.jsonpath.filter;
 
-import com.jayway.jsonpath.JsonUtil;
-import net.minidev.json.JSONArray;
 
+import com.jayway.jsonpath.json.JsonArray;
+import com.jayway.jsonpath.json.JsonElement;
+import com.jayway.jsonpath.json.JsonException;
+import com.jayway.jsonpath.json.JsonFactory;
+
+
+import java.util.ArrayList;
 import java.util.List;
 import java.util.regex.Pattern;
 
@@ -19,36 +24,31 @@ public class PropertyFilter extends JsonPathFilterBase {
 
     private final String pathFragment;
 
+
+    private JsonFactory factory = com.jayway.jsonpath.json.minidev.MiniJsonFactory.getInstance();
+
     public PropertyFilter(String pathFragment) {
         this.pathFragment = pathFragment;
     }
-
+    
     @Override
-    public FilterOutput apply(FilterOutput filter) {
+	public String getPathSegment() throws JsonException {
+		return null;
+	}
 
-        List<Object> result = new JSONArray();
+	@Override
+	public List<JsonElement> apply(JsonElement element) throws JsonException {
+	    
+    	List<JsonElement> result = new ArrayList<JsonElement>();
 
+    	if (element.isJsonObject() && element.toJsonObject().hasProperty(pathFragment)) {
+    		JsonElement o = element.toJsonObject().getProperty(pathFragment);
+    		result.add(o);
+    	}
+    	else if(element.isJsonObject()){
+    		result.add(factory.createJsonNull(pathFragment,element));
+    	}
 
-        if (filter.isList()) {
-            for (Object current : filter.getResultAsList()) {
-                if (JsonUtil.toMap(current).containsKey(pathFragment)) {
-
-                    Object o = JsonUtil.toMap(current).get(pathFragment);
-                    if (JsonUtil.isList(o)) {
-                        result.addAll(JsonUtil.toList(o));
-
-                    } else {
-                        result.add(JsonUtil.toMap(current).get(pathFragment));
-                    }
-                }
-            }
-            return new FilterOutput(result);
-        } else {
-            Object mapValue = null;
-            if (JsonUtil.toMap(filter.getResult()).containsKey(pathFragment)) {
-                mapValue = JsonUtil.toMap(filter.getResult()).get(pathFragment);
-            }
-            return new FilterOutput(mapValue);
-        }
+        return result;
     }
 }

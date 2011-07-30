@@ -3,6 +3,9 @@ package com.jayway.jsonassert.impl;
 
 import com.jayway.jsonassert.JsonAsserter;
 import com.jayway.jsonpath.JsonPath;
+import com.jayway.jsonpath.json.JsonElement;
+import com.jayway.jsonpath.json.JsonException;
+
 import org.hamcrest.Matcher;
 
 import static java.lang.String.format;
@@ -16,7 +19,7 @@ import static org.hamcrest.Matchers.*;
 public class JsonAsserterImpl implements JsonAsserter {
 
 
-    private final Object jsonObject;
+    private final JsonElement jsonObject;
 
 
     /**
@@ -24,27 +27,29 @@ public class JsonAsserterImpl implements JsonAsserter {
      *
      * @param jsonObject the object to make asserts on
      */
-    public JsonAsserterImpl(Object jsonObject) {
+    public JsonAsserterImpl(JsonElement jsonObject) {
         this.jsonObject = jsonObject;
     }
 
 
     /**
      * {@inheritDoc}
+     * @throws AssertionError 
+     * @throws JsonException 
      */
     @SuppressWarnings("unchecked")
-    public <T> JsonAsserter assertThat(String path, Matcher<T> matcher) {
+    public <T> JsonAsserter assertThat(String path, Matcher<T> matcher) throws JsonException, AssertionError {
 
         String reason = "When processing json path: " + path;
 
-        if (!matcher.matches(JsonPath.<T>read(jsonObject, path))) {
-
+        JsonElement je = JsonPath.read(jsonObject, path);
+        if (! (matcher.matches(je)||matcher.matches(je.toObject()))){ 
             System.out.println(JsonPath.read(jsonObject, path).toString());
-
             throw new AssertionError(reason + matcher.toString());
         }
 
         /*
+         * 
        if (PathUtil.isPathDefinite(path)) {
            if (!matcher.matches(JsonPath.<T>readOne(jsonObject, path))) {
                throw new AssertionError(reason + matcher.toString());
@@ -61,18 +66,21 @@ public class JsonAsserterImpl implements JsonAsserter {
 
     /**
      * {@inheritDoc}
+     * @throws AssertionError 
+     * @throws JsonException 
      */
-    public <T> JsonAsserter assertEquals(String path, T expected) {
+    public <T> JsonAsserter assertEquals(String path, T expected) throws JsonException, AssertionError {
         return assertThat(path, equalTo(expected));
     }
 
     /**
      * {@inheritDoc}
+     * @throws JsonException 
      */
-    public JsonAsserter assertNotDefined(String path) {
-        Object o = JsonPath.read(jsonObject, path);
-
-        if (o != null) {
+    public JsonAsserter assertNotDefined(String path) throws JsonException {
+        JsonElement o = JsonPath.read(jsonObject, path);
+        
+        if (o!=null && !o.isJsonNull()) {
             throw new AssertionError(format("Document contains the path <%s> but was expected not to.", path));
         }
         return this;
@@ -80,15 +88,19 @@ public class JsonAsserterImpl implements JsonAsserter {
 
     /**
      * {@inheritDoc}
+     * @throws AssertionError 
+     * @throws JsonException 
      */
-    public JsonAsserter assertNull(String path) {
+    public JsonAsserter assertNull(String path) throws JsonException, AssertionError {
         return assertThat(path, nullValue());
     }
 
     /**
      * {@inheritDoc}
+     * @throws AssertionError 
+     * @throws JsonException 
      */
-    public <T> JsonAsserter assertNotNull(String path) {
+    public <T> JsonAsserter assertNotNull(String path) throws JsonException, AssertionError {
         return assertThat(path, notNullValue());
     }
 

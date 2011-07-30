@@ -1,7 +1,18 @@
 package com.jayway.jsonpath;
 
+import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 
+import com.google.gson.JsonNull;
+import com.jayway.jsonpath.json.JsonArray;
+import com.jayway.jsonpath.json.JsonElement;
+import com.jayway.jsonpath.json.JsonException;
+import com.jayway.jsonpath.json.JsonFactory;
+import com.jayway.jsonpath.json.JsonObject;
+
+
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Scanner;
@@ -16,7 +27,7 @@ import static org.junit.Assert.*;
  * Date: 2/2/11
  * Time: 3:07 PM
  */
-public class JsonPathTest {
+public abstract class JsonPathTest {
 
     public final static String ARRAY = "[{\"value\": 1},{\"value\": 2}, {\"value\": 3},{\"value\": 4}]";
 
@@ -55,36 +66,112 @@ public class JsonPathTest {
                     "  }\n" +
                     "}";
 
+    protected  JsonFactory factory = null;
+    @Before
+    public void init_factory(){
+    	
+    }
     @Test
     public void bracket_notation_can_be_used_in_path() throws Exception {
-
-        assertEquals("new", JsonPath.read(DOCUMENT, "$.['store'].bicycle.['dot.notation']"));
-        assertEquals("new", JsonPath.read(DOCUMENT, "$['store']['bicycle']['dot.notation']"));
-        assertEquals("new", JsonPath.read(DOCUMENT, "$.['store']['bicycle']['dot.notation']"));
-        assertEquals("new", JsonPath.read(DOCUMENT, "$.['store'].['bicycle'].['dot.notation']"));
+    
+    
+        assertEquals(w("new"), JsonPath.read(DOCUMENT, "$.['store'].bicycle.['dot.notation']"));
+        assertEquals(w("new"), JsonPath.read(DOCUMENT, "$['store']['bicycle']['dot.notation']"));
+        assertEquals(w("new"), JsonPath.read(DOCUMENT, "$.['store']['bicycle']['dot.notation']"));
+        assertEquals(w("new"), JsonPath.read(DOCUMENT, "$.['store'].['bicycle'].['dot.notation']"));
     }
 
     @Test
     public void filter_an_array() throws Exception {
-        List<Object> matches = JsonPath.read(ARRAY, "$.[?(@.value = 1)]");
+        JsonElement matches = JsonPath.read(ARRAY, "$.[?(@.value = 1)]");
 
-        assertEquals(1, matches.size());
+        assertEquals(true, matches.isJsonObject());
         System.out.println(matches);
     }
 
     @Test
     public void read_path_with_colon() throws Exception {
 
-        assertEquals(JsonPath.read(DOCUMENT, "$.store.bicycle.foo:bar"), "fooBar");
-        assertEquals(JsonPath.read(DOCUMENT, "$['store']['bicycle']['foo:bar']"), "fooBar");
+        assertEquals(JsonPath.read(DOCUMENT, "$.store.bicycle.foo:bar"), w("fooBar"));
+        assertEquals(JsonPath.read(DOCUMENT, "$.['store'].['bicycle'].['foo:bar']"), w("fooBar"));
     }
 
+    
+    
+    private JsonElement w(Object obj) throws JsonException {
+    	return factory.createJsonPrimitive(obj);
+    	
+	}
+    private JsonElement[] w(Object ... objs) throws JsonException {
+    	JsonElement je[]= new JsonElement[objs.length]; 
+    	for(int i=0;i<objs.length;i++){
+    		je[i] = w(objs[i]);
+    	}
+    	return je;
+	}
+
+
+    @Test
+    public void parent_ref() throws Exception {
+
+        
+    	String doc = "{foo:{biz:{id:1}}}";
+    	
+    	
+    	
+    	assertEquals(JsonPath.read(doc, "$.foo.biz").toString(), "{\"id\":1}");
+        
+        JsonElement j = JsonPath.read(doc, "$.foo.biz");
+        assertEquals(j.getParentReference().getParent().toString() , "{\"biz\":{\"id\":1}}");;
+        assertEquals(j.getParentReference().getParent().getParentReference().getParent().toString(), "{\"foo\":{\"biz\":{\"id\":1}}}");
+        
+        
+        doc = "{foo:{biz:[{Id:1},{Id:2},{Id:4,foo:1234}]}}";    	
+    	
+        JsonElement root = JsonPath.parse(doc);
+        assertEquals(JsonPath.read(doc, "$.foo.biz.[2].foo").toString(), "1234");
+        assertEquals(JsonPath.read(doc, "$.foo.biz.[2].foo").getParentReference().getParent().toJsonObject().get("Id").toString(), "4");
+        
+        JsonElement doc_json = JsonFactory.getInstance().parse( "{foo:[[[1],2,3,4],1,2,3]}");
+        JsonElement je = JsonPath.read(doc_json, "$.foo[0][0]");
+        je.getParentReference().setReference( JsonFactory.getInstance().createJsonPrimitive("foo"));
+        assertEquals(doc_json.toString(),"{\"foo\":[[\"foo\",2,3,4],1,2,3]}");
+        
+        
+
+    }
+    
+    
+    @Test
+    public void type_test() throws Exception {
+
+        
+    	String doc = "{foo:{biz:{id:1}}}";
+    	
+    	assertEquals(JsonPath.read(doc, "$.foo.biz.(object)").toString(), "{\"id\":1}");
+    	
+    		JsonPath.read(doc, "$.foo.biz.(collection)");
+
+  
+        
+        
+        doc = "{foo:{biz:[{Id:1},{Id:2},{Id:4,foo:1234}]}}";    	
+    	
+        JsonElement root = JsonPath.parse(doc);
+        assertEquals(JsonPath.read(doc, "$.foo.biz.(collection)[2].foo.(value)").toString(), "1234");
+
+        
+
+    }
+    
+    
+    
     @Test
     public void read_document_from_root() throws Exception {
 
-        Map result = JsonPath.read(DOCUMENT, "$.store");
+        com.jayway.jsonpath.json.JsonObject result = JsonPath.read(DOCUMENT, "$.store").toJsonObject();
 
-        assertEquals(2, result.values().size());
+        assertEquals(2, result.getProperties().size());
 
 
     }
@@ -95,109 +182,128 @@ public class JsonPathTest {
 
         JsonPath path = JsonPath.compile("$.store.book[1]");
 
-        Map map = path.read(DOCUMENT);
+        JsonElement map = path.read(DOCUMENT);
 
-        assertEquals("Evelyn Waugh", map.get("author"));
+        assertEquals("Evelyn Waugh", map.toJsonObject().get("author").toObject());
     }
 
     @Test
     public void read_store_book_wildcard() throws Exception {
         JsonPath path = JsonPath.compile("$.store.book[*]");
 
-        List<Object> list = path.read(DOCUMENT);
+        JsonElement list = path.read(DOCUMENT);
 
     }
 
     @Test
     public void read_store_book_author() throws Exception {
-        assertThat(JsonPath.<List<String>>read(DOCUMENT, "$.store.book[0,1].author"), hasItems("Nigel Rees", "Evelyn Waugh"));
-        assertThat(JsonPath.<List<String>>read(DOCUMENT, "$.store.book[*].author"), hasItems("Nigel Rees", "Evelyn Waugh", "Herman Melville", "J. R. R. Tolkien"));
-        assertThat(JsonPath.<List<String>>read(DOCUMENT, "$.['store'].['book'][*].['author']"), hasItems("Nigel Rees", "Evelyn Waugh", "Herman Melville", "J. R. R. Tolkien"));
-        assertThat(JsonPath.<List<String>>read(DOCUMENT, "$['store']['book'][*]['author']"), hasItems("Nigel Rees", "Evelyn Waugh", "Herman Melville", "J. R. R. Tolkien"));
-        assertThat(JsonPath.<List<String>>read(DOCUMENT, "$['store'].book[*]['author']"), hasItems("Nigel Rees", "Evelyn Waugh", "Herman Melville", "J. R. R. Tolkien"));
+    	Iterable<String> l1 = toList(JsonPath.read(DOCUMENT, "$.store.book[0,1].author"));
+    	assertThat(l1, hasItems("Nigel Rees", "Evelyn Waugh"));
+        
+    	Iterable<String> l2 = toList(JsonPath.read(DOCUMENT, "$.store.book[*].author"));
+    	assertThat(l2, hasItems("Nigel Rees", "Evelyn Waugh", "Herman Melville", "J. R. R. Tolkien"));
+        
+    	Iterable<String> l3 = toList(JsonPath.read(DOCUMENT, "$.['store'].['book'][*].['author']"));
+    	assertThat(l3, hasItems("Nigel Rees", "Evelyn Waugh", "Herman Melville", "J. R. R. Tolkien"));
+                	
     }
 
 
-    @Test
+    private <T> List<T> toList(JsonElement read) throws JsonException {
+		List l = new ArrayList<T>();
+    	for(JsonElement e: read.toJsonArray()){
+    		l.add((T)	e.toObject());    		
+    	}
+    	return l ;
+    }
+
+	@Test
     public void all_authors() throws Exception {
-        assertThat(JsonPath.<List<String>>read(DOCUMENT, "$..author"), hasItems("Nigel Rees", "Evelyn Waugh", "Herman Melville", "J. R. R. Tolkien"));
+		Iterable<String> l1 = toList(JsonPath.read(DOCUMENT, "$..author"));
+        assertThat(l1, hasItems("Nigel Rees", "Evelyn Waugh", "Herman Melville", "J. R. R. Tolkien"));
     }
 
 
     @Test
     public void all_store_properties() throws Exception {
-        List<Object> itemsInStore = JsonPath.read(DOCUMENT, "$.store.*");
+        JsonArray itemsInStore = JsonPath.read(DOCUMENT, "$.store.*").toJsonArray();
 
-        assertEquals(JsonPath.read(itemsInStore, "$.[0].[0].author"), "Nigel Rees");
-        assertEquals(JsonPath.read(itemsInStore, "$.[0][0].author"), "Nigel Rees");
+        assertEquals(JsonPath.read(itemsInStore, "$.[0].[0].author").toObject(), "Nigel Rees");
+        assertEquals(JsonPath.read(itemsInStore, "$.[0][0].author").toObject(), "Nigel Rees");
     }
 
     @Test
     public void all_prices_in_store() throws Exception {
 
-        assertThat(JsonPath.<List<Double>>read(DOCUMENT, "$.store..price"), hasItems(8.95D, 12.99D, 8.99D, 19.95D));
+        assertThat(this.<Double>toList(JsonPath.read(DOCUMENT, "$.store..price")), hasItems(8.95D, 12.99D, 8.99D, 19.95D));
 
     }
 
     @Test
     public void access_array_by_index_from_tail() throws Exception {
 
-        assertThat(JsonPath.<String>read(DOCUMENT, "$..book[(@.length-1)].author"), equalTo("J. R. R. Tolkien"));
-        assertThat(JsonPath.<String>read(DOCUMENT, "$..book[-1:].author"), equalTo("J. R. R. Tolkien"));
+        assertThat((String)JsonPath.read(DOCUMENT, "$..book[(@.length-1)].author").toObject(), equalTo("J. R. R. Tolkien"));
+        assertThat((String)JsonPath.read(DOCUMENT, "$..book[-1:].author").toObject(), equalTo("J. R. R. Tolkien"));
     }
 
     @Test
     public void read_store_book_index_0_and_1() throws Exception {
 
-        assertThat(JsonPath.<List<String>>read(DOCUMENT, "$.store.book[0,1].author"), hasItems("Nigel Rees", "Evelyn Waugh"));
-        assertTrue(JsonPath.<List>read(DOCUMENT, "$.store.book[0,1].author").size() == 2);
+        assertThat(this.<String>toList(JsonPath.read(DOCUMENT, "$.store.book[0,1].author")), hasItems("Nigel Rees", "Evelyn Waugh"));
+        assertTrue(this.<String>toList(JsonPath.read(DOCUMENT, "$.store.book[0,1].author")).size() == 2);
     }
 
     @Test
     public void read_store_book_pull_first_2() throws Exception {
 
-        assertThat(JsonPath.<List<String>>read(DOCUMENT, "$.store.book[:2].author"), hasItems("Nigel Rees", "Evelyn Waugh"));
-        assertTrue(JsonPath.<List>read(DOCUMENT, "$.store.book[:2].author").size() == 2);
+        assertThat(this.<String>toList(JsonPath.read(DOCUMENT, "$.store.book[:2].author")), hasItems("Nigel Rees", "Evelyn Waugh"));
+        assertTrue(this.<String>toList(JsonPath.read(DOCUMENT, "$.store.book[:2].author")).size() == 2);
     }
 
 
     @Test
     public void read_store_book_filter_by_isbn() throws Exception {
 
-        assertThat(JsonPath.<List<String>>read(DOCUMENT, "$.store.book[?(@.isbn)].isbn"), hasItems("0-553-21311-3", "0-395-19395-8"));
-        assertTrue(JsonPath.<List>read(DOCUMENT, "$.store.book[?(@.isbn)].isbn").size() == 2);
+        assertThat(this.<String>toList(JsonPath.read(DOCUMENT, "$.store.book[?(@.isbn)].isbn")), hasItems("0-553-21311-3", "0-395-19395-8"));
+        assertTrue(this.<String>toList(JsonPath.read(DOCUMENT, "$.store.book[?(@.isbn)].isbn")).size() == 2);
     }
 
     @Test
     public void all_books_cheaper_than_10() throws Exception {
-
-        assertThat(JsonPath.<List<String>>read(DOCUMENT, "$.store.book[?(@.price < 10)].title"), hasItems("Sayings of the Century", "Moby Dick"));
+    	Object o = JsonPath.read(DOCUMENT, "$.store.book[?(@.price < 10)].title");
+        assertThat(this.<String>toList(JsonPath.read(DOCUMENT, "$.store.book[?(@.price < 10)].title")), hasItems("Sayings of the Century", "Moby Dick"));
 
     }
 
     @Test
     public void all_books_with_category_reference() throws Exception {
 
-        assertThat(JsonPath.<List<String>>read(DOCUMENT, "$..book[?(@.category = 'reference')].title"), hasItems("Sayings of the Century"));
+    	Object o = JsonPath.read(DOCUMENT, "$..book[?(@.category = 'reference')].title");
+        assertEquals(JsonPath.read(DOCUMENT, "$..book[?(@.category = 'reference')].title").toObject(), "Sayings of the Century");
 
     }
 
     @Test
     public void all_members_of_all_documents() throws Exception {
-        List<String> all = JsonPath.read(DOCUMENT, "$..*");
+        JsonPath.read(DOCUMENT, "$..*");
     }
 
     @Test
     public void access_index_out_of_bounds_does_not_throw_exception() throws Exception {
 
-        Object res = JsonPath.read(DOCUMENT, "$.store.book[100].author");
 
-        assertNull(res);
-
-        res = JsonPath.read(DOCUMENT, "$.store.book[1, 200].author");
+    		JsonElement res = JsonPath.read(DOCUMENT, "$.store.book[100].author");
 
 
-        assertThat((List<String>) res, hasItems("Evelyn Waugh"));
+
+
+        JsonElement res2 = JsonPath.read(DOCUMENT, "$.store.book[1, 200].author");
+        JsonElement res3 = JsonPath.read(DOCUMENT, "$.store.book[1, 200]");
+        assertEquals(res2.toObject(), "Evelyn Waugh");
+
+
+
+
         //assertNull(();
     }
 
@@ -212,5 +318,7 @@ public class JsonPathTest {
     public void invalid_new_path_throws_exception() throws Exception {
         JsonPath.read(DOCUMENT, "new ");
     }
+
+    
 
 }

@@ -1,7 +1,11 @@
 package com.jayway.jsonpath.filter;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.regex.Pattern;
+
+import com.jayway.jsonpath.json.JsonElement;
+import com.jayway.jsonpath.json.JsonException;
 
 /**
  * Created by IntelliJ IDEA.
@@ -13,8 +17,16 @@ public class RootFilter extends JsonPathFilterBase{
 
     public final static Pattern PATTERN = Pattern.compile("\\$");
 
-    @Override
-    public FilterOutput apply(FilterOutput  root) {
-        return root;
+	@Override
+	public List<JsonElement> apply(JsonElement element) throws JsonException {
+	    
+    	List<JsonElement> result = new ArrayList<JsonElement>();
+    	result.add(element);
+    	return result;
     }
+    
+    @Override
+	public String getPathSegment() throws JsonException {
+		return null;
+	}
 }

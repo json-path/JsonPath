@@ -10,22 +10,25 @@ import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import net.minidev.json.JSONValue;
+
 /**
  * Created by IntelliJ IDEA.
  * User: kallestenflo
  * Date: 2/15/11
  * Time: 8:23 PM
  */
-public class ListPropertyFilter extends JsonPathFilterBase {
+public class TypeFilter extends JsonPathFilterBase {
 
 	//@Autowired
 	public com.jayway.jsonpath.json.JsonFactory factory = com.jayway.jsonpath.json.minidev.MiniJsonFactory.getInstance();	
 	
-    public static final Pattern PATTERN = Pattern.compile("\\[\\s?\\?\\s?\\(\\s?@\\.(\\w+)\\s?\\)\\s?\\]");  //[?(@.title)]
-
+    public static final Pattern PATTERN = Pattern.compile("\\((collection|object|value)\\)");
+    		
     private final String pathFragment;
 
-    public ListPropertyFilter(String pathFragment) {
+        
+    public TypeFilter(String pathFragment) {
         this.pathFragment = pathFragment;
     }
     @Override
@@ -37,16 +40,11 @@ public class ListPropertyFilter extends JsonPathFilterBase {
     	List<JsonElement> result = new ArrayList<JsonElement>();
 
         String prop = getFilterProperty();
+        JsonType v = JsonType.fromString(pathFragment.substring(1,pathFragment.length()-1));
 
-        if(element.isJsonArray()){
-        	for(JsonElement subElement : element.toJsonArray()){
-        		if (subElement.isJsonObject()) {
-        			if (subElement.toJsonObject().hasProperty(prop)) {
-        				result.add(subElement);
-        			}
-        		}
-        	}
-        }
+    	if(element.isJsonType(v))
+    		result.add(element);
+    		
         
         return result;
     }

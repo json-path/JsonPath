@@ -1,6 +1,12 @@
 package com.jayway.jsonpath.filter;
 
+import java.util.ArrayList;
 import java.util.List;
+
+import com.jayway.jsonpath.json.JsonArray;
+import com.jayway.jsonpath.json.JsonElement;
+import com.jayway.jsonpath.json.JsonException;
+import com.jayway.jsonpath.json.JsonFactory;
 
 import static java.lang.String.format;
 
@@ -11,27 +17,54 @@ import static java.lang.String.format;
  */
 public class FilterOutput {
 
-    private final Object result;
-
-    public FilterOutput(Object result) {
-        this.result = result;
+    private final List<JsonElement> result;
+    
+    public FilterOutput(JsonElement root) {
+    	this.result = new ArrayList<JsonElement>();
+        result.add(root);
     }
 
 
-    public boolean isList(){
+    public FilterOutput(List<JsonElement> result) {
+    	this.result = result;
+	}
 
-        return (result instanceof List);
 
+	public FilterOutput() {
+		this.result = new ArrayList<JsonElement>();
+	}
+
+
+	public JsonElement getResult() throws JsonException {
+		for(int i=result.size()-1;i>=0;i--){
+			if(result.get(i).isJsonNull())
+				result.remove(i);
+		}
+		
+		if(result.size()==0){
+			return null;
+		}
+		else if(result.size()==1){
+			return result.get(0);
+    	}
+		else{
+    		JsonFactory fact = JsonFactory.getInstance();
+    		JsonArray ja = fact.createJsonArray();
+    		for(JsonElement ele:result)
+    			ja.add(ele);
+    		return ja;
+		}
     }
+	
+	
+	public JsonArray getResultAsList() throws JsonException {
+		return getResult().toJsonArray();
+	}
+	
+   
 
-    public Object getResult() {
-        return result;
-    }
-    public List<Object> getResultAsList() {
-        if(!isList()){
-            throw new RuntimeException(format("Can not convert a %s to a %s", result.getClass().getName(), List.class.getName()));
-        }
-        return (List<Object>)result;
+    public List<JsonElement> getList() throws JsonException {
+    	return result;
     }
 
 

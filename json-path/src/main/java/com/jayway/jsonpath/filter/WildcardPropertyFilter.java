@@ -1,8 +1,13 @@
 package com.jayway.jsonpath.filter;
 
-import com.jayway.jsonpath.JsonUtil;
-import net.minidev.json.JSONArray;
 
+import com.jayway.jsonpath.json.JsonArray;
+import com.jayway.jsonpath.json.JsonElement;
+import com.jayway.jsonpath.json.JsonException;
+import com.jayway.jsonpath.json.JsonFactory;
+
+
+import java.util.ArrayList;
 import java.util.List;
 import java.util.regex.Pattern;
 
@@ -15,25 +20,29 @@ import java.util.regex.Pattern;
 public class WildcardPropertyFilter extends JsonPathFilterBase {
 
     public final static Pattern PATTERN = Pattern.compile("\\*");
-
+    private JsonFactory factory = com.jayway.jsonpath.json.minidev.MiniJsonFactory.getInstance();
 
     @Override
-    public FilterOutput apply(FilterOutput filter) {
+	public String getPathSegment() throws JsonException {
+		return null;
+	}
 
-        List<Object> result = new JSONArray();
+    @Override
+	public List<JsonElement> apply(JsonElement element) throws JsonException {
+		List<JsonElement> result = new ArrayList<JsonElement>();
 
-        if (filter.isList()) {
-            for (Object current : filter.getResultAsList()) {
-                for (Object value : JsonUtil.toMap(current).values()) {
+        if (element.isJsonArray()) {
+            for (JsonElement current : element.toJsonArray()) {
+                for (JsonElement value : current.toJsonObject().getProperties()) {
                     result.add(value);
                 }
             }
         } else {
-            for (Object value : JsonUtil.toMap(filter.getResult()).values()) {
+            for (JsonElement value : element.toJsonObject().getProperties()){
                 result.add(value);
             }
         }
-        return new FilterOutput(result);
+        return result;
 
     }
 }

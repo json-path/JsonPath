@@ -1,5 +1,33 @@
-Java DSL for reading and testing JSON documents.
+Improvements on the com.jayway.jsonpath implementation.  
 
+Notes:
 
+1) A facade has been placed over the Java objects that directly represent a JSON structure. This modification was two fold, first it allows for use of other JSON libraries without reparsing the entire strucutre, which could lead to some performance improvements. Second, it allows for the addition of parent references and modification of the JSON structure via the path (see below)
 
-Santa Fe LET 50
+2) Parent references within JSONPath.  This allows code to use a JSON query to update a particular set of objects pointed to by a path. Thus, we can now say $a.b[1] = 3 and handle the reference changes in the original object approrpiately.
+
+3) JsonPath.read no longer returns a JsonArray, it returns a list of JsonElements.  For backwards compatability, it can also be read into a JSON array.  This was done to support the parent references as well as a logical consideration that the result of a JSON path query is set of eleements that match that query.  
+
+For example:
+
+Given 
+{a: [1,2,3]}
+
+The result of $.a should be a single JsonArray
+The result of $.a[2,3] should be two JsonPrimitives 
+
+More complexly 
+
+Given 
+
+{b: [{a:1},{a:2},{a:3}]
+$.b[?(@.a < 1)] returns a result list with two elements.  
+
+and
+
+{b: [{a:1},{c:{a:1}},{a:3}]
+$..a should return a result list with three elements 
+
+In both cases, putting these into a JsonArray (logically) does not make sense because that array does not acutally have an significance to the original structure.  Furthermore, if we wish to modify the result of $..a, adding the elements to a new Json structure destroys their reference
+
+4) Requisite updates to unit tests, etc to support these changes
