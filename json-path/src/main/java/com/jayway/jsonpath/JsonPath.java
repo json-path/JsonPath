@@ -82,11 +82,11 @@ public class JsonPath {
 
     private final static Logger log = Logger.getLogger(JsonPath.class.getName());
 
-    private static JSONParser JSON_PARSER = new JSONParser(JsonPath.mode);
+    private JSONParser JSON_PARSER = new JSONParser(JsonPath.mode);
 
     private JsonPathFilterChain filters;
 
-    public static void setMode(int mode){
+    public void setMode(int mode){
         if(mode != JsonPath.mode){
             JsonPath.mode = mode;
             JSON_PARSER = new JSONParser(JsonPath.mode);
@@ -177,7 +177,7 @@ public class JsonPath {
     }
 
 
-    private static Object parse(String json) throws java.text.ParseException {
+    private Object parse(String json) throws java.text.ParseException {
         try {
             return JSON_PARSER.parse(json);
         } catch (ParseException e) {

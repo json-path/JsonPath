@@ -37,14 +37,16 @@ public class ParserTest {
 
     @Test(expected = ParseException.class)
     public void strict_mode_does_not_accept_single_quotes() throws Exception {
-        JsonPath.setMode(JsonPath.STRICT_MODE);
-        JsonPath.read(SINGLE_QUOTE_JSON, "lhs");
+    	JsonPath path = JsonPath.compile("lhs");
+    	path.setMode(JsonPath.STRICT_MODE);
+    	path.read(SINGLE_QUOTE_JSON);
     }
 
     @Test(expected = ParseException.class)
     public void strict_mode_does_not_accept_no_quotes() throws Exception {
-        JsonPath.setMode(JsonPath.STRICT_MODE);
-        JsonPath.read(NO_QUOTE_JSON, "lhs");
+    	JsonPath path = JsonPath.compile("lhs");
+    	path.setMode(JsonPath.STRICT_MODE);
+    	path.read(NO_QUOTE_JSON);
     }
 
 
