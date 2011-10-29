@@ -15,12 +15,13 @@ public class PathUtilTest {
 
 
     @Test
-    public void wildcard_is_not_definite() throws Exception {
+    public void path_is_not_definite() throws Exception {
         assertFalse(PathUtil.isPathDefinite("$..book[0]"));
+        assertFalse(PathUtil.isPathDefinite("$.books[*]"));
     }
 
     @Test
-    public void is_definite() throws Exception {
+    public void path_is_definite() throws Exception {
         assertTrue(PathUtil.isPathDefinite("$.definite.this.is"));
         assertTrue(PathUtil.isPathDefinite("$.definite:this.is"));
         assertTrue(PathUtil.isPathDefinite("rows[0].id"));

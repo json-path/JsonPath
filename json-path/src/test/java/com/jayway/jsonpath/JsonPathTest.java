@@ -4,7 +4,6 @@ import org.junit.Test;
 
 import java.util.List;
 import java.util.Map;
-import java.util.Scanner;
 
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.hasItems;
@@ -55,6 +54,27 @@ public class JsonPathTest {
                     "  }\n" +
                     "}";
 
+
+    private final static String PRODUCT_JSON = "{\n" +
+            "\t\"product\": [ {\n" +
+            "\t    \"version\": \"A\", \n" +
+            "\t    \"codename\": \"Seattle\", \n" +
+            "\t    \"attr.with.dot\": \"A\"\n" +
+            "\t},\n" +
+            "\t{\n" +
+            "\t    \"version\": \"4.0\", \n" +
+            "\t    \"codename\": \"Montreal\", \n" +
+            "\t    \"attr.with.dot\": \"B\"\n" +
+            "\t}]\n" +
+            "}";
+
+    private final static String ARRAY_EXPAND = "[{\"parent\": \"ONE\", \"child\": {\"name\": \"NAME_ONE\"}}, [{\"parent\": \"TWO\", \"child\": {\"name\": \"NAME_TWO\"}}]]";
+
+    @Test
+    public void array_start_expands() throws Exception {
+        assertThat(JsonPath.<List<String>>read(ARRAY_EXPAND, "$[?(@.parent = 'ONE')].child.name"), hasItems("NAME_ONE"));
+    }
+
     @Test
     public void bracket_notation_can_be_used_in_path() throws Exception {
 
@@ -73,6 +93,14 @@ public class JsonPathTest {
     }
 
     @Test
+    public void filter_an_array_on_index() throws Exception {
+        Integer matches = JsonPath.read(ARRAY, "$.[1].value");
+
+        assertEquals(new Integer(2), matches);
+        System.out.println(matches);
+    }
+
+    @Test
     public void read_path_with_colon() throws Exception {
 
         assertEquals(JsonPath.read(DOCUMENT, "$.store.bicycle.foo:bar"), "fooBar");
@@ -85,10 +113,7 @@ public class JsonPathTest {
         Map result = JsonPath.read(DOCUMENT, "$.store");
 
         assertEquals(2, result.values().size());
-
-
     }
-
 
     @Test
     public void read_store_book_1() throws Exception {
@@ -172,6 +197,20 @@ public class JsonPathTest {
     public void all_books_cheaper_than_10() throws Exception {
 
         assertThat(JsonPath.<List<String>>read(DOCUMENT, "$.store.book[?(@.price < 10)].title"), hasItems("Sayings of the Century", "Moby Dick"));
+
+    }
+
+    @Test
+    public void dot_in_predicate_works() throws Exception {
+
+        assertThat(JsonPath.<List<String>>read(PRODUCT_JSON, "$.product[?(@.version='4.0')].codename"), hasItems("Montreal"));
+
+    }
+
+    @Test
+    public void dots_in_predicate_works() throws Exception {
+
+        assertThat(JsonPath.<List<String>>read(PRODUCT_JSON, "$.product[?(@.attr.with.dot='A')].codename"), hasItems("Seattle"));
 
     }
 

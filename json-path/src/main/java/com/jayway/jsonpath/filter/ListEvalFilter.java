@@ -17,8 +17,7 @@ import java.util.regex.Pattern;
  */
 public class ListEvalFilter extends JsonPathFilterBase {
 
-
-    public static final Pattern PATTERN = Pattern.compile("\\[\\s?\\?\\s?\\(\\s?@.(\\w+)\\s?([=<>]+)\\s?(.*)\\s?\\)\\s?\\]");    //[?( @.title< 'ko')]
+    public static final Pattern PATTERN = Pattern.compile("\\[\\s?\\?\\s?\\(\\s?@.(.*?)\\s?([=<>]+)\\s?(.*)\\s?\\)\\s?\\]");    //[?( @.title< 'ko')]
 
     private final String pathFragment;
 

@@ -1,10 +1,13 @@
 package com.jayway.jsonpath;
 
+import org.hamcrest.Matcher;
 import org.junit.Test;
 
-import static org.hamcrest.Matchers.hasItemInArray;
+import java.util.List;
+
 import static org.hamcrest.Matchers.hasItems;
 import static org.junit.Assert.assertThat;
+import static org.junit.Assert.assertTrue;
 
 /**
  * Created by IntelliJ IDEA.
@@ -14,69 +17,93 @@ import static org.junit.Assert.assertThat;
  */
 public class SplitPathFragmentsTest {
 
-    /*
-    1.  "$..book[-1:].foo.bar"
-    2.  "$.store.book[*].author"
-    3.  "$..author"
-    4.  "$.store.*"
-    5.  "$.store..price"
-    6.  "$..book[(@.length-1)]"
-    7.  "$..book[-1:]
-    8.  "$..book[0,1]"
-    9.  "$..book[:2]"
-    10. "$..book[?(@.isbn)]"
-    11. "$..book[?(@.price<10)]"
-    12. "$..*"
-    */
 
 
     @Test
-    public void bracket_notation_can_be_split() throws Exception {
-        assertThat(PathUtil.splitPath("$.['store'].['price']"), hasItems("$", "store", "price"));
-        assertThat(PathUtil.splitPath("$['store']['price']"), hasItems("$", "store", "price"));
-        assertThat(PathUtil.splitPath("['store']['price']"), hasItems("$", "store", "price"));
-        assertThat(PathUtil.splitPath("['store'].price"), hasItems("$", "store", "price"));
+    public void valid_path_is_split_correctly() throws Exception {
 
-        assertThat(PathUtil.splitPath("$.['store book'].['price list']"), hasItems("$", "store book", "price list"));
+        assertPath("$.store[*]", hasItems("$", "store", "[*]"));
 
-        assertThat(PathUtil.splitPath("$.['store.book'].['price.list']"), hasItems("$", "store.book", "price.list"));
+        assertPath("$", hasItems("$"));
+
+        assertPath("$..*", hasItems("$", "..", "*"));
+
+        assertPath("$.store", hasItems("$", "store"));
+
+        assertPath("$.store.*", hasItems("$", "store", "*"));
+
+        assertPath("$.store[*].name", hasItems("$", "store", "[*]", "name"));
+
+        assertPath("$..book[-1:].foo.bar", hasItems("$", "..", "book", "[-1:]", "foo", "bar"));
+
+        assertPath("$..book[?(@.isbn)]", hasItems("$", "..", "book", "[?(@.isbn)]"));
+
+        assertPath("['store'].['price']", hasItems("$", "store", "price"));
+
+        assertPath("$.['store'].['price']", hasItems("$", "store", "price"));
+
+        assertPath("$.['store']['price']", hasItems("$", "store", "price"));
+
+        assertPath("$.['store'].price", hasItems("$", "store", "price"));
+
+        assertPath("$.['store space']['price space']", hasItems("$", "store space", "price space"));
+
+        assertPath("$.['store']['nice.price']", hasItems("$", "store", "nice.price"));
+
+        assertPath("$..book[?(@.price<10)]", hasItems("$", "..", "book", "[?(@.price<10)]"));
+
+        assertPath("$..book[?(@.price<10)]", hasItems("$", "..", "book", "[?(@.price<10)]"));
+
+        assertPath("$.store.book[*].author", hasItems("$", "store", "book", "[*]", "author"));
+
+        assertPath("$.store..price", hasItems("$", "store", "..", "price"));
+
     }
 
     @Test
-    public void fragments_are_split_correctly() throws Exception {
+    public void white_space_are_removed() throws Exception {
 
-        assertThat(PathUtil.splitPath("$..book[-1:].foo.bar"), hasItems("$", "..", "[-1:]", "foo", "bar"));
+        assertPath("$.[ 'store' ]", hasItems("$", "store"));
 
-        assertThat(PathUtil.splitPath("$.store.book[*].author"), hasItems("$", "store", "book", "[*]", "author"));
+        assertPath("$.[   'store' ]", hasItems("$", "store"));
 
-        assertThat(PathUtil.splitPath("$..author"), hasItems("$", "..", "author"));
+        assertPath("$..book[  ?(@.price<10)  ]", hasItems("$", "..", "book", "[?(@.price<10)]"));
 
-        assertThat(PathUtil.splitPath("$.store.*"), hasItems("$", "store", "*"));
+        assertPath("$..book[?(@.price<10  )]", hasItems("$", "..", "book", "[?(@.price<10)]"));
 
-        assertThat(PathUtil.splitPath("$.store..price"), hasItems("$", "store", "..", "price"));
+        assertPath("$..book[?(  @.price<10)]", hasItems("$", "..", "book", "[?(@.price<10)]"));
 
-        assertThat(PathUtil.splitPath("$..book[(@.length-1)]"), hasItems("$", "..", "book", "[(@.length-1)]"));
-
-        assertThat(PathUtil.splitPath("$..book[-1:]"), hasItems("$", "..", "book", "[-1:]"));
-
-        assertThat(PathUtil.splitPath("$..book[0,1]"), hasItems("$", "..", "book", "[0,1]"));
-
-        assertThat(PathUtil.splitPath("$..book[:2]"), hasItems("$", "..", "book", "[:2]"));
-
-        assertThat(PathUtil.splitPath("$..book[?(@.isbn)]"), hasItems("$", "..", "book", "[?(@.isbn)]"));
-
-        assertThat(PathUtil.splitPath("$..book[?(@.price<10)]"), hasItems("$", "..", "book", "[?(@.price<10)]"));
-
-        assertThat(PathUtil.splitPath("$..*"), hasItems("$", "..", "*"));
-
-        assertThat(PathUtil.splitPath("$.[0][1].author"), hasItems("$", "[0]", "[1]", "author"));
-
-        assertThat(PathUtil.splitPath("$.[0].[1].author"), hasItems("$", "[0]", "[1]", "author"));
-
-        assertThat(PathUtil.splitPath("$.foo:bar.author"), hasItems("$", "foo:bar", "author"));
-
+        assertPath("$..book[  ?(@.price<10)]", hasItems("$", "..", "book", "[?(@.price<10)]"));
     }
 
+    @Test
+    public void invalid_path_throws_exception() throws Exception {
+        assertPathInvalid("$...*");
+    }
+
+
+    //----------------------------------------------------------------
+    //
+    // Helpers
+    //
+    //----------------------------------------------------------------
+
+    private void assertPathInvalid(String path) {
+        try {
+            PathUtil.splitPath(path);
+            assertTrue("Expected exception!", false);
+        } catch (InvalidPathException expected) {}
+    }
+
+    private void assertPath(String path, Matcher<Iterable<String>> matcher) {
+        System.out.println("PATH: " + path);
+        List<String> fragments = PathUtil.splitPath(path);
+        for (String fragment : fragments) {
+            System.out.println(fragment);
+        }
+        assertThat(fragments, matcher);
+        System.out.println("----------------------------------");
+    }
 
 
 }

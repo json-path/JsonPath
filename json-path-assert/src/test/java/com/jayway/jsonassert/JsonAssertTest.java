@@ -50,6 +50,12 @@ public class JsonAssertTest {
                     "}";
 
 
+
+    @Test(expected = AssertionError.class)
+    public void failed_error_message() throws Exception {
+        with(JSON).assertThat("$.store.book[0].category", endsWith("foobar"));
+    }
+
     @Test
     public void links_document() throws Exception {
 
