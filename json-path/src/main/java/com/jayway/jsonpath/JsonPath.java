@@ -177,7 +177,7 @@ public class JsonPath {
     }
 
 
-    private static Object parse(String json) throws java.text.ParseException {
+    public static Object parse(String json) throws java.text.ParseException {
         try {
             return JSON_PARSER.parse(json);
         } catch (ParseException e) {

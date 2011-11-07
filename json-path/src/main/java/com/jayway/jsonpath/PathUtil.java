@@ -104,17 +104,16 @@ public class PathUtil {
                 sb.append(c);
             }
         }
-
         if (includeSopChar) {
             assertValidPeek(pathQueue, false, stopChars);
             sb.append(pathQueue.poll());
         } else {
             assertValidPeek(pathQueue, true, stopChars);
         }
-        return unWrapProperty(sb);
+        return clean(sb);
     }
 
-    private static String unWrapProperty(StringBuilder sb) {
+    private static String clean(StringBuilder sb) {
 
         String src = sb.toString();
 

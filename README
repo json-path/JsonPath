@@ -1,5 +1,4 @@
 Java DSL for reading and testing JSON documents.
 
-
-
-Santa Fe LET 50
+COPY DEPENDENCIES : mvn clean compile dependency:copy-dependencies -DstripVersion
+FONT LOGO : Santa Fe LET 50
