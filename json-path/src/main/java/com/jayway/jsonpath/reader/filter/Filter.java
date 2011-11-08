@@ -1,7 +1,6 @@
 package com.jayway.jsonpath.reader.filter;
 
-import java.util.List;
-import java.util.Map;
+import com.jayway.jsonpath.spi.JsonProvider;
 
 /**
  * Created by IntelliJ IDEA.
@@ -17,48 +16,6 @@ public abstract class Filter {
         this.condition = condition;
     }
 
-    /**
-     * checks if object is <code>instanceof</code> <code>java.util.List</code> or <code>java.util.Map</code>
-     *
-     * @param obj object to check
-     * @return true if List or Map
-     */
-    protected boolean isContainer(Object obj) {
-        return (isList(obj) || isMap(obj));
-    }
-
-    /**
-     * checks if object is <code>instanceof</code> <code>java.util.List</code>
-     *
-     * @param obj object to check
-     * @return true if List
-     */
-    protected boolean isList(Object obj) {
-        return (obj instanceof List);
-    }
-
-    protected List<Object> toList(Object list) {
-        return (List<Object>) list;
-    }
-
-    protected Map<String, Object> toMap(Object map) {
-        return (Map<String, Object>) map;
-    }
-
-    protected Object getMapValue(Object obj, String key) {
-        Map<String, Object> map = toMap(obj);
-        return map.get(key);
-    }
-
-    /**
-     * checks if object is <code>instanceof</code> <code>java.util.Map</code>
-     *
-     * @param obj object to check
-     * @return true if Map
-     */
-    protected boolean isMap(Object obj) {
-        return (obj instanceof Map);
-    }
 
     protected String trim(String str, int front, int end) {
         String res = str;
@@ -72,6 +29,6 @@ public abstract class Filter {
         return res;
     }
 
-    public abstract Object filter(Object obj);
+    public abstract Object filter(Object obj, JsonProvider jsonProvider);
 
 }

@@ -1,6 +1,7 @@
 package com.jayway.jsonpath.reader.filter;
 
-import java.util.LinkedList;
+import com.jayway.jsonpath.spi.JsonProvider;
+
 import java.util.List;
 import java.util.Map;
 
@@ -16,16 +17,16 @@ public class FieldFilter extends Filter {
         super(condition);
     }
 
-    public Object filter(Object obj) {
-        if (isList(obj)) {
-            List<Object> result = new LinkedList<Object>();
-            for (Object current : toList(obj)) {
-                if (isMap(current)) {
-                    Map<String, Object> map = toMap(current);
+    public Object filter(Object obj, JsonProvider jsonProvider) {
+        if (jsonProvider.isList(obj)) {
+            List<Object> result = jsonProvider.createList();
+            for (Object current : jsonProvider.toList(obj)) {
+                if (jsonProvider.isMap(current)) {
+                    Map<String, Object> map = jsonProvider.toMap(current);
                     if (map.containsKey(condition)) {
                         Object o = map.get(condition);
-                        if (isList(o)) {
-                            result.addAll(toList(o));
+                        if (jsonProvider.isList(o)) {
+                            result.addAll(jsonProvider.toList(o));
                         } else {
                             result.add(map.get(condition));
                         }
@@ -34,7 +35,7 @@ public class FieldFilter extends Filter {
             }
             return result;
         } else {
-            return getMapValue(obj, condition);
+            return jsonProvider.getMapValue(obj, condition);
         }
     }
 }

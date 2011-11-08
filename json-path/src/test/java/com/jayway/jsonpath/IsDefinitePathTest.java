@@ -11,20 +11,19 @@ import static org.junit.Assert.assertTrue;
  * Date: 2/3/11
  * Time: 9:58 PM
  */
-public class PathUtilTest {
+public class IsDefinitePathTest {
 
 
     @Test
     public void path_is_not_definite() throws Exception {
-        assertFalse(PathUtil.isPathDefinite("$..book[0]"));
-        assertFalse(PathUtil.isPathDefinite("$.books[*]"));
+        assertFalse(JsonPath.compile("$..book[0]").isPathDefinite());
+        assertFalse(JsonPath.compile("$.books[*]").isPathDefinite());
     }
 
     @Test
     public void path_is_definite() throws Exception {
-        assertTrue(PathUtil.isPathDefinite("$.definite.this.is"));
-        assertTrue(PathUtil.isPathDefinite("$.definite:this.is"));
-        assertTrue(PathUtil.isPathDefinite("rows[0].id"));
+        assertTrue(JsonPath.compile("$.definite.this.is").isPathDefinite());
+        assertTrue(JsonPath.compile("rows[0].id").isPathDefinite());
     }
 
 

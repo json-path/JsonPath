@@ -1,9 +1,10 @@
 package com.jayway.jsonpath;
 
+import com.jayway.jsonpath.reader.PathTokenizer;
+import com.jayway.jsonpath.spi.JsonProvider;
+import com.jayway.jsonpath.spi.impl.DefaultJsonProvider;
 import org.hamcrest.Matcher;
 import org.junit.Test;
-
-import java.util.List;
 
 import static org.hamcrest.Matchers.hasItems;
 import static org.junit.Assert.assertThat;
@@ -17,7 +18,7 @@ import static org.junit.Assert.assertTrue;
  */
 public class SplitPathFragmentsTest {
 
-
+    private JsonProvider jsonProvider = new DefaultJsonProvider();
 
     @Test
     public void valid_path_is_split_correctly() throws Exception {
@@ -92,7 +93,7 @@ public class SplitPathFragmentsTest {
 
     private void assertPathInvalid(String path) {
         try {
-            PathUtil.splitPath(path);
+            PathTokenizer tokenizer = new PathTokenizer(path, jsonProvider);
             assertTrue("Expected exception!", false);
         } catch (InvalidPathException expected) {}
     }
@@ -100,13 +101,16 @@ public class SplitPathFragmentsTest {
     private void assertPath(String path, Matcher<Iterable<String>> matcher) {
         System.out.println("PATH: " + path);
 
-        List<String> fragments = PathUtil.splitPath(path);
 
-        for (String fragment : fragments) {
+        PathTokenizer tokenizer = new PathTokenizer(path, jsonProvider);
+
+
+
+        for (String fragment : tokenizer.getFragments()) {
             System.out.println(fragment);
         }
 
-        assertThat(fragments, matcher);
+        assertThat(tokenizer.getFragments(), matcher);
         System.out.println("----------------------------------");
     }
 

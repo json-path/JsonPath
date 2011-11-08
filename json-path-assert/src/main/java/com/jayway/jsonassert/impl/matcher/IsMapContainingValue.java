@@ -32,8 +32,10 @@ package com.jayway.jsonassert.impl.matcher;
 import org.hamcrest.Description;
 import org.hamcrest.Factory;
 import org.hamcrest.Matcher;
-import static org.hamcrest.core.IsEqual.equalTo;
+
 import java.util.Map;
+
+import static org.hamcrest.core.IsEqual.equalTo;
 
 public class IsMapContainingValue<V> extends MapTypeSafeMatcher<Map<?,V>>{
     private final Matcher<? super V> valueMatcher;

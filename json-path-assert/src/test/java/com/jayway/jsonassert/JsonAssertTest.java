@@ -1,6 +1,5 @@
 package com.jayway.jsonassert;
 
-import org.hamcrest.Matchers;
 import org.junit.Test;
 
 import java.io.InputStream;
@@ -141,10 +140,12 @@ public class JsonAssertTest {
                 .assertThat("$['store'].book[0].title", equalTo("Sayings of the Century"));
     }
 
+    /*
     @Test
     public void no_hit_returns_null() throws Exception {
         with(JSON).assertThat("$.store.book[1000].title", Matchers.<Object>nullValue());
     }
+    */
 
     @Test
     public void invalid_path() throws Exception {

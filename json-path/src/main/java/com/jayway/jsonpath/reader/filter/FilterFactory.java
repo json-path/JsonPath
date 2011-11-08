@@ -1,7 +1,5 @@
 package com.jayway.jsonpath.reader.filter;
 
-import com.jayway.jsonpath.filter.ListEvalFilter;
-
 /**
  * Created by IntelliJ IDEA.
  * User: kallestenflo
@@ -10,19 +8,28 @@ import com.jayway.jsonpath.filter.ListEvalFilter;
  */
 public class FilterFactory {
 
+    private final static Filter DOCUMENT_FILTER = new PassThrewFilter("$");
+    private final static Filter ALL_ARRAY_ITEMS_FILTER = new PassThrewFilter("[*]");
+    private final static Filter WILDCARD_FILTER = new WildcardFilter("*");
+    private final static Filter SCAN_FILTER = new ScanFilter("..");
+
     public static Filter createFilter(String pathFragment) {
 
-        if ("$".equals(pathFragment) || "[*]".equals(pathFragment)) {
+        if ("$".equals(pathFragment)) {
 
-            return new PassThrewFilter(pathFragment);
+            return DOCUMENT_FILTER;
+
+        } else if("[*]".equals(pathFragment)){
+
+            return ALL_ARRAY_ITEMS_FILTER;
 
         } else if ("*".equals(pathFragment)) {
 
-            return new WildcardFilter(pathFragment);
+            return WILDCARD_FILTER;
 
         } else if (pathFragment.contains("..")) {
 
-            return new ScanFilter(pathFragment);
+            return SCAN_FILTER;
 
         } else if (!pathFragment.contains("[")) {
 

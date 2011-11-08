@@ -1,6 +1,7 @@
 package com.jayway.jsonpath.reader.filter;
 
-import java.util.LinkedList;
+import com.jayway.jsonpath.spi.JsonProvider;
+
 import java.util.List;
 
 /**
@@ -15,10 +16,10 @@ public class ArrayIndexFilter extends Filter {
     }
 
     @Override
-    public Object filter(Object obj) {
+    public Object filter(Object obj,JsonProvider jsonProvider) {
 
-        List<Object> src = toList(obj);
-        List<Object> result = new LinkedList<Object>();
+        List<Object> src = jsonProvider.toList(obj);
+        List<Object> result = jsonProvider.createList();
 
         String trimmedCondition = trim(condition, 1, 1);
 

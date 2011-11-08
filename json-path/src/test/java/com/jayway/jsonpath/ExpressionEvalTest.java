@@ -1,6 +1,6 @@
 package com.jayway.jsonpath;
 
-import com.jayway.jsonpath.eval.ExpressionEvaluator;
+import com.jayway.jsonpath.reader.filter.eval.ExpressionEvaluator;
 import org.junit.Test;
 
 import static org.junit.Assert.assertFalse;

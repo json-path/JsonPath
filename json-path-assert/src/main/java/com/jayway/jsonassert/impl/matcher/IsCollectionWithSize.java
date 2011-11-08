@@ -29,13 +29,13 @@ DAMAGE.
 */
 package com.jayway.jsonassert.impl.matcher;
 
-import static org.hamcrest.core.IsEqual.equalTo;
-
 import org.hamcrest.Description;
 import org.hamcrest.Factory;
 import org.hamcrest.Matcher;
 
 import java.util.Collection;
+
+import static org.hamcrest.core.IsEqual.equalTo;
 
 /**
  * Matches if collection size satisfies a nested matcher.

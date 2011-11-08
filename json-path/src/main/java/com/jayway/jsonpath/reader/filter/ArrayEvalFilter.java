@@ -1,9 +1,9 @@
 package com.jayway.jsonpath.reader.filter;
 
 import com.jayway.jsonpath.InvalidPathException;
-import com.jayway.jsonpath.eval.ExpressionEvaluator;
+import com.jayway.jsonpath.reader.filter.eval.ExpressionEvaluator;
+import com.jayway.jsonpath.spi.JsonProvider;
 
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.regex.Matcher;
@@ -24,31 +24,28 @@ public class ArrayEvalFilter extends Filter {
     }
 
     @Override
-    public Object filter(Object obj) {
+    public Object filter(Object obj, JsonProvider jsonProvider) {
         //[?(@.isbn = 10)]
-        List<Object> src = toList(obj);
-        List<Object> result = new LinkedList<Object>();
+        List<Object> src = jsonProvider.toList(obj);
+        List<Object> result = jsonProvider.createList();
 
         String trimmedCondition = trim(condition, 5, 2);
 
         ConditionStatement conditionStatement = createConditionStatement(trimmedCondition);
 
-
-
-
         for (Object item : src) {
-            if (isMatch(item, conditionStatement)) {
+            if (isMatch(item, conditionStatement, jsonProvider)) {
                 result.add(item);
             }
         }
         return result;
     }
 
-    private boolean isMatch(Object check, ConditionStatement conditionStatement) {
-        if (!isMap(check)) {
+    private boolean isMatch(Object check, ConditionStatement conditionStatement, JsonProvider jsonProvider) {
+        if (!jsonProvider.isMap(check)) {
             return false;
         }
-        Map obj = toMap(check);
+        Map obj = jsonProvider.toMap(check);
 
         if (!obj.containsKey(conditionStatement.getField())) {
             return false;
@@ -56,7 +53,7 @@ public class ArrayEvalFilter extends Filter {
 
         Object propertyValue = obj.get(conditionStatement.getField());
 
-        if (isContainer(propertyValue)) {
+        if (jsonProvider.isContainer(propertyValue)) {
             return false;
         }
         return ExpressionEvaluator.eval(propertyValue, conditionStatement.getOperator(), conditionStatement.getExpected());

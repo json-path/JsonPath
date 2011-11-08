@@ -1,4 +1,4 @@
-package com.jayway.jsonpath.eval;
+package com.jayway.jsonpath.reader.filter.eval;
 
 /**
  * User: kalle stenflo

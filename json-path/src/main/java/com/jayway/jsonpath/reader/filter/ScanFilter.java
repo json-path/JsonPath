@@ -1,8 +1,8 @@
 package com.jayway.jsonpath.reader.filter;
 
-import com.jayway.jsonpath.JsonUtil;
 
-import java.util.LinkedList;
+import com.jayway.jsonpath.spi.JsonProvider;
+
 import java.util.List;
 
 /**
@@ -18,29 +18,29 @@ public class ScanFilter extends Filter {
     }
 
     @Override
-    public Object filter(Object obj) {
-        List<Object> result = new LinkedList<Object>();
-        scan(obj, result);
+    public Object filter(Object obj, JsonProvider jsonProvider) {
+        List<Object> result = jsonProvider.createList();
+        scan(obj, result, jsonProvider);
 
         return result;
     }
 
 
-    private void scan(Object container, List<Object> result) {
+    private void scan(Object container, List<Object> result, JsonProvider jsonProvider) {
 
-        if (isMap(container)) {
+        if (jsonProvider.isMap(container)) {
             result.add(container);
 
-            for (Object value : toMap(container).values()) {
-                if (isContainer(value)) {
-                    scan(value, result);
+            for (Object value : jsonProvider.toMap(container).values()) {
+                if (jsonProvider.isContainer(value)) {
+                    scan(value, result, jsonProvider);
                 }
             }
-        } else if (isList(container)) {
+        } else if (jsonProvider.isList(container)) {
 
-            for (Object value : JsonUtil.toList(container)) {
-                if (isContainer(value)) {
-                    scan(value, result);
+            for (Object value : jsonProvider.toList(container)) {
+                if (jsonProvider.isContainer(value)) {
+                    scan(value, result, jsonProvider);
                 }
             }
         }

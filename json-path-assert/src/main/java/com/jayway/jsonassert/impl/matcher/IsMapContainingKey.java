@@ -29,11 +29,12 @@ DAMAGE.
 */
 package com.jayway.jsonassert.impl.matcher;
 
-import java.util.Map;
-
 import org.hamcrest.Description;
 import org.hamcrest.Factory;
 import org.hamcrest.Matcher;
+
+import java.util.Map;
+
 import static org.hamcrest.core.IsEqual.equalTo;
 
 public class IsMapContainingKey<K> extends MapTypeSafeMatcher<Map<K,?>> {

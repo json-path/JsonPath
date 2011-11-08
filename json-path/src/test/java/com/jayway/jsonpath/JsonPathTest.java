@@ -1,5 +1,6 @@
 package com.jayway.jsonpath;
 
+import com.jayway.jsonpath.util.ScriptEngineJsonPath;
 import org.junit.Test;
 
 import java.util.List;
@@ -70,6 +71,7 @@ public class JsonPathTest {
 
     private final static String ARRAY_EXPAND = "[{\"parent\": \"ONE\", \"child\": {\"name\": \"NAME_ONE\"}}, [{\"parent\": \"TWO\", \"child\": {\"name\": \"NAME_TWO\"}}]]";
 
+
     @Test
     public void array_start_expands() throws Exception {
         assertThat(JsonPath.<List<String>>read(ARRAY_EXPAND, "$[?(@.parent = 'ONE')].child.name"), hasItems("NAME_ONE"));
@@ -77,6 +79,10 @@ public class JsonPathTest {
 
     @Test
     public void bracket_notation_can_be_used_in_path() throws Exception {
+
+        //System.out.println(ScriptEngineJsonPath.eval(DOCUMENT, "$.['store'].['bicycle'].['dot.notation']"));
+        System.out.println(ScriptEngineJsonPath.eval(DOCUMENT, "$.store.bicycle.['dot.notation']"));
+
 
         assertEquals("new", JsonPath.read(DOCUMENT, "$.['store'].bicycle.['dot.notation']"));
         assertEquals("new", JsonPath.read(DOCUMENT, "$['store']['bicycle']['dot.notation']"));
