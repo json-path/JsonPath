@@ -196,9 +196,19 @@ public class JsonPathTest {
     @Test
     public void all_books_cheaper_than_10() throws Exception {
 
-        assertThat(JsonPath.<List<String>>read(DOCUMENT, "$.store.book[?(@.price < 10)].title"), hasItems("Sayings of the Century", "Moby Dick"));
+        assertThat(JsonPath.<List<String>>read(DOCUMENT, "$..book[?(@.price<10)].title"), hasItems("Sayings of the Century", "Moby Dick"));
 
     }
+
+        @Test
+    public void all_books() throws Exception {
+
+            //List<String> books = JsonPath.<List<String>>read(DOCUMENT, "$..book");
+            Object books = JsonPath.<List<String>>read(DOCUMENT, "$..book");
+
+            System.out.println("test");
+
+        }
 
     @Test
     public void dot_in_predicate_works() throws Exception {
@@ -217,7 +227,8 @@ public class JsonPathTest {
     @Test
     public void all_books_with_category_reference() throws Exception {
 
-        assertThat(JsonPath.<List<String>>read(DOCUMENT, "$..book[?(@.category = 'reference')].title"), hasItems("Sayings of the Century"));
+        assertThat(JsonPath.<List<String>>read(DOCUMENT, "$..book[?(@.category='reference')].title"), hasItems("Sayings of the Century"));
+        assertThat(JsonPath.<List<String>>read(DOCUMENT, "$.store.book[?(@.category='reference')].title"), hasItems("Sayings of the Century"));
 
     }
 
@@ -226,26 +237,12 @@ public class JsonPathTest {
         List<String> all = JsonPath.read(DOCUMENT, "$..*");
     }
 
-    @Test
+    @Test(expected = IndexOutOfBoundsException.class)
     public void access_index_out_of_bounds_does_not_throw_exception() throws Exception {
 
         Object res = JsonPath.read(DOCUMENT, "$.store.book[100].author");
 
-        assertNull(res);
-
-        res = JsonPath.read(DOCUMENT, "$.store.book[1, 200].author");
-
-
-        assertThat((List<String>) res, hasItems("Evelyn Waugh"));
-        //assertNull(();
     }
-
-    /*
-    @Test(expected = InvalidPathException.class)
-    public void invalid_space_path_throws_exception() throws Exception {
-        JsonPath.read(DOCUMENT, "space is not good");
-    }
-    */
 
     @Test(expected = InvalidPathException.class)
     public void invalid_new_path_throws_exception() throws Exception {

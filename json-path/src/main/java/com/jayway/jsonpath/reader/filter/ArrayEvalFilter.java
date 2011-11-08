@@ -34,6 +34,8 @@ public class ArrayEvalFilter extends Filter {
         ConditionStatement conditionStatement = createConditionStatement(trimmedCondition);
 
 
+
+
         for (Object item : src) {
             if (isMatch(item, conditionStatement)) {
                 result.add(item);
@@ -83,6 +85,10 @@ public class ArrayEvalFilter extends Filter {
             this.field = field;
             this.operator = operator;
             this.expected = expected;
+
+            if(this.expected.startsWith("'")){
+                this.expected = trim(this.expected, 1, 1);
+            }
         }
 
         public String getField() {

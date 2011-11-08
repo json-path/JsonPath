@@ -14,6 +14,7 @@ import java.util.List;
  */
 public class PathTokenizer implements Iterable<PathToken> {
 
+    private String path;
     private char[] pathChars;
     private int index = 0;
     private List<PathToken> pathTokens = new LinkedList<PathToken>();
@@ -23,11 +24,16 @@ public class PathTokenizer implements Iterable<PathToken> {
         if (!jsonPath.startsWith("$") && !jsonPath.startsWith("$[")) {
             jsonPath = "$." + jsonPath;
         }
-        pathChars = jsonPath.toCharArray();
+        this.path = jsonPath;
+        this.pathChars = path.toCharArray();
 
         for (String pathFragment : splitPath()) {
             pathTokens.add(new PathToken(pathFragment));
         }
+    }
+
+    public String getPath() {
+        return path;
     }
 
     public Iterator<PathToken> iterator() {

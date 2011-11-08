@@ -17,10 +17,20 @@ public class FieldFilter extends Filter {
     }
 
     public Object filter(Object obj) {
-        if(isList(obj)){
+        if (isList(obj)) {
             List<Object> result = new LinkedList<Object>();
-            for (Object item : toList(obj)) {
-                result.add(filter(item));
+            for (Object current : toList(obj)) {
+                if (isMap(current)) {
+                    Map<String, Object> map = toMap(current);
+                    if (map.containsKey(condition)) {
+                        Object o = map.get(condition);
+                        if (isList(o)) {
+                            result.addAll(toList(o));
+                        } else {
+                            result.add(map.get(condition));
+                        }
+                    }
+                }
             }
             return result;
         } else {

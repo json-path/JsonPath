@@ -1,15 +1,16 @@
 package com.jayway.jsonpath;
 
 
-import com.jayway.jsonpath.filter.FilterOutput;
-import com.jayway.jsonpath.filter.JsonPathFilterChain;
-import net.minidev.json.JSONArray;
-import net.minidev.json.JSONObject;
+import com.jayway.jsonpath.reader.PathToken;
+import com.jayway.jsonpath.reader.PathTokenizer;
 import net.minidev.json.parser.JSONParser;
 import net.minidev.json.parser.ParseException;
 
 import java.io.IOException;
+import java.util.List;
+import java.util.Map;
 import java.util.logging.Logger;
+import java.util.regex.Pattern;
 
 /**
  * User: kalle stenflo
@@ -84,16 +85,18 @@ public class JsonPath {
 
     private static JSONParser JSON_PARSER = new JSONParser(JsonPath.mode);
 
-    private JsonPathFilterChain filters;
+    private static Pattern DEFINITE_PATH_PATTERN = Pattern.compile(".*(\\.\\.|\\*|\\[[\\\\/]|\\?|,|:\\s?\\]|\\[\\s?:|>|\\(|<|=|\\+).*");
 
-    public static void setMode(int mode){
-        if(mode != JsonPath.mode){
+    private PathTokenizer tokenizer;
+
+    public static void setMode(int mode) {
+        if (mode != JsonPath.mode) {
             JsonPath.mode = mode;
             JSON_PARSER = new JSONParser(JsonPath.mode);
         }
     }
 
-    public static int getMode(){
+    public static int getMode() {
         return mode;
     }
 
@@ -111,24 +114,71 @@ public class JsonPath {
 
             throw new InvalidPathException("Invalid path");
         }
-        this.filters = new JsonPathFilterChain(PathUtil.splitPath(jsonPath));
+        this.tokenizer = new PathTokenizer(jsonPath);
+        //this.filters = new JsonPathFilterChain(PathUtil.splitPath(jsonPath));
+    }
+
+    public String getPath() {
+        return this.tokenizer.getPath();
     }
 
     /**
-     * Applies this json path to the provided object
+     * Checks if a path points to a single item or if it potentially returns multiple items
+     * <p/>
+     * a path is considered <strong>not</strong> definite if it contains a scan fragment ".."
+     * or an array position fragment that is not based on a single index
+     * <p/>
+     * <p/>
+     * definite path examples are:
+     * <p/>
+     * $store.book
+     * $store.book[1].title
+     * <p/>
+     * not definite path examples are:
+     * <p/>
+     * $..book
+     * $.store.book[1,2]
+     * $.store.book[?(@.category = 'fiction')]
      *
-     * @param json a json Object
+     * @return true if path is definite (points to single item)
+     */
+    public boolean isPathDefinite() {
+        //return !getPath().replaceAll("\"[^\"\\\\\\n\r]*\"", "").matches(".*(\\.\\.|\\*|\\[[\\\\/]|\\?|,|:\\s?\\]|\\[\\s?:|>|\\(|<|=|\\+).*");
+
+        String preparedPath = getPath().replaceAll("\"[^\"\\\\\\n\r]*\"", "");
+
+        return !DEFINITE_PATH_PATTERN.matcher(preparedPath).matches();
+
+    }
+
+    /**
+     * Applies this container path to the provided object
+     *
+     * @param container a container Object
      * @param <T>
      * @return list of objects matched by the given path
      */
-    public <T> T read(Object json) {
-        FilterOutput filterOutput = filters.filter(json);
+    public <T> T read(Object container) {
+
+        if(!(container instanceof Map) && !(container instanceof List) ){
+            throw new IllegalArgumentException("Invalid container object");
+        }
+
+        Object result = container;
+
+        for (PathToken pathToken : tokenizer) {
+            result = pathToken.filter(result);
+        }
+        return (T)result;
+        /*
+        FilterOutput filterOutput = filters.filter(container);
 
         if (filterOutput == null || filterOutput.getResult() == null) {
             return null;
         }
 
         return (T) filterOutput.getResult();
+        */
     }
 
     /**
