@@ -8,7 +8,6 @@ import net.minidev.json.JSONObject;
 import net.minidev.json.parser.JSONParser;
 import net.minidev.json.parser.ParseException;
 
-import java.io.IOException;
 import java.util.List;
 import java.util.Map;
 
@@ -18,17 +17,17 @@ import java.util.Map;
  * Date: 11/8/11
  * Time: 3:56 PM
  */
-public class DefaultJsonProvider extends JsonProvider {
+public class JsonSmartProvider extends JsonProvider {
 
     private Mode mode;
 
     private JSONParser parser;
 
-    public DefaultJsonProvider() {
+    public JsonSmartProvider() {
         this(Mode.SLACK);
     }
 
-    public DefaultJsonProvider(Mode mode) {
+    public JsonSmartProvider(Mode mode) {
         this.mode = mode;
         this.parser = new JSONParser(mode.intValue());
     }
@@ -45,8 +44,6 @@ public class DefaultJsonProvider extends JsonProvider {
         try {
             return parser.parse(json);
         } catch (ParseException e) {
-            throw new InvalidJsonException(e);
-        } catch (IOException e) {
             throw new InvalidJsonException(e);
         }
     }

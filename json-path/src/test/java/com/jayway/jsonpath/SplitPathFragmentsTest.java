@@ -2,7 +2,6 @@ package com.jayway.jsonpath;
 
 import com.jayway.jsonpath.reader.PathTokenizer;
 import com.jayway.jsonpath.spi.JsonProvider;
-import com.jayway.jsonpath.spi.impl.DefaultJsonProvider;
 import org.hamcrest.Matcher;
 import org.junit.Test;
 
@@ -18,7 +17,7 @@ import static org.junit.Assert.assertTrue;
  */
 public class SplitPathFragmentsTest {
 
-    private JsonProvider jsonProvider = new DefaultJsonProvider();
+    private JsonProvider jsonProvider = JsonProvider.getInstance();
 
     @Test
     public void valid_path_is_split_correctly() throws Exception {

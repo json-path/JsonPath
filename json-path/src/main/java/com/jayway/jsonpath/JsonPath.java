@@ -4,7 +4,6 @@ package com.jayway.jsonpath;
 import com.jayway.jsonpath.reader.PathToken;
 import com.jayway.jsonpath.reader.PathTokenizer;
 import com.jayway.jsonpath.spi.JsonProvider;
-import com.jayway.jsonpath.spi.impl.DefaultJsonProvider;
 
 import java.util.List;
 import java.util.Map;
@@ -87,7 +86,7 @@ public class JsonPath {
      * @param jsonPath the path statement
      */
     private JsonPath(String jsonPath) {
-        this(new DefaultJsonProvider(), jsonPath);
+        this(JsonProvider.getInstance(), jsonPath);
     }
 
 

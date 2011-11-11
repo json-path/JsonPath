@@ -1,18 +1,19 @@
 package com.jayway.jsonpath;
 
+import com.jayway.jsonpath.spi.impl.JacksonProvider;
 import org.junit.Test;
-
-import java.util.Map;
 
 /**
  * Created by IntelliJ IDEA.
  * User: kallestenflo
  * Date: 11/8/11
- * Time: 7:52 PM
+ * Time: 10:40 PM
  */
-public class PathReaderTest {
+public class JacksonProviderTest {
 
-        public final static String DOCUMENT =
+    public final static String ARRAY = "[{\"value\": 1},{\"value\": 2}, {\"value\": 3},{\"value\": 4}]";
+
+    public final static String DOCUMENT =
             "{ \"store\": {\n" +
                     "    \"book\": [ \n" +
                     "      { \"category\": \"reference\",\n" +
@@ -46,20 +47,25 @@ public class PathReaderTest {
                     "    }\n" +
                     "  }\n" +
                     "}";
-    
+
+
     @Test
-    public void a_path_can_be_read() throws Exception {
+    public void parse_document() throws Exception {
 
-        PathReader pathReader = PathReader.create(DOCUMENT);
+        JacksonProvider provider = new JacksonProvider();
 
-        Map<String, Object> book = pathReader.read("store.book[1]");
+        Object o = provider.parse(DOCUMENT);
 
-        PathReader pathReader1 = pathReader.get("store.book[1]");
-
-        String author = pathReader1.read("author");
-
-        System.out.println("d");
+        System.out.println(o);
 
     }
-    
+
+    @Test
+    public void parse_array() throws Exception {
+                JacksonProvider provider = new JacksonProvider();
+
+        Object o = provider.parse(ARRAY);
+
+        System.out.println(o);
+    }
 }

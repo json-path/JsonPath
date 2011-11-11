@@ -4,7 +4,6 @@ package com.jayway.jsonassert;
 import com.jayway.jsonassert.impl.JsonAsserterImpl;
 import com.jayway.jsonassert.impl.matcher.*;
 import com.jayway.jsonpath.spi.JsonProvider;
-import com.jayway.jsonpath.spi.impl.DefaultJsonProvider;
 import org.hamcrest.Matcher;
 
 import java.io.*;
@@ -19,12 +18,7 @@ import java.util.Map;
  */
 public class JsonAssert {
 
-    private static JsonProvider jsonProvider = new DefaultJsonProvider();
-
-    public final static int STRICT_MODE = 0;
-    public final static int SLACK_MODE = -1;
-
-    private static int mode = SLACK_MODE;
+    private static JsonProvider jsonProvider = JsonProvider.getInstance();
 
     public static void setJsonProvider(JsonProvider jsonProvider) {
         JsonAssert.jsonProvider = jsonProvider;
@@ -61,7 +55,7 @@ public class JsonAssert {
      * @return a JSON asserter initialized with the provided document
      * @throws ParseException when the given JSON could not be parsed
      */
-    public static JsonAsserter with(InputStream is) throws ParseException, IOException {
+    public static JsonAsserter with(InputStream is) throws IOException {
         Reader reader = new InputStreamReader(is);
         return with(reader);
     }

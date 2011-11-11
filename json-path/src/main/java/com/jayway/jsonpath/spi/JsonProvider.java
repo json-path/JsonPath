@@ -1,6 +1,8 @@
 package com.jayway.jsonpath.spi;
 
 import com.jayway.jsonpath.InvalidJsonException;
+import com.jayway.jsonpath.spi.impl.JacksonProvider;
+import com.jayway.jsonpath.spi.impl.JsonSmartProvider;
 
 import java.util.List;
 import java.util.Map;
@@ -20,6 +22,11 @@ public abstract class JsonProvider {
     public abstract Map<String, Object> createMap();
 
     public abstract List<Object> createList();
+
+    public static JsonProvider getInstance(){
+        //return new JsonSmartProvider();
+        return new JacksonProvider();
+    }
 
     /**
      * checks if object is <code>instanceof</code> <code>java.util.List</code> or <code>java.util.Map</code>

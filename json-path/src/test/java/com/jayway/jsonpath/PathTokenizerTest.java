@@ -3,7 +3,6 @@ package com.jayway.jsonpath;
 import com.jayway.jsonpath.reader.PathToken;
 import com.jayway.jsonpath.reader.PathTokenizer;
 import com.jayway.jsonpath.spi.JsonProvider;
-import com.jayway.jsonpath.spi.impl.DefaultJsonProvider;
 import org.junit.Test;
 
 import java.util.List;
@@ -20,7 +19,7 @@ import static org.junit.Assert.assertThat;
  */
 public class PathTokenizerTest {
 
-    private JsonProvider jsonProvider = new DefaultJsonProvider();
+    private JsonProvider jsonProvider = JsonProvider.getInstance();
 
     public final static String DOCUMENT =
             "{ \"store\": {\n" +
