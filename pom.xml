@@ -26,7 +26,7 @@
     <artifactId>json-path-parent</artifactId>
     <packaging>pom</packaging>
     <version>0.5.6-SNAPSHOT</version>
-    <url>http://code.google.com/p/json-path</url>
+    <url>https://github.com/jayway/JsonPath</url>
     <name>json-path-parent-pom</name>
     <description>Java JsonPath implementation</description>
     <inceptionYear>2011</inceptionYear>
@@ -154,18 +154,11 @@
 
     <dependencyManagement>
         <dependencies>
-            <!--
-            <dependency>
-                <groupId>com.googlecode.json-simple</groupId>
-                <artifactId>json-simple</artifactId>
-                <version>1.1</version>
-            </dependency>
-            -->
 
             <dependency>
                 <groupId>net.minidev</groupId>
                 <artifactId>json-smart</artifactId>
-                <version>1.0.9</version>
+                <version>1.0.9-1</version>
             </dependency>
 
             <dependency>

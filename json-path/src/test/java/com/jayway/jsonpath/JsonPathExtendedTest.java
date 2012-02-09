@@ -1,15 +1,14 @@
 package com.jayway.jsonpath;
 
-import com.jayway.jsonpath.util.ScriptEngineJsonPath;
 import org.junit.Test;
 
 /**
  * Created by IntelliJ IDEA.
  * User: kallestenflo
- * Date: 11/8/11
- * Time: 7:52 PM
+ * Date: 11/12/11
+ * Time: 8:25 PM
  */
-public class JsonModelTest {
+public class JsonPathExtendedTest {
 
     public final static String DOCUMENT =
             "{ \"store\": {\n" +
@@ -46,63 +45,15 @@ public class JsonModelTest {
                     "  }\n" +
                     "}";
 
-    public final static JsonModel MODEL = new JsonModel(DOCUMENT);
 
     @Test
-    public void a_path_can_be_read() throws Exception {
+    public void test_1() throws Exception {
+
 
         JsonPath path = JsonPath.compile("$.store.book[*].title");
 
-        JsonModel model = new JsonModel(DOCUMENT);
-
-        Object result = model.get(path);
-
-        System.out.println(model.getJsonProvider().toJson(result));
 
 
-    }
-
-    @Test
-    public void test2() throws Exception {
-        JsonPath path = JsonPath.compile("$..");
-
-        System.out.println(ScriptEngineJsonPath.eval(DOCUMENT, path.getPath()));
-
-        JsonModel model = new JsonModel(DOCUMENT);
-
-        System.out.println(model.getJson(path));
-    }
-
-
-    @Test
-    public void test3() throws Exception {
-        JsonPath path = JsonPath.compile("$..[0]");
-
-        //System.out.println(ScriptEngineJsonPath.eval(DOCUMENT, path.getPath()));
-
-        System.out.println(MODEL.getJson(path));
-    }
-
-    @Test
-    public void test4() throws Exception {
-        JsonPath path = JsonPath.compile("$..*");
-
-        System.out.println(ScriptEngineJsonPath.eval(DOCUMENT, path.getPath()));
-        System.out.println("--------------------------------");
-
-        JsonModel model = new JsonModel(DOCUMENT);
-        System.out.println(model.getJson(path));
-    }
-
-    @Test
-    public void test5() throws Exception {
-
-        JsonModel model = new JsonModel(DOCUMENT);
-
-        JsonModel model2 = model.getModel("store.book[0]");
-
-
-        System.out.println(model2.getJson());
 
     }
 

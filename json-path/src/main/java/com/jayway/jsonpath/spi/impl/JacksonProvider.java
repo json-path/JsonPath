@@ -33,6 +33,11 @@ public class JacksonProvider extends JsonProvider {
     }
 
     @Override
+    public String toJson(Object obj) {
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
     public Map<String, Object> createMap() {
         return new HashMap<String, Object>();
     }

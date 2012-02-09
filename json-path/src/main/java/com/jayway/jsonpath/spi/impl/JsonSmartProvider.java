@@ -4,6 +4,7 @@ import com.jayway.jsonpath.InvalidJsonException;
 import com.jayway.jsonpath.spi.JsonProvider;
 import com.jayway.jsonpath.spi.Mode;
 import net.minidev.json.JSONArray;
+import net.minidev.json.JSONAware;
 import net.minidev.json.JSONObject;
 import net.minidev.json.parser.JSONParser;
 import net.minidev.json.parser.ParseException;
@@ -46,6 +47,16 @@ public class JsonSmartProvider extends JsonProvider {
         } catch (ParseException e) {
             throw new InvalidJsonException(e);
         }
+    }
+
+    @Override
+    public String toJson(Object obj) {
+        if(!(obj instanceof JSONAware)){
+            throw new InvalidJsonException();
+        }
+        JSONAware aware = (JSONAware)obj;
+
+        return aware.toJSONString();
     }
 
     public Mode getMode() {

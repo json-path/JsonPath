@@ -14,7 +14,7 @@ public class JsonModel {
 
     private JsonProvider jsonProvider;
 
-    private JsonModel(String json) {
+    public JsonModel(String json) {
         this.jsonProvider = JsonProvider.getInstance();
         this.jsonObject = jsonProvider.parse(json);
     }
@@ -28,24 +28,36 @@ public class JsonModel {
         return new JsonModel(json);
     }
 
-    public <T> T read(String jsonPath) {
+    public <T> T get(String jsonPath) {
         JsonPath path = JsonPath.compile(jsonProvider, jsonPath);
-        return (T)read(path);
+        return (T) get(path);
     }
 
-    public <T> T read(JsonPath jsonPath) {
+    public <T> T get(JsonPath jsonPath) {
         return (T) jsonPath.read(jsonObject);
     }
 
-    public JsonModel get(String jsonPath) {
-        JsonPath path = JsonPath.compile(jsonProvider, jsonPath);
-
-        return get(path);
+    public String getJson(JsonPath jsonPath) {
+        return jsonProvider.toJson(jsonPath.read(jsonObject));
     }
 
-    public JsonModel get(JsonPath jsonPath) {
+    public JsonModel getModel(String jsonPath) {
+        JsonPath path = JsonPath.compile(jsonProvider, jsonPath);
+
+        return getModel(path);
+    }
+
+    public JsonModel getModel(JsonPath jsonPath) {
         Object subModel = jsonPath.read(jsonObject);
 
         return new JsonModel(subModel);
+    }
+
+    public JsonProvider getJsonProvider() {
+        return jsonProvider;
+    }
+    
+    public String getJson(){
+        return jsonProvider.toJson(jsonObject);
     }
 }

@@ -100,10 +100,7 @@ public class SplitPathFragmentsTest {
     private void assertPath(String path, Matcher<Iterable<String>> matcher) {
         System.out.println("PATH: " + path);
 
-
         PathTokenizer tokenizer = new PathTokenizer(path, jsonProvider);
-
-
 
         for (String fragment : tokenizer.getFragments()) {
             System.out.println(fragment);

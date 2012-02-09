@@ -37,6 +37,7 @@
 				  }
 				};
 
+                $('#src').append(JSON.stringify(window.doc, null, 4));
 				
 				$('#btnEval').click(function(e) {
 					$('#result').empty();
@@ -51,7 +52,8 @@
 		</script>
 	</head>
 	<body>
-		<input id="txtPath" type="text" value="$.store.book[?(@.price<10)].title"><button id="btnEval">eval</button>
+        <pre id="src"></pre>
+		<input id="txtPath" type="text" style="width:600px;" value="$.store.book[?(@.price<10)].title"><button id="btnEval">eval</button>
 		<pre id="result"></pre>
 	</body>
 </html>

@@ -19,13 +19,15 @@ public abstract class JsonProvider {
 
     public abstract Object parse(String json) throws InvalidJsonException;
 
+    public abstract String toJson(Object obj);
+
     public abstract Map<String, Object> createMap();
 
     public abstract List<Object> createList();
 
     public static JsonProvider getInstance(){
-        //return new JsonSmartProvider();
-        return new JacksonProvider();
+        return new JsonSmartProvider();
+        //return new JacksonProvider();
     }
 
     /**
