@@ -9,6 +9,7 @@ import java.util.Map;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.hasItems;
 import static org.junit.Assert.*;
+import static org.junit.Assert.assertThat;
 
 /**
  * Created by IntelliJ IDEA.
@@ -26,29 +27,29 @@ public class JsonPathTest {
                     "      { \"category\": \"reference\",\n" +
                     "        \"author\": \"Nigel Rees\",\n" +
                     "        \"title\": \"Sayings of the Century\",\n" +
-                    "        \"price\": 8.95\n" +
+                    "        \"display-price\": 8.95\n" +
                     "      },\n" +
                     "      { \"category\": \"fiction\",\n" +
                     "        \"author\": \"Evelyn Waugh\",\n" +
                     "        \"title\": \"Sword of Honour\",\n" +
-                    "        \"price\": 12.99\n" +
+                    "        \"display-price\": 12.99\n" +
                     "      },\n" +
                     "      { \"category\": \"fiction\",\n" +
                     "        \"author\": \"Herman Melville\",\n" +
                     "        \"title\": \"Moby Dick\",\n" +
                     "        \"isbn\": \"0-553-21311-3\",\n" +
-                    "        \"price\": 8.99\n" +
+                    "        \"display-price\": 8.99\n" +
                     "      },\n" +
                     "      { \"category\": \"fiction\",\n" +
                     "        \"author\": \"J. R. R. Tolkien\",\n" +
                     "        \"title\": \"The Lord of the Rings\",\n" +
                     "        \"isbn\": \"0-395-19395-8\",\n" +
-                    "        \"price\": 22.99\n" +
+                    "        \"display-price\": 22.99\n" +
                     "      }\n" +
                     "    ],\n" +
                     "    \"bicycle\": {\n" +
                     "      \"color\": \"red\",\n" +
-                    "      \"price\": 19.95,\n" +
+                    "      \"display-price\": 19.95,\n" +
                     "      \"foo:bar\": \"fooBar\",\n" +
                     "      \"dot.notation\": \"new\",\n" +
 	                "      \"dash-notation\": \"dashes\"\n" +
@@ -174,7 +175,7 @@ public class JsonPathTest {
     @Test
     public void all_prices_in_store() throws Exception {
 
-        assertThat(JsonPath.<List<Double>>read(DOCUMENT, "$.store..price"), hasItems(8.95D, 12.99D, 8.99D, 19.95D));
+        assertThat(JsonPath.<List<Double>>read(DOCUMENT, "$.store..['display-price']"), hasItems(8.95D, 12.99D, 8.99D, 19.95D));
 
     }
 
@@ -205,12 +206,13 @@ public class JsonPathTest {
 
         assertThat(JsonPath.<List<String>>read(DOCUMENT, "$.store.book[?(@.isbn)].isbn"), hasItems("0-553-21311-3", "0-395-19395-8"));
         assertTrue(JsonPath.<List>read(DOCUMENT, "$.store.book[?(@.isbn)].isbn").size() == 2);
+	    assertTrue(JsonPath.<List>read(DOCUMENT, "$.store.book[?(@['isbn'])].isbn").size() == 2);
     }
 
     @Test
     public void all_books_cheaper_than_10() throws Exception {
 
-        assertThat(JsonPath.<List<String>>read(DOCUMENT, "$..book[?(@.price<10)].title"), hasItems("Sayings of the Century", "Moby Dick"));
+        assertThat(JsonPath.<List<String>>read(DOCUMENT, "$..book[?(@['display-price'] < 10)].title"), hasItems("Sayings of the Century", "Moby Dick"));
 
     }
 
