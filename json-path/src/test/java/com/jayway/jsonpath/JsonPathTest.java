@@ -50,7 +50,8 @@ public class JsonPathTest {
                     "      \"color\": \"red\",\n" +
                     "      \"price\": 19.95,\n" +
                     "      \"foo:bar\": \"fooBar\",\n" +
-                    "      \"dot.notation\": \"new\"\n" +
+                    "      \"dot.notation\": \"new\",\n" +
+	                "      \"dash-notation\": \"dashes\"\n" +
                     "    }\n" +
                     "  }\n" +
                     "}";
@@ -88,6 +89,13 @@ public class JsonPathTest {
         assertEquals("new", JsonPath.read(DOCUMENT, "$['store']['bicycle']['dot.notation']"));
         assertEquals("new", JsonPath.read(DOCUMENT, "$.['store']['bicycle']['dot.notation']"));
         assertEquals("new", JsonPath.read(DOCUMENT, "$.['store'].['bicycle'].['dot.notation']"));
+
+	    System.out.println(ScriptEngineJsonPath.eval(DOCUMENT, "$.store.bicycle.['dash-notation']"));
+
+	    assertEquals("dashes", JsonPath.read(DOCUMENT, "$.['store'].bicycle.['dash-notation']"));
+	    assertEquals("dashes", JsonPath.read(DOCUMENT, "$['store']['bicycle']['dash-notation']"));
+	    assertEquals("dashes", JsonPath.read(DOCUMENT, "$.['store']['bicycle']['dash-notation']"));
+	    assertEquals("dashes", JsonPath.read(DOCUMENT, "$.['store'].['bicycle'].['dash-notation']"));
     }
 
     @Test
