@@ -25,6 +25,11 @@ public class ScanFilter extends Filter {
         return result;
     }
 
+    @Override
+    public boolean isArrayFilter() {
+        return true;
+    }
+
 
     private void scan(Object container, List<Object> result, JsonProvider jsonProvider) {
 

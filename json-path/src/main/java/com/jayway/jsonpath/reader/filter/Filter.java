@@ -29,6 +29,14 @@ public abstract class Filter {
         return res;
     }
 
+    public Object filter(Object obj, JsonProvider jsonProvider, boolean inArrayContext){
+        return filter(obj, jsonProvider);
+    }
+
     public abstract Object filter(Object obj, JsonProvider jsonProvider);
+
+
+
+    public abstract boolean isArrayFilter();
 
 }

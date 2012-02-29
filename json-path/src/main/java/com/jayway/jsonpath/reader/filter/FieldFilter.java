@@ -17,8 +17,38 @@ public class FieldFilter extends Filter {
         super(condition);
     }
 
+    @Override
+    public Object filter(Object obj, JsonProvider jsonProvider, boolean inArrayContext) {
+        if (jsonProvider.isList(obj)) {
+            if (!inArrayContext) {
+                return null;
+            } else {
+                List<Object> result = jsonProvider.createList();
+                for (Object current : jsonProvider.toList(obj)) {
+                    if (jsonProvider.isMap(current)) {
+                        Map<String, Object> map = jsonProvider.toMap(current);
+                        if (map.containsKey(condition)) {
+                            Object o = map.get(condition);
+                            if (jsonProvider.isList(o)) {
+                                result.addAll(jsonProvider.toList(o));
+                            } else {
+                                result.add(map.get(condition));
+                            }
+                        }
+                    }
+                }
+                return result;
+            }
+        } else {
+            return jsonProvider.getMapValue(obj, condition);
+        }
+    }
+
+
     public Object filter(Object obj, JsonProvider jsonProvider) {
         if (jsonProvider.isList(obj)) {
+            return obj;
+            /*
             List<Object> result = jsonProvider.createList();
             for (Object current : jsonProvider.toList(obj)) {
                 if (jsonProvider.isMap(current)) {
@@ -34,8 +64,16 @@ public class FieldFilter extends Filter {
                 }
             }
             return result;
+            */
         } else {
             return jsonProvider.getMapValue(obj, condition);
         }
     }
+
+    @Override
+    public boolean isArrayFilter() {
+        return false;
+    }
+
+
 }

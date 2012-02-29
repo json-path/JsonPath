@@ -33,4 +33,9 @@ public class WildcardFilter extends Filter {
         }
         return result;
     }
+
+    @Override
+    public boolean isArrayFilter() {
+        return true;
+    }
 }

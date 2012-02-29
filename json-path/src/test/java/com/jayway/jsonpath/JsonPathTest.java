@@ -77,7 +77,8 @@ public class JsonPathTest {
 
     @Test
     public void array_start_expands() throws Exception {
-        assertThat(JsonPath.<List<String>>read(ARRAY_EXPAND, "$[?(@.parent = 'ONE')].child.name"), hasItems("NAME_ONE"));
+        //assertThat(JsonPath.<List<String>>read(ARRAY_EXPAND, "$[?(@.parent = 'ONE')].child.name"), hasItems("NAME_ONE"));
+        assertThat(JsonPath.<List<String>>read(ARRAY_EXPAND, "$[?(@['parent'] = 'ONE')].child.name"), hasItems("NAME_ONE"));
     }
 
     @Test

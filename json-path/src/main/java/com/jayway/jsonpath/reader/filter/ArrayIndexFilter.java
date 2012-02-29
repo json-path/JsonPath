@@ -58,4 +58,9 @@ public class ArrayIndexFilter extends Filter {
             }
         }
     }
+
+    @Override
+    public boolean isArrayFilter() {
+        return true;
+    }
 }
