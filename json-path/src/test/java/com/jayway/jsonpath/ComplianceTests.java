@@ -40,7 +40,12 @@ public class ComplianceTests {
 
         assertThat(JsonPath.<Integer>read(json, "$[0]"), is(equalTo(1)));
         assertThat(JsonPath.<Integer>read(json, "$[4]"), is(equalTo(null)));
-        assertThat(JsonPath.<List<Comparable>>read(json, "$[*]"), hasItems((Comparable)new Integer(1), (Comparable)new String("2"), (Comparable)new Double(3.14), (Comparable)new Boolean(true), null));
+        assertThat(JsonPath.<List<Comparable>>read(json, "$[*]"), hasItems(
+                (Comparable)new Integer(1),
+                (Comparable)new String("2"),
+                (Comparable)new Double(3.14),
+                (Comparable)new Boolean(true),
+                null));
         assertThat(JsonPath.<Boolean>read(json, "$[-1:]"), is(equalTo(null)));
     }
 
@@ -65,7 +70,7 @@ public class ComplianceTests {
 
         assertThat(JsonPath.<Integer>read(json, "$.points[4].x"), equalTo(0));
 
-        assertThat(JsonPath.<List<Integer>>read(json, "$.points[?(@.id = 'i4')].x"), hasItem(-6));
+        assertThat(JsonPath.<List<Integer>>read(json, "$.points[?(@.id == 'i4')].x"), hasItem(-6));
 
         assertThat(JsonPath.<List<Integer>>read(json, "$.points[*].x"), hasItems(4, -2, 8, -6, 0, 1));
 
@@ -78,7 +83,44 @@ public class ComplianceTests {
 
     @Test
     public void test_four() throws Exception {
+        String json = "{ \"menu\": {\n" +
+                "                 \"header\": \"SVG Viewer\",\n" +
+                "                 \"items\": [\n" +
+                "                     {\"id\": \"Open\"},\n" +
+                "                     {\"id\": \"OpenNew\", \"label\": \"Open New\"},\n" +
+                "                     null,\n" +
+                "                     {\"id\": \"ZoomIn\", \"label\": \"Zoom In\"},\n" +
+                "                     {\"id\": \"ZoomOut\", \"label\": \"Zoom Out\"},\n" +
+                "                     {\"id\": \"OriginalView\", \"label\": \"Original View\"},\n" +
+                "                     null,\n" +
+                "                     {\"id\": \"Quality\"},\n" +
+                "                     {\"id\": \"Pause\"},\n" +
+                "                     {\"id\": \"Mute\"},\n" +
+                "                     null,\n" +
+                "                     {\"id\": \"Find\", \"label\": \"Find...\"},\n" +
+                "                     {\"id\": \"FindAgain\", \"label\": \"Find Again\"},\n" +
+                "                     {\"id\": \"Copy\"},\n" +
+                "                     {\"id\": \"CopyAgain\", \"label\": \"Copy Again\"},\n" +
+                "                     {\"id\": \"CopySVG\", \"label\": \"Copy SVG\"},\n" +
+                "                     {\"id\": \"ViewSVG\", \"label\": \"View SVG\"},\n" +
+                "                     {\"id\": \"ViewSource\", \"label\": \"View Source\"},\n" +
+                "                     {\"id\": \"SaveAs\", \"label\": \"Save As\"},\n" +
+                "                     null,\n" +
+                "                     {\"id\": \"Help\"},\n" +
+                "                     {\"id\": \"About\", \"label\": \"About Adobe CVG Viewer...\"}\n" +
+                "                 ]\n" +
+                "               }\n" +
+                "             }";
 
+
+
+        /*
+
+        "$.menu.items[?(@ && @.id && !@.label)].id",
+                       "$.menu.items[?(@ && @.label && /SVG/.test(@.label))].id",
+                       "$.menu.items[?(!@)]",
+            		   "$..[0]"
+         */
     }
 
 
