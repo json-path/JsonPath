@@ -1,5 +1,6 @@
 package com.jayway.jsonpath;
 
+import com.jayway.jsonpath.reader.PathTokenizer;
 import com.jayway.jsonpath.util.ScriptEngineJsonPath;
 import org.junit.Test;
 
@@ -212,7 +213,9 @@ public class JsonPathTest {
     @Test
     public void all_books_cheaper_than_10() throws Exception {
 
+
         assertThat(JsonPath.<List<String>>read(DOCUMENT, "$..book[?(@['display-price'] < 10)].title"), hasItems("Sayings of the Century", "Moby Dick"));
+        assertThat(JsonPath.<List<String>>read(DOCUMENT, "$..book[?(@.display-price < 10)].title"), hasItems("Sayings of the Century", "Moby Dick"));
 
     }
 

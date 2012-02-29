@@ -24,7 +24,14 @@ public class HasFieldFilter extends Filter {
         List<Object> src = jsonProvider.toList(obj);
         List<Object> result = jsonProvider.createList();
 
-        String trimmedCondition = trim(condition, 5, 2);
+        String trimmedCondition = condition;
+
+        if(condition.contains("['")){
+            trimmedCondition = trimmedCondition.replace("['", ".");
+            trimmedCondition = trimmedCondition.replace("']", "");
+        }
+
+        trimmedCondition = trim(trimmedCondition, 5, 2);
 
         for (Object item : src) {
             if(jsonProvider.isMap(item)){

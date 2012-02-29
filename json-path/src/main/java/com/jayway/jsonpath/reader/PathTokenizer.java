@@ -33,7 +33,7 @@ public class PathTokenizer implements Iterable<PathToken> {
         }
     }
 
-    public List<String> getFragments(){
+    public List<String> getFragments() {
         List<String> fragments = new LinkedList<String>();
         for (PathToken pathToken : pathTokens) {
             fragments.add(pathToken.getFragment());
@@ -106,17 +106,28 @@ public class PathTokenizer implements Iterable<PathToken> {
 
 
     private String extract(boolean includeSopChar, char... stopChars) {
+
+
         StringBuilder sb = new StringBuilder();
         while (!isEmpty() && (!isStopChar(peek(), stopChars))) {
 
-            char c = poll();
 
-            if (isStopChar(c, stopChars)) {
-                if (includeSopChar) {
+            if (peek() == '(') {
+                do {
+                    sb.append(poll());
+                } while (peek() != ')');
+                sb.append(poll());
+            } else {
+
+                char c = poll();
+
+                if (isStopChar(c, stopChars)) {
+                    if (includeSopChar) {
+                        sb.append(c);
+                    }
+                } else {
                     sb.append(c);
                 }
-            } else {
-                sb.append(c);
             }
         }
         if (includeSopChar) {
