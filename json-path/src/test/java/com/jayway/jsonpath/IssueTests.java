@@ -10,7 +10,7 @@ import static junit.framework.Assert.assertNull;
  * Date: 2/29/12
  * Time: 8:42 AM
  */
-public class Issues {
+public class IssueTests {
     @Test
     public void issue_7() throws Exception {
 
