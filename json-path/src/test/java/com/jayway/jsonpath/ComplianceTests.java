@@ -7,6 +7,7 @@ import java.util.List;
 import java.util.Map;
 
 import static org.hamcrest.Matchers.*;
+import static org.hamcrest.Matchers.hasItems;
 import static org.junit.Assert.assertThat;
 
 /**
@@ -113,14 +114,11 @@ public class ComplianceTests {
                 "             }";
 
 
+        //assertThat(JsonPath.<List<String>>read(json, "$.menu.items[?(@ && @.id && !@.label)].id"), hasItems("?")); //low
+        //assertThat(JsonPath.<List<String>>read(json, "$.menu.items[?(@ && @.label && /SVG/.test(@.label))].id"), hasItems("?")); //low
+        //assertThat(JsonPath.<List<String>>read(json, "$.menu.items[?(!@)]"), hasItems("?")); //low
+        //assertThat(JsonPath.<List<String>>read(json, "$..[0]"), hasItems("?")); //low
 
-        /*
-
-        "$.menu.items[?(@ && @.id && !@.label)].id",
-                       "$.menu.items[?(@ && @.label && /SVG/.test(@.label))].id",
-                       "$.menu.items[?(!@)]",
-            		   "$..[0]"
-         */
     }
 
 

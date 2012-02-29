@@ -8,8 +8,8 @@ package com.jayway.jsonpath.reader.filter;
  */
 public class FilterFactory {
 
-    private final static Filter DOCUMENT_FILTER = new PassThroughFilter("$", false);
-    private final static Filter ALL_ARRAY_ITEMS_FILTER = new PassThroughFilter("[*]", true);
+    private final static Filter DOCUMENT_FILTER = new PassthroughFilter("$", false);
+    private final static Filter ALL_ARRAY_ITEMS_FILTER = new PassthroughFilter("[*]", true);
     private final static Filter WILDCARD_FILTER = new WildcardFilter("*");
     private final static Filter SCAN_FILTER = new ScanFilter("..");
 

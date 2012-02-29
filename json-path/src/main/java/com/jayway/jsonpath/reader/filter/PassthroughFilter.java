@@ -8,11 +8,12 @@ import com.jayway.jsonpath.spi.JsonProvider;
  * Date: 11/4/11
  * Time: 10:15 PM
  */
-public class PassThroughFilter extends Filter {
+public class PassthroughFilter extends Filter {
+
 
     private boolean isArrayFilter;
 
-    public PassThroughFilter(String condition, boolean isArrayFilter) {
+    public PassthroughFilter(String condition, boolean isArrayFilter) {
         super(condition);
         this.isArrayFilter = isArrayFilter;
     }
