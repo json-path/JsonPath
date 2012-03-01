@@ -1,5 +1,7 @@
 package com.jayway.jsonpath;
 
+import com.jayway.jsonpath.reader.PathToken;
+import com.jayway.jsonpath.reader.PathTokenizer;
 import org.hamcrest.Matchers;
 import org.junit.Test;
 
@@ -15,8 +17,6 @@ import static org.junit.Assert.assertThat;
  */
 public class ComplianceTests {
 
-
-
     @Test
     public void test_one() throws Exception {
 
@@ -24,12 +24,12 @@ public class ComplianceTests {
                 "           b: \"b\",\n" +
                 "           \"c d\": \"e\" \n" +
                 "         }";
-        
-        assertThat(JsonPath.<String>read(json, "$.a"), is(equalTo("a")));
+
+        assertThat(JsonPath.<String>read(json, "$.a"), equalTo("a"));
         assertThat(JsonPath.<List<String>>read(json, "$.*"), hasItems("a", "b", "e"));
         assertThat(JsonPath.<List<String>>read(json, "$['*']"), hasItems("a", "b", "e"));
+        assertThat(JsonPath.<String>read(json, "$['a']"), equalTo("a"));
 
-        //assertThat(JsonPath.<String>read(json, "$['a']"), is(equalTo("a")));              //high
         //assertThat(JsonPath.<String>read(json, "$.'c d'"), is(equalTo("e")));             //low
         //assertThat(JsonPath.<List<String>>read(json, "$[*]"), hasItems("a", "b", "e"));   //low
 

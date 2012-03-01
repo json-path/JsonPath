@@ -149,7 +149,7 @@ public class PathTokenizer implements Iterable<PathToken> {
         src = trimLeft(src, "?");
         src = trimLeft(src, "@");
 
-        if (src.length() > 5 && src.subSequence(0, 2).equals("['")) {
+        if (src.length() >= 5 && src.subSequence(0, 2).equals("['")) {
             src = src.substring(2);
             src = src.substring(0, src.length() - 2);
         }
