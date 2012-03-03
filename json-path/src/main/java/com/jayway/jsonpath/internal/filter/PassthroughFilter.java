@@ -12,35 +12,29 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.jayway.jsonpath.spi;
+package com.jayway.jsonpath.internal.filter;
+
+import com.jayway.jsonpath.spi.JsonProvider;
 
 /**
  * @author Kalle Stenflo
  */
-public enum Mode {
+public class PassthroughFilter extends Filter {
 
-    SLACK(-1),
-    STRICT(1);
 
-    private final int mode;
+    private boolean isArrayFilter;
 
-    Mode(int mode) {
-        this.mode = mode;
+    public PassthroughFilter(String condition, boolean isArrayFilter) {
+        super(condition);
+        this.isArrayFilter = isArrayFilter;
     }
 
-    public int intValue(){
-        return mode;
+    public Object filter(Object obj, JsonProvider jsonProvider) {
+        return obj;
     }
 
-    public Mode parse(int mode){
-        if(mode == -1){
-            return SLACK;
-        } else if(mode == 1){
-            return STRICT;
-        } else {
-            throw new IllegalArgumentException("Mode " + mode + " not supported");
-        }
+    @Override
+    public boolean isArrayFilter() {
+        return isArrayFilter;
     }
-
-
 }

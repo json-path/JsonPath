@@ -43,7 +43,6 @@ public class ScriptEngineJsonPath {
     private static String readScript(String script) {
         InputStream is = null;
         try {
-
             is = ScriptEngineJsonPath.class.getClassLoader().getSystemResourceAsStream("js/" + script);
 
             return new Scanner(is).useDelimiter("\\A").next();
@@ -52,6 +51,7 @@ public class ScriptEngineJsonPath {
                 try {
                     is.close();
                 } catch (IOException e) {
+                    throw new RuntimeException(e);
                 }
             }
         }

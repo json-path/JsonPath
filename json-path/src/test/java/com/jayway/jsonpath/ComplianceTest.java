@@ -1,7 +1,5 @@
 package com.jayway.jsonpath;
 
-import com.jayway.jsonpath.reader.PathToken;
-import com.jayway.jsonpath.reader.PathTokenizer;
 import org.hamcrest.Matchers;
 import org.junit.Test;
 
@@ -15,7 +13,7 @@ import static org.junit.Assert.assertThat;
 /**
  * test defined in http://jsonpath.googlecode.com/svn/trunk/tests/jsonpath-test-js.html
  */
-public class ComplianceTests {
+public class ComplianceTest {
 
     @Test
     public void test_one() throws Exception {
@@ -82,6 +80,7 @@ public class ComplianceTests {
         //assertThat(JsonPath.<List<Integer>>read(json, "$['points'][?(@.x * @.x + @.y * @.y > 50)].id"), hasItems(?)); //low
     }
 
+    @SuppressWarnings("UnusedAssignment")
     @Test
     public void test_four() throws Exception {
         String json = "{ \"menu\": {\n" +

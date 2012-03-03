@@ -1,6 +1,6 @@
 package com.jayway.jsonpath;
 
-import com.jayway.jsonpath.reader.filter.eval.ExpressionEvaluator;
+import com.jayway.jsonpath.internal.filter.eval.ExpressionEvaluator;
 import org.junit.Test;
 
 import static org.junit.Assert.assertFalse;
@@ -14,12 +14,11 @@ import static org.junit.Assert.assertTrue;
  */
 public class ExpressionEvalTest {
 
-
-    
     @Test
     public void long_eval() throws Exception {
 
         assertTrue(ExpressionEvaluator.eval(1L, "=", "1"));
+        assertTrue(ExpressionEvaluator.eval(1L, "==", "1"));
         assertTrue(ExpressionEvaluator.eval(2L, "!=", "1"));
         assertTrue(ExpressionEvaluator.eval(2L, ">", "1"));
         assertTrue(ExpressionEvaluator.eval(2L, ">=", "1"));
@@ -39,6 +38,7 @@ public class ExpressionEvalTest {
     public void double_eval() throws Exception {
 
         assertTrue(ExpressionEvaluator.eval(1D, "=", "1"));
+        assertTrue(ExpressionEvaluator.eval(1D, "==", "1"));
         assertTrue(ExpressionEvaluator.eval(2D, "!=", "1"));
         assertTrue(ExpressionEvaluator.eval(2D, ">", "1"));
         assertTrue(ExpressionEvaluator.eval(2D, ">=", "1"));
@@ -57,7 +57,7 @@ public class ExpressionEvalTest {
     @Test
     public void string_eval() throws Exception {
 
-        assertTrue(ExpressionEvaluator.eval("A", "=", "A"));
+        assertTrue(ExpressionEvaluator.eval("A", "==", "A"));
         assertTrue(ExpressionEvaluator.eval("B", "!=", "A"));
 
     }

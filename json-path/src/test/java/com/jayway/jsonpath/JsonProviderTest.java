@@ -9,7 +9,7 @@ import org.junit.Test;
  * Date: 11/8/11
  * Time: 10:40 PM
  */
-public class JacksonProviderTest {
+public class JsonProviderTest {
 
     public final static String ARRAY = "[{\"value\": 1},{\"value\": 2}, {\"value\": 3},{\"value\": 4}]";
 

@@ -1,6 +1,5 @@
 package com.jayway.jsonpath;
 
-import com.jayway.jsonpath.reader.PathTokenizer;
 import com.jayway.jsonpath.util.ScriptEngineJsonPath;
 import org.junit.Test;
 
@@ -159,7 +158,6 @@ public class JsonPathTest {
         assertThat(JsonPath.<List<String>>read(DOCUMENT, "$['store'].book[*]['author']"), hasItems("Nigel Rees", "Evelyn Waugh", "Herman Melville", "J. R. R. Tolkien"));
     }
 
-
     @Test
     public void all_authors() throws Exception {
         assertThat(JsonPath.<List<String>>read(DOCUMENT, "$..author"), hasItems("Nigel Rees", "Evelyn Waugh", "Herman Melville", "J. R. R. Tolkien"));
@@ -264,9 +262,6 @@ public class JsonPathTest {
 
     }
 
-    @Test(expected = InvalidPathException.class)
-    public void invalid_new_path_throws_exception() throws Exception {
-        JsonPath.read(DOCUMENT, "new ");
-    }
+
 
 }

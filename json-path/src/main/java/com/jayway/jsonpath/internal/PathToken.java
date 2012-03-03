@@ -12,35 +12,32 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.jayway.jsonpath.spi;
+package com.jayway.jsonpath.internal;
+
+import com.jayway.jsonpath.internal.filter.Filter;
+import com.jayway.jsonpath.internal.filter.FilterFactory;
+import com.jayway.jsonpath.spi.JsonProvider;
 
 /**
  * @author Kalle Stenflo
  */
-public enum Mode {
+public class PathToken {
 
-    SLACK(-1),
-    STRICT(1);
+    private String fragment;
 
-    private final int mode;
-
-    Mode(int mode) {
-        this.mode = mode;
+    public PathToken(String fragment) {
+        this.fragment = fragment;
     }
 
-    public int intValue(){
-        return mode;
+    public Filter getFilter(){
+        return FilterFactory.createFilter(fragment);
     }
 
-    public Mode parse(int mode){
-        if(mode == -1){
-            return SLACK;
-        } else if(mode == 1){
-            return STRICT;
-        } else {
-            throw new IllegalArgumentException("Mode " + mode + " not supported");
-        }
+    public Object filter(Object model, JsonProvider jsonProvider){
+        return FilterFactory.createFilter(fragment).filter(model, jsonProvider);
     }
 
-
+    public String getFragment() {
+        return fragment;
+    }
 }

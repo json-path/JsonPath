@@ -1,5 +1,7 @@
 package com.jayway.jsonpath;
 
+import com.jayway.jsonpath.spi.JsonProvider;
+import com.jayway.jsonpath.spi.JsonProviderFactory;
 import com.jayway.jsonpath.util.ScriptEngineJsonPath;
 import org.junit.Test;
 
@@ -57,7 +59,7 @@ public class JsonModelTest {
 
         Object result = model.get(path);
 
-        System.out.println(model.getJsonProvider().toJson(result));
+        System.out.println(JsonProviderFactory.getInstance().toJson(result));
 
 
     }
@@ -99,7 +101,7 @@ public class JsonModelTest {
 
         JsonModel model = new JsonModel(DOCUMENT);
 
-        JsonModel model2 = model.getModel("store.book[0]");
+        JsonModel model2 = model.getSubModel("store.book[0]");
 
 
         System.out.println(model2.getJson());

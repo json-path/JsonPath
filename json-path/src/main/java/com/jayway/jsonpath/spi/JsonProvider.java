@@ -1,34 +1,45 @@
+/*
+ * Copyright 2011 the original author or authors.
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *       http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package com.jayway.jsonpath.spi;
 
 import com.jayway.jsonpath.InvalidJsonException;
-import com.jayway.jsonpath.spi.impl.JacksonProvider;
-import com.jayway.jsonpath.spi.impl.JsonSmartProvider;
 
+import java.io.InputStream;
+import java.io.Reader;
 import java.util.List;
 import java.util.Map;
 
 /**
- * Created by IntelliJ IDEA.
- * User: kallestenflo
- * Date: 11/8/11
- * Time: 3:51 PM
+ * @author Kalle Stenflo
  */
-public abstract class JsonProvider {
+public interface JsonProvider {
 
-    public abstract Mode getMode();
+    Mode getMode();
 
-    public abstract Object parse(String json) throws InvalidJsonException;
+    Object parse(String json) throws InvalidJsonException;
 
-    public abstract String toJson(Object obj);
+    Object parse(Reader jsonReader) throws InvalidJsonException;
 
-    public abstract Map<String, Object> createMap();
+    Object parse(InputStream jsonStream) throws InvalidJsonException;
 
-    public abstract List<Object> createList();
+    String toJson(Object obj);
 
-    public static JsonProvider getInstance(){
-        return new JsonSmartProvider();
-        //return new JacksonProvider();
-    }
+    Map<String, Object> createMap();
+
+    List<Object> createList();
+
 
     /**
      * checks if object is <code>instanceof</code> <code>java.util.List</code> or <code>java.util.Map</code>
@@ -36,9 +47,7 @@ public abstract class JsonProvider {
      * @param obj object to check
      * @return true if List or Map
      */
-    public boolean isContainer(Object obj) {
-        return (isList(obj) || isMap(obj));
-    }
+    boolean isContainer(Object obj);
 
     /**
      * checks if object is <code>instanceof</code> <code>java.util.List</code>
@@ -46,9 +55,7 @@ public abstract class JsonProvider {
      * @param obj object to check
      * @return true if List
      */
-    public boolean isList(Object obj) {
-        return (obj instanceof List);
-    }
+     boolean isList(Object obj);
 
     /**
      * Converts give object to a List
@@ -56,9 +63,7 @@ public abstract class JsonProvider {
      * @param list
      * @return
      */
-    public List<Object> toList(Object list) {
-        return (List<Object>) list;
-    }
+     List<Object> toList(Object list);
 
 
     /**
@@ -67,9 +72,7 @@ public abstract class JsonProvider {
      * @param map
      * @return
      */
-    public Map<String, Object> toMap(Object map) {
-        return (Map<String, Object>) map;
-    }
+     Map<String, Object> toMap(Object map);
 
     /**
      * Extracts a value from a Map
@@ -78,9 +81,7 @@ public abstract class JsonProvider {
      * @param key
      * @return
      */
-    public Object getMapValue(Object map, String key) {
-        return toMap(map).get(key);
-    }
+     Object getMapValue(Object map, String key);
 
     /**
      * checks if object is <code>instanceof</code> <code>java.util.Map</code>
@@ -88,9 +89,7 @@ public abstract class JsonProvider {
      * @param obj object to check
      * @return true if Map
      */
-    public boolean isMap(Object obj) {
-        return (obj instanceof Map);
-    }
+     boolean isMap(Object obj);
 
 
 }

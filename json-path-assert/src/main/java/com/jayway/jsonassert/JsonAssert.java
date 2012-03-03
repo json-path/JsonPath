@@ -4,6 +4,7 @@ package com.jayway.jsonassert;
 import com.jayway.jsonassert.impl.JsonAsserterImpl;
 import com.jayway.jsonassert.impl.matcher.*;
 import com.jayway.jsonpath.spi.JsonProvider;
+import com.jayway.jsonpath.spi.JsonProviderFactory;
 import org.hamcrest.Matcher;
 
 import java.io.*;
@@ -18,7 +19,7 @@ import java.util.Map;
  */
 public class JsonAssert {
 
-    private static JsonProvider jsonProvider = JsonProvider.getInstance();
+    private static JsonProvider jsonProvider = JsonProviderFactory.getInstance();
 
     public static void setJsonProvider(JsonProvider jsonProvider) {
         JsonAssert.jsonProvider = jsonProvider;

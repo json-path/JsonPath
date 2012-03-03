@@ -1,11 +1,11 @@
 package com.jayway.jsonpath;
 
-import com.jayway.jsonpath.reader.PathTokenizer;
-import com.jayway.jsonpath.spi.JsonProvider;
+import com.jayway.jsonpath.internal.PathTokenizer;
 import org.hamcrest.Matcher;
 import org.junit.Test;
 
 import static org.hamcrest.Matchers.hasItems;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
 
@@ -15,32 +15,20 @@ import static org.junit.Assert.assertTrue;
  * Date: 2/2/11
  * Time: 1:22 PM
  */
-public class SplitPathFragmentsTest {
-
-    private JsonProvider jsonProvider = JsonProvider.getInstance();
-
-
+public class PathTest {
 
 
     @Test
-    public void array_filter_bracket_test() throws Exception {
-
-
-        PathTokenizer tokenizer = new PathTokenizer("$.store.book[?(@['isbn'])].isbn", jsonProvider);
-        //PathTokenizer tokenizer = new PathTokenizer("$.store.book[?(@.isbn)].isbn", jsonProvider);
-
-        for (String fragment : tokenizer.getFragments()) {
-            System.out.println(fragment);
-        }
-
-        //assertThat(tokenizer.getFragments(), hasItems("$", "store", "[*]"));
-
-
-
+    public void path_is_not_definite() throws Exception {
+        assertFalse(JsonPath.compile("$..book[0]").isPathDefinite());
+        assertFalse(JsonPath.compile("$.books[*]").isPathDefinite());
     }
 
-
-
+    @Test
+    public void path_is_definite() throws Exception {
+        assertTrue(JsonPath.compile("$.definite.this.is").isPathDefinite());
+        assertTrue(JsonPath.compile("rows[0].id").isPathDefinite());
+    }
 
     @Test
     public void valid_path_is_split_correctly() throws Exception {
@@ -122,7 +110,7 @@ public class SplitPathFragmentsTest {
 
     private void assertPathInvalid(String path) {
         try {
-            PathTokenizer tokenizer = new PathTokenizer(path, jsonProvider);
+            PathTokenizer tokenizer = new PathTokenizer(path);
             assertTrue("Expected exception!", false);
         } catch (InvalidPathException expected) {}
     }
@@ -130,7 +118,7 @@ public class SplitPathFragmentsTest {
     private void assertPath(String path, Matcher<Iterable<String>> matcher) {
         System.out.println("PATH: " + path);
 
-        PathTokenizer tokenizer = new PathTokenizer(path, jsonProvider);
+        PathTokenizer tokenizer = new PathTokenizer(path);
 
         for (String fragment : tokenizer.getFragments()) {
             System.out.println(fragment);
