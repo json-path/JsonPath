@@ -46,6 +46,11 @@ public class WildcardFilter extends Filter {
     }
 
     @Override
+    public Object getRef(Object obj, JsonProvider jsonProvider) {
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
     public boolean isArrayFilter() {
         return true;
     }

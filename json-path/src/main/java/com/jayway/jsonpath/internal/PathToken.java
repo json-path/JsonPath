@@ -37,6 +37,10 @@ public class PathToken {
         return FilterFactory.createFilter(fragment).filter(model, jsonProvider);
     }
 
+    public Object get(Object model, JsonProvider jsonProvider){
+        return FilterFactory.createFilter(fragment).getRef(model, jsonProvider);
+    }
+
     public String getFragment() {
         return fragment;
     }

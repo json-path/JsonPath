@@ -34,6 +34,11 @@ public class PassthroughFilter extends Filter {
     }
 
     @Override
+    public Object getRef(Object obj, JsonProvider jsonProvider) {
+        return obj;
+    }
+
+    @Override
     public boolean isArrayFilter() {
         return isArrayFilter;
     }

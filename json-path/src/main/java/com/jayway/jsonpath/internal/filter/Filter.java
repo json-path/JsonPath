@@ -46,7 +46,7 @@ public abstract class Filter {
 
     public abstract Object filter(Object obj, JsonProvider jsonProvider);
 
-
+    public abstract Object getRef(Object obj, JsonProvider jsonProvider);
 
     public abstract boolean isArrayFilter();
 

@@ -18,6 +18,7 @@ package com.jayway.jsonpath;
 import com.jayway.jsonpath.internal.PathToken;
 import com.jayway.jsonpath.internal.PathTokenizer;
 import com.jayway.jsonpath.internal.filter.Filter;
+import com.jayway.jsonpath.spi.JsonProvider;
 import com.jayway.jsonpath.spi.JsonProviderFactory;
 import org.apache.commons.io.IOUtils;
 
@@ -108,6 +109,15 @@ public class JsonPath {
         this.tokenizer = new PathTokenizer(jsonPath);
     }
 
+    PathTokenizer getTokenizer(){
+        return this.tokenizer;
+    }
+
+    /**
+     * Returns the string representation of this JsonPath
+     *
+     * @return path as String
+     */
     public String getPath() {
         return this.tokenizer.getPath();
     }
@@ -154,13 +164,15 @@ public class JsonPath {
             throw new IllegalArgumentException("Invalid container object");
         }
 
+        JsonProvider jsonProvider = JsonProviderFactory.getInstance();
+
         Object result = jsonObject;
 
         boolean inArrayContext = false;
 
         for (PathToken pathToken : tokenizer) {
             Filter filter = pathToken.getFilter();
-            result = filter.filter(result, JsonProviderFactory.getInstance(), inArrayContext);
+            result = filter.filter(result, jsonProvider, inArrayContext);
 
             if (!inArrayContext) {
                 inArrayContext = filter.isArrayFilter();
