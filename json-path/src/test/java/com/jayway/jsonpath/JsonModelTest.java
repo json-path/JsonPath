@@ -52,7 +52,6 @@ public class JsonModelTest {
                     "  }\n" +
                     "}";
 
-
     @Test
     public void a_json_document_can_be_fetched_with_a_URL() throws Exception {
         URL url = new URL("http://maps.googleapis.com/maps/api/geocode/json");
@@ -86,13 +85,9 @@ public class JsonModelTest {
     }
 
     @Test
-    public void map_a_json_model() throws Exception {
+    public void map_a_json_model_to_an_Class() throws Exception {
 
         JsonModel model = JsonModel.create(DOCUMENT);
-
-        List<Book> booksList = model.map("$.store.book[0,1]").toListOf(Book.class);
-
-        Set<Book> bookSet = model.map("$.store.book[0,1]").toSetOf(Book.class);
 
         Book book = model.map("$.store.book[1]").to(Book.class);
 
@@ -100,14 +95,48 @@ public class JsonModelTest {
         assertEquals("Evelyn Waugh", book.author);
         assertEquals("Sword of Honour", book.title);
         assertEquals(12.99D, book.price);
-
-        List<Book> booksList2 = model.map("$.store.book[*]").toListOf(Book.class);
-
-        List<Book> booksList3 = model.map("$.store.book[*]").toList().of(Book.class);
-
-        System.out.println("asd");
     }
 
+    @Test
+    public void map_a_json_model_to_a_List() throws Exception {
+        JsonModel model = JsonModel.create(DOCUMENT);
+
+        List<Book> booksList = model.map("$.store.book[0,1]").toListOf(Book.class);
+
+        assertEquals("fiction", booksList.get(1).category);
+        assertEquals("Evelyn Waugh", booksList.get(1).author);
+        assertEquals("Sword of Honour", booksList.get(1).title);
+        assertEquals(12.99D, booksList.get(1).price);
+
+        booksList = model.map("$.store.book[*]").toListOf(Book.class);
+
+        assertEquals("fiction", booksList.get(1).category);
+        assertEquals("Evelyn Waugh", booksList.get(1).author);
+        assertEquals("Sword of Honour", booksList.get(1).title);
+        assertEquals(12.99D, booksList.get(1).price);
+
+        booksList = model.map("$.store.book[*]").toList().of(Book.class);
+
+        assertEquals("fiction", booksList.get(1).category);
+        assertEquals("Evelyn Waugh", booksList.get(1).author);
+        assertEquals("Sword of Honour", booksList.get(1).title);
+        assertEquals(12.99D, booksList.get(1).price);
+    }
+
+    @Test
+    public void map_a_json_model_to_a_Set() throws Exception {
+
+        JsonModel model = JsonModel.create(DOCUMENT);
+
+        Set<Book> bookSet = model.map("$.store.book[1]").toSetOf(Book.class);
+
+        Book book = bookSet.iterator().next();
+
+        assertEquals("fiction", book.category);
+        assertEquals("Evelyn Waugh", book.author);
+        assertEquals("Sword of Honour", book.title);
+        assertEquals(12.99D, book.price);
+    }
 
 
     public static class Book {
