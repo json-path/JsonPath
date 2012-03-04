@@ -18,6 +18,7 @@ import com.jayway.jsonpath.InvalidJsonException;
 
 import java.io.InputStream;
 import java.io.Reader;
+import java.net.URL;
 import java.util.List;
 import java.util.Map;
 
@@ -33,6 +34,7 @@ public interface JsonProvider {
     Object parse(Reader jsonReader) throws InvalidJsonException;
 
     Object parse(InputStream jsonStream) throws InvalidJsonException;
+
 
     String toJson(Object obj);
 

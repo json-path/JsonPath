@@ -84,12 +84,14 @@ public class JsonSmartProvider extends AbstractJsonProvider {
 
     @Override
     public String toJson(Object obj) {
-        if(!(obj instanceof JSONAware)){
-            throw new InvalidJsonException();
-        }
-        JSONAware aware = (JSONAware)obj;
 
-        return aware.toJSONString();
+        if(obj instanceof Map) {
+            return JSONObject.toJSONString((Map<String, ? extends Object>) obj);
+        } else if(obj instanceof List){
+            return JSONArray.toJSONString((List<? extends Object>) obj);
+        } else {
+            throw new UnsupportedOperationException(obj.getClass().getName() + " can not be converted to JSON");
+        }
     }
 
     public Mode getMode() {
