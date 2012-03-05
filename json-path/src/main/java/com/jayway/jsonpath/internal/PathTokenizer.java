@@ -16,7 +16,6 @@ package com.jayway.jsonpath.internal;
 
 import com.jayway.jsonpath.InvalidPathException;
 
-import java.util.Collections;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;

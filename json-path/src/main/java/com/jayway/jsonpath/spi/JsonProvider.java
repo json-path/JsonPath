@@ -18,7 +18,6 @@ import com.jayway.jsonpath.InvalidJsonException;
 
 import java.io.InputStream;
 import java.io.Reader;
-import java.net.URL;
 import java.util.List;
 import java.util.Map;
 
