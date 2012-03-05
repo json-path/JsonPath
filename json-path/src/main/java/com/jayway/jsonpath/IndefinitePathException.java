@@ -6,6 +6,7 @@ package com.jayway.jsonpath;
  * Date: 3/4/12
  * Time: 7:15 PM
  */
+@SuppressWarnings("serial")
 public class IndefinitePathException extends RuntimeException {
 
 

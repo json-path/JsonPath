@@ -6,6 +6,7 @@ package com.jayway.jsonpath;
  * Date: 3/4/12
  * Time: 2:38 PM
  */
+@SuppressWarnings("serial")
 public class InvalidModelPathException extends RuntimeException {
 
     public InvalidModelPathException() {
