@@ -21,7 +21,7 @@ import java.util.List;
 /**
  * @author Kalle Stenflo
  */
-public class WildcardFilter extends Filter {
+public class WildcardFilter extends PathTokenFilter {
 
     public WildcardFilter(String condition) {
         super(condition);

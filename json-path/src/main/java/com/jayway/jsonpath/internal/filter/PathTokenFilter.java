@@ -14,16 +14,19 @@
  */
 package com.jayway.jsonpath.internal.filter;
 
+import com.jayway.jsonpath.Filter;
 import com.jayway.jsonpath.spi.JsonProvider;
+
+import java.util.LinkedList;
 
 /**
  * @author Kalle Stenflo
  */
-public abstract class Filter {
+public abstract class PathTokenFilter {
 
     final String condition;
 
-    Filter(String condition) {
+    PathTokenFilter(String condition) {
         this.condition = condition;
     }
 
@@ -40,7 +43,7 @@ public abstract class Filter {
         return res;
     }
 
-    public Object filter(Object obj, JsonProvider jsonProvider, boolean inArrayContext){
+    public Object filter(Object obj, JsonProvider jsonProvider, LinkedList<Filter> filters, boolean inArrayContext){
         return filter(obj, jsonProvider);
     }
 

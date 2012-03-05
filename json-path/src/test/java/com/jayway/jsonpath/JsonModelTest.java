@@ -4,7 +4,9 @@ import org.junit.Test;
 
 import java.io.ByteArrayInputStream;
 import java.net.URL;
-import java.util.*;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.Map;
 
 import static java.util.Arrays.asList;
 import static junit.framework.Assert.assertEquals;
@@ -67,8 +69,8 @@ public class JsonModelTest {
     @Test
     public void test_a_sub_model_can_be_fetched_and_read() throws Exception {
         JsonModel model = JsonModel.create(DOCUMENT);
-        assertEquals("Nigel Rees", model.getSubModel("$store.book[0]").get("author"));
-        assertEquals("Nigel Rees", model.getSubModel(JsonPath.compile("$store.book[0]")).get("author"));
+        assertEquals("Nigel Rees", model.getModel("$store.book[0]").get("author"));
+        assertEquals("Nigel Rees", model.getModel(JsonPath.compile("$store.book[0]")).get("author"));
     }
 
     @Test

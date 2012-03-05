@@ -79,7 +79,7 @@ public class JsonModelOpsTest {
 
         model.opsForArray("store.book").add(newBook);
 
-        JsonModel subModel = model.getSubModel("store.book[4]");
+        JsonModel subModel = model.getModel("store.book[4]");
 
         assertEquals("reference", subModel.get("category"));
         assertEquals("Kalle", subModel.get("author"));

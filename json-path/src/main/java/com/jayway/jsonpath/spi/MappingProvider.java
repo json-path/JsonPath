@@ -1,11 +1,5 @@
 package com.jayway.jsonpath.spi;
 
-import org.codehaus.jackson.map.type.CollectionType;
-import org.codehaus.jackson.map.type.TypeFactory;
-import org.codehaus.jackson.map.type.TypeModifier;
-import org.codehaus.jackson.map.type.TypeParser;
-import org.codehaus.jackson.type.JavaType;
-
 import java.util.Collection;
 
 /**

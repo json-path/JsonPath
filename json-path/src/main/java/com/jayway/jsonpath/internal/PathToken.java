@@ -14,8 +14,8 @@
  */
 package com.jayway.jsonpath.internal;
 
-import com.jayway.jsonpath.internal.filter.Filter;
 import com.jayway.jsonpath.internal.filter.FilterFactory;
+import com.jayway.jsonpath.internal.filter.PathTokenFilter;
 import com.jayway.jsonpath.spi.JsonProvider;
 
 /**
@@ -29,7 +29,7 @@ public class PathToken {
         this.fragment = fragment;
     }
 
-    public Filter getFilter(){
+    public PathTokenFilter getFilter(){
         return FilterFactory.createFilter(fragment);
     }
 

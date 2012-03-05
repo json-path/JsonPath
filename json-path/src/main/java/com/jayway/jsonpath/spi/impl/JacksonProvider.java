@@ -15,7 +15,6 @@
 package com.jayway.jsonpath.spi.impl;
 
 import com.jayway.jsonpath.InvalidJsonException;
-import com.jayway.jsonpath.spi.JsonProvider;
 import com.jayway.jsonpath.spi.MappingProvider;
 import com.jayway.jsonpath.spi.Mode;
 import org.codehaus.jackson.map.ObjectMapper;

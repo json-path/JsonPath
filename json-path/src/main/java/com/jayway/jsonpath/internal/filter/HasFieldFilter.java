@@ -22,7 +22,7 @@ import java.util.Map;
 /**
  * @author Kalle Stenflo
  */
-public class HasFieldFilter extends Filter {
+public class HasFieldFilter extends PathTokenFilter {
 
     public HasFieldFilter(String condition) {
         super(condition);

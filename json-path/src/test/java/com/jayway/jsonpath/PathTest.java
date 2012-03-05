@@ -5,9 +5,7 @@ import org.hamcrest.Matcher;
 import org.junit.Test;
 
 import static org.hamcrest.Matchers.hasItems;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertThat;
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.*;
 
 /**
  * Created by IntelliJ IDEA.
@@ -21,6 +19,7 @@ public class PathTest {
     @Test
     public void path_is_not_definite() throws Exception {
         assertFalse(JsonPath.compile("$..book[0]").isPathDefinite());
+        assertFalse(JsonPath.compile("$book[?]").isPathDefinite());
         assertFalse(JsonPath.compile("$.books[*]").isPathDefinite());
     }
 

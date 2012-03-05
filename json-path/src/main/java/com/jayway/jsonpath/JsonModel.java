@@ -115,8 +115,8 @@ public class JsonModel {
     // --------------------------------------------------------
 
     @SuppressWarnings({"unchecked"})
-    public <T> T get(String jsonPath) {
-        return (T) get(JsonPath.compile(jsonPath));
+    public <T> T get(String jsonPath, Filter... filters) {
+        return (T) get(JsonPath.compile(jsonPath, filters));
     }
 
     @SuppressWarnings({"unchecked"})
@@ -180,11 +180,11 @@ public class JsonModel {
     //
     // --------------------------------------------------------
 
-    public JsonModel getSubModel(String jsonPath) {
-        return getSubModel(JsonPath.compile(jsonPath));
+    public JsonModel getModel(String jsonPath) {
+        return getModel(JsonPath.compile(jsonPath));
     }
 
-    public JsonModel getSubModel(JsonPath jsonPath) {
+    public JsonModel getModel(JsonPath jsonPath) {
         notNull(jsonPath, "jsonPath can not be null");
 
         Object subModel = jsonPath.read(jsonObject);

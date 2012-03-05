@@ -26,7 +26,7 @@ import java.util.regex.Pattern;
 /**
  * @author Kalle Stenflo
  */
-public class ArrayEvalFilter extends Filter {
+public class ArrayEvalFilter extends PathTokenFilter {
 
     private static final Pattern PATTERN = Pattern.compile("(.*?)\\s?([=<>]+)\\s?(.*)");
 

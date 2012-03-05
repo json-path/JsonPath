@@ -14,23 +14,25 @@
  */
 package com.jayway.jsonpath.internal.filter;
 
+import com.jayway.jsonpath.Filter;
 import com.jayway.jsonpath.InvalidPathException;
 import com.jayway.jsonpath.spi.JsonProvider;
 
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
 /**
  * @author Kalle Stenflo
  */
-public class FieldFilter extends Filter {
+public class FieldFilter extends PathTokenFilter {
 
     public FieldFilter(String condition) {
         super(condition);
     }
 
     @Override
-    public Object filter(Object obj, JsonProvider jsonProvider, boolean inArrayContext) {
+    public Object filter(Object obj, JsonProvider jsonProvider, LinkedList<Filter> filters, boolean inArrayContext) {
         if (jsonProvider.isList(obj)) {
             if (!inArrayContext) {
                 return null;

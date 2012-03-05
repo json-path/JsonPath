@@ -19,12 +19,12 @@ package com.jayway.jsonpath.internal.filter;
  */
 public class FilterFactory {
 
-    private final static Filter DOCUMENT_FILTER = new PassthroughFilter("$", false);
-    private final static Filter ALL_ARRAY_ITEMS_FILTER = new PassthroughFilter("[*]", true);
-    private final static Filter WILDCARD_FILTER = new WildcardFilter("*");
-    private final static Filter SCAN_FILTER = new ScanFilter("..");
+    private final static PathTokenFilter DOCUMENT_FILTER = new PassthroughFilter("$", false);
+    private final static PathTokenFilter ALL_ARRAY_ITEMS_FILTER = new PassthroughFilter("[*]", true);
+    private final static PathTokenFilter WILDCARD_FILTER = new WildcardFilter("*");
+    private final static PathTokenFilter SCAN_FILTER = new ScanFilter("..");
 
-    public static Filter createFilter(String pathFragment) {
+    public static PathTokenFilter createFilter(String pathFragment) {
 
         if ("$".equals(pathFragment)) {
 
@@ -45,6 +45,10 @@ public class FilterFactory {
         } else if (!pathFragment.contains("[")) {
 
             return new FieldFilter(pathFragment);
+
+        } else if (pathFragment.equals("[?]")) {
+
+            return new ArrayQueryFilter(pathFragment);
 
         } else if (pathFragment.contains("[")) {
 

@@ -9,7 +9,6 @@ import java.util.Map;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.hasItems;
 import static org.junit.Assert.*;
-import static org.junit.Assert.assertThat;
 
 /**
  * Created by IntelliJ IDEA.

@@ -22,7 +22,7 @@ import java.util.List;
 /**
  * @author Kalle Stenflo
  */
-public class ScanFilter extends Filter {
+public class ScanFilter extends PathTokenFilter {
 
     public ScanFilter(String condition) {
         super(condition);
