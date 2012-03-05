@@ -28,7 +28,7 @@ public class ExpressionEvaluator {
             Long a = (Long) actual;
             Long e = Long.parseLong(expected.trim());
 
-            if ("=".equals(comparator) || "==".equals(comparator)) {
+            if ("==".equals(comparator)) {
                 return a.longValue() == e.longValue();
             } else if ("!=".equals(comparator) || "<>".equals(comparator)) {
                 return a.longValue() != e.longValue();
@@ -45,7 +45,7 @@ public class ExpressionEvaluator {
             Integer a = (Integer) actual;
             Integer e = Integer.parseInt(expected.trim());
 
-            if ("=".equals(comparator)) {
+            if ("==".equals(comparator)) {
                 return a.intValue() == e.intValue();
             } else if ("!=".equals(comparator) || "<>".equals(comparator)) {
                 return a.intValue() != e.intValue();
@@ -63,7 +63,7 @@ public class ExpressionEvaluator {
             Double a = (Double) actual;
             Double e = Double.parseDouble(expected.trim());
 
-            if ("=".equals(comparator) || "==".equals(comparator)) {
+            if ("==".equals(comparator)) {
                 return a.doubleValue() == e.doubleValue();
             } else if ("!=".equals(comparator) || "<>".equals(comparator)) {
                 return a.doubleValue() != e.doubleValue();
@@ -87,7 +87,7 @@ public class ExpressionEvaluator {
                 expected = expected.substring(0, expected.length()-1);
             }
 
-            if ("=".equals(comparator) || "==".equals(comparator)) {
+            if ("==".equals(comparator)) {
                 return a.equals(expected);
             } else if ("!=".equals(comparator) || "<>".equals(comparator)) {
                 return !a.equals(expected);

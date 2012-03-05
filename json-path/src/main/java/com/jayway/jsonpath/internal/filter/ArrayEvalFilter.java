@@ -36,7 +36,7 @@ public class ArrayEvalFilter extends Filter {
 
     @Override
     public Object filter(Object obj, JsonProvider jsonProvider) {
-        //[?(@.isbn = 10)]
+        //[?(@.isbn == 10)]
         List<Object> src = jsonProvider.toList(obj);
         List<Object> result = jsonProvider.createList();
 

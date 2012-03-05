@@ -77,7 +77,7 @@ public class JsonPathTest {
     @Test
     public void array_start_expands() throws Exception {
         //assertThat(JsonPath.<List<String>>read(ARRAY_EXPAND, "$[?(@.parent = 'ONE')].child.name"), hasItems("NAME_ONE"));
-        assertThat(JsonPath.<List<String>>read(ARRAY_EXPAND, "$[?(@['parent'] = 'ONE')].child.name"), hasItems("NAME_ONE"));
+        assertThat(JsonPath.<List<String>>read(ARRAY_EXPAND, "$[?(@['parent'] == 'ONE')].child.name"), hasItems("NAME_ONE"));
     }
 
     @Test
@@ -102,7 +102,7 @@ public class JsonPathTest {
 
     @Test
     public void filter_an_array() throws Exception {
-        List<Object> matches = JsonPath.read(ARRAY, "$.[?(@.value = 1)]");
+        List<Object> matches = JsonPath.read(ARRAY, "$.[?(@.value == 1)]");
 
         assertEquals(1, matches.size());
         System.out.println(matches);
@@ -231,22 +231,22 @@ public class JsonPathTest {
     @Test
     public void dot_in_predicate_works() throws Exception {
 
-        assertThat(JsonPath.<List<String>>read(PRODUCT_JSON, "$.product[?(@.version='4.0')].codename"), hasItems("Montreal"));
+        assertThat(JsonPath.<List<String>>read(PRODUCT_JSON, "$.product[?(@.version=='4.0')].codename"), hasItems("Montreal"));
 
     }
 
     @Test
     public void dots_in_predicate_works() throws Exception {
 
-        assertThat(JsonPath.<List<String>>read(PRODUCT_JSON, "$.product[?(@.attr.with.dot='A')].codename"), hasItems("Seattle"));
+        assertThat(JsonPath.<List<String>>read(PRODUCT_JSON, "$.product[?(@.attr.with.dot=='A')].codename"), hasItems("Seattle"));
 
     }
 
     @Test
     public void all_books_with_category_reference() throws Exception {
 
-        assertThat(JsonPath.<List<String>>read(DOCUMENT, "$..book[?(@.category='reference')].title"), hasItems("Sayings of the Century"));
-        assertThat(JsonPath.<List<String>>read(DOCUMENT, "$.store.book[?(@.category='reference')].title"), hasItems("Sayings of the Century"));
+        assertThat(JsonPath.<List<String>>read(DOCUMENT, "$..book[?(@.category=='reference')].title"), hasItems("Sayings of the Century"));
+        assertThat(JsonPath.<List<String>>read(DOCUMENT, "$.store.book[?(@.category=='reference')].title"), hasItems("Sayings of the Century"));
 
     }
 
