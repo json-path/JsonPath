@@ -108,7 +108,7 @@ public class ArrayEvalFilter extends PathTokenFilter {
 
         private ConditionStatement(String field, String operator, String expected) {
             this.field = field;
-            this.operator = operator;
+            this.operator = operator.trim();
             this.expected = expected;
 
             if(this.expected.startsWith("'")){
