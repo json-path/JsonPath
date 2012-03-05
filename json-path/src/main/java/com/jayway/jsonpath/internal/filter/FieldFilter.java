@@ -14,6 +14,7 @@
  */
 package com.jayway.jsonpath.internal.filter;
 
+import com.jayway.jsonpath.InvalidPathException;
 import com.jayway.jsonpath.spi.JsonProvider;
 
 import java.util.List;
@@ -51,7 +52,12 @@ public class FieldFilter extends Filter {
                 return result;
             }
         } else {
-            return jsonProvider.getMapValue(obj, condition);
+            Map<String, Object> map = jsonProvider.toMap(obj);
+            if(!map.containsKey(condition)){
+                throw new InvalidPathException("invalid path");
+            } else {
+                return map.get(condition);
+            }
         }
     }
 

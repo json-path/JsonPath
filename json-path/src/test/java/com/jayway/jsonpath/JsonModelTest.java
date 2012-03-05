@@ -85,6 +85,11 @@ public class JsonModelTest {
     }
 
 
+    @Test(expected = InvalidPathException.class)
+    public void invalid_path_throws() throws Exception {
+        JsonModel.create(DOCUMENT).get("store.invalid");
+    }
+
 
 
 }

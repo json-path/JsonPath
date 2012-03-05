@@ -278,7 +278,7 @@ public class JsonModel {
         PathToken currentToken;
         do {
             currentToken = tokens.poll();
-            modelRef = currentToken.get(modelRef, jsonProvider);
+            modelRef = currentToken.apply(modelRef, jsonProvider);
         } while (!tokens.isEmpty());
 
         if (modelRef.getClass().isAssignableFrom(clazz)) {
