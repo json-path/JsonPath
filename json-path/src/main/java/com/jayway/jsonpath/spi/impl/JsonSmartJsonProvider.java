@@ -15,15 +15,12 @@
 package com.jayway.jsonpath.spi.impl;
 
 import com.jayway.jsonpath.InvalidJsonException;
-import com.jayway.jsonpath.spi.JsonProvider;
 import com.jayway.jsonpath.spi.Mode;
 import net.minidev.json.JSONArray;
-import net.minidev.json.JSONAware;
 import net.minidev.json.JSONObject;
 import net.minidev.json.parser.JSONParser;
 import net.minidev.json.parser.ParseException;
 
-import java.io.BufferedReader;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.Reader;
@@ -33,17 +30,17 @@ import java.util.Map;
 /**
  * @author Kalle Stenflo
  */
-public class JsonSmartProvider extends AbstractJsonProvider {
+public class JsonSmartJsonProvider extends AbstractJsonProvider {
 
     private Mode mode;
 
     private JSONParser parser;
 
-    public JsonSmartProvider() {
+    public JsonSmartJsonProvider() {
         this(Mode.SLACK);
     }
 
-    public JsonSmartProvider(Mode mode) {
+    public JsonSmartJsonProvider(Mode mode) {
         this.mode = mode;
         this.parser = new JSONParser(mode.intValue());
     }
