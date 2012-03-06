@@ -38,6 +38,7 @@ import static org.apache.commons.lang.Validate.notNull;
 public class JsonModel {
 
     private Object jsonObject;
+    private JsonProvider jsonProvider;
 
     // --------------------------------------------------------
     //
@@ -45,13 +46,11 @@ public class JsonModel {
     //
     // --------------------------------------------------------
 
-    /**
-     * Creates a new JsonModel
-     *
-     * @param json json string
-     */
-    public JsonModel(String json) {
-        this(JsonProviderFactory.getInstance().parse(json));
+    private JsonModel(String jsonObject, JsonProvider jsonProvider) {
+        notNull(jsonObject, "json can not be null");
+
+        this.jsonProvider = jsonProvider;
+        this.jsonObject = jsonProvider.parse(jsonObject);
     }
 
     /**
@@ -60,13 +59,13 @@ public class JsonModel {
      *
      * @param jsonObject the json object
      */
-    private JsonModel(Object jsonObject) {
+    private JsonModel(Object jsonObject, JsonProvider jsonProvider) {
         notNull(jsonObject, "json can not be null");
 
         if (!(jsonObject instanceof Map) && !(jsonObject instanceof List)) {
             throw new IllegalArgumentException("Invalid container object");
         }
-
+        this.jsonProvider = jsonProvider;
         this.jsonObject = jsonObject;
     }
 
@@ -75,10 +74,10 @@ public class JsonModel {
      *
      * @param jsonInputStream the input stream
      */
-    private JsonModel(InputStream jsonInputStream) {
+    private JsonModel(InputStream jsonInputStream, JsonProvider jsonProvider) {
         notNull(jsonInputStream, "jsonInputStream can not be null");
-
-        this.jsonObject = JsonProviderFactory.getInstance().parse(jsonInputStream);
+        this.jsonProvider = jsonProvider;
+        this.jsonObject = jsonProvider.parse(jsonInputStream);
     }
 
     /**
@@ -87,13 +86,14 @@ public class JsonModel {
      * @param jsonURL the URL to read
      * @throws IOException
      */
-    private JsonModel(URL jsonURL) throws IOException {
+    private JsonModel(URL jsonURL, JsonProvider jsonProvider) throws IOException {
         notNull(jsonURL, "jsonURL can not be null");
 
         InputStream jsonInputStream = null;
         try {
             jsonInputStream = jsonURL.openStream();
-            this.jsonObject = JsonProviderFactory.getInstance().parse(jsonInputStream);
+            this.jsonObject = jsonProvider.parse(jsonInputStream);
+            this.jsonProvider = jsonProvider;
         } finally {
             IOUtils.closeQuietly(jsonInputStream);
         }
@@ -160,18 +160,18 @@ public class JsonModel {
     // JSON extractors
     //
     // --------------------------------------------------------
-    public String toJson() {
-        return JsonProviderFactory.getInstance().toJson(jsonObject);
+    public String getJson() {
+        return jsonProvider.toJson(jsonObject);
     }
 
-    public String toJson(String jsonPath) {
-        return toJson(JsonPath.compile(jsonPath));
+    public String getJson(String jsonPath, Filter... filters) {
+        return getJson(JsonPath.compile(jsonPath, filters));
     }
 
-    public String toJson(JsonPath jsonPath) {
+    public String getJson(JsonPath jsonPath) {
         notNull(jsonPath, "jsonPath can not be null");
 
-        return JsonProviderFactory.getInstance().toJson(get(jsonPath));
+        return jsonProvider.toJson(get(jsonPath));
     }
 
     // --------------------------------------------------------
@@ -180,8 +180,8 @@ public class JsonModel {
     //
     // --------------------------------------------------------
 
-    public JsonModel getModel(String jsonPath) {
-        return getModel(JsonPath.compile(jsonPath));
+    public JsonModel getModel(String jsonPath, Filter... filters) {
+        return getModel(JsonPath.compile(jsonPath, filters));
     }
 
     public JsonModel getModel(JsonPath jsonPath) {
@@ -193,7 +193,7 @@ public class JsonModel {
             throw new InvalidModelPathException("The path " + jsonPath.getPath() + " returned an invalid model " + (subModel != null ? subModel.getClass() : "null"));
         }
 
-        return new JsonModel(subModel);
+        return new JsonModel(subModel, this.jsonProvider);
     }
 
     // --------------------------------------------------------
@@ -205,7 +205,7 @@ public class JsonModel {
         return map(JsonPath.compile(jsonPath));
     }
 
-    public MappingModelReader map(final JsonPath jsonPath) {
+    public MappingModelReader map(JsonPath jsonPath) {
         notNull(jsonPath, "jsonPath can not be null");
 
         return new DefaultMappingModelReader(JsonModel.this.get(jsonPath));
@@ -219,25 +219,25 @@ public class JsonModel {
     public static JsonModel create(String json) {
         notEmpty(json, "json can not be null or empty");
 
-        return new JsonModel(json);
+        return new JsonModel(json, JsonProviderFactory.getInstance());
     }
 
     public static JsonModel create(Object jsonObject) {
         notNull(jsonObject, "jsonObject can not be null");
 
-        return new JsonModel(jsonObject);
+        return new JsonModel(jsonObject, JsonProviderFactory.getInstance());
     }
 
     public static JsonModel create(URL url) throws IOException {
         notNull(url, "url can not be null");
 
-        return new JsonModel(url);
+        return new JsonModel(url, JsonProviderFactory.getInstance());
     }
 
     public static JsonModel create(InputStream jsonInputStream) throws IOException {
         notNull(jsonInputStream, "jsonInputStream can not be null");
 
-        return new JsonModel(jsonInputStream);
+        return new JsonModel(jsonInputStream, JsonProviderFactory.getInstance());
     }
 
     // --------------------------------------------------------
@@ -456,9 +456,5 @@ public class JsonModel {
         public <T> T to(Class<T> targetClass) {
             return MappingProviderFactory.getInstance().convertValue(model, targetClass);
         }
-
-
     }
-
-
 }

@@ -83,7 +83,7 @@ public class JsonModelTest {
 
         assertEquals("value", model.get("$child.key"));
         assertEquals(1, model.get("$items[1]"));
-        assertEquals("{\"child\":{\"key\":\"value\"},\"items\":[0,1,2]}", model.toJson());
+        assertEquals("{\"child\":{\"key\":\"value\"},\"items\":[0,1,2]}", model.getJson());
     }
 
 

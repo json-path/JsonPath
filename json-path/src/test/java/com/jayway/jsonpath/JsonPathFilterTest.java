@@ -10,6 +10,7 @@ import java.util.regex.Pattern;
 import static com.jayway.jsonpath.Criteria.where;
 import static com.jayway.jsonpath.Filter.filter;
 import static java.util.Arrays.asList;
+import static junit.framework.Assert.assertEquals;
 
 /**
  * Created by IntelliJ IDEA.
@@ -53,20 +54,11 @@ public class JsonPathFilterTest {
                     "    }\n" +
                     "  }\n" +
                     "}";
-    
-    @Test
-    public void a_path_can_use_filters() throws Exception {
-        
-        Filter lowPricedBooksFilter = filter(where("price").lt(10));
 
-        List read = JsonPath.read(DOCUMENT, "store.book[?]", lowPricedBooksFilter);
-
-        System.out.println(read.size());
-    }
     
     
     @Test
-    public void a_path_can_use_many_filters() throws Exception {
+    public void arrays_of_maps_can_be_filtered() throws Exception {
 
 
         Map<String, Object> rootGrandChild_A = new HashMap<String, Object>();
@@ -96,9 +88,9 @@ public class JsonPathFilterTest {
 
 
 
-        Filter customFilter = new Filter() {
+        Filter customFilter = new Filter.FilterAdapter<Map<String, Object>>() {
             @Override
-            public boolean apply(Map<String, Object> map) {
+            public boolean accept(Map<String, Object> map) {
                 if(map.get("name").equals("rootGrandChild_A")){
                     return true;
                 }
@@ -111,7 +103,26 @@ public class JsonPathFilterTest {
 
         List read = JsonPath.read(root, "children[?].children[?][?]", rootChildFilter, rootGrandChildFilter, customFilter);
 
+
         System.out.println(read.size());
+    }
+    
+    
+    @Test
+    public void arrays_of_objects_can_be_filtered() throws Exception {
+        Map<String, Object> doc = new HashMap<String, Object>();
+        doc.put("items", asList(1, 2, 3));
+        
+        Filter customFilter = new Filter.FilterAdapter<Integer>(){
+            @Override
+            public boolean accept(Integer o) {
+                return 1 == o;
+            }
+        };
+        
+        List<Integer> res = JsonPath.read(doc, "$.items[?]", customFilter);
+
+        assertEquals(1, res.get(0).intValue());
     }
     
 }

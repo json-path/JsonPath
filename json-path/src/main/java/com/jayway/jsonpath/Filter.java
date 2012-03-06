@@ -1,23 +1,46 @@
+/*
+ * Copyright 2011 the original author or authors.
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *       http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package com.jayway.jsonpath;
 
 import java.util.*;
 
 /**
- * Created by IntelliJ IDEA.
- * User: kallestenflo
- * Date: 3/5/12
- * Time: 5:31 PM
+ * A filter is used to filter the content of a JSON array in a JSONPath.
+ *
+ * Sample
+ *
+ * <code>
+ * String doc = {"items": [{"name" : "john"}, {"name": "bob"}]}
+ *
+ * List<String> names = JsonPath.read(doc, "$items[?].name", Filter.filter(Criteria.where("name").is("john"));
+ * </code>
+ *
+ * @See Criteria
+ *
+ * @author Kalle Stenflo
  */
-public abstract class Filter {
+public abstract class Filter<T> {
 
-    public abstract boolean apply(Map<String, Object> map);
-
-    public List<?> doFilter(List<Map<String, Object>> filterItems) {
-        List<Object> result = new ArrayList<Object>();
-
-        for (Map<String, Object> filterItem : filterItems) {
-
-            if(apply(filterItem)){
+    public static Filter filter(Criteria criteria) {
+        return new MapFilter(criteria);
+    }
+    
+    public List<T> doFilter(List<T> filterItems) {
+        List<T> result = new ArrayList<T>();
+        for (T filterItem : filterItems) {
+            if (accept(filterItem)) {
                 result.add(filterItem);
             }
         }
@@ -25,9 +48,9 @@ public abstract class Filter {
     }
 
 
-    public static Filter filter(Criteria criteria) {
-        return new MapFilter(criteria);
-    }
+    public abstract boolean accept(T obj);
+
+    public abstract Filter addCriteria(Criteria criteria);
 
 
     // --------------------------------------------------------
@@ -35,7 +58,21 @@ public abstract class Filter {
     // Default filter implementation
     //
     // --------------------------------------------------------
-    private static class MapFilter extends Filter {
+    public static abstract class FilterAdapter<T> extends Filter<T> {
+
+        @Override
+        public boolean accept(T obj){
+            return false;
+        }
+
+        @Override
+        public Filter addCriteria(Criteria criteria) {
+            throw new UnsupportedOperationException("can not add criteria to a FilterAdapter.");
+        }
+    }
+
+
+    private static class MapFilter extends FilterAdapter<Map<String, Object>> {
 
         private HashMap<String, Criteria> criteria = new LinkedHashMap<String, Criteria>();
 
@@ -54,22 +91,16 @@ public abstract class Filter {
             return this;
         }
 
-        protected List<Criteria> getCriteria() {
-            return new ArrayList<Criteria>(this.criteria.values());
-        }
-
         @Override
-        public boolean apply(Map<String, Object> map) {
-
-            for (Criteria criterion : getCriteria()) {
+        public boolean accept(Map<String, Object> map) {
+            for (Criteria criterion : this.criteria.values()) {
                 if (!criterion.apply(map)) {
                     return false;
                 }
             }
-
             return true;
-
         }
+
 
     }
 

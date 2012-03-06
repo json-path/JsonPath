@@ -97,15 +97,8 @@ public class JsonPath {
 
     private static Pattern DEFINITE_PATH_PATTERN = Pattern.compile(".*(\\.\\.|\\*|\\[[\\\\/]|\\?|,|:\\s?\\]|\\[\\s?:|>|\\(|<|=|\\+).*");
 
-    private static final Filter[] NO_FILTERS = new Filter[0];
-    
     private PathTokenizer tokenizer;
     private LinkedList<Filter> filters;
-
-
-    private JsonPath(String jsonPath) {
-        this(jsonPath, new Filter[0]);
-    }
 
     public JsonPath(String jsonPath, Filter[] filters) {
         if (jsonPath == null ||
