@@ -14,8 +14,7 @@
   ~ See the License for the specific language governing permissions and
   ~ limitations under the License.
   -->
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
     <modelVersion>4.0.0</modelVersion>
     <parent>
         <groupId>org.sonatype.oss</groupId>
@@ -25,14 +24,14 @@
     <groupId>com.jayway.jsonpath</groupId>
     <artifactId>json-path-parent</artifactId>
     <packaging>pom</packaging>
-    <version>0.6.0-SNAPSHOT</version>
+    <version>0.8.0</version>
     <url>https://github.com/jayway/JsonPath</url>
     <name>json-path-parent-pom</name>
     <description>Java JsonPath implementation</description>
     <inceptionYear>2011</inceptionYear>
     <issueManagement>
         <system>GitHub Issue Tracking</system>
-        <url/>
+        <url />
     </issueManagement>
     <licenses>
         <license>
