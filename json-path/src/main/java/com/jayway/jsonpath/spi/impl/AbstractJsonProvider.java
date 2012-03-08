@@ -1,3 +1,17 @@
+/*
+ * Copyright 2011 the original author or authors.
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *       http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package com.jayway.jsonpath.spi.impl;
 
 import com.jayway.jsonpath.spi.JsonProvider;
@@ -6,10 +20,7 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * Created by IntelliJ IDEA.
- * User: kallestenflo
- * Date: 3/2/12
- * Time: 9:56 PM
+ * @author Kalle Stenflo
  */
 public abstract class AbstractJsonProvider implements JsonProvider {
 
@@ -36,8 +47,8 @@ public abstract class AbstractJsonProvider implements JsonProvider {
     /**
      * Converts give object to a List
      *
-     * @param list
-     * @return
+     * @param list object to convert
+     * @return object as list
      */
     @SuppressWarnings({"unchecked"})
     public List<Object> toList(Object list) {
@@ -48,8 +59,8 @@ public abstract class AbstractJsonProvider implements JsonProvider {
     /**
      * Converts given object to a Map
      *
-     * @param map
-     * @return
+     * @param map object to convert
+     * @return object as map
      */
     @SuppressWarnings({"unchecked"})
     public Map<String, Object> toMap(Object map) {
@@ -59,9 +70,9 @@ public abstract class AbstractJsonProvider implements JsonProvider {
     /**
      * Extracts a value from a Map
      *
-     * @param map
-     * @param key
-     * @return
+     * @param map map to read from
+     * @param key key to read
+     * @return value of key in map
      */
     public Object getMapValue(Object map, String key) {
         return toMap(map).get(key);

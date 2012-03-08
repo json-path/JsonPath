@@ -11,9 +11,7 @@ import java.util.regex.Pattern;
 import static com.jayway.jsonpath.Criteria.where;
 import static com.jayway.jsonpath.Filter.filter;
 import static java.util.Arrays.asList;
-import static junit.framework.Assert.assertEquals;
-import static junit.framework.Assert.assertFalse;
-import static junit.framework.Assert.assertTrue;
+import static junit.framework.Assert.*;
 
 /**
  * Created by IntelliJ IDEA.
@@ -131,10 +129,10 @@ public class FilterTest {
         check.put("foo", 12.5D);
         check.put("foo_null", null);
 
-        assertTrue(filter(where("foo").lt(13D)).accept(check));
-        assertFalse(filter(where("foo").lt(null)).accept(check));
-        assertFalse(filter(where("foo").lt(5D)).accept(check));
-        assertFalse(filter(where("foo_null").lt(5D)).accept(check));
+        assertTrue(filter(where("foo").lte(13D)).accept(check));
+        assertFalse(filter(where("foo").lte(null)).accept(check));
+        assertFalse(filter(where("foo").lte(5D)).accept(check));
+        assertFalse(filter(where("foo_null").lte(5D)).accept(check));
     }
 
     @Test
@@ -267,7 +265,7 @@ public class FilterTest {
     }
 
     @Test
-    public void filters_can_be_extended() throws Exception {
+    public void filters_can_be_extended_with_new_criteria() throws Exception {
 
         Map<String, Object> check = new HashMap<String, Object>();
         check.put("string", "foo");
@@ -283,6 +281,36 @@ public class FilterTest {
         filter.addCriteria(where("long").ne(1L));
 
         assertFalse(filter.accept(check));
+
+    }
+
+    @Test
+    public void filters_criteria_can_be_refined() throws Exception {
+
+        Map<String, Object> check = new HashMap<String, Object>();
+        check.put("string", "foo");
+        check.put("string_null", null);
+        check.put("int", 10);
+        check.put("long", 1L);
+        check.put("double", 1.12D);
+
+        Filter filter = filter(where("string").is("foo"));
+
+        assertTrue(filter.accept(check));
+
+        Criteria criteria = where("string").is("not eq");
+
+        filter.addCriteria(criteria);
+
+        assertFalse(filter.accept(check));
+
+
+        filter = filter(where("string").is("foo").and("string").is("not eq"));
+        assertFalse(filter.accept(check));
+
+
+        filter = filter(where("string").is("foo").and("string").is("foo"));
+        assertTrue(filter.accept(check));
 
     }
 

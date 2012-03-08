@@ -83,9 +83,9 @@ public class JsonSmartJsonProvider extends AbstractJsonProvider {
     public String toJson(Object obj) {
 
         if(obj instanceof Map) {
-            return JSONObject.toJSONString((Map<String, ? extends Object>) obj);
+            return JSONObject.toJSONString((Map<String, ?>) obj);
         } else if(obj instanceof List){
-            return JSONArray.toJSONString((List<? extends Object>) obj);
+            return JSONArray.toJSONString((List<?>) obj);
         } else {
             throw new UnsupportedOperationException(obj.getClass().getName() + " can not be converted to JSON");
         }

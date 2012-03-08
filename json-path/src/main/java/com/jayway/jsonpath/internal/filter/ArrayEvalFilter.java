@@ -102,8 +102,8 @@ public class ArrayEvalFilter extends PathTokenFilter {
     }
 
     private class ConditionStatement {
-        private String field;
-        private String operator;
+        private final String field;
+        private final String operator;
         private String expected;
 
         private ConditionStatement(String field, String operator, String expected) {

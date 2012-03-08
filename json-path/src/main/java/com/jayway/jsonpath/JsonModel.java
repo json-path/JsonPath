@@ -58,6 +58,7 @@ public class JsonModel {
      * Note that the jsonObject must either a {@link List} or a {@link Map}
      *
      * @param jsonObject the json object
+     * @param jsonProvider
      */
     private JsonModel(Object jsonObject, JsonProvider jsonProvider) {
         notNull(jsonObject, "json can not be null");
@@ -73,6 +74,7 @@ public class JsonModel {
      * Creates a new JsonModel based on an {@link InputStream}
      *
      * @param jsonInputStream the input stream
+     * @param jsonProvider
      */
     private JsonModel(InputStream jsonInputStream, JsonProvider jsonProvider) {
         notNull(jsonInputStream, "jsonInputStream can not be null");
@@ -84,7 +86,8 @@ public class JsonModel {
      * Creates a new JsonModel by fetching the content from the provided URL
      *
      * @param jsonURL the URL to read
-     * @throws IOException
+     * @param jsonProvider
+     * @throws IOException failed to load URL
      */
     private JsonModel(URL jsonURL, JsonProvider jsonProvider) throws IOException {
         notNull(jsonURL, "jsonURL can not be null");
@@ -266,7 +269,7 @@ public class JsonModel {
         } while (!tokens.isEmpty());
 
         if (modelRef.getClass().isAssignableFrom(clazz)) {
-            throw new InvalidModelPathException(jsonPath + " does nor refer to a Map but " + (currentToken != null ? currentToken.getClass().getName() : "null"));
+            throw new InvalidModelPathException(jsonPath + " does nor refer to a Map but " + currentToken.getClass().getName());
         }
         return clazz.cast(modelRef);
     }

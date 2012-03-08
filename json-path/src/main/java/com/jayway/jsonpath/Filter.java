@@ -27,16 +27,26 @@ import java.util.*;
  * List<String> names = JsonPath.read(doc, "$items[?].name", Filter.filter(Criteria.where("name").is("john"));
  * </code>
  *
- * @See Criteria
+ * @see Criteria
  *
  * @author Kalle Stenflo
  */
 public abstract class Filter<T> {
 
+    /**
+     * Creates a new filter based on given criteria
+     * @param criteria the filter criteria
+     * @return a new filter
+     */
     public static Filter filter(Criteria criteria) {
         return new MapFilter(criteria);
     }
-    
+
+    /**
+     * Filters the provided list based on this filter configuration
+     * @param filterItems items to filter
+     * @return the filtered list
+     */
     public List<T> doFilter(List<T> filterItems) {
         List<T> result = new ArrayList<T>();
         for (T filterItem : filterItems) {
@@ -47,9 +57,19 @@ public abstract class Filter<T> {
         return result;
     }
 
-
+    /**
+     * Check if this filter will accept or reject the given object
+     * @param obj item to check
+     * @return true if filter matches
+     */
     public abstract boolean accept(T obj);
 
+    /**
+     * Adds a new criteria to this filter
+     *
+     * @param criteria to add
+     * @return the updated filter
+     */
     public abstract Filter addCriteria(Criteria criteria);
 
 
@@ -94,7 +114,7 @@ public abstract class Filter<T> {
         @Override
         public boolean accept(Map<String, Object> map) {
             for (Criteria criterion : this.criteria.values()) {
-                if (!criterion.apply(map)) {
+                if (!criterion.matches(map)) {
                     return false;
                 }
             }

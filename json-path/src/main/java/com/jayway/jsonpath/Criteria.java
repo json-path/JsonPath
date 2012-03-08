@@ -32,23 +32,39 @@ public class Criteria {
      */
     private static final Object NOT_SET = new Object();
 
-    private String key;
+    private enum CriteriaType {
+        GT,
+        GTE,
+        LT,
+        LTE,
+        NE,
+        IN,
+        NIN,
+        ALL,
+        SIZE,
+        EXISTS,
+        TYPE,
+        REGEX,
+        OR
+    }
 
-    private List<Criteria> criteriaChain;
+    private final String key;
 
-    private LinkedHashMap<String, Object> criteria = new LinkedHashMap<String, Object>();
+    private final List<Criteria> criteriaChain;
+
+    private final LinkedHashMap<CriteriaType, Object> criteria = new LinkedHashMap<CriteriaType, Object>();
 
     private Object isValue = NOT_SET;
 
 
-    public Criteria(String key) {
+    private Criteria(String key) {
         notEmpty(key, "key can not be null or empty");
         this.criteriaChain = new ArrayList<Criteria>();
         this.criteriaChain.add(this);
         this.key = key;
     }
 
-    protected Criteria(List<Criteria> criteriaChain, String key) {
+    private Criteria(List<Criteria> criteriaChain, String key) {
         notEmpty(key, "key can not be null or empty");
         this.criteriaChain = criteriaChain;
         this.criteriaChain.add(this);
@@ -59,14 +75,20 @@ public class Criteria {
         return this.key;
     }
 
-    public boolean apply(Map<String, Object> map) {
+    /**
+     * Checks if this criteria matches the given map
+     *
+     * @param map map to check
+     * @return true if criteria is a match
+     */
+    public boolean matches(Map<String, Object> map) {
 
         if (this.criteriaChain.size() == 1) {
             return criteriaChain.get(0).singleObjectApply(map);
         } else {
-
             for (Criteria c : this.criteriaChain) {
 
+                System.out.println("");
                 if (!c.singleObjectApply(map)) {
                     return false;
                 }
@@ -75,150 +97,152 @@ public class Criteria {
         }
     }
 
-    protected boolean singleObjectApply(Map<String, Object> map) {
 
-        boolean not = false;
-        for (String key : this.criteria.keySet()) {
-            Object expectedVal = null;
+
+
+    boolean singleObjectApply(Map<String, Object> map) {
+
+        for (CriteriaType key : this.criteria.keySet()) {
+
             Object actualVal = map.get(this.key);
-            if (not) {
-                expectedVal = this.criteria.get(key);
-                not = false;
-            } else {
-                if ("$not".equals(key)) {
-                    not = true;
-                } else {
-                    expectedVal = this.criteria.get(key);
-                    if ("$gt".equals(key)) {
+            Object expectedVal = this.criteria.get(key);
 
-                        if (expectedVal == null || actualVal == null) {
-                            return false;
-                        }
+            if (CriteriaType.GT.equals(key)) {
 
-                        Number expectedNumber = (Number) expectedVal;
-                        Number actualNumber = (Number) actualVal;
-
-                        return (actualNumber.doubleValue() > expectedNumber.doubleValue());
-
-                    } else if ("$gte".equals(key)) {
-
-                        if (expectedVal == null || actualVal == null) {
-                            return false;
-                        }
-
-                        Number expectedNumber = (Number) expectedVal;
-                        Number actualNumber = (Number) actualVal;
-
-                        return (actualNumber.doubleValue() >= expectedNumber.doubleValue());
-
-                    } else if ("$lt".equals(key)) {
-
-                        if (expectedVal == null || actualVal == null) {
-                            return false;
-                        }
-
-                        Number expectedNumber = (Number) expectedVal;
-                        Number actualNumber = (Number) actualVal;
-
-                        return (actualNumber.doubleValue() < expectedNumber.doubleValue());
-
-                    } else if ("$lte".equals(key)) {
-
-                        if (expectedVal == null || actualVal == null) {
-                            return false;
-                        }
-
-                        Number expectedNumber = (Number) expectedVal;
-                        Number actualNumber = (Number) actualVal;
-
-                        return (actualNumber.doubleValue() <= expectedNumber.doubleValue());
-
-                    } else if ("$ne".equals(key)) {
-                        if (expectedVal == null && actualVal == null) {
-                            return false;
-                        }
-                        if (expectedVal == null) {
-                            return !(actualVal == null);
-                        }
-
-                        return !expectedVal.equals(actualVal);
-
-                    } else if ("$in".equals(key)) {
-
-                        Collection exp = (Collection) expectedVal;
-
-                        return exp.contains(actualVal);
-
-                    } else if ("$nin".equals(key)) {
-
-                        Collection exp = (Collection) expectedVal;
-
-                        return !exp.contains(actualVal);
-                    } else if ("$all".equals(key)) {
-
-                        Collection exp = (Collection) expectedVal;
-                        Collection act = (Collection) actualVal;
-
-                        return act.containsAll(exp);
-
-                    } else if ("$size".equals(key)) {
-
-                        int exp = (Integer) expectedVal;
-                        List act = (List) actualVal;
-
-                        return (act.size() == exp);
-
-                    } else if ("$exists".equals(key)) {
-
-                        boolean exp = (Boolean) expectedVal;
-                        boolean act = map.containsKey(this.key);
-
-                        return act == exp;
-
-                    } else if ("$type".equals(key)) {
-
-                        Class<?> exp = (Class<?>) expectedVal;
-                        Class<?> act = null;
-                        if (map.containsKey(this.key)) {
-                            Object actVal = map.get(this.key);
-                            if (actVal != null) {
-                                act = actVal.getClass();
-                            }
-                        }
-                        if (act == null) {
-                            return false;
-                        } else {
-                            return act.equals(exp);
-                        }
-
-                    } else if ("$regex".equals(key)) {
-
-
-                        Pattern exp = (Pattern) expectedVal;
-                        String act = (String) actualVal;
-                        if(act == null){
-                            return false;
-                        }
-                        return exp.matcher(act).matches();
-
-                    } else if ("$or".equals(key)) {
-
-
-                        throw new UnsupportedOperationException("Or not supported yet");
-                    }
-
-
+                if (expectedVal == null || actualVal == null) {
+                    return false;
                 }
 
+                Number expectedNumber = (Number) expectedVal;
+                Number actualNumber = (Number) actualVal;
 
+                return (actualNumber.doubleValue() > expectedNumber.doubleValue());
+
+            } else if (CriteriaType.GTE.equals(key)) {
+
+                if (expectedVal == null || actualVal == null) {
+                    return false;
+                }
+
+                Number expectedNumber = (Number) expectedVal;
+                Number actualNumber = (Number) actualVal;
+
+                return (actualNumber.doubleValue() >= expectedNumber.doubleValue());
+
+            } else if (CriteriaType.LT.equals(key)) {
+
+                if (expectedVal == null || actualVal == null) {
+                    return false;
+                }
+
+                Number expectedNumber = (Number) expectedVal;
+                Number actualNumber = (Number) actualVal;
+
+                return (actualNumber.doubleValue() < expectedNumber.doubleValue());
+
+            } else if (CriteriaType.LTE.equals(key)) {
+
+                if (expectedVal == null || actualVal == null) {
+                    return false;
+                }
+
+                Number expectedNumber = (Number) expectedVal;
+                Number actualNumber = (Number) actualVal;
+
+                return (actualNumber.doubleValue() <= expectedNumber.doubleValue());
+
+            } else if (CriteriaType.NE.equals(key)) {
+                if (expectedVal == null && actualVal == null) {
+                    return false;
+                }
+                if (expectedVal == null) {
+                    return true;
+                } else {
+                    return !expectedVal.equals(actualVal);
+                }
+
+            } else if (CriteriaType.IN.equals(key)) {
+
+                Collection exp = (Collection) expectedVal;
+
+                return exp.contains(actualVal);
+
+            } else if (CriteriaType.NIN.equals(key)) {
+
+                Collection exp = (Collection) expectedVal;
+
+                return !exp.contains(actualVal);
+            } else if (CriteriaType.ALL.equals(key)) {
+
+                Collection exp = (Collection) expectedVal;
+                Collection act = (Collection) actualVal;
+
+                return act.containsAll(exp);
+
+            } else if (CriteriaType.SIZE.equals(key)) {
+
+                int exp = (Integer) expectedVal;
+                List act = (List) actualVal;
+
+                return (act.size() == exp);
+
+            } else if (CriteriaType.EXISTS.equals(key)) {
+
+                boolean exp = (Boolean) expectedVal;
+                boolean act = map.containsKey(this.key);
+
+                return act == exp;
+
+            } else if (CriteriaType.TYPE.equals(key)) {
+
+                Class<?> exp = (Class<?>) expectedVal;
+                Class<?> act = null;
+                if (map.containsKey(this.key)) {
+                    Object actVal = map.get(this.key);
+                    if (actVal != null) {
+                        act = actVal.getClass();
+                    }
+                }
+                if (act == null) {
+                    return false;
+                } else {
+                    return act.equals(exp);
+                }
+
+            } else if (CriteriaType.REGEX.equals(key)) {
+
+
+                Pattern exp = (Pattern) expectedVal;
+                String act = (String) actualVal;
+                if (act == null) {
+                    return false;
+                }
+                return exp.matcher(act).matches();
+
+            } else {
+                throw new UnsupportedOperationException("Criteria type not supported: " + key.name());
             }
         }
         if (isValue != NOT_SET) {
 
-            if (isValue == null) {
-                return (map.get(key) == null);
+            if (isValue instanceof Collection) {
+                Collection<Criteria> cs = (Collection<Criteria>) isValue;
+                for (Criteria crit : cs) {
+                    for (Criteria c : crit.criteriaChain) {
+                        if (!c.singleObjectApply(map)) {
+                            return false;
+                        }
+                    }
+                }
+                return true;
             } else {
-                return isValue.equals(map.get(key));
+
+
+                if (isValue == null) {
+                    return (map.get(key) == null);
+                } else {
+                    return isValue.equals(map.get(key));
+                }
             }
         } else {
 
@@ -230,8 +254,8 @@ public class Criteria {
     /**
      * Static factory method to create a Criteria using the provided key
      *
-     * @param key
-     * @return
+     * @param key filed name
+     * @return the new criteria
      */
 
     public static Criteria where(String key) {
@@ -241,7 +265,8 @@ public class Criteria {
     /**
      * Static factory method to create a Criteria using the provided key
      *
-     * @return
+     * @param key ads new filed to criteria
+     * @return the criteria builder
      */
     public Criteria and(String key) {
         return new Criteria(this.criteriaChain, key);
@@ -264,6 +289,7 @@ public class Criteria {
         this.isValue = o;
         return this;
     }
+
     /**
      * Creates a criterion using equality
      *
@@ -275,62 +301,63 @@ public class Criteria {
     }
 
     /**
-     * Creates a criterion using the $ne operator
+     * Creates a criterion using the <b>!=</b> operator
      *
      * @param o
      * @return
      */
     public Criteria ne(Object o) {
-        criteria.put("$ne", o);
+        criteria.put(CriteriaType.NE, o);
         return this;
     }
 
     /**
-     * Creates a criterion using the $lt operator
+     * Creates a criterion using the <b>&lt;</b> operator
      *
      * @param o
      * @return
      */
     public Criteria lt(Object o) {
-        criteria.put("$lt", o);
+        criteria.put(CriteriaType.LT, o);
         return this;
     }
 
     /**
-     * Creates a criterion using the $lte operator
+     * Creates a criterion using the <b>&lt;=</b> operator
      *
      * @param o
      * @return
      */
     public Criteria lte(Object o) {
-        criteria.put("$lte", o);
+        criteria.put(CriteriaType.LTE, o);
         return this;
     }
 
     /**
-     * Creates a criterion using the $gt operator
+     * Creates a criterion using the <b>&gt;</b> operator
      *
      * @param o
      * @return
      */
     public Criteria gt(Object o) {
-        criteria.put("$gt", o);
+        criteria.put(CriteriaType.GT, o);
         return this;
     }
 
     /**
-     * Creates a criterion using the $gte operator
+     * Creates a criterion using the <b>&gt;=</b> operator
      *
      * @param o
      * @return
      */
     public Criteria gte(Object o) {
-        criteria.put("$gte", o);
+        criteria.put(CriteriaType.GTE, o);
         return this;
     }
 
     /**
-     * Creates a criterion using the $in operator
+     * The <code>in</code> operator is analogous to the SQL IN modifier, allowing you
+     * to specify an array of possible matches.
      *
      * @param o the values to match against
      * @return
@@ -344,35 +371,45 @@ public class Criteria {
     }
 
     /**
-     * Creates a criterion using the $in operator
-     *
-     * @param c the collection containing the values to match against
-     * @return
-     */
+      * The <code>in</code> operator is analogous to the SQL IN modifier, allowing you
+      * to specify an array of possible matches.
+      *
+      * @param c the collection containing the values to match against
+      * @return
+      */
     public Criteria in(Collection<?> c) {
-        criteria.put("$in", c);
+        notNull(c, "collection can not be null");
+        criteria.put(CriteriaType.IN, c);
         return this;
     }
 
     /**
-     * Creates a criterion using the $nin operator
+     * The <code>nin</code> operator is similar to $in except that it selects objects for
+     * which the specified field does not have any value in the specified array.
      *
-     * @param o
+     * @param o the values to match against
      * @return
      */
     public Criteria nin(Object... o) {
         return nin(Arrays.asList(o));
     }
 
-    public Criteria nin(Collection<?> o) {
-        notNull(o, "collection can not be null");
-        criteria.put("$nin", o);
+    /**
+     * The <code>nin</code> operator is similar to $in except that it selects objects for
+     * which the specified field does not have any value in the specified array.
+     *
+     * @param c the values to match against
+     * @return
+     */
+    public Criteria nin(Collection<?> c) {
+        notNull(c, "collection can not be null");
+        criteria.put(CriteriaType.NIN, c);
         return this;
     }
 
 
     /**
-     * Creates a criterion using the $all operator
+     * The <code>all</code> operator is similar to $in, but instead of matching any value in the specified array all values in the array must be matched.
      *
      * @param o
      * @return
@@ -380,94 +417,77 @@ public class Criteria {
     public Criteria all(Object... o) {
         return all(Arrays.asList(o));
     }
-
-    public Criteria all(Collection<?> o) {
-        criteria.put("$all", o);
+    /**
+     * The <code>all</code> operator is similar to $in, but instead of matching any value in the specified array all values in the array must be matched.
+     *
+     * @param c
+     * @return
+     */
+    public Criteria all(Collection<?> c) {
+        notNull(c, "collection can not be null");
+        criteria.put(CriteriaType.ALL, c);
         return this;
     }
 
     /**
-     * Creates a criterion using the $size operator
+     * The <code>size</code> operator matches any array with the specified number of elements.
      *
      * @param s
      * @return
      */
     public Criteria size(int s) {
-        criteria.put("$size", s);
+        criteria.put(CriteriaType.SIZE, s);
         return this;
     }
 
     /**
-     * Creates a criterion using the $exists operator
+     * Check for existence (or lack thereof) of a field.
      *
      * @param b
      * @return
      */
     public Criteria exists(boolean b) {
-        criteria.put("$exists", b);
+        criteria.put(CriteriaType.EXISTS, b);
         return this;
     }
 
     /**
-     * Creates a criterion using the $type operator
+     * The $type operator matches values based on their Java type.
      *
      * @param t
      * @return
      */
     public Criteria type(Class<?> t) {
-        criteria.put("$type", t);
-        return this;
-    }
-
-    /**
-     * Creates a criterion using the $not meta operator which affects the clause directly following
-     *
-     * @return
-     */
-    public Criteria not() {
-        criteria.put("$not", null);
+        notNull(t, "type can not be null");
+        criteria.put(CriteriaType.TYPE, t);
         return this;
     }
 
 
     /**
-     * Creates a criterion using a $regex and $options
+     * Creates a criterion using a Regex
      *
      * @param pattern
      * @return
      */
     public Criteria regex(Pattern pattern) {
-        criteria.put("$regex", pattern);
-
+        notNull(pattern, "pattern can not be null");
+        criteria.put(CriteriaType.REGEX, pattern);
         return this;
     }
 
-    /**
-     * Creates a criterion using the $mod operator
-     *
-     * @param value
-     * @param remainder
-     * @return
-     */
-    /*
-    public Criteria mod(Number value, Number remainder) {
-        List<Object> l = new ArrayList<Object>();
-        l.add(value);
-        l.add(remainder);
-        criteria.put("$mod", l);
-        return this;
-    }
-    */
 
     /**
      * Creates an 'or' criteria using the $or operator for all of the provided criteria
      *
      * @param criteria
      */
+    /*
     public Criteria orOperator(Criteria... criteria) {
         criteriaChain.add(new Criteria("$or").is(asList(criteria)));
         return this;
     }
+    */
 
     /**
      * Creates a 'nor' criteria using the $nor operator for all of the provided criteria

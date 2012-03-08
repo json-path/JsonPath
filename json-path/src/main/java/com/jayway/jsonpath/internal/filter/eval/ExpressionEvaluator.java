@@ -31,13 +31,13 @@ public class ExpressionEvaluator {
             } else if ("!=".equals(comparator) || "<>".equals(comparator)) {
                 return a.longValue() != e.longValue();
             } else if (">".equals(comparator)) {
-                return a.longValue() > e.longValue();
+                return a > e;
             } else if (">=".equals(comparator)) {
-                return a.longValue() >= e.longValue();
+                return a >= e;
             } else if ("<".equals(comparator)) {
-                return a.longValue() < e.longValue();
+                return a < e;
             } else if ("<=".equals(comparator)) {
-                return a.longValue() <= e.longValue();
+                return a <= e;
             }
         } else if (actual instanceof Integer) {
             Integer a = (Integer) actual;
@@ -48,13 +48,13 @@ public class ExpressionEvaluator {
             } else if ("!=".equals(comparator) || "<>".equals(comparator)) {
                 return a.intValue() != e.intValue();
             } else if (">".equals(comparator)) {
-                return a.intValue() > e.intValue();
+                return a > e;
             } else if (">=".equals(comparator)) {
-                return a.intValue() >= e.intValue();
+                return a >= e;
             } else if ("<".equals(comparator)) {
-                return a.intValue() < e.intValue();
+                return a < e;
             } else if ("<=".equals(comparator)) {
-                return a.intValue() <= e.intValue();
+                return a <= e;
             }
         } else if (actual instanceof Double) {
 
@@ -66,13 +66,13 @@ public class ExpressionEvaluator {
             } else if ("!=".equals(comparator) || "<>".equals(comparator)) {
                 return a.doubleValue() != e.doubleValue();
             } else if (">".equals(comparator)) {
-                return a.doubleValue() > e.doubleValue();
+                return a > e;
             } else if (">=".equals(comparator)) {
-                return a.doubleValue() >= e.doubleValue();
+                return a >= e;
             } else if ("<".equals(comparator)) {
-                return a.doubleValue() < e.doubleValue();
+                return a < e;
             } else if ("<=".equals(comparator)) {
-                return a.doubleValue() <= e.doubleValue();
+                return a <= e;
             }
         } else if (actual instanceof String) {
 

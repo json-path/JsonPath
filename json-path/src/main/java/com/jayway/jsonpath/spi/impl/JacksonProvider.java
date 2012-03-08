@@ -31,6 +31,7 @@ import java.util.*;
 public class JacksonProvider extends AbstractJsonProvider implements MappingProvider{
 
     private ObjectMapper objectMapper = new ObjectMapper();
+
     @Override
     public Mode getMode() {
         return Mode.STRICT;

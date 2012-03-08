@@ -30,6 +30,9 @@ public abstract class PathTokenFilter {
         this.condition = condition;
     }
 
+    String getCondition() {
+        return condition;
+    }
 
     String trim(String str, int front, int end) {
         String res = str;
