@@ -222,25 +222,25 @@ public class JsonModel {
     public static JsonModel create(String json) {
         notEmpty(json, "json can not be null or empty");
 
-        return new JsonModel(json, JsonProviderFactory.getInstance());
+        return new JsonModel(json, JsonProviderFactory.createProvider());
     }
 
     public static JsonModel create(Object jsonObject) {
         notNull(jsonObject, "jsonObject can not be null");
 
-        return new JsonModel(jsonObject, JsonProviderFactory.getInstance());
+        return new JsonModel(jsonObject, JsonProviderFactory.createProvider());
     }
 
     public static JsonModel create(URL url) throws IOException {
         notNull(url, "url can not be null");
 
-        return new JsonModel(url, JsonProviderFactory.getInstance());
+        return new JsonModel(url, JsonProviderFactory.createProvider());
     }
 
     public static JsonModel create(InputStream jsonInputStream) throws IOException {
         notNull(jsonInputStream, "jsonInputStream can not be null");
 
-        return new JsonModel(jsonInputStream, JsonProviderFactory.getInstance());
+        return new JsonModel(jsonInputStream, JsonProviderFactory.createProvider());
     }
 
     // --------------------------------------------------------
@@ -256,7 +256,7 @@ public class JsonModel {
             throw new IndefinitePathException(jsonPath.getPath());
         }
 
-        JsonProvider jsonProvider = JsonProviderFactory.getInstance();
+        JsonProvider jsonProvider = JsonProviderFactory.createProvider();
 
         Object modelRef = jsonObject;
 
@@ -442,7 +442,7 @@ public class JsonModel {
             if (!(model instanceof List)) {
                 model = asList(model);
             }
-            return MappingProviderFactory.getInstance().convertValue(model, List.class, targetClass);
+            return MappingProviderFactory.createProvider().convertValue(model, List.class, targetClass);
         }
 
         @Override
@@ -452,12 +452,12 @@ public class JsonModel {
                 setModel.add(model);
                 model = setModel;
             }
-            return MappingProviderFactory.getInstance().convertValue(model, Set.class, targetClass);
+            return MappingProviderFactory.createProvider().convertValue(model, Set.class, targetClass);
         }
 
         @Override
         public <T> T to(Class<T> targetClass) {
-            return MappingProviderFactory.getInstance().convertValue(model, targetClass);
+            return MappingProviderFactory.createProvider().convertValue(model, targetClass);
         }
     }
 }

@@ -87,8 +87,6 @@ public class Criteria {
             return criteriaChain.get(0).singleObjectApply(map);
         } else {
             for (Criteria c : this.criteriaChain) {
-
-                System.out.println("");
                 if (!c.singleObjectApply(map)) {
                     return false;
                 }

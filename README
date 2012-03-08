@@ -1,6 +1,18 @@
 Java DSL for reading and testing JSON documents.
 
 ------------------------------------------
+0.8.0                           2012-03-08
+------------------------------------------
+- Fixed issue http://code.google.com/p/json-path/issues/detail?id=8
+- Fixed issue http://code.google.com/p/json-path/issues/detail?id=9
+- Improved compliance
+- Fixed bug with '=' sign when evaluating expressions
+- OSGi support added
+- Support for custom array filters in JsonPath
+- Lots of new features in JsonModel
+
+
+------------------------------------------
 0.5.6                           2012-02-09
 ------------------------------------------
 - Replaced regexp with custom tokenizer

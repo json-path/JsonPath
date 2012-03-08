@@ -19,24 +19,36 @@ import com.jayway.jsonpath.spi.impl.JacksonProvider;
 /**
  * @author Kalle Stenflo
  */
-public class MappingProviderFactory {
+public abstract class MappingProviderFactory {
 
-    private static MappingProvider mappingProvider;
 
-    static {
-        try {
-            Class.forName("org.codehaus.jackson.map.ObjectMapper");
+    public static MappingProviderFactory factory = new MappingProviderFactory() {
 
-            mappingProvider = new JacksonProvider();
-        } catch (ClassNotFoundException e) {
-            throw new RuntimeException("org.codehaus.jackson.map.ObjectMapper not found on classpath. This is an optional dependency needed for POJO conversions.", e);
+        private MappingProvider provider = null;
+
+        @Override
+        protected MappingProvider create() {
+            if (this.provider == null) {
+                synchronized (MappingProviderFactory.class) {
+                    try {
+                        Class.forName("org.codehaus.jackson.map.ObjectMapper");
+
+                        provider = new JacksonProvider();
+                        return provider;
+                    } catch (ClassNotFoundException e) {
+                        throw new RuntimeException("org.codehaus.jackson.map.ObjectMapper not found on classpath. This is an optional dependency needed for POJO conversions.", e);
+                    }
+                }
+            } else {
+                return provider;
+            }
         }
-    }
+    };
+
+    protected abstract MappingProvider create();
 
 
-
-
-    public static MappingProvider getInstance() {
-        return mappingProvider;
+    public static MappingProvider createProvider() {
+        return factory.create();
     }
 }
