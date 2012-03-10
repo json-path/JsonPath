@@ -15,10 +15,10 @@
 package com.jayway.jsonpath;
 
 import com.jayway.jsonpath.internal.PathToken;
+import com.jayway.jsonpath.internal.Util;
 import com.jayway.jsonpath.spi.JsonProvider;
 import com.jayway.jsonpath.spi.JsonProviderFactory;
 import com.jayway.jsonpath.spi.MappingProviderFactory;
-import org.apache.commons.io.IOUtils;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -57,13 +57,13 @@ public class JsonModel {
      * Creates a new JsonModel based on a json document.
      * Note that the jsonObject must either a {@link List} or a {@link Map}
      *
-     * @param jsonObject the json object
+     * @param jsonObject   the json object
      * @param jsonProvider
      */
     private JsonModel(Object jsonObject, JsonProvider jsonProvider) {
         notNull(jsonObject, "json can not be null");
 
-        if (!(jsonObject instanceof Map) && !(jsonObject instanceof List)) {
+        if (!jsonProvider.isContainer(jsonObject)) {
             throw new IllegalArgumentException("Invalid container object");
         }
         this.jsonProvider = jsonProvider;
@@ -85,7 +85,7 @@ public class JsonModel {
     /**
      * Creates a new JsonModel by fetching the content from the provided URL
      *
-     * @param jsonURL the URL to read
+     * @param jsonURL      the URL to read
      * @param jsonProvider
      * @throws IOException failed to load URL
      */
@@ -98,8 +98,16 @@ public class JsonModel {
             this.jsonObject = jsonProvider.parse(jsonInputStream);
             this.jsonProvider = jsonProvider;
         } finally {
-            IOUtils.closeQuietly(jsonInputStream);
+            Util.closeQuietly(jsonInputStream);
         }
+    }
+
+    public boolean isList(){
+        return jsonProvider.isList(jsonObject);
+    }
+
+    public boolean isMap(){
+        return jsonProvider.isMap(jsonObject);
     }
 
     // --------------------------------------------------------
@@ -138,12 +146,20 @@ public class JsonModel {
         return opsForArray(JsonPath.compile(jsonPath));
     }
 
+    public ArrayOps opsForArray() {
+        return new DefaultArrayOps(this.jsonObject);
+    }
+
     public ArrayOps opsForArray(JsonPath jsonPath) {
         notNull(jsonPath, "jsonPath can not be null");
 
-        List<Object> opsTarget = getTargetObject(jsonPath, List.class);
+        Object opsTarget = getTargetObject(jsonPath, List.class);
 
         return new DefaultArrayOps(opsTarget);
+    }
+
+    public ObjectOps opsForObject() {
+        return new DefaultObjectOps(this.jsonObject);
     }
 
     public ObjectOps opsForObject(String jsonPath) {
@@ -153,7 +169,7 @@ public class JsonModel {
     public ObjectOps opsForObject(JsonPath jsonPath) {
         notNull(jsonPath, "jsonPath can not be null");
 
-        Map<String, Object> opsTarget = getTargetObject(jsonPath, Map.class);
+        Object opsTarget = getTargetObject(jsonPath, Map.class);
 
         return new DefaultObjectOps(opsTarget);
     }
@@ -192,8 +208,8 @@ public class JsonModel {
 
         Object subModel = jsonPath.read(jsonObject);
 
-        if (!(subModel instanceof Map) && !(subModel instanceof List)) {
-            throw new InvalidModelPathException("The path " + jsonPath.getPath() + " returned an invalid model " + (subModel != null ? subModel.getClass() : "null"));
+        if(!jsonProvider.isContainer(subModel)){
+            throw new InvalidModelException("The path " + jsonPath.getPath() + " returned an invalid model " + (subModel != null ? subModel.getClass() : "null"));
         }
 
         return new JsonModel(subModel, this.jsonProvider);
@@ -204,8 +220,12 @@ public class JsonModel {
     // Mapping model readers
     //
     // --------------------------------------------------------
-    public MappingModelReader map(String jsonPath) {
-        return map(JsonPath.compile(jsonPath));
+    public MappingModelReader map() {
+        return new DefaultMappingModelReader(this.jsonObject);
+    }
+
+    public MappingModelReader map(String jsonPath, Filter... filters) {
+        return map(JsonPath.compile(jsonPath, filters));
     }
 
     public MappingModelReader map(JsonPath jsonPath) {
@@ -219,25 +239,25 @@ public class JsonModel {
     // Static factory methods
     //
     // --------------------------------------------------------
-    public static JsonModel create(String json) {
+    public static JsonModel model(String json) {
         notEmpty(json, "json can not be null or empty");
 
         return new JsonModel(json, JsonProviderFactory.createProvider());
     }
 
-    public static JsonModel create(Object jsonObject) {
+    public static JsonModel model(Object jsonObject) {
         notNull(jsonObject, "jsonObject can not be null");
 
         return new JsonModel(jsonObject, JsonProviderFactory.createProvider());
     }
 
-    public static JsonModel create(URL url) throws IOException {
+    public static JsonModel model(URL url) throws IOException {
         notNull(url, "url can not be null");
 
         return new JsonModel(url, JsonProviderFactory.createProvider());
     }
 
-    public static JsonModel create(InputStream jsonInputStream) throws IOException {
+    public static JsonModel model(InputStream jsonInputStream) throws IOException {
         notNull(jsonInputStream, "jsonInputStream can not be null");
 
         return new JsonModel(jsonInputStream, JsonProviderFactory.createProvider());
@@ -269,7 +289,7 @@ public class JsonModel {
         } while (!tokens.isEmpty());
 
         if (modelRef.getClass().isAssignableFrom(clazz)) {
-            throw new InvalidModelPathException(jsonPath + " does nor refer to a Map but " + currentToken.getClass().getName());
+            throw new InvalidModelException(jsonPath + " does nor refer to a Map but " + currentToken.getClass().getName());
         }
         return clazz.cast(modelRef);
     }
@@ -307,9 +327,15 @@ public class JsonModel {
 
         ObjectOps put(String key, Object value);
 
+        ObjectOps putIfAbsent(String key, Object value);
+
+        Object get(String key);
+
         ObjectOps putAll(Map<String, Object> map);
 
         ObjectOps remove(String key);
+
+        ObjectOps transform(Transformer<JsonModel> transformer);
 
         <T> T to(Class<T> targetClass);
     }
@@ -325,6 +351,8 @@ public class JsonModel {
 
         ListMappingModelReader toList();
 
+        ArrayOps transform(Transformer<Object> transformer);
+
         <T> List<T> toListOf(Class<T> targetClass);
 
         <T> Set<T> toSetOf(Class<T> targetClass);
@@ -334,9 +362,8 @@ public class JsonModel {
 
         private Map<String, Object> opsTarget;
 
-        private DefaultObjectOps(Map<String, Object> opsTarget) {
-
-            this.opsTarget = opsTarget;
+        private DefaultObjectOps(Object opsTarget) {
+            this.opsTarget = (Map<String, Object>) opsTarget;
         }
 
         @Override
@@ -356,6 +383,19 @@ public class JsonModel {
         }
 
         @Override
+        public ObjectOps putIfAbsent(String key, Object value) {
+            if (!opsTarget.containsKey(key)) {
+                opsTarget.put(key, value);
+            }
+            return this;
+        }
+
+        @Override
+        public Object get(String key) {
+            return opsTarget.get(key);
+        }
+
+        @Override
         public ObjectOps putAll(Map<String, Object> map) {
             opsTarget.putAll(map);
             return this;
@@ -364,6 +404,12 @@ public class JsonModel {
         @Override
         public ObjectOps remove(String key) {
             opsTarget.remove(key);
+            return this;
+        }
+
+        @Override
+        public ObjectOps transform(Transformer<JsonModel> transformer) {
+            transformer.transform(-1, JsonModel.model(opsTarget));
             return this;
         }
 
@@ -377,8 +423,8 @@ public class JsonModel {
 
         private List<Object> opsTarget;
 
-        private DefaultArrayOps(List<Object> opsTarget) {
-            this.opsTarget = opsTarget;
+        private DefaultArrayOps(Object opsTarget) {
+            this.opsTarget = (List<Object>) opsTarget;
         }
 
         @Override
@@ -407,6 +453,15 @@ public class JsonModel {
         @Override
         public ListMappingModelReader toList() {
             return new DefaultMappingModelReader(opsTarget);
+        }
+
+        @Override
+        public ArrayOps transform(Transformer<Object> transformer) {
+            for (int i = 0; i < opsTarget.size(); i++) {
+                Object current = opsTarget.get(i);
+                opsTarget.set(i, transformer.transform(i, current));
+            }
+            return this;
         }
 
         @Override
@@ -439,20 +494,22 @@ public class JsonModel {
 
         @Override
         public <T> List<T> toListOf(Class<T> targetClass) {
-            if (!(model instanceof List)) {
-                model = asList(model);
+            Object modelRef = model;
+            if (!(modelRef instanceof List)) {
+                modelRef = asList(modelRef);
             }
-            return MappingProviderFactory.createProvider().convertValue(model, List.class, targetClass);
+            return MappingProviderFactory.createProvider().convertValue(modelRef, List.class, targetClass);
         }
 
         @Override
         public <T> Set<T> toSetOf(Class<T> targetClass) {
-            if (!(model instanceof List)) {
+            Object modelRef = model;
+            if (!(modelRef instanceof List)) {
                 Set setModel = new HashSet();
                 setModel.add(model);
-                model = setModel;
+                modelRef = setModel;
             }
-            return MappingProviderFactory.createProvider().convertValue(model, Set.class, targetClass);
+            return MappingProviderFactory.createProvider().convertValue(modelRef, Set.class, targetClass);
         }
 
         @Override

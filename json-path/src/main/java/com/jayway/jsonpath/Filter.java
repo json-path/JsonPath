@@ -120,8 +120,5 @@ public abstract class Filter<T> {
             }
             return true;
         }
-
-
     }
-
 }

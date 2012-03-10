@@ -55,7 +55,7 @@ public class JsonModelOpsTest {
     @Test
     public void object_ops_can_update() throws Exception {
 
-        JsonModel model = JsonModel.create(DOCUMENT);
+        JsonModel model = JsonModel.model(DOCUMENT);
 
         model.opsForObject("store.book[0]")
                 .put("author", "Kalle")
@@ -68,7 +68,7 @@ public class JsonModelOpsTest {
     
     @Test
     public void array_ops_can_add_element() throws Exception {
-        JsonModel model = JsonModel.create(DOCUMENT);
+        JsonModel model = JsonModel.model(DOCUMENT);
         
         Map<String, Object> newBook = new HashMap<String, Object>();
         newBook.put("category", "reference");
@@ -90,7 +90,7 @@ public class JsonModelOpsTest {
 
     @Test
     public void arrays_can_be_mapped() throws Exception {
-        JsonModel model = JsonModel.create(DOCUMENT);
+        JsonModel model = JsonModel.model(DOCUMENT);
 
         List<Book> books1 = model.opsForArray("store.book").toList().of(Book.class);
         List<Book> books2 = model.opsForArray("store.book").toListOf(Book.class);
@@ -103,7 +103,7 @@ public class JsonModelOpsTest {
 
     @Test
     public void objects_can_be_mapped() throws Exception {
-        JsonModel model = JsonModel.create(DOCUMENT);
+        JsonModel model = JsonModel.model(DOCUMENT);
 
         Book book = model.opsForObject("store.book[1]").to(Book.class);
 
@@ -112,6 +112,69 @@ public class JsonModelOpsTest {
         assertEquals("Sword of Honour", book.title);
         assertEquals(12.99D, book.price);
 
+    }
+
+
+    @Test
+    public void object_can_be_transformed() throws Exception {
+
+        Transformer transformer = new Transformer<JsonModel>() {
+            @Override
+            public JsonModel transform(int index, JsonModel model) {
+                model.opsForObject().put("newProp", "newProp");
+                return model;
+            }
+        };
+
+        JsonModel model = JsonModel.model(DOCUMENT);
+
+        model.opsForObject("store.book[1]").transform(transformer);
+
+        assertEquals("newProp", model.get("store.book[1].newProp"));
+    }
+
+    @Test
+    public void arrays_can_be_transformed() throws Exception {
+        Transformer transformer = new Transformer<Object>() {
+            @Override
+            public Object transform(int index, Object model) {
+                Map<String, Object>  map = (Map<String, Object>) model;
+                map.put("newProp", "newProp");
+                return model;
+            }
+        };
+
+        JsonModel model = JsonModel.model(DOCUMENT);
+
+        model.opsForArray("store.book").transform(transformer);
+
+        assertEquals("newProp", model.get("store.book[1].newProp"));
+    }
+    
+    @Test
+    public void array_can_be_transformed_to_primitives() throws Exception {
+        Transformer positionTransformer = new Transformer<Object>() {
+            private int i = 0;
+            @Override
+            public Object transform(int index, Object model) {
+                return i++;
+            }
+        };
+
+        Transformer multiplyingTransformer = new Transformer<Object>() {
+            @Override
+            public Object transform(int index, Object model) {
+                int in = (Integer)model;
+
+                return in * 2;
+            }
+        };
+
+        JsonModel model = JsonModel.model(DOCUMENT);
+
+        model.opsForArray("store.book").transform(positionTransformer).transform(multiplyingTransformer);
+
+        assertEquals(2, model.get("store.book[1]"));
     }
 
     public static class Book {

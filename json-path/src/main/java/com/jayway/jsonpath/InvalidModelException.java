@@ -18,21 +18,21 @@ package com.jayway.jsonpath;
  * @author Kalle Stenflo
  */
 @SuppressWarnings("serial")
-public class InvalidModelPathException extends RuntimeException {
+public class InvalidModelException extends RuntimeException {
 
-    public InvalidModelPathException() {
+    public InvalidModelException() {
         super();
     }
 
-    public InvalidModelPathException(String message) {
+    public InvalidModelException(String message) {
         super(message);
     }
 
-    public InvalidModelPathException(String message, Throwable cause) {
+    public InvalidModelException(String message, Throwable cause) {
         super(message, cause);
     }
 
-    public InvalidModelPathException(Throwable cause) {
+    public InvalidModelException(Throwable cause) {
         super(cause);
     }
 }

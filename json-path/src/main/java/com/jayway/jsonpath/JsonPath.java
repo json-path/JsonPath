@@ -17,10 +17,11 @@ package com.jayway.jsonpath;
 
 import com.jayway.jsonpath.internal.PathToken;
 import com.jayway.jsonpath.internal.PathTokenizer;
+import com.jayway.jsonpath.internal.Util;
 import com.jayway.jsonpath.internal.filter.PathTokenFilter;
+import com.jayway.jsonpath.spi.HttpProviderFactory;
 import com.jayway.jsonpath.spi.JsonProvider;
 import com.jayway.jsonpath.spi.JsonProviderFactory;
-import org.apache.commons.io.IOUtils;
 
 import java.io.*;
 import java.net.URL;
@@ -214,12 +215,12 @@ public class JsonPath {
     public <T> T read(URL jsonURL) throws IOException {
         notNull(jsonURL, "json URL can not be null");
 
-        BufferedReader in = null;
+        InputStream in = null;
         try {
-            in = new BufferedReader(new InputStreamReader(jsonURL.openStream()));
+            in = HttpProviderFactory.getProvider().get(jsonURL);
             return (T) read(JsonProviderFactory.createProvider().parse(in));
         } finally {
-            IOUtils.closeQuietly(in);
+            Util.closeQuietly(in);
         }
     }
 
@@ -241,7 +242,7 @@ public class JsonPath {
             fis = new FileInputStream(jsonFile);
             return (T) read(JsonProviderFactory.createProvider().parse(fis));
         } finally {
-            IOUtils.closeQuietly(fis);
+            Util.closeQuietly(fis);
         }
     }
 
@@ -260,7 +261,7 @@ public class JsonPath {
         try {
             return (T) read(JsonProviderFactory.createProvider().parse(jsonInputStream));
         } finally {
-            IOUtils.closeQuietly(jsonInputStream);
+            Util.closeQuietly(jsonInputStream);
         }
     }
 
