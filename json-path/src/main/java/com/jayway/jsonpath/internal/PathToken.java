@@ -14,14 +14,20 @@
  */
 package com.jayway.jsonpath.internal;
 
+import com.jayway.jsonpath.InvalidModelException;
 import com.jayway.jsonpath.internal.filter.FilterFactory;
 import com.jayway.jsonpath.internal.filter.PathTokenFilter;
 import com.jayway.jsonpath.spi.JsonProvider;
+
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  * @author Kalle Stenflo
  */
 public class PathToken {
+    
+    private static final Pattern ARRAY_INDEX_PATTERN = Pattern.compile("\\[(\\d+)\\]");
 
     private String fragment;
 
@@ -43,5 +49,20 @@ public class PathToken {
 
     public String getFragment() {
         return fragment;
+    }
+
+    public boolean isRootToken(){
+        return "$".equals(fragment);
+    }
+    public boolean isArrayIndexToken(){
+        return ARRAY_INDEX_PATTERN.matcher(fragment).matches();   
+    }
+    
+    public int getArrayIndex(){
+        Matcher matcher = ARRAY_INDEX_PATTERN.matcher(fragment);
+        if(matcher.find()){
+            return Integer.parseInt(matcher.group(1));
+        }
+        else throw new InvalidModelException("Could not get array index from fragment " + fragment);
     }
 }

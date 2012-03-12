@@ -54,7 +54,7 @@ public class ArrayIndexFilter extends PathTokenFilter {
             return result;
 
         } else if (trimmedCondition.endsWith(":")) {
-            trimmedCondition = trim(trimmedCondition, 1, 1);
+            trimmedCondition = trim(trimmedCondition.replace(" ", ""), 1, 1);
             int get = Integer.parseInt(trimmedCondition);
             return src.get(src.size() - get);
 

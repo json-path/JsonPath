@@ -17,11 +17,12 @@ package com.jayway.jsonpath;
 
 import com.jayway.jsonpath.internal.PathToken;
 import com.jayway.jsonpath.internal.PathTokenizer;
-import com.jayway.jsonpath.internal.Util;
+import com.jayway.jsonpath.internal.IOUtils;
 import com.jayway.jsonpath.internal.filter.PathTokenFilter;
 import com.jayway.jsonpath.spi.HttpProviderFactory;
 import com.jayway.jsonpath.spi.JsonProvider;
 import com.jayway.jsonpath.spi.JsonProviderFactory;
+import org.apache.commons.lang.StringUtils;
 
 import java.io.*;
 import java.net.URL;
@@ -108,8 +109,11 @@ public class JsonPath {
 
             throw new InvalidPathException("Invalid path");
         }
+
+        int filterCountInPath = StringUtils.countMatches(jsonPath, "[?]");
+        isTrue(filterCountInPath == filters.length, "Filters in path ([?]) does not match provided filters.");
+
         this.tokenizer = new PathTokenizer(jsonPath);
-        
         this.filters = new LinkedList<Filter>();
         this.filters.addAll(asList(filters));
 
@@ -119,6 +123,10 @@ public class JsonPath {
         return this.tokenizer;
     }
 
+
+    public JsonPath copy(){
+        return new JsonPath(tokenizer.getPath(), filters.toArray(new Filter[0]));
+    }
 
 
     /**
@@ -220,7 +228,7 @@ public class JsonPath {
             in = HttpProviderFactory.getProvider().get(jsonURL);
             return (T) read(JsonProviderFactory.createProvider().parse(in));
         } finally {
-            Util.closeQuietly(in);
+            IOUtils.closeQuietly(in);
         }
     }
 
@@ -242,7 +250,7 @@ public class JsonPath {
             fis = new FileInputStream(jsonFile);
             return (T) read(JsonProviderFactory.createProvider().parse(fis));
         } finally {
-            Util.closeQuietly(fis);
+            IOUtils.closeQuietly(fis);
         }
     }
 
@@ -261,7 +269,7 @@ public class JsonPath {
         try {
             return (T) read(JsonProviderFactory.createProvider().parse(jsonInputStream));
         } finally {
-            Util.closeQuietly(jsonInputStream);
+            IOUtils.closeQuietly(jsonInputStream);
         }
     }
 

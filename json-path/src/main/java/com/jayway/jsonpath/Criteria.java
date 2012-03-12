@@ -27,11 +27,6 @@ import static org.apache.commons.lang.Validate.notNull;
 public class Criteria {
 
 
-    /**
-     * Custom "not-null" object as we have to be able to work with {@literal null} values as well.
-     */
-    private static final Object NOT_SET = new Object();
-
     private enum CriteriaType {
         GT,
         GTE,
@@ -47,6 +42,11 @@ public class Criteria {
         REGEX,
         OR
     }
+
+    /**
+     * Custom "not-null" object as we have to be able to work with {@literal null} values as well.
+     */
+    private static final Object NOT_SET = new Object();
 
     private final String key;
 
@@ -234,8 +234,6 @@ public class Criteria {
                 }
                 return true;
             } else {
-
-
                 if (isValue == null) {
                     return (map.get(key) == null);
                 } else {

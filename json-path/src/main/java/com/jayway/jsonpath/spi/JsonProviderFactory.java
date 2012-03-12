@@ -25,6 +25,7 @@ public abstract class JsonProviderFactory {
         @Override
         protected JsonProvider create() {
             return new JsonSmartJsonProvider();
+            //return new JacksonProvider();
         }
     };
 

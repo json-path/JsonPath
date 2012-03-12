@@ -1,25 +1,16 @@
 package com.jayway.jsonpath;
 
 import org.junit.Test;
-
-import java.io.ByteArrayInputStream;
-import java.net.URL;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.Map;
-
-import static java.util.Arrays.asList;
+import static com.jayway.jsonpath.JsonModel.model;
 import static junit.framework.Assert.assertEquals;
-import static junit.framework.Assert.assertFalse;
-import static junit.framework.Assert.assertTrue;
 
 /**
  * Created by IntelliJ IDEA.
  * User: kallestenflo
- * Date: 11/8/11
- * Time: 7:52 PM
+ * Date: 3/11/12
+ * Time: 4:44 PM
  */
-public class JsonModelTest {
+public class JsonModelSubModelDetachedTest {
 
     public final static String DOCUMENT =
             "{ \"store\": {\n" +
@@ -55,50 +46,20 @@ public class JsonModelTest {
                     "    }\n" +
                     "  }\n" +
                     "}";
-
     
     @Test
-    public void has_path_validates() throws Exception {
-        assertFalse(JsonModel.model(DOCUMENT).hasPath("store.invalid"));
-        assertFalse( JsonModel.model(DOCUMENT).hasPath("store.book[0].foo"));
-
-        assertTrue( JsonModel.model(DOCUMENT).hasPath("store.book"));
-        assertTrue( JsonModel.model(DOCUMENT).hasPath("store.book[0].title"));
-    }
+    public void a_sub_model_can_be_detached() throws Exception {
     
-    @Test
-    public void a_json_document_can_be_fetched_with_a_URL() throws Exception {
-        URL url = new URL("http://maps.googleapis.com/maps/api/geocode/json");
-        assertEquals("REQUEST_DENIED", JsonModel.model(url).get("status"));
+        JsonModel model = model(DOCUMENT);
+
+        JsonModel detachedModel = model.getSubModelDetached("$.store.book[*]");
+
+        detachedModel.opsForArray().add(1);
+
+        assertEquals(4, model.opsForArray("$.store.book").size());
+        assertEquals(5, detachedModel.opsForArray("$.store.book").size());
+
     }
-
-    @Test
-    public void a_json_document_can_be_fetched_with_a_InputStream() throws Exception {
-        ByteArrayInputStream bis = new ByteArrayInputStream(DOCUMENT.getBytes());
-        assertEquals("Nigel Rees", JsonModel.model(bis).get("store.book[0].author"));
-    }
-
-
-
-    @Test
-    public void maps_and_list_can_queried() throws Exception {
-        Map<String, Object> doc = new HashMap<String, Object>();
-        doc.put("items", asList(0, 1, 2));
-        doc.put("child", Collections.singletonMap("key", "value"));
-
-        JsonModel model = JsonModel.model(doc);
-
-        assertEquals("value", model.get("$child.key"));
-        assertEquals(1, model.get("$items[1]"));
-        assertEquals("{\"child\":{\"key\":\"value\"},\"items\":[0,1,2]}", model.toJson());
-    }
-
-
-    @Test(expected = InvalidPathException.class)
-    public void invalid_path_throws() throws Exception {
-        JsonModel.model(DOCUMENT).get("store.invalid");
-    }
-
 
 
 }

@@ -15,7 +15,9 @@
 package com.jayway.jsonpath.spi.impl;
 
 import com.jayway.jsonpath.spi.JsonProvider;
+import org.apache.commons.lang.SerializationUtils;
 
+import java.io.Serializable;
 import java.util.List;
 import java.util.Map;
 
@@ -23,6 +25,11 @@ import java.util.Map;
  * @author Kalle Stenflo
  */
 public abstract class AbstractJsonProvider implements JsonProvider {
+
+    @Override
+    public Object clone(Object obj){
+        return SerializationUtils.clone((Serializable)obj);
+    }
 
     /**
      * checks if object is <code>instanceof</code> <code>java.util.List</code> or <code>java.util.Map</code>

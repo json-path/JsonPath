@@ -1,7 +1,12 @@
 package com.jayway.jsonpath;
 
 import com.jayway.jsonpath.spi.impl.JacksonProvider;
+import org.apache.commons.lang.SerializationUtils;
 import org.junit.Test;
+
+import java.io.Serializable;
+
+import static com.jayway.jsonpath.JsonModel.model;
 
 /**
  * Created by IntelliJ IDEA.
@@ -49,6 +54,19 @@ public class JsonProviderTest {
                     "}";
 
 
+
+    @Test
+    public void clone_test() throws Exception {
+
+        Serializable jsonObject = (Serializable) model(DOCUMENT).getJsonObject();
+
+        Object clone = SerializationUtils.clone(jsonObject);
+
+        System.out.println(model(clone).toJson());
+
+    }
+
+
     @Test
     public void parse_document() throws Exception {
 
@@ -62,7 +80,7 @@ public class JsonProviderTest {
 
     @Test
     public void parse_array() throws Exception {
-                JacksonProvider provider = new JacksonProvider();
+        JacksonProvider provider = new JacksonProvider();
 
         Object o = provider.parse(ARRAY);
 

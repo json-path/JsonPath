@@ -15,11 +15,22 @@ import static org.junit.Assert.*;
  */
 public class PathTest {
 
+    Filter filter = new Filter(){
+        @Override
+        public boolean accept(Object obj) {
+            return true;
+        }
 
+        @Override
+        public Filter addCriteria(Criteria criteria) {
+            return this;
+        }
+    };
+    
     @Test
     public void path_is_not_definite() throws Exception {
         assertFalse(JsonPath.compile("$..book[0]").isPathDefinite());
-        assertFalse(JsonPath.compile("$book[?]").isPathDefinite());
+        assertFalse(JsonPath.compile("$book[?]", filter).isPathDefinite());
         assertFalse(JsonPath.compile("$.books[*]").isPathDefinite());
     }
 

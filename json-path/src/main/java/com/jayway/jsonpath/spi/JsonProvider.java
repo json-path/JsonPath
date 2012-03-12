@@ -41,6 +41,8 @@ public interface JsonProvider {
 
     List<Object> createList();
 
+    
+    Object clone(Object model);
 
     /**
      * checks if object is <code>instanceof</code> <code>java.util.List</code> or <code>java.util.Map</code>

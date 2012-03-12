@@ -50,6 +50,10 @@ public class PathTokenizer implements Iterable<PathToken> {
         return fragments;
     }
 
+    public int size(){
+        return pathTokens.size();
+    }
+
     public String getPath() {
         return new String(pathChars);
     }
@@ -62,6 +66,13 @@ public class PathTokenizer implements Iterable<PathToken> {
         return pathTokens.iterator();
     }
 
+    public PathToken removeLastPathToken(){
+        PathToken lastPathToken = pathTokens.get(pathTokens.size() - 1);
+
+        //TODO: this should also trim the pathChars
+        pathTokens.remove(pathTokens.size() - 1);
+        return lastPathToken;
+    } 
 
     //--------------------------------------------
     //
@@ -111,7 +122,6 @@ public class PathTokenizer implements Iterable<PathToken> {
 
                 default:
                     fragments.add(extract(false, '[', '.'));
-
             }
         }
         return fragments;

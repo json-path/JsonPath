@@ -17,8 +17,8 @@ public class ComplianceTest {
     @Test
     public void test_one() throws Exception {
 
-        String json = "{ a: \"a\",\n" +
-                "           b: \"b\",\n" +
+        String json = "{ \"a\": \"a\",\n" +
+                "           \"b\": \"b\",\n" +
                 "           \"c d\": \"e\" \n" +
                 "         }";
 
@@ -39,23 +39,23 @@ public class ComplianceTest {
         assertThat(JsonPath.<Integer>read(json, "$[0]"), is(equalTo(1)));
         assertThat(JsonPath.<Integer>read(json, "$[4]"), is(equalTo(null)));
         assertThat(JsonPath.<List<Comparable>>read(json, "$[*]"), hasItems(
-                (Comparable)new Integer(1),
-                (Comparable)new String("2"),
-                (Comparable)new Double(3.14),
-                (Comparable)new Boolean(true),
-                null));
+                new Integer(1),
+                new String("2"),
+                new Double(3.14),
+                new Boolean(true),
+                (Comparable)null));
         assertThat(JsonPath.<Boolean>read(json, "$[-1:]"), is(equalTo(null)));
     }
 
     @Test
     public void test_three() throws Exception {
-        String json = "{ points: [\n" +
-                "             { id: \"i1\", x:  4, y: -5 },\n" +
-                "             { id: \"i2\", x: -2, y:  2, z: 1 },\n" +
-                "             { id: \"i3\", x:  8, y:  3 },\n" +
-                "             { id: \"i4\", x: -6, y: -1 },\n" +
-                "             { id: \"i5\", x:  0, y:  2, z: 1 },\n" +
-                "             { id: \"i6\", x:  1, y:  4 }\n" +
+        String json = "{ \"points\": [\n" +
+                "             { \"id\": \"i1\", \"x\":  4, \"y\": -5 },\n" +
+                "             { \"id\": \"i2\", \"x\": -2, \"y\":  2, \"z\": 1 },\n" +
+                "             { \"id\": \"i3\", \"x\":  8, \"y\":  3 },\n" +
+                "             { \"id\": \"i4\", \"x\": -6, \"y\": -1 },\n" +
+                "             { \"id\": \"i5\", \"x\":  0, \"y\":  2, \"z\": 1 },\n" +
+                "             { \"id\": \"i6\", \"x\":  1, \"y\":  4 }\n" +
                 "           ]\n" +
                 "         }";
 
@@ -74,7 +74,7 @@ public class ComplianceTest {
 
         assertThat(JsonPath.<List<String>>read(json, "$.points[?(@.z)].id"), hasItems("i2", "i5"));
 
-        assertThat(JsonPath.<String>read(json, "$.points[(@.length-1)].id"), equalTo("i6"));
+        assertThat(JsonPath.<String>read(json, "$.points[(@.length - 1)].id"), equalTo("i6"));
 
         //assertThat(JsonPath.<List<Integer>>read(json, "$['points'][?(@.x * @.x + @.y * @.y > 50)].id"), hasItems(?)); //low
     }

@@ -12,20 +12,21 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.jayway.jsonpath;
+package com.jayway.jsonpath.internal;
+
+import java.io.Closeable;
+import java.io.IOException;
 
 /**
  * @author Kalle Stenflo
  */
-public interface Transformer<T> {
+public abstract class IOUtils {
 
-    /**
-     *
-     * @param obj object to transform
-     * @return the transformed object
-     */
-    public Object transform(T obj);
-
-
-
+    public static void closeQuietly(Closeable closeable) {
+        try {
+            if (closeable != null) {
+                closeable.close();
+            }
+        } catch (IOException ignore) {}
+    }
 }
