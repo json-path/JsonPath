@@ -122,6 +122,10 @@ public class JsonModel {
         return jsonProvider.isMap(jsonObject);
     }
 
+    public void print(){
+        System.out.println(toJson());
+    }
+
     /**
      * Check if this JsonModel has the given definite path
      *
@@ -706,6 +710,13 @@ public class JsonModel {
         Double getDouble(String key);
 
         /**
+         * Tries to convert the value associated with the key to an {@link String}
+         * @param key the key
+         * @return converted value
+         */
+        String getString(String key);
+
+        /**
          * @see Map#putAll(java.util.Map)
          */
         ObjectOps putAll(Map<String, Object> map);
@@ -777,6 +788,9 @@ public class JsonModel {
          * @return this {@link ArrayOps}
          */
         ArrayOps transform(Transformer<List<Object>> transformer);
+        
+        
+        ArrayOps each(Transformer<Object> transformer);
 
         /**
          * @see ListMappingModelReader
@@ -845,6 +859,11 @@ public class JsonModel {
         @Override
         public Double getDouble(String key) {
             return ConvertUtils.toDouble(get(key));
+        }
+
+        @Override
+        public String getString(String key) {
+            return ConvertUtils.toString(get(key));
         }
 
         @Override
@@ -926,6 +945,16 @@ public class JsonModel {
         public ArrayOps transform(Transformer<List<Object>> transformer) {
             Object transformed = transformer.transform(getTargetObject(jsonPath, List.class));
             setTargetObject(jsonPath, transformed);
+            return this;
+        }
+
+        @Override
+        public ArrayOps each(Transformer<Object> transformer) {
+
+            List targetObject = getTargetObject(jsonPath, List.class);
+            for(int i = 0; i < targetObject.size(); i++){
+                targetObject.set(i, transformer.transform(targetObject.get(i)));
+            }
             return this;
         }
 

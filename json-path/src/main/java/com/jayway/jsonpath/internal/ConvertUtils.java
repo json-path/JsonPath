@@ -75,4 +75,12 @@ public class ConvertUtils {
             throw new InvalidConversionException("Could not convert " + o.toString() + " to Double");
         }
     }
+
+    public static String toString(Object o) {
+        if(null == o){
+            return null;
+        }
+
+        return o.toString();
+    }
 }
