@@ -488,6 +488,9 @@ public class JsonModel {
 
         return new JsonModel(json, JsonProviderFactory.createProvider());
     }
+    public static JsonModel create(String json) {
+        return model(json);
+    }
 
     /**
      * Creates a JsonModel 
@@ -499,6 +502,9 @@ public class JsonModel {
         notNull(jsonObject, "jsonObject can not be null");
 
         return new JsonModel(jsonObject, JsonProviderFactory.createProvider());
+    }
+    public static JsonModel create(Object jsonObject) {
+        return model(jsonObject);
     }
 
     /**
@@ -512,6 +518,9 @@ public class JsonModel {
 
         return new JsonModel(url, JsonProviderFactory.createProvider());
     }
+    public static JsonModel create(URL url) throws IOException  {
+        return model(url);
+    }
     
     /**
      * Creates a JsonModel 
@@ -523,6 +532,9 @@ public class JsonModel {
         notNull(jsonInputStream, "jsonInputStream can not be null");
 
         return new JsonModel(jsonInputStream, JsonProviderFactory.createProvider());
+    }
+    public static JsonModel create(InputStream jsonInputStream) throws IOException  {
+        return model(jsonInputStream);
     }
 
     // --------------------------------------------------------

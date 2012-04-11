@@ -23,5 +23,11 @@ public class IssuesTest {
 
         assertNull(JsonPath.read(json, "$.foo.id"));
     }
+    
+    @Test
+    public void issue_11() throws Exception {
+        //String json = "{ \"foo\" : [] }";
+        //JsonPath.read(json, "$.foo[?(@.rel= 'item')][0].uri");
+    }
 
 }
