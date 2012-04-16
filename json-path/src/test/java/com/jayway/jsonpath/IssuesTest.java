@@ -2,7 +2,11 @@ package com.jayway.jsonpath;
 
 import org.junit.Test;
 
+import java.util.List;
+
+import static junit.framework.Assert.assertEquals;
 import static junit.framework.Assert.assertNull;
+import static junit.framework.Assert.assertTrue;
 
 /**
  * Created by IntelliJ IDEA.
@@ -26,8 +30,14 @@ public class IssuesTest {
     
     @Test
     public void issue_11() throws Exception {
-        //String json = "{ \"foo\" : [] }";
-        //JsonPath.read(json, "$.foo[?(@.rel= 'item')][0].uri");
+        String json = "{ \"foo\" : [] }";
+        List<String> result = JsonPath.read(json, "$.foo[?(@.rel= 'item')][0].uri");
+
+        System.out.println(JsonPath.compile("$.foo[?(@.rel= 'item')][0].uri").isPathDefinite());
+        System.out.println(JsonPath.compile("$.foo[?(@.rel= 'item')][0]").isPathDefinite());
+        System.out.println(JsonPath.compile("$.foo[?(@.rel= 'item')]").isPathDefinite());
+
+        assertTrue(result.isEmpty());
     }
 
 }

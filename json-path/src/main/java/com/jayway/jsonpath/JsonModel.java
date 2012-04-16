@@ -15,6 +15,7 @@
 package com.jayway.jsonpath;
 
 import com.jayway.jsonpath.internal.ConvertUtils;
+import com.jayway.jsonpath.internal.JsonFormatter;
 import com.jayway.jsonpath.internal.PathToken;
 import com.jayway.jsonpath.internal.IOUtils;
 import com.jayway.jsonpath.spi.JsonProvider;
@@ -122,8 +123,12 @@ public class JsonModel {
         return jsonProvider.isMap(jsonObject);
     }
 
+    /**
+     * Prints this JsonModel to standard out
+     */
     public void print(){
-        System.out.println(toJson());
+        String json = toJson();
+        System.out.println(JsonFormatter.prettyPrint(json));
     }
 
     /**
@@ -324,7 +329,22 @@ public class JsonModel {
      * @return model as Json
      */
     public String toJson() {
-        return jsonProvider.toJson(jsonObject);
+        return toJson(false);
+    }
+
+
+    /**
+     * Creates a JSON representation of this JsonModel
+     *
+     * @param prettyPrint if the model should be pretty printed
+     * @return
+     */
+    public String toJson(boolean prettyPrint) {
+        String json = jsonProvider.toJson(jsonObject);
+        if(prettyPrint)
+            return JsonFormatter.prettyPrint(json);
+        else
+            return json;
     }
 
     /**
