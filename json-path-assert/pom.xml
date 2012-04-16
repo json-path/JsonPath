@@ -19,7 +19,7 @@
     <parent>
         <artifactId>json-path-parent</artifactId>
         <groupId>com.jayway.jsonpath</groupId>
-        <version>0.8.1-SNAPSHOT</version>
+        <version>0.8.1</version>
     </parent>
     <artifactId>json-path-assert</artifactId>
     <name>json-path-assert</name>
