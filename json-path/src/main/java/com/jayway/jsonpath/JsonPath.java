@@ -104,7 +104,7 @@ public class JsonPath {
 
     public JsonPath(String jsonPath, Filter[] filters) {
         if (jsonPath == null ||
-                jsonPath.trim().isEmpty() ||
+                jsonPath.trim().length()==0 ||
                 jsonPath.matches("[^\\?\\+\\=\\-\\*\\/\\!]\\(")) {
 
             throw new InvalidPathException("Invalid path");
