@@ -100,6 +100,7 @@ public abstract class Filter<T> {
             addCriteria(criteria);
         }
 
+        @Override
         public MapFilter addCriteria(Criteria criteria) {
             Criteria existing = this.criteria.get(criteria.getKey());
             String key = criteria.getKey();

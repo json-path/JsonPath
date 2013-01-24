@@ -56,14 +56,13 @@ public class JsonAssertTest {
     }
 
     @Test
+    @SuppressWarnings("unchecked")
     public void links_document() throws Exception {
-
         with(getResourceAsStream("links.json")).assertEquals("count", 2)
                 .assertThat("links.gc:this.href", endsWith("?pageNumber=1&pageSize=2"))
                 .assertNotDefined("links.gc:prev")
                 .assertNotDefined("links.gc:next")
                 .assertThat("rows", collectionWithSize(equalTo(2)));
-
     }
 
 
@@ -90,6 +89,7 @@ public class JsonAssertTest {
     }
 
     @Test
+    @SuppressWarnings("unchecked")
     public void list_content_can_be_asserted_with_matcher() throws Exception {
 
         with(JSON).assertThat("$..book[*].author", hasItems("Nigel Rees", "Evelyn Waugh", "Herman Melville", "J. R. R. Tolkien"));
@@ -99,6 +99,7 @@ public class JsonAssertTest {
     }
 
     @Test
+    @SuppressWarnings("unchecked")
     public void list_content_can_be_asserted_with_nested_matcher() throws Exception {
         with(JSON).assertThat("$..book[*]", hasItems(hasEntry("author", "Nigel Rees"), hasEntry("author", "Evelyn Waugh")));
     }

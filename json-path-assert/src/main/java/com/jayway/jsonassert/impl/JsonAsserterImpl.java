@@ -16,7 +16,6 @@ import static org.hamcrest.Matchers.*;
  */
 public class JsonAsserterImpl implements JsonAsserter {
 
-
     private final Object jsonObject;
 
 
@@ -33,6 +32,7 @@ public class JsonAsserterImpl implements JsonAsserter {
     /**
      * {@inheritDoc}
      */
+    @Override
     @SuppressWarnings("unchecked")
     public <T> JsonAsserter assertThat(String path, Matcher<T> matcher) {
         T obj = JsonPath.<T>read(jsonObject, path);
@@ -46,6 +46,7 @@ public class JsonAsserterImpl implements JsonAsserter {
     /**
      * {@inheritDoc}
      */
+    @Override
     public <T> JsonAsserter assertEquals(String path, T expected) {
         return assertThat(path, equalTo(expected));
     }
@@ -53,12 +54,13 @@ public class JsonAsserterImpl implements JsonAsserter {
     /**
      * {@inheritDoc}
      */
+    @Override
     public JsonAsserter assertNotDefined(String path) {
 
         try {
             Object o = JsonPath.read(jsonObject, path);
             throw new AssertionError(format("Document contains the path <%s> but was expected not to.", path));
-        } catch (InvalidPathException e) {
+        } catch (InvalidPathException ignored) {
         }
         return this;
     }
@@ -66,6 +68,7 @@ public class JsonAsserterImpl implements JsonAsserter {
     /**
      * {@inheritDoc}
      */
+    @Override
     public JsonAsserter assertNull(String path) {
         return assertThat(path, nullValue());
     }
@@ -73,6 +76,7 @@ public class JsonAsserterImpl implements JsonAsserter {
     /**
      * {@inheritDoc}
      */
+    @Override
     public <T> JsonAsserter assertNotNull(String path) {
         return assertThat(path, notNullValue());
     }
@@ -80,6 +84,7 @@ public class JsonAsserterImpl implements JsonAsserter {
     /**
      * {@inheritDoc}
      */
+    @Override
     public JsonAsserter and() {
         return this;
     }

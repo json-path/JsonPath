@@ -34,12 +34,10 @@ import org.hamcrest.BaseMatcher;
 import java.util.Collection;
 
 public abstract class CollectionMatcher<C extends Collection<?>> extends BaseMatcher<C> {
+    @Override
     @SuppressWarnings("unchecked")
     public boolean matches(Object item) {
-        if (!(item instanceof Collection)) {
-            return false;
-        }
-        return matchesSafely((C)item);
+        return item instanceof Collection && matchesSafely((C) item);
     }
 
     protected abstract boolean matchesSafely(C collection);

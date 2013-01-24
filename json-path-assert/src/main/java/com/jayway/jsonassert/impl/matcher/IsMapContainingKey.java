@@ -54,6 +54,7 @@ public class IsMapContainingKey<K> extends MapTypeSafeMatcher<Map<K,?>> {
         return false;
     }
 
+    @Override
     public void describeTo(Description description) {
         description.appendText("map with key ")
                    .appendDescriptionOf(keyMatcher);

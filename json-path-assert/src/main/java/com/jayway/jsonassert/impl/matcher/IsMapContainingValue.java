@@ -54,6 +54,7 @@ public class IsMapContainingValue<V> extends MapTypeSafeMatcher<Map<?,V>>{
         return false;
     }
 
+    @Override
     public void describeTo(Description description) {
         description.appendText("map with value ")
                    .appendDescriptionOf(valueMatcher);

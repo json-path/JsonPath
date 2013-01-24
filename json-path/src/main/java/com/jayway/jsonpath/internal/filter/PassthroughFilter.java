@@ -29,6 +29,7 @@ public class PassthroughFilter extends PathTokenFilter {
         this.isArrayFilter = isArrayFilter;
     }
 
+    @Override
     public Object filter(Object obj, JsonProvider jsonProvider) {
         return obj;
     }

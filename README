@@ -1,6 +1,24 @@
 Java DSL for reading and testing JSON documents.
 
 ------------------------------------------
+0.8.2-SNAPSHOT                  2013-01-24
+------------------------------------------
+- Changes from Gordon Dickens
+- Removed dependency on sonatype parent project
+- Added explicit versions for standard plugins
+- Added logging for tests, replacing sysout
+- Removed unnecessary boxing/unboxing of primitives
+- Added @Unchecked for test classes
+- Refactored out deprecated JUnit packages "junit.framework", replacing with Hamcrest matchers or "org.junit"
+- Added Maven Site Reporting
+  - run "mvn site"
+  - open "target/site/index.html"
+- NOTES:
+  - net.minidev:json-smart - is NOT OSGi compliant
+  - HttpProviderTest - refactor out sun.misc.IOUtils, its an internal proprietary API and may be removed in a future release
+  - JsonAssert.mapContainingKey() contains unchecked assignment, can this be improved?
+
+------------------------------------------
 0.8.1                           2012-04-16
 ------------------------------------------
 - Fixed issue http://code.google.com/p/json-path/issues/detail?id=11

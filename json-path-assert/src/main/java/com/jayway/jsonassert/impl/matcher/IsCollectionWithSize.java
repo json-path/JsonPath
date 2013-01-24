@@ -52,9 +52,10 @@ public class IsCollectionWithSize<E> extends CollectionMatcher<Collection<? exte
         return sizeMatcher.matches(item.size());
     }
 
+    @Override
     public void describeTo(Description description) {
         description.appendText("a collection with size ")
-            .appendDescriptionOf(sizeMatcher);
+                .appendDescriptionOf(sizeMatcher);
     }
 
     /**
@@ -67,9 +68,9 @@ public class IsCollectionWithSize<E> extends CollectionMatcher<Collection<? exte
 
     /**
      * This is a shortcut to the frequently used hasSize(equalTo(x)).
-     *
+     * <p/>
      * For example,  assertThat(hasSize(equal_to(x)))
-     *          vs.  assertThat(hasSize(x))
+     * vs.  assertThat(hasSize(x))
      */
     @Factory
     public static <E> Matcher<? super Collection<? extends E>> hasSize(int size) {

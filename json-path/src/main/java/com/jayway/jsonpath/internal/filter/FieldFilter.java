@@ -64,6 +64,7 @@ public class FieldFilter extends PathTokenFilter {
     }
 
 
+    @Override
     public Object filter(Object obj, JsonProvider jsonProvider) {
         if (jsonProvider.isList(obj)) {
             return obj;

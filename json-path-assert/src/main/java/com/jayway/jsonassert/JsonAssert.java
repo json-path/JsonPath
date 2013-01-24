@@ -67,6 +67,7 @@ public class JsonAssert {
         return new IsCollectionWithSize(sizeMatcher);
     }
 
+    //TODO Can this be generic?
     public static Matcher<Map<String, ?>> mapContainingKey(Matcher<String> keyMatcher) {
         return new IsMapContainingKey(keyMatcher);
     }
@@ -99,6 +100,4 @@ public class JsonAssert {
             return "";
         }
     }
-
-
 }
