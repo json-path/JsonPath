@@ -1,11 +1,15 @@
 package com.jayway.jsonpath;
 
 import org.junit.Test;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.List;
 import java.util.Map;
 
-import static junit.framework.Assert.assertEquals;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.equalTo;
+
 
 /**
  * Created by IntelliJ IDEA.
@@ -14,7 +18,8 @@ import static junit.framework.Assert.assertEquals;
  * Time: 7:30 AM
  */
 public class JsonModelChainedCallsTest {
-    
+    private static final Logger logger = LoggerFactory.getLogger(JsonModelChainedCallsTest.class);
+
     public final static String DOCUMENT =
             "{ \"store\": {\n" +
                     "    \"book\": [ \n" +
@@ -50,13 +55,13 @@ public class JsonModelChainedCallsTest {
                     "    }\n" +
                     "  }\n" +
                     "}";
-    
-    
+
+
     @Test
     public void convert_and_map() throws Exception {
-     
+
         JsonModel model = JsonModel.model(DOCUMENT);
-        
+
         Transformer<Map<String, Object>> transformer = new Transformer<Map<String, Object>>() {
             @Override
             public Object transform(Map<String, Object> map) {
@@ -68,15 +73,16 @@ public class JsonModelChainedCallsTest {
 
         Book book = model.opsForObject("store.book[0]").transform(transformer).to(Book.class);
 
-        assertEquals(book.author, "kalle");
+        assertThat(book.author, equalTo("kalle"));
     }
-    
-        
+
+
     @Test
+    @SuppressWarnings("unchecked")
     public void convert_each_and_map() throws Exception {
-     
+
         JsonModel model = JsonModel.model(DOCUMENT);
-        
+
         Transformer<Object> transformer = new Transformer<Object>() {
             @Override
             public Object transform(Object obj) {
@@ -89,15 +95,15 @@ public class JsonModelChainedCallsTest {
 
         List<Book> books = model.opsForArray("store.book").each(transformer).toList().of(Book.class);
 
-        System.out.println();
+        logger.debug("");
     }
-    
-    
+
+
     public static class Book {
         public String category;
         public String author;
         public String title;
         public Double price;
     }
-    
+
 }

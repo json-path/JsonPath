@@ -3,6 +3,8 @@ package com.jayway.jsonpath;
 import com.jayway.jsonpath.internal.PathTokenizer;
 import org.hamcrest.Matcher;
 import org.junit.Test;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import static org.hamcrest.Matchers.hasItems;
 import static org.junit.Assert.*;
@@ -14,8 +16,9 @@ import static org.junit.Assert.*;
  * Time: 1:22 PM
  */
 public class PathTest {
+    private static final Logger logger = LoggerFactory.getLogger(PathTest.class);
 
-    Filter filter = new Filter(){
+    Filter filter = new Filter() {
         @Override
         public boolean accept(Object obj) {
             return true;
@@ -26,7 +29,7 @@ public class PathTest {
             return this;
         }
     };
-    
+
     @Test
     public void path_is_not_definite() throws Exception {
         assertFalse(JsonPath.compile("$..book[0]").isPathDefinite());
@@ -99,12 +102,12 @@ public class PathTest {
         assertPath("$..book[  ?(@.price<10)]", hasItems("$", "..", "book", "[?(@.price<10)]"));
     }
 
-	@Test
-	public void dot_ending_ignored() throws Exception {
+    @Test
+    public void dot_ending_ignored() throws Exception {
 
-		assertPath("$..book['something'].", hasItems("$", "..", "something"));
+        assertPath("$..book['something'].", hasItems("$", "..", "something"));
 
-	}
+    }
 
     @Test
     public void invalid_path_throws_exception() throws Exception {
@@ -122,20 +125,21 @@ public class PathTest {
         try {
             PathTokenizer tokenizer = new PathTokenizer(path);
             assertTrue("Expected exception!", false);
-        } catch (InvalidPathException expected) {}
+        } catch (InvalidPathException expected) {
+        }
     }
 
     private void assertPath(String path, Matcher<Iterable<String>> matcher) {
-        System.out.println("PATH: " + path);
+        logger.debug("PATH: " + path);
 
         PathTokenizer tokenizer = new PathTokenizer(path);
 
         for (String fragment : tokenizer.getFragments()) {
-            System.out.println(fragment);
+            logger.debug(fragment);
         }
 
         assertThat(tokenizer.getFragments(), matcher);
-        System.out.println("----------------------------------");
+        logger.debug("----------------------------------");
     }
 
 

@@ -3,6 +3,8 @@ package com.jayway.jsonpath;
 import com.jayway.jsonpath.spi.impl.JacksonProvider;
 import org.apache.commons.lang.SerializationUtils;
 import org.junit.Test;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.Serializable;
 
@@ -15,6 +17,7 @@ import static com.jayway.jsonpath.JsonModel.model;
  * Time: 10:40 PM
  */
 public class JsonProviderTest {
+    private static final Logger logger = LoggerFactory.getLogger(JsonPathTest.class);
 
     public final static String ARRAY = "[{\"value\": 1},{\"value\": 2}, {\"value\": 3},{\"value\": 4}]";
 
@@ -54,7 +57,6 @@ public class JsonProviderTest {
                     "}";
 
 
-
     @Test
     public void clone_test() throws Exception {
 
@@ -62,7 +64,7 @@ public class JsonProviderTest {
 
         Object clone = SerializationUtils.clone(jsonObject);
 
-        System.out.println(model(clone).toJson());
+        logger.debug(model(clone).toJson());
 
     }
 
@@ -74,7 +76,7 @@ public class JsonProviderTest {
 
         Object o = provider.parse(DOCUMENT);
 
-        System.out.println(o);
+        logger.debug("{}", o);
 
     }
 
@@ -84,6 +86,6 @@ public class JsonProviderTest {
 
         Object o = provider.parse(ARRAY);
 
-        System.out.println(o);
+        logger.debug("{}", o);
     }
 }

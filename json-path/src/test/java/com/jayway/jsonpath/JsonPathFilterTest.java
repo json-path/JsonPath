@@ -1,6 +1,8 @@
 package com.jayway.jsonpath;
 
 import org.junit.Test;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.HashMap;
 import java.util.List;
@@ -10,7 +12,9 @@ import java.util.regex.Pattern;
 import static com.jayway.jsonpath.Criteria.where;
 import static com.jayway.jsonpath.Filter.filter;
 import static java.util.Arrays.asList;
-import static junit.framework.Assert.assertEquals;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.equalTo;
+
 
 /**
  * Created by IntelliJ IDEA.
@@ -18,8 +22,10 @@ import static junit.framework.Assert.assertEquals;
  * Date: 3/5/12
  * Time: 4:24 PM
  */
+@SuppressWarnings("unchecked")
 public class JsonPathFilterTest {
-    
+    private static final Logger logger = LoggerFactory.getLogger(JsonPathFilterTest.class);
+
     public final static String DOCUMENT =
             "{ \"store\": {\n" +
                     "    \"book\": [ \n" +
@@ -55,8 +61,7 @@ public class JsonPathFilterTest {
                     "  }\n" +
                     "}";
 
-    
-    
+
     @Test
     public void arrays_of_maps_can_be_filtered() throws Exception {
 
@@ -87,42 +92,41 @@ public class JsonPathFilterTest {
         root.put("children", asList(rootChild_A, rootChild_B, rootChild_C));
 
 
-
         Filter customFilter = new Filter.FilterAdapter<Map<String, Object>>() {
             @Override
             public boolean accept(Map<String, Object> map) {
-                if(map.get("name").equals("rootGrandChild_A")){
+                if (map.get("name").equals("rootGrandChild_A")) {
                     return true;
                 }
                 return false;
             }
         };
-        
+
         Filter rootChildFilter = filter(where("name").regex(Pattern.compile("rootChild_[A|B]")));
         Filter rootGrandChildFilter = filter(where("name").regex(Pattern.compile("rootGrandChild_[A|B]")));
 
         List read = JsonPath.read(root, "children[?].children[?][?]", rootChildFilter, rootGrandChildFilter, customFilter);
 
 
-        System.out.println(read.size());
+        logger.debug("Size {}", read.size());
     }
-    
-    
+
+
     @Test
     public void arrays_of_objects_can_be_filtered() throws Exception {
         Map<String, Object> doc = new HashMap<String, Object>();
         doc.put("items", asList(1, 2, 3));
-        
-        Filter customFilter = new Filter.FilterAdapter<Integer>(){
+
+        Filter customFilter = new Filter.FilterAdapter<Integer>() {
             @Override
             public boolean accept(Integer o) {
                 return 1 == o;
             }
         };
-        
+
         List<Integer> res = JsonPath.read(doc, "$.items[?]", customFilter);
 
-        assertEquals(1, res.get(0).intValue());
+        assertThat(1, equalTo(res.get(0)));
     }
-    
+
 }

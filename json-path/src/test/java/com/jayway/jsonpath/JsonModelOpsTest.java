@@ -5,7 +5,9 @@ import org.junit.Test;
 import java.util.*;
 
 import static com.jayway.jsonpath.JsonModel.model;
-import static junit.framework.Assert.assertEquals;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.equalTo;
+import static org.hamcrest.Matchers.hasSize;
 
 /**
  * Created by IntelliJ IDEA.
@@ -13,6 +15,7 @@ import static junit.framework.Assert.assertEquals;
  * Date: 3/4/12
  * Time: 4:55 PM
  */
+@SuppressWarnings("unchecked")
 public class JsonModelOpsTest {
 
     public final static String DOCUMENT =
@@ -58,9 +61,9 @@ public class JsonModelOpsTest {
 
         JsonModel.ObjectOps ops = model.opsForObject();
 
-        assertEquals(19.95D, ops.getDouble("price"));
-        assertEquals(new Long(12), ops.getLong("number"));
-        assertEquals(new Integer(12), ops.getInteger("number"));
+        assertThat(19.95D, equalTo(ops.getDouble("price")));
+        assertThat(12L, equalTo(ops.getLong("number")));
+        assertThat(12, equalTo(ops.getInteger("number")));
 
         int i = ops.getInteger("number");
         long l = ops.getLong("number");
@@ -76,8 +79,8 @@ public class JsonModelOpsTest {
                 .put("author", "Kalle")
                 .put("price", 12.30D);
 
-        assertEquals("Kalle", model.get("store.book[0].author"));
-        assertEquals(12.30D, model.get("store.book[0].price"));
+        assertThat("Kalle", equalTo(model.get("store.book[0].author")));
+        assertThat(12.30D, equalTo(model.get("store.book[0].price")));
     }
 
 
@@ -96,11 +99,11 @@ public class JsonModelOpsTest {
 
         JsonModel subModel = model.getSubModel("store.book[4]");
 
-        assertEquals("reference", subModel.get("category"));
-        assertEquals("Kalle", subModel.get("author"));
-        assertEquals("JSONPath book", subModel.get("title"));
-        assertEquals("0-553-21311-34", subModel.get("isbn"));
-        assertEquals(12.10D, subModel.get("price"));
+        assertThat("reference", equalTo(subModel.get("category")));
+        assertThat("Kalle", equalTo(subModel.get("author")));
+        assertThat("JSONPath book", equalTo(subModel.get("title")));
+        assertThat("0-553-21311-34", equalTo(subModel.get("isbn")));
+        assertThat(12.10D, equalTo(subModel.get("price")));
     }
 
     @Test
@@ -122,10 +125,10 @@ public class JsonModelOpsTest {
                 return obj;
             }
         });
-        assertEquals("kalle", model.get("name"));
+        assertThat("kalle", equalTo(model.get("name")));
     }
-    
-    
+
+
     @Test
     public void ops_can_transform_array_root() throws Exception {
 
@@ -142,7 +145,7 @@ public class JsonModelOpsTest {
                 return Collections.singletonMap("root", "new");
             }
         });
-        assertEquals("new", model.get("root"));
+        assertThat("new", equalTo(model.get("root")));
     }
 
     @Test
@@ -169,7 +172,7 @@ public class JsonModelOpsTest {
             }
         });
 
-        assertEquals("kalle", model.get("child.name"));
+        assertThat("kalle", equalTo(model.get("child.name")));
     }
 
     @Test
@@ -180,9 +183,9 @@ public class JsonModelOpsTest {
         List<Book> books2 = model.opsForArray("store.book").toListOf(Book.class);
         Set<Book> books3 = model.opsForArray("store.book").toSetOf(Book.class);
 
-        assertEquals(4, books1.size());
-        assertEquals(4, books2.size());
-        assertEquals(4, books3.size());
+        assertThat(books1, hasSize(4));
+        assertThat(books2, hasSize(4));
+        assertThat(books3, hasSize(4));
     }
 
     @Test
@@ -191,10 +194,10 @@ public class JsonModelOpsTest {
 
         Book book = model.opsForObject("store.book[1]").to(Book.class);
 
-        assertEquals("fiction", book.category);
-        assertEquals("Evelyn Waugh", book.author);
-        assertEquals("Sword of Honour", book.title);
-        assertEquals(12.99D, book.price);
+        assertThat("fiction", equalTo(book.category));
+        assertThat("Evelyn Waugh", equalTo(book.author));
+        assertThat("Sword of Honour", equalTo(book.title));
+        assertThat(12.99D, equalTo(book.price));
 
     }
 
@@ -214,7 +217,7 @@ public class JsonModelOpsTest {
 
         model.opsForObject("store.book[1]").transform(transformer);
 
-        assertEquals("newProp", model.get("store.book[1].newProp"));
+        assertThat("newProp", equalTo(model.get("store.book[1].newProp")));
     }
 
     @Test
@@ -236,7 +239,7 @@ public class JsonModelOpsTest {
 
         model.opsForArray("store.book").transform(transformer);
 
-        assertEquals("newProp", model.get("store.book[1].newProp"));
+        assertThat("newProp", equalTo(model.get("store.book[1].newProp")));
     }
 
     @Test
@@ -249,7 +252,7 @@ public class JsonModelOpsTest {
                 List<Object> newList = new ArrayList<Object>();
 
                 for (Object o : model) {
-                    newList.add(new Integer(i++));
+                    newList.add(i++);
                 }
 
                 return newList;
@@ -273,7 +276,7 @@ public class JsonModelOpsTest {
 
         model.opsForArray("store.book").transform(positionTransformer).transform(multiplyingTransformer);
 
-        assertEquals(2, model.get("store.book[1]"));
+        assertThat(2, equalTo(model.get("store.book[1]")));
     }
 
     public static class Book {

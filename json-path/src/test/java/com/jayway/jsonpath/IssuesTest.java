@@ -1,12 +1,15 @@
 package com.jayway.jsonpath;
 
 import org.junit.Test;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.List;
 
-import static junit.framework.Assert.assertEquals;
-import static junit.framework.Assert.assertNull;
-import static junit.framework.Assert.assertTrue;
+import static com.jayway.jsonpath.JsonPath.compile;
+import static com.jayway.jsonpath.JsonPath.read;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
 
 /**
  * Created by IntelliJ IDEA.
@@ -15,6 +18,8 @@ import static junit.framework.Assert.assertTrue;
  * Time: 8:42 AM
  */
 public class IssuesTest {
+    private static final Logger logger = LoggerFactory.getLogger(IssuesTest.class);
+
     @Test
     public void issue_7() throws Exception {
 
@@ -25,17 +30,17 @@ public class IssuesTest {
                 "  ] }";
 
 
-        assertNull(JsonPath.read(json, "$.foo.id"));
+        assertNull(read(json, "$.foo.id"));
     }
-    
+
     @Test
     public void issue_11() throws Exception {
         String json = "{ \"foo\" : [] }";
-        List<String> result = JsonPath.read(json, "$.foo[?(@.rel= 'item')][0].uri");
+        List<String> result = read(json, "$.foo[?(@.rel= 'item')][0].uri");
 
-        System.out.println(JsonPath.compile("$.foo[?(@.rel= 'item')][0].uri").isPathDefinite());
-        System.out.println(JsonPath.compile("$.foo[?(@.rel= 'item')][0]").isPathDefinite());
-        System.out.println(JsonPath.compile("$.foo[?(@.rel= 'item')]").isPathDefinite());
+        logger.debug("{}", compile("$.foo[?(@.rel= 'item')][0].uri").isPathDefinite());
+        logger.debug("{}", compile("$.foo[?(@.rel= 'item')][0]").isPathDefinite());
+        logger.debug("{}", compile("$.foo[?(@.rel= 'item')]").isPathDefinite());
 
         assertTrue(result.isEmpty());
     }

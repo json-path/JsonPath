@@ -37,6 +37,7 @@ public abstract class AbstractJsonProvider implements JsonProvider {
      * @param obj object to check
      * @return true if List or Map
      */
+    @Override
     public boolean isContainer(Object obj) {
         return (isList(obj) || isMap(obj));
     }
@@ -47,6 +48,7 @@ public abstract class AbstractJsonProvider implements JsonProvider {
      * @param obj object to check
      * @return true if List
      */
+    @Override
     public boolean isList(Object obj) {
         return (obj instanceof List);
     }
@@ -57,6 +59,7 @@ public abstract class AbstractJsonProvider implements JsonProvider {
      * @param list object to convert
      * @return object as list
      */
+    @Override
     @SuppressWarnings({"unchecked"})
     public List<Object> toList(Object list) {
         return (List<Object>) list;
@@ -69,6 +72,7 @@ public abstract class AbstractJsonProvider implements JsonProvider {
      * @param map object to convert
      * @return object as map
      */
+    @Override
     @SuppressWarnings({"unchecked"})
     public Map<String, Object> toMap(Object map) {
         return (Map<String, Object>) map;
@@ -81,6 +85,7 @@ public abstract class AbstractJsonProvider implements JsonProvider {
      * @param key key to read
      * @return value of key in map
      */
+    @Override
     public Object getMapValue(Object map, String key) {
         return toMap(map).get(key);
     }
@@ -91,6 +96,7 @@ public abstract class AbstractJsonProvider implements JsonProvider {
      * @param obj object to check
      * @return true if Map
      */
+    @Override
     public boolean isMap(Object obj) {
         return (obj instanceof Map);
     }

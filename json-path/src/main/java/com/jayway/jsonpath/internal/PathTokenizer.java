@@ -62,6 +62,7 @@ public class PathTokenizer implements Iterable<PathToken> {
         return new LinkedList<PathToken>(pathTokens);
     }
 
+    @Override
     public Iterator<PathToken> iterator() {
         return pathTokens.iterator();
     }

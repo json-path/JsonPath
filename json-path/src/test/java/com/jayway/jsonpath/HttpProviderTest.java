@@ -8,7 +8,9 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
 
-import static junit.framework.Assert.assertEquals;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.equalTo;
+
 
 /**
  * Created by IntelliJ IDEA.
@@ -16,6 +18,7 @@ import static junit.framework.Assert.assertEquals;
  * Date: 3/10/12
  * Time: 8:12 AM
  */
+@SuppressWarnings("unchecked")
 public class HttpProviderTest {
 
 
@@ -23,7 +26,7 @@ public class HttpProviderTest {
             "   \"results\" : [],\n" +
             "   \"status\" : \"REQUEST_DENIED\"\n" +
             "}";
-    
+
     @Test
     public void http_get() throws Exception {
 
@@ -31,16 +34,16 @@ public class HttpProviderTest {
 
         InputStream inputStream = null;
         try {
-            inputStream =  HttpProviderFactory.getProvider().get(url);
-
+            inputStream = HttpProviderFactory.getProvider().get(url);
+//TODO - Refactor out - sun.misc.IOUtils is internal proprietary API and may be removed in a future release
             byte[] bytes = sun.misc.IOUtils.readFully(inputStream, -1, true);
-            
+
             String json = new String(bytes).trim();
 
-            assertEquals(EXPECTED, json);
+            assertThat(EXPECTED, equalTo(json));
 
         } catch (IOException e) {
-             IOUtils.closeQuietly(inputStream);
+            IOUtils.closeQuietly(inputStream);
         }
 
     }

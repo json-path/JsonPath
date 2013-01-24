@@ -9,9 +9,10 @@ import java.util.HashMap;
 import java.util.Map;
 
 import static java.util.Arrays.asList;
-import static junit.framework.Assert.assertEquals;
-import static junit.framework.Assert.assertFalse;
-import static junit.framework.Assert.assertTrue;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.equalTo;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 
 /**
  * Created by IntelliJ IDEA.
@@ -67,24 +68,23 @@ public class JsonModelTest {
     @Test
     public void has_path_validates() throws Exception {
         assertFalse(JsonModel.model(DOCUMENT).hasPath("store.invalid"));
-        assertFalse( JsonModel.model(DOCUMENT).hasPath("store.book[0].foo"));
+        assertFalse(JsonModel.model(DOCUMENT).hasPath("store.book[0].foo"));
 
-        assertTrue( JsonModel.model(DOCUMENT).hasPath("store.book"));
-        assertTrue( JsonModel.model(DOCUMENT).hasPath("store.book[0].title"));
+        assertTrue(JsonModel.model(DOCUMENT).hasPath("store.book"));
+        assertTrue(JsonModel.model(DOCUMENT).hasPath("store.book[0].title"));
     }
-    
+
     @Test
     public void a_json_document_can_be_fetched_with_a_URL() throws Exception {
         URL url = new URL("http://maps.googleapis.com/maps/api/geocode/json");
-        assertEquals("REQUEST_DENIED", JsonModel.model(url).get("status"));
+        assertThat("REQUEST_DENIED", equalTo(JsonModel.model(url).get("status")));
     }
 
     @Test
     public void a_json_document_can_be_fetched_with_a_InputStream() throws Exception {
         ByteArrayInputStream bis = new ByteArrayInputStream(DOCUMENT.getBytes());
-        assertEquals("Nigel Rees", JsonModel.model(bis).get("store.book[0].author"));
+        assertThat("Nigel Rees", equalTo(JsonModel.model(bis).get("store.book[0].author")));
     }
-
 
 
     @Test
@@ -95,9 +95,9 @@ public class JsonModelTest {
 
         JsonModel model = JsonModel.model(doc);
 
-        assertEquals("value", model.get("$child.key"));
-        assertEquals(1, model.get("$items[1]"));
-        assertEquals("{\"child\":{\"key\":\"value\"},\"items\":[0,1,2]}", model.toJson());
+        assertThat("value", equalTo(model.get("$child.key")));
+        assertThat(1, equalTo(model.get("$items[1]")));
+        assertThat("{\"child\":{\"key\":\"value\"},\"items\":[0,1,2]}", equalTo(model.toJson()));
     }
 
 
@@ -105,7 +105,6 @@ public class JsonModelTest {
     public void invalid_path_throws() throws Exception {
         JsonModel.model(DOCUMENT).get("store.invalid");
     }
-
 
 
 }

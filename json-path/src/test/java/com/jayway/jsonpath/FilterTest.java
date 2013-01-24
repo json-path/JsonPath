@@ -1,6 +1,8 @@
 package com.jayway.jsonpath;
 
 import org.junit.Test;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.Collections;
 import java.util.HashMap;
@@ -11,7 +13,10 @@ import java.util.regex.Pattern;
 import static com.jayway.jsonpath.Criteria.where;
 import static com.jayway.jsonpath.Filter.filter;
 import static java.util.Arrays.asList;
-import static junit.framework.Assert.*;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.equalTo;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 
 /**
  * Created by IntelliJ IDEA.
@@ -19,7 +24,9 @@ import static junit.framework.Assert.*;
  * Date: 3/5/12
  * Time: 12:27 PM
  */
+@SuppressWarnings("unchecked")
 public class FilterTest {
+    private static final Logger logger = LoggerFactory.getLogger(FilterTest.class);
 
     public final static String DOCUMENT =
             "{ \"store\": {\n" +
@@ -256,7 +263,7 @@ public class FilterTest {
         check.put("int", 10);
         check.put("long", 1L);
         check.put("double", 1.12D);
-        
+
         Filter shouldMarch = filter(where("string").is("foo").and("int").lt(11));
         Filter shouldNotMarch = filter(where("string").is("foo").and("int").gt(11));
 
@@ -316,71 +323,67 @@ public class FilterTest {
 
 
     @Test
-        public void arrays_of_maps_can_be_filtered() throws Exception {
+    public void arrays_of_maps_can_be_filtered() throws Exception {
 
 
-            Map<String, Object> rootGrandChild_A = new HashMap<String, Object>();
-            rootGrandChild_A.put("name", "rootGrandChild_A");
+        Map<String, Object> rootGrandChild_A = new HashMap<String, Object>();
+        rootGrandChild_A.put("name", "rootGrandChild_A");
 
-            Map<String, Object> rootGrandChild_B = new HashMap<String, Object>();
-            rootGrandChild_B.put("name", "rootGrandChild_B");
+        Map<String, Object> rootGrandChild_B = new HashMap<String, Object>();
+        rootGrandChild_B.put("name", "rootGrandChild_B");
 
-            Map<String, Object> rootGrandChild_C = new HashMap<String, Object>();
-            rootGrandChild_C.put("name", "rootGrandChild_C");
-
-
-            Map<String, Object> rootChild_A = new HashMap<String, Object>();
-            rootChild_A.put("name", "rootChild_A");
-            rootChild_A.put("children", asList(rootGrandChild_A, rootGrandChild_B, rootGrandChild_C));
-
-            Map<String, Object> rootChild_B = new HashMap<String, Object>();
-            rootChild_B.put("name", "rootChild_B");
-            rootChild_B.put("children", asList(rootGrandChild_A, rootGrandChild_B, rootGrandChild_C));
-
-            Map<String, Object> rootChild_C = new HashMap<String, Object>();
-            rootChild_C.put("name", "rootChild_C");
-            rootChild_C.put("children", asList(rootGrandChild_A, rootGrandChild_B, rootGrandChild_C));
-
-            Map<String, Object> root = new HashMap<String, Object>();
-            root.put("children", asList(rootChild_A, rootChild_B, rootChild_C));
+        Map<String, Object> rootGrandChild_C = new HashMap<String, Object>();
+        rootGrandChild_C.put("name", "rootGrandChild_C");
 
 
+        Map<String, Object> rootChild_A = new HashMap<String, Object>();
+        rootChild_A.put("name", "rootChild_A");
+        rootChild_A.put("children", asList(rootGrandChild_A, rootGrandChild_B, rootGrandChild_C));
 
-            Filter customFilter = new Filter.FilterAdapter<Map<String, Object>>() {
-                @Override
-                public boolean accept(Map<String, Object> map) {
-                    if(map.get("name").equals("rootGrandChild_A")){
-                        return true;
-                    }
-                    return false;
-                }
-            };
+        Map<String, Object> rootChild_B = new HashMap<String, Object>();
+        rootChild_B.put("name", "rootChild_B");
+        rootChild_B.put("children", asList(rootGrandChild_A, rootGrandChild_B, rootGrandChild_C));
 
-            Filter rootChildFilter = filter(where("name").regex(Pattern.compile("rootChild_[A|B]")));
-            Filter rootGrandChildFilter = filter(where("name").regex(Pattern.compile("rootGrandChild_[A|B]")));
+        Map<String, Object> rootChild_C = new HashMap<String, Object>();
+        rootChild_C.put("name", "rootChild_C");
+        rootChild_C.put("children", asList(rootGrandChild_A, rootGrandChild_B, rootGrandChild_C));
 
-            List read = JsonPath.read(root, "children[?].children[?][?]", rootChildFilter, rootGrandChildFilter, customFilter);
-
-
-            System.out.println(read.size());
-        }
+        Map<String, Object> root = new HashMap<String, Object>();
+        root.put("children", asList(rootChild_A, rootChild_B, rootChild_C));
 
 
-        @Test
-        public void arrays_of_objects_can_be_filtered() throws Exception {
-            Map<String, Object> doc = new HashMap<String, Object>();
-            doc.put("items", asList(1, 2, 3));
+        Filter customFilter = new Filter.FilterAdapter<Map<String, Object>>() {
+            @Override
+            public boolean accept(Map<String, Object> map) {
+                return map.get("name").equals("rootGrandChild_A");
+            }
+        };
 
-            Filter customFilter = new Filter.FilterAdapter(){
-                @Override
-                public boolean accept(Object o) {
-                    return 1 == (Integer)o;
-                }
-            };
+        Filter rootChildFilter = filter(where("name").regex(Pattern.compile("rootChild_[A|B]")));
+        Filter rootGrandChildFilter = filter(where("name").regex(Pattern.compile("rootGrandChild_[A|B]")));
 
-            List<Integer> res = JsonPath.read(doc, "$.items[?]", customFilter);
+        List read = JsonPath.read(root, "children[?].children[?][?]", rootChildFilter, rootGrandChildFilter, customFilter);
 
-            assertEquals(1, res.get(0).intValue());
-        }
+
+        logger.debug("Size {}", read.size());
+    }
+
+
+    @Test
+    public void arrays_of_objects_can_be_filtered() throws Exception {
+        Map<String, Object> doc = new HashMap<String, Object>();
+        doc.put("items", asList(1, 2, 3));
+
+        Filter customFilter = new Filter.FilterAdapter() {
+            @Override
+            public boolean accept(Object o) {
+                return 1 == (Integer) o;
+            }
+        };
+
+        List<Integer> res = JsonPath.read(doc, "$.items[?]", customFilter);
+
+        assertThat(1, equalTo(res.get(0)));
+    }
 
 }

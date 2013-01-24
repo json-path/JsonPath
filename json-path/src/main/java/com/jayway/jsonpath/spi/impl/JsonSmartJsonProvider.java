@@ -45,14 +45,17 @@ public class JsonSmartJsonProvider extends AbstractJsonProvider {
         this.parser = new JSONParser(mode.intValue());
     }
 
+    @Override
     public Map<String, Object> createMap() {
         return new JSONObject();
     }
 
+    @Override
     public List<Object> createList() {
         return new JSONArray();
     }
 
+    @Override
     public Object parse(String json) {
         try {
             return parser.parse(json);
@@ -91,6 +94,7 @@ public class JsonSmartJsonProvider extends AbstractJsonProvider {
         }
     }
 
+    @Override
     public Mode getMode() {
         return mode;
     }

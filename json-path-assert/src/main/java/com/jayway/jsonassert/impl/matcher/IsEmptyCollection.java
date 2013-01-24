@@ -45,6 +45,7 @@ public class IsEmptyCollection<E> extends CollectionMatcher<Collection<E>> {
         return item.isEmpty();
     }
 
+    @Override
     public void describeTo(Description description) {
         description.appendText("an empty collection");
     }

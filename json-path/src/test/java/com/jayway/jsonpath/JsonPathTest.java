@@ -2,6 +2,8 @@ package com.jayway.jsonpath;
 
 import com.jayway.jsonpath.util.ScriptEngineJsonPath;
 import org.junit.Test;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.List;
 import java.util.Map;
@@ -17,6 +19,7 @@ import static org.junit.Assert.*;
  * Time: 3:07 PM
  */
 public class JsonPathTest {
+    private static final Logger logger = LoggerFactory.getLogger(JsonPathTest.class);
 
     public final static String ARRAY = "[{\"value\": 1},{\"value\": 2}, {\"value\": 3},{\"value\": 4}]";
 
@@ -51,7 +54,7 @@ public class JsonPathTest {
                     "      \"display-price\": 19.95,\n" +
                     "      \"foo:bar\": \"fooBar\",\n" +
                     "      \"dot.notation\": \"new\",\n" +
-	                "      \"dash-notation\": \"dashes\"\n" +
+                    "      \"dash-notation\": \"dashes\"\n" +
                     "    }\n" +
                     "  }\n" +
                     "}";
@@ -82,8 +85,8 @@ public class JsonPathTest {
     @Test
     public void bracket_notation_can_be_used_in_path() throws Exception {
 
-        //System.out.println(ScriptEngineJsonPath.eval(DOCUMENT, "$.['store'].['bicycle'].['dot.notation']"));
-        System.out.println(ScriptEngineJsonPath.eval(DOCUMENT, "$.store.bicycle.['dot.notation']"));
+        //logger.debug(ScriptEngineJsonPath.eval(DOCUMENT, "$.['store'].['bicycle'].['dot.notation']"));
+        logger.debug(ScriptEngineJsonPath.eval(DOCUMENT, "$.store.bicycle.['dot.notation']"));
 
 
         assertEquals("new", JsonPath.read(DOCUMENT, "$.['store'].bicycle.['dot.notation']"));
@@ -91,12 +94,12 @@ public class JsonPathTest {
         assertEquals("new", JsonPath.read(DOCUMENT, "$.['store']['bicycle']['dot.notation']"));
         assertEquals("new", JsonPath.read(DOCUMENT, "$.['store'].['bicycle'].['dot.notation']"));
 
-	    System.out.println(ScriptEngineJsonPath.eval(DOCUMENT, "$.store.bicycle.['dash-notation']"));
+        logger.debug(ScriptEngineJsonPath.eval(DOCUMENT, "$.store.bicycle.['dash-notation']"));
 
-	    assertEquals("dashes", JsonPath.read(DOCUMENT, "$.['store'].bicycle.['dash-notation']"));
-	    assertEquals("dashes", JsonPath.read(DOCUMENT, "$['store']['bicycle']['dash-notation']"));
-	    assertEquals("dashes", JsonPath.read(DOCUMENT, "$.['store']['bicycle']['dash-notation']"));
-	    assertEquals("dashes", JsonPath.read(DOCUMENT, "$.['store'].['bicycle'].['dash-notation']"));
+        assertEquals("dashes", JsonPath.read(DOCUMENT, "$.['store'].bicycle.['dash-notation']"));
+        assertEquals("dashes", JsonPath.read(DOCUMENT, "$['store']['bicycle']['dash-notation']"));
+        assertEquals("dashes", JsonPath.read(DOCUMENT, "$.['store']['bicycle']['dash-notation']"));
+        assertEquals("dashes", JsonPath.read(DOCUMENT, "$.['store'].['bicycle'].['dash-notation']"));
     }
 
     @Test
@@ -104,7 +107,7 @@ public class JsonPathTest {
         List<Object> matches = JsonPath.read(ARRAY, "$.[?(@.value == 1)]");
 
         assertEquals(1, matches.size());
-        System.out.println(matches);
+        logger.debug(matches.toString());
     }
 
     @Test
@@ -112,7 +115,7 @@ public class JsonPathTest {
         Integer matches = JsonPath.read(ARRAY, "$.[1].value");
 
         assertEquals(new Integer(2), matches);
-        System.out.println(matches);
+        logger.debug(matches.toString());
     }
 
     @Test
@@ -205,7 +208,7 @@ public class JsonPathTest {
 
         assertThat(JsonPath.<List<String>>read(DOCUMENT, "$.store.book[?(@.isbn)].isbn"), hasItems("0-553-21311-3", "0-395-19395-8"));
         assertTrue(JsonPath.<List>read(DOCUMENT, "$.store.book[?(@.isbn)].isbn").size() == 2);
-	    assertTrue(JsonPath.<List>read(DOCUMENT, "$.store.book[?(@['isbn'])].isbn").size() == 2);
+        assertTrue(JsonPath.<List>read(DOCUMENT, "$.store.book[?(@['isbn'])].isbn").size() == 2);
     }
 
     @Test
@@ -217,15 +220,15 @@ public class JsonPathTest {
 
     }
 
-        @Test
+    @Test
     public void all_books() throws Exception {
 
-            //List<String> books = JsonPath.<List<String>>read(DOCUMENT, "$..book");
-            Object books = JsonPath.<List<String>>read(DOCUMENT, "$..book");
+        //List<String> books = JsonPath.<List<String>>read(DOCUMENT, "$..book");
+        Object books = JsonPath.<List<String>>read(DOCUMENT, "$..book");
 
-            System.out.println("test");
+        logger.debug("test");
 
-        }
+    }
 
     @Test
     public void dot_in_predicate_works() throws Exception {
@@ -260,7 +263,6 @@ public class JsonPathTest {
         Object res = JsonPath.read(DOCUMENT, "$.store.book[100].author");
 
     }
-
 
 
 }

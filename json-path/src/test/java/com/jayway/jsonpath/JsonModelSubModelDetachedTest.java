@@ -2,7 +2,9 @@ package com.jayway.jsonpath;
 
 import org.junit.Test;
 import static com.jayway.jsonpath.JsonModel.model;
-import static junit.framework.Assert.assertEquals;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.equalTo;
+
 
 /**
  * Created by IntelliJ IDEA.
@@ -56,10 +58,8 @@ public class JsonModelSubModelDetachedTest {
 
         detachedModel.opsForArray().add(1);
 
-        assertEquals(4, model.opsForArray("$.store.book").size());
-        assertEquals(5, detachedModel.opsForArray("$.store.book").size());
+        assertThat(4, equalTo(model.opsForArray("$.store.book").size()));
+        assertThat(5, equalTo(detachedModel.opsForArray("$.store.book").size()));
 
     }
-
-
 }

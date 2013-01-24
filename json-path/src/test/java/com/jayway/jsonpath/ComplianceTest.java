@@ -39,10 +39,10 @@ public class ComplianceTest {
         assertThat(JsonPath.<Integer>read(json, "$[0]"), is(equalTo(1)));
         assertThat(JsonPath.<Integer>read(json, "$[4]"), is(equalTo(null)));
         assertThat(JsonPath.<List<Comparable>>read(json, "$[*]"), hasItems(
-                new Integer(1),
-                new String("2"),
-                new Double(3.14),
-                new Boolean(true),
+                1,
+                "2",
+                3.14,
+                true,
                 (Comparable)null));
         assertThat(JsonPath.<Boolean>read(json, "$[-1:]"), is(equalTo(null)));
     }
