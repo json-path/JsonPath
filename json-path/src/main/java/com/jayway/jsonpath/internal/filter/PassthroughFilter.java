@@ -30,12 +30,12 @@ public class PassthroughFilter extends PathTokenFilter {
     }
 
     @Override
-    public Object filter(Object obj, Configuration configuration) {
+    public Object filter(Object obj, Object root, Configuration configuration) {
         return obj;
     }
 
     @Override
-    public Object getRef(Object obj, Configuration configuration) {
+    public Object getRef(Object obj, Object root, Configuration configuration) {
         return obj;
     }
 

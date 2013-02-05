@@ -29,18 +29,18 @@ public class ArrayQueryFilter extends PathTokenFilter {
     }
 
     @Override
-    public Object filter(Object obj, Configuration configuration, LinkedList<Filter> filters, boolean inArrayContext) {
+    public Object filter(Object obj, Object root, Configuration configuration, LinkedList<Filter> filters, boolean inArrayContext) {
         Filter filter = filters.poll();
         return filter.doFilter(configuration.getProvider().toIterable(obj), configuration);
     }
 
     @Override
-    public Object filter(Object obj, Configuration configuration) {
+    public Object filter(Object obj, Object root, Configuration configuration) {
         throw new UnsupportedOperationException();
     }
 
     @Override
-    public Object getRef(Object obj, Configuration configuration) {
+    public Object getRef(Object obj, Object root, Configuration configuration) {
         throw new UnsupportedOperationException("");
     }
 

@@ -243,6 +243,7 @@ public class JsonPath {
 
 
         Object result = jsonObject;
+        Object root = jsonObject;
 
         boolean inArrayContext = false;
 
@@ -253,7 +254,7 @@ public class JsonPath {
                 LOG.debug("Applying filter: " + filter  + " to " + result);
             }
 
-            result = filter.filter(result, configuration, contextFilters, inArrayContext);
+            result = filter.filter(result, root, configuration, contextFilters, inArrayContext);
 
             if(result == null && !pathToken.isEndToken()){
                 throw new PathNotFoundException("Path token: '" + pathToken.getFragment() + "' not found.");

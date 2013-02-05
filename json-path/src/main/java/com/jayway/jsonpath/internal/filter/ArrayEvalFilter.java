@@ -32,31 +32,14 @@ public class ArrayEvalFilter extends PathTokenFilter {
     private static final Pattern CONDITION_STATEMENT_PATTERN = Pattern.compile("\\[\\s?\\?\\(.*?[!=<>]+.*?\\)\\s?]");
     private static final Pattern PATTERN = Pattern.compile("\\s?(@.*?)\\s?([!=<>]+)\\s?(.*?)\\s?");
 
-
-
-    private  ConditionStatement[] conditionStatements;
-
     public ArrayEvalFilter(String condition) {
         super(condition);
-
-        // [?(@.name == 'Luke Skywalker' && @.occupation == 'Farm boy')]
-        // [?(@.name == 'Luke Skywalker')]
-
-        condition = condition.trim();
-        condition = condition.substring(3, condition.length()-2);
-
-        String[] split = condition.split("&&");
-
-        conditionStatements = new ConditionStatement[split.length];
-        for(int i = 0; i < split.length; i++){
-            conditionStatements[i] = createConditionStatement(split[i]);
-        }
     }
 
 
 
     @Override
-    public Object filter(Object obj, Configuration configuration) {
+    public Object filter(Object obj, Object root, Configuration configuration) {
         JsonProvider jsonProvider = configuration.getProvider();
         Iterable<Object> src = null;
         try {
@@ -66,7 +49,7 @@ public class ArrayEvalFilter extends PathTokenFilter {
         }
         Object result = jsonProvider.createArray();
         for (Object item : src) {
-            if (isMatch(item, configuration, conditionStatements)) {
+            if (isMatch(item, configuration, getConditionStatements(condition, root))) {
                 jsonProvider.setProperty(result, jsonProvider.length(result), item);
             }
         }
@@ -74,7 +57,7 @@ public class ArrayEvalFilter extends PathTokenFilter {
     }
 
     @Override
-    public Object getRef(Object obj, Configuration configuration) {
+    public Object getRef(Object obj, Object root, Configuration configuration) {
         throw new UnsupportedOperationException("");
     }
 
@@ -101,8 +84,37 @@ public class ArrayEvalFilter extends PathTokenFilter {
         }
     }
 
+    private ConditionStatement[] getConditionStatements(String condition, Object root) {
+        // [?(@.name == 'Luke Skywalker' && @.occupation == 'Farm boy')]
+        // [?(@.name == 'Luke Skywalker')]
+
+        condition = condition.trim();
+        condition = condition.substring(3, condition.length()-2);
+
+        String[] split = condition.split("&&");
+
+        ConditionStatement[] conditionStatements = new ConditionStatement[split.length];
+        for(int i = 0; i < split.length; i++){
+            conditionStatements[i] = createConditionStatement(split[i], root);
+        }
+        return conditionStatements;
+    }
+
     static boolean isConditionStatement(String condition) {
         return CONDITION_STATEMENT_PATTERN.matcher(condition).matches();
+    }
+
+    static ConditionStatement createConditionStatement(String condition, Object root) {
+        Matcher matcher = PATTERN.matcher(condition);
+        if (matcher.matches()) {
+            String property = matcher.group(1).trim();
+            String operator = matcher.group(2).trim();
+            String expected = matcher.group(3).trim();
+
+            return new ConditionStatement(condition, property, operator, expected, root);
+        } else {
+            return null;
+        }
     }
 
     static ConditionStatement createConditionStatement(String condition) {
@@ -112,11 +124,12 @@ public class ArrayEvalFilter extends PathTokenFilter {
             String operator = matcher.group(2).trim();
             String expected = matcher.group(3).trim();
 
-            return new ConditionStatement(condition, property, operator, expected);
+            return new ConditionStatement(condition, property, operator, expected, "");
         } else {
             return null;
         }
     }
+
 
     static class ConditionStatement {
         private final String condition;
@@ -126,14 +139,15 @@ public class ArrayEvalFilter extends PathTokenFilter {
         private final JsonPath path;
 
 
-        ConditionStatement(String condition, String field, String operator, String expected) {
+        ConditionStatement(String condition, String field, String operator, String expected, Object root) {
             this.condition = condition;
             this.field = field;
             this.operator = operator;
 
-
             if(expected.startsWith("'")){
                 this.expected = trim(expected, 1, 1);
+            } else if (expected.startsWith("$")) {
+                this.expected = JsonPath.read(root, expected).toString();
             }else{
                 this.expected = expected;
             }
@@ -144,8 +158,13 @@ public class ArrayEvalFilter extends PathTokenFilter {
                 this.path = JsonPath.compile(this.field.replace("@", "$"));
             }
         }
+
+        ConditionStatement(String field, String operator, String expected, Object root) {
+            this(null, field, operator, expected, root);
+        }
+
         ConditionStatement(String field, String operator, String expected) {
-            this(null, field, operator, expected);
+            this(null, field, operator, expected, "");
         }
 
         String getCondition() {

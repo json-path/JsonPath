@@ -52,7 +52,7 @@ public class ArrayIndexFilter extends PathTokenFilter {
 
 
     @Override
-    public Object filter(Object obj, Configuration configuration) {
+    public Object filter(Object obj, Object root, Configuration configuration) {
         JsonProvider jsonProvider = configuration.getProvider();
 
         Object result = jsonProvider.createArray();
@@ -138,7 +138,7 @@ public class ArrayIndexFilter extends PathTokenFilter {
     }
 
     @Override
-    public Object getRef(Object obj, Configuration configuration) {
+    public Object getRef(Object obj, Object root, Configuration configuration) {
         if(SINGLE_ARRAY_INDEX_PATTERN.matcher(condition).matches()){
             String trimmedCondition = trim(condition, 1, 1);
             return configuration.getProvider().getProperty(obj, trimmedCondition);

@@ -100,6 +100,10 @@ public class PathTokenizer implements Iterable<PathToken> {
         return pathChars[index];
     }
 
+    private char next() {
+        return pathChars[index+1];
+    }
+
     private char poll() {
         char peek = peek();
         index++;
@@ -145,9 +149,18 @@ public class PathTokenizer implements Iterable<PathToken> {
 
 
         StringBuilder sb = new StringBuilder();
-        while (!isEmpty() && (!isStopChar(peek(), stopChars))) {
 
-            if (peek() == '(') {
+        if (peek() == '[') {
+            sb.append(poll());
+        }
+
+        while (!isEmpty() && (!isStopChar(peek(), stopChars))) {
+            if (peek() == '[') {
+                do {
+                    sb.append(poll());
+                } while (peek() != ']');
+                sb.append(poll());
+            } else if (peek() == '(') {
                 do {
                     sb.append(poll());
                 } while (peek() != ')');
