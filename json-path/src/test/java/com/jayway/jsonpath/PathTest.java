@@ -111,6 +111,15 @@ public class PathTest {
         assertPathInvalid("$...*");
     }
 
+    @Test
+    public void multi_field_select(){
+        PathTokenizer tokenizer = new PathTokenizer("$.contents[*].['groupType', 'type']");
+        for (String fragment : tokenizer.getFragments()) {
+            System.out.println(fragment);
+        }
+
+    }
+
 
     //----------------------------------------------------------------
     //

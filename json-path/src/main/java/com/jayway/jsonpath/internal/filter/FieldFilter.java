@@ -40,25 +40,55 @@ public class FieldFilter extends PathTokenFilter {
                 List<Object> result = jsonProvider.createList();
                 for (Object current : jsonProvider.toList(obj)) {
                     if (jsonProvider.isMap(current)) {
+
                         Map<String, Object> map = jsonProvider.toMap(current);
-                        if (map.containsKey(condition)) {
-                            Object o = map.get(condition);
-                            if (jsonProvider.isList(o)) {
-                                result.addAll(jsonProvider.toList(o));
-                            } else {
-                                result.add(map.get(condition));
+
+                        String[] split = condition.split("','");
+                        if(split.length == 1){
+                            if (map.containsKey(condition)) {
+                                Object o = map.get(condition);
+                                if (jsonProvider.isList(o)) {
+                                    result.addAll(jsonProvider.toList(o));
+                                } else {
+                                    result.add(map.get(condition));
+                                }
                             }
+                        } else {
+                            Map<String, Object> res = jsonProvider.createMap();
+                            for (String prop : split) {
+                                if (map.containsKey(prop)) {
+                                    res.put(prop, map.get(prop));
+                                }
+                            }
+                            result.add(res);
                         }
                     }
                 }
                 return result;
             }
         } else {
+            String[] split = condition.split("','");
+
             Map<String, Object> map = jsonProvider.toMap(obj);
-            if(!map.containsKey(condition)){
+            if(!map.containsKey(condition) && split.length == 1){
                 throw new InvalidPathException("invalid path");
             } else {
-                return map.get(condition);
+
+                if(split.length == 1){
+                    return map.get(condition);
+                } else {
+                    Map<String, Object> res = jsonProvider.createMap();
+                    for (String prop : split) {
+                        if(map.containsKey(prop)){
+                            res.put(prop, map.get(prop));
+                        } else {
+                            throw new InvalidPathException("invalid path");
+                        }
+                    }
+                    return res;
+                }
+
+
             }
         }
     }

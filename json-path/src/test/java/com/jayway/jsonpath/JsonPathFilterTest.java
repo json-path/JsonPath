@@ -101,6 +101,10 @@ public class JsonPathFilterTest {
         Filter rootChildFilter = filter(where("name").regex(Pattern.compile("rootChild_[A|B]")));
         Filter rootGrandChildFilter = filter(where("name").regex(Pattern.compile("rootGrandChild_[A|B]")));
 
+
+
+
+
         List read = JsonPath.read(root, "children[?].children[?][?]", rootChildFilter, rootGrandChildFilter, customFilter);
 
 
