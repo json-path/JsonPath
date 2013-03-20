@@ -34,12 +34,10 @@ public class JacksonProvider extends AbstractJsonProvider implements MappingProv
 
     private ObjectMapper objectMapper = new ObjectMapper();
 
-    @Override
     public Mode getMode() {
         return Mode.STRICT;
     }
 
-    @Override
     public Object parse(String json) throws InvalidJsonException {
         try {
             return objectMapper.readValue(json, Object.class);
@@ -48,7 +46,6 @@ public class JacksonProvider extends AbstractJsonProvider implements MappingProv
         }
     }
 
-    @Override
     public Object parse(Reader jsonReader) throws InvalidJsonException {
         try {
             return objectMapper.readValue(jsonReader, Object.class);
@@ -57,7 +54,6 @@ public class JacksonProvider extends AbstractJsonProvider implements MappingProv
         }
     }
 
-    @Override
     public Object parse(InputStream jsonStream) throws InvalidJsonException {
         try {
             return objectMapper.readValue(jsonStream, Object.class);
@@ -66,7 +62,6 @@ public class JacksonProvider extends AbstractJsonProvider implements MappingProv
         }
     }
 
-    @Override
     public String toJson(Object obj) {
         StringWriter writer = new StringWriter();
         try {
@@ -79,12 +74,10 @@ public class JacksonProvider extends AbstractJsonProvider implements MappingProv
         }
     }
 
-    @Override
     public Map<String, Object> createMap() {
         return new HashMap<String, Object>();
     }
 
-    @Override
     public List<Object> createList() {
         return new LinkedList<Object>();
     }
@@ -95,12 +88,10 @@ public class JacksonProvider extends AbstractJsonProvider implements MappingProv
     //
     //-------------------------------------------------------------------
 
-    @Override
     public <T> T convertValue(Object fromValue, Class<T> toValueType) throws IllegalArgumentException {
         return objectMapper.convertValue(fromValue, toValueType);
     }
 
-    @Override
     @SuppressWarnings({"unchecked"})
     public <T extends Collection<E>, E> T convertValue(Object fromValue, Class<T> collectionType, Class<E> elementType) throws IllegalArgumentException {
         CollectionType colType = objectMapper.getTypeFactory().constructCollectionType(collectionType, elementType);

@@ -61,7 +61,6 @@ public class JsonSmartJsonProvider extends AbstractJsonProvider {
         }
     }
 
-    @Override
     public Object parse(Reader jsonReader) throws InvalidJsonException {
         try {
             return parser.parse(jsonReader);
@@ -70,7 +69,6 @@ public class JsonSmartJsonProvider extends AbstractJsonProvider {
         }
     }
 
-    @Override
     public Object parse(InputStream jsonStream) throws InvalidJsonException {
         try {
             return parser.parse(new InputStreamReader(jsonStream));
@@ -79,7 +77,6 @@ public class JsonSmartJsonProvider extends AbstractJsonProvider {
         }
     }
 
-    @Override
     public String toJson(Object obj) {
 
         if(obj instanceof Map) {

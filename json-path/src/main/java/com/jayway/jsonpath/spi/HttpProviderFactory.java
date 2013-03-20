@@ -17,7 +17,6 @@ public abstract class HttpProviderFactory {
         @Override
         protected HttpProvider create() {
             return new HttpProvider() {
-                @Override
                 public InputStream get(URL url) throws IOException {
                     URLConnection connection = url.openConnection();
                     connection.setRequestProperty("Accept", "application/json");

@@ -26,7 +26,6 @@ import java.util.Map;
  */
 public abstract class AbstractJsonProvider implements JsonProvider {
 
-    @Override
     public Object clone(Object obj){
         return SerializationUtils.clone((Serializable)obj);
     }

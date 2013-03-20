@@ -848,23 +848,19 @@ public class JsonModel {
             this.jsonPath = jsonPath;
         }
 
-        @Override
         public Map<String, Object> getTarget() {
             return getTargetObject(jsonPath, Map.class);
         }
 
-        @Override
         public boolean containsKey(String key) {
             return getTargetObject(jsonPath, Map.class).containsKey(key);
         }
 
-        @Override
         public ObjectOps put(String key, Object value) {
             getTargetObject(jsonPath, Map.class).put(key, value);
             return this;
         }
 
-        @Override
         public ObjectOps putIfAbsent(String key, Object value) {
             Map targetObject = getTargetObject(jsonPath, Map.class);
             if (!targetObject.containsKey(key)) {
@@ -873,44 +869,36 @@ public class JsonModel {
             return this;
         }
 
-        @Override
         public Object get(String key) {
             return getTargetObject(jsonPath, Map.class).get(key);
         }
 
-        @Override
         public Integer getInteger(String key) {
             return ConvertUtils.toInt(get(key));
         }
 
-        @Override
         public Long getLong(String key) {
             return ConvertUtils.toLong(get(key));
         }
 
-        @Override
         public Double getDouble(String key) {
             return ConvertUtils.toDouble(get(key));
         }
 
-        @Override
         public String getString(String key) {
             return ConvertUtils.toString(get(key));
         }
 
-        @Override
         public ObjectOps putAll(Map<String, Object> map) {
             getTargetObject(jsonPath, Map.class).putAll(map);
             return this;
         }
 
-        @Override
         public ObjectOps remove(String key) {
             getTargetObject(jsonPath, Map.class).remove(key);
             return this;
         }
 
-        @Override
         public ObjectOps transform(Transformer<Map<String, Object>> transformer) {
             Map targetObject = getTargetObject(jsonPath, Map.class);
             Object transformed = transformer.transform(targetObject);
@@ -918,7 +906,6 @@ public class JsonModel {
             return this;
         }
 
-        @Override
         public <T> T to(Class<T> targetClass) {
             Map targetObject = getTargetObject(jsonPath, Map.class);
             return new DefaultMappingModelReader(targetObject).to(targetClass);
@@ -934,53 +921,45 @@ public class JsonModel {
             this.jsonPath = jsonPath;
         }
 
-        @Override
         public List<Object> getTarget() {
             return getTargetObject(jsonPath, List.class);
         }
 
-        @Override
         public ArrayOps add(Object o) {
             getTargetObject(jsonPath, List.class).add(o);
             return this;
         }
 
-        @Override
         public ArrayOps addAll(Collection<Object> collection) {
             getTargetObject(jsonPath, List.class).addAll(collection);
             return this;
         }
 
-        @Override
         public ArrayOps remove(Object o) {
             getTargetObject(jsonPath, List.class).remove(o);
             return this;
         }
 
-        @Override
         public int size() {
             return getTargetObject(jsonPath, List.class).size();
         }
 
-        @Override
         public ArrayOps set(int index, Object value) {
             getTargetObject(jsonPath, List.class).set(index, value);
             return this;
         }
 
-        @Override
+
         public ListMappingModelReader toList() {
             return new DefaultMappingModelReader(getTargetObject(jsonPath, List.class));
         }
 
-        @Override
         public ArrayOps transform(Transformer<List<Object>> transformer) {
             Object transformed = transformer.transform(getTargetObject(jsonPath, List.class));
             setTargetObject(jsonPath, transformed);
             return this;
         }
 
-        @Override
         public ArrayOps each(Transformer<Object> transformer) {
 
             List targetObject = getTargetObject(jsonPath, List.class);
@@ -990,12 +969,10 @@ public class JsonModel {
             return this;
         }
 
-        @Override
         public <T> List<T> toListOf(Class<T> targetClass) {
             return new DefaultMappingModelReader(getTargetObject(jsonPath, List.class)).toListOf(targetClass);
         }
 
-        @Override
         public <T> Set<T> toSetOf(Class<T> targetClass) {
             return new DefaultMappingModelReader(getTargetObject(jsonPath, List.class)).toSetOf(targetClass);
         }
@@ -1008,17 +985,14 @@ public class JsonModel {
             this.model = model;
         }
 
-        @Override
         public ListMappingModelReader toList() {
             return this;
         }
 
-        @Override
         public <T> List<T> of(Class<T> targetClass) {
             return toListOf(targetClass);
         }
 
-        @Override
         public <T> List<T> toListOf(Class<T> targetClass) {
             Object modelRef = model;
             if (!(modelRef instanceof List)) {
@@ -1027,7 +1001,6 @@ public class JsonModel {
             return MappingProviderFactory.createProvider().convertValue(modelRef, List.class, targetClass);
         }
 
-        @Override
         public <T> Set<T> toSetOf(Class<T> targetClass) {
             Object modelRef = model;
             if (!(modelRef instanceof List)) {
@@ -1038,7 +1011,6 @@ public class JsonModel {
             return MappingProviderFactory.createProvider().convertValue(modelRef, Set.class, targetClass);
         }
 
-        @Override
         public <T> T to(Class<T> targetClass) {
             return MappingProviderFactory.createProvider().convertValue(model, targetClass);
         }
