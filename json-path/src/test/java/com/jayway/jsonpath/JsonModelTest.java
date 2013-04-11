@@ -56,6 +56,9 @@ public class JsonModelTest {
                     "  }\n" +
                     "}";
 
+    public final static String INVALID_DOCUMENT =
+            "{?\\?\\?!!?~q`}}}}}\"\" \"store\": {\n";
+
 
     @Test
     public void a_model_can_be_pretty_printed() throws Exception {
@@ -101,9 +104,14 @@ public class JsonModelTest {
     }
 
 
+    @Test(expected = InvalidJsonException.class)
+    public void invalid_json_throws() throws Exception {
+        JsonModel.model(INVALID_DOCUMENT).get("store.id");
+    }
+
     @Test(expected = InvalidPathException.class)
     public void invalid_path_throws() throws Exception {
-        JsonModel.model(DOCUMENT).get("store.invalid");
+        JsonModel.model(DOCUMENT).get("a(");
     }
 
 
