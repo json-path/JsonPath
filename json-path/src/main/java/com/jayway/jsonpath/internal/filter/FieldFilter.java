@@ -55,8 +55,8 @@ public class FieldFilter extends PathTokenFilter {
             }
         } else {
             Map<String, Object> map = jsonProvider.toMap(obj);
-            if(!map.containsKey(condition)){
-                throw new InvalidPathException("invalid path");
+            if(map == null || !map.containsKey(condition)){
+                return null;
             } else {
                 return map.get(condition);
             }

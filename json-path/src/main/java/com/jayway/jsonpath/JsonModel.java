@@ -154,13 +154,13 @@ public class JsonModel {
     public boolean hasPath(JsonPath jsonPath){
 
         isTrue(jsonPath.isPathDefinite(), "hasPath can only be used for definite paths");
-
+        Object obj = null;
         try {
-            get(jsonPath);
+            obj = get(jsonPath);
         } catch(InvalidPathException e){
             return false;
         }
-        return true;
+        return null == obj?false:true;
     }
 
     // --------------------------------------------------------
