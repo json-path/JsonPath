@@ -158,10 +158,35 @@ public class JsonPath {
      *
      * @return true if path is definite (points to single item)
      */
-    public boolean isPathDefinite() {
-        String preparedPath = getPath().replaceAll("\"[^\"\\\\\\n\r]*\"", "");
+    public static boolean isPathDefinite(String path) {
+        String preparedPath = path.replaceAll("\"[^\"\\\\\\n\r]*\"", "");
 
         return !DEFINITE_PATH_PATTERN.matcher(preparedPath).matches();
+    }
+
+
+    /**
+     * Checks if a path points to a single item or if it potentially returns multiple items
+     * <p/>
+     * a path is considered <strong>not</strong> definite if it contains a scan fragment ".."
+     * or an array position fragment that is not based on a single index
+     * <p/>
+     * <p/>
+     * definite path examples are:
+     * <p/>
+     * $store.book
+     * $store.book[1].title
+     * <p/>
+     * not definite path examples are:
+     * <p/>
+     * $..book
+     * $.store.book[1,2]
+     * $.store.book[?(@.category = 'fiction')]
+     *
+     * @return true if path is definite (points to single item)
+     */
+    public boolean isPathDefinite() {
+        return JsonPath.isPathDefinite(getPath());
     }
 
     /**
