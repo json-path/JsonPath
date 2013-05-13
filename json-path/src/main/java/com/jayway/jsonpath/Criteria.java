@@ -185,14 +185,21 @@ public class Criteria {
                 });
 
             } else if (CriteriaType.NE.equals(key)) {
-                if (expectedVal == null && actualVal == null) {
-                    return false;
-                }
-                if (expectedVal == null) {
-                    return true;
-                } else {
-                    return !expectedVal.equals(actualVal);
-                }
+              
+                return objectOrAnyCollectionItemMatches(actualVal, new Predicate<Object>() {
+
+                    @Override
+                    public boolean accept(Object value) {
+                        if (expectedVal == null && value == null) {
+                            return false;
+                        }
+                        if (expectedVal == null) {
+                            return true;
+                        } else {
+                            return !expectedVal.equals(value);
+                        }
+                    }
+                });
 
             } else if (CriteriaType.IN.equals(key)) {
 
@@ -287,12 +294,17 @@ public class Criteria {
                 return true;
             } else {
                 Object actualVal = readSafely(this.key, map);
-
-                if (isValue == null) {
-                    return actualVal == null;
-                } else {
-                    return isValue.equals(actualVal);
-                }
+                return objectOrAnyCollectionItemMatches(actualVal, new Predicate<Object>() {
+                    @Override
+                    public boolean accept(Object value) {
+                        if (isValue == null) {
+                            return value == null;
+                        } else {
+                            return isValue.equals(value);
+                        }
+                    }
+                  
+                });
             }
         } else {
 
