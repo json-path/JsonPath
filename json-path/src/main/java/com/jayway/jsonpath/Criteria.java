@@ -221,15 +221,25 @@ public class Criteria {
 
             } else if (CriteriaType.EXISTS.equals(key)) {
 
-                boolean exp = (Boolean) expectedVal;
-                boolean act = true;
-                try{
-                  this.key.read(map);
-                }catch (InvalidPathException e){
-                  act = false;
+              final boolean exp = (Boolean) expectedVal;
+              return objectOrAnyCollectionItemMatches(map, new Predicate<Object>() {
+
+                @Override
+                public boolean accept(final Object value) {
+                  boolean act = true;
+                  try {
+                    Object val = getKey().read(value);
+                    if(val instanceof Collection){
+                      act = !((Collection) val).isEmpty();
+                    }
+                  } catch (InvalidPathException e) {
+                    act = false;
+                  }
+                  return act == exp;
+
                 }
 
-                return act == exp;
+              });
 
             } else if (CriteriaType.TYPE.equals(key)) {
 
