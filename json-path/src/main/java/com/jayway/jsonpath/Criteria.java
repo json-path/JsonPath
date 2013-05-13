@@ -122,7 +122,7 @@ public class Criteria {
         for (CriteriaType key : this.criteria.keySet()) {
 
             Object actualVal = readSafely(this.key, map);
-            Object expectedVal = this.criteria.get(key);
+            final Object expectedVal = this.criteria.get(key);
 
             if (CriteriaType.GT.equals(key)) {
 
@@ -130,10 +130,14 @@ public class Criteria {
                     return false;
                 }
 
-                Number expectedNumber = (Number) expectedVal;
-                Number actualNumber = (Number) actualVal;
+                final Number expectedNumber = (Number) expectedVal;
+                return objectOrAnyCollectionItemMatches(actualVal, new Predicate<Number>() {
 
-                return (actualNumber.doubleValue() > expectedNumber.doubleValue());
+                  @Override
+                  public boolean accept(Number value) {
+                    return (value.doubleValue() > expectedNumber.doubleValue());
+                  }
+                });
 
             } else if (CriteriaType.GTE.equals(key)) {
 
@@ -141,10 +145,14 @@ public class Criteria {
                     return false;
                 }
 
-                Number expectedNumber = (Number) expectedVal;
-                Number actualNumber = (Number) actualVal;
+                final Number expectedNumber = (Number) expectedVal;
+                return objectOrAnyCollectionItemMatches(actualVal, new Predicate<Number>() {
 
-                return (actualNumber.doubleValue() >= expectedNumber.doubleValue());
+                  @Override
+                  public boolean accept(Number value) {
+                    return (value.doubleValue() >= expectedNumber.doubleValue());
+                  }
+                });
 
             } else if (CriteriaType.LT.equals(key)) {
 
@@ -152,10 +160,14 @@ public class Criteria {
                     return false;
                 }
 
-                Number expectedNumber = (Number) expectedVal;
-                Number actualNumber = (Number) actualVal;
+                final Number expectedNumber = (Number) expectedVal;
+                return objectOrAnyCollectionItemMatches(actualVal, new Predicate<Number>() {
 
-                return (actualNumber.doubleValue() < expectedNumber.doubleValue());
+                  @Override
+                  public boolean accept(Number value) {
+                    return (value.doubleValue() < expectedNumber.doubleValue());
+                  }
+                });
 
             } else if (CriteriaType.LTE.equals(key)) {
 
@@ -163,10 +175,14 @@ public class Criteria {
                     return false;
                 }
 
-                Number expectedNumber = (Number) expectedVal;
-                Number actualNumber = (Number) actualVal;
+                final Number expectedNumber = (Number) expectedVal;
+                return objectOrAnyCollectionItemMatches(actualVal, new Predicate<Number>() {
 
-                return (actualNumber.doubleValue() <= expectedNumber.doubleValue());
+                  @Override
+                  public boolean accept(Number value) {
+                    return (value.doubleValue() <= expectedNumber.doubleValue());
+                  }
+                });
 
             } else if (CriteriaType.NE.equals(key)) {
                 if (expectedVal == null && actualVal == null) {
