@@ -103,6 +103,19 @@ public class Criteria {
       }
     }
 
+    private static <T> boolean objectOrAnyCollectionItemMatches(final Object singleObjectOrCollection,
+        final Predicate<T> predicate){
+            if (singleObjectOrCollection instanceof Collection) {
+                Iterator it = ((Collection) singleObjectOrCollection).iterator();
+                while (it.hasNext()) {
+                    if (predicate.accept((T) it.next())) {
+                        return true;
+                }
+            }
+            return false;
+        }
+        return predicate.accept((T) singleObjectOrCollection);
+    }
 
     boolean singleObjectApply(Map<String, Object> map) {
 
@@ -514,5 +527,9 @@ public class Criteria {
         return this;
     }
 
+    
+    private interface Predicate<T> {
+        boolean accept(T value);
+    }
 
 }
