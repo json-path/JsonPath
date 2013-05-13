@@ -48,7 +48,7 @@ public class Criteria {
      */
     private static final Object NOT_SET = new Object();
 
-    private final String key;
+    private final JsonPath key;
 
     private final List<Criteria> criteriaChain;
 
@@ -61,17 +61,17 @@ public class Criteria {
         notEmpty(key, "key can not be null or empty");
         this.criteriaChain = new ArrayList<Criteria>();
         this.criteriaChain.add(this);
-        this.key = key;
+        this.key = JsonPath.compile(key);
     }
 
     private Criteria(List<Criteria> criteriaChain, String key) {
         notEmpty(key, "key can not be null or empty");
         this.criteriaChain = criteriaChain;
         this.criteriaChain.add(this);
-        this.key = key;
+        this.key = JsonPath.compile(key);
     }
 
-    public String getKey() {
+    public JsonPath getKey() {
         return this.key;
     }
 
