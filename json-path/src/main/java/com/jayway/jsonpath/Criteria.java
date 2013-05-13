@@ -243,14 +243,19 @@ public class Criteria {
 
             } else if (CriteriaType.TYPE.equals(key)) {
 
-                Class<?> exp = (Class<?>) expectedVal;
-                Class<?> act = actualVal == null ? null : actualVal.getClass();
+                final Class<?> exp = (Class<?>) expectedVal;
+                return objectOrAnyCollectionItemMatches(actualVal, new Predicate<Object>() {
 
-                if (act == null) {
-                    return false;
-                } else {
-                    return act.equals(exp);
-                }
+                  @Override
+                  public boolean accept(Object value) {
+                    Class<?> act = value == null ? null : value.getClass();
+                    if (act == null) {
+                      return false;
+                    } else {
+                      return act.equals(exp);
+                    }
+                  }
+                });
 
             } else if (CriteriaType.REGEX.equals(key)) {
                 final Pattern exp = (Pattern) expectedVal;
