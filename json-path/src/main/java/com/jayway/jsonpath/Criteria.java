@@ -205,13 +205,8 @@ public class Criteria {
             } else if (CriteriaType.TYPE.equals(key)) {
 
                 Class<?> exp = (Class<?>) expectedVal;
-                Class<?> act = null;
-                if (map.containsKey(this.key)) {
-                    Object actVal = map.get(this.key);
-                    if (actVal != null) {
-                        act = actVal.getClass();
-                    }
-                }
+                Class<?> act = actualVal == null ? null : actualVal.getClass();
+
                 if (act == null) {
                     return false;
                 } else {
