@@ -101,8 +101,8 @@ public abstract class Filter<T> {
         }
 
         public MapFilter addCriteria(Criteria criteria) {
-            Criteria existing = this.criteria.get(criteria.getKey());
-            String key = criteria.getKey();
+            Criteria existing = this.criteria.get(criteria.getKey().getPath());
+            String key = criteria.getKey().getPath();
             if (existing == null) {
                 this.criteria.put(key, criteria);
             } else {

@@ -48,7 +48,7 @@ public class Criteria {
      */
     private static final Object NOT_SET = new Object();
 
-    private final String key;
+    private final JsonPath key;
 
     private final List<Criteria> criteriaChain;
 
@@ -61,17 +61,17 @@ public class Criteria {
         notEmpty(key, "key can not be null or empty");
         this.criteriaChain = new ArrayList<Criteria>();
         this.criteriaChain.add(this);
-        this.key = key;
+        this.key = JsonPath.compile(key);
     }
 
     private Criteria(List<Criteria> criteriaChain, String key) {
         notEmpty(key, "key can not be null or empty");
         this.criteriaChain = criteriaChain;
         this.criteriaChain.add(this);
-        this.key = key;
+        this.key = JsonPath.compile(key);
     }
 
-    public String getKey() {
+    public JsonPath getKey() {
         return this.key;
     }
 
@@ -95,15 +95,34 @@ public class Criteria {
         }
     }
 
+    private static Object readSafely(JsonPath path, Map<String, Object> map){
+      try{
+        return path.read(map);
+      } catch (InvalidPathException e){
+        return null;
+      }
+    }
 
-
+    private static <T> boolean objectOrAnyCollectionItemMatches(final Object singleObjectOrCollection,
+        final Predicate<T> predicate){
+            if (singleObjectOrCollection instanceof Collection) {
+                Iterator it = ((Collection) singleObjectOrCollection).iterator();
+                while (it.hasNext()) {
+                    if (predicate.accept((T) it.next())) {
+                        return true;
+                }
+            }
+            return false;
+        }
+        return predicate.accept((T) singleObjectOrCollection);
+    }
 
     boolean singleObjectApply(Map<String, Object> map) {
 
         for (CriteriaType key : this.criteria.keySet()) {
 
-            Object actualVal = map.get(this.key);
-            Object expectedVal = this.criteria.get(key);
+            Object actualVal = readSafely(this.key, map);
+            final Object expectedVal = this.criteria.get(key);
 
             if (CriteriaType.GT.equals(key)) {
 
@@ -111,10 +130,14 @@ public class Criteria {
                     return false;
                 }
 
-                Number expectedNumber = (Number) expectedVal;
-                Number actualNumber = (Number) actualVal;
+                final Number expectedNumber = (Number) expectedVal;
+                return objectOrAnyCollectionItemMatches(actualVal, new Predicate<Number>() {
 
-                return (actualNumber.doubleValue() > expectedNumber.doubleValue());
+                  @Override
+                  public boolean accept(Number value) {
+                    return (value.doubleValue() > expectedNumber.doubleValue());
+                  }
+                });
 
             } else if (CriteriaType.GTE.equals(key)) {
 
@@ -122,10 +145,14 @@ public class Criteria {
                     return false;
                 }
 
-                Number expectedNumber = (Number) expectedVal;
-                Number actualNumber = (Number) actualVal;
+                final Number expectedNumber = (Number) expectedVal;
+                return objectOrAnyCollectionItemMatches(actualVal, new Predicate<Number>() {
 
-                return (actualNumber.doubleValue() >= expectedNumber.doubleValue());
+                  @Override
+                  public boolean accept(Number value) {
+                    return (value.doubleValue() >= expectedNumber.doubleValue());
+                  }
+                });
 
             } else if (CriteriaType.LT.equals(key)) {
 
@@ -133,10 +160,14 @@ public class Criteria {
                     return false;
                 }
 
-                Number expectedNumber = (Number) expectedVal;
-                Number actualNumber = (Number) actualVal;
+                final Number expectedNumber = (Number) expectedVal;
+                return objectOrAnyCollectionItemMatches(actualVal, new Predicate<Number>() {
 
-                return (actualNumber.doubleValue() < expectedNumber.doubleValue());
+                  @Override
+                  public boolean accept(Number value) {
+                    return (value.doubleValue() < expectedNumber.doubleValue());
+                  }
+                });
 
             } else if (CriteriaType.LTE.equals(key)) {
 
@@ -144,20 +175,31 @@ public class Criteria {
                     return false;
                 }
 
-                Number expectedNumber = (Number) expectedVal;
-                Number actualNumber = (Number) actualVal;
+                final Number expectedNumber = (Number) expectedVal;
+                return objectOrAnyCollectionItemMatches(actualVal, new Predicate<Number>() {
 
-                return (actualNumber.doubleValue() <= expectedNumber.doubleValue());
+                  @Override
+                  public boolean accept(Number value) {
+                    return (value.doubleValue() <= expectedNumber.doubleValue());
+                  }
+                });
 
             } else if (CriteriaType.NE.equals(key)) {
-                if (expectedVal == null && actualVal == null) {
-                    return false;
-                }
-                if (expectedVal == null) {
-                    return true;
-                } else {
-                    return !expectedVal.equals(actualVal);
-                }
+              
+                return objectOrAnyCollectionItemMatches(actualVal, new Predicate<Object>() {
+
+                    @Override
+                    public boolean accept(Object value) {
+                        if (expectedVal == null && value == null) {
+                            return false;
+                        }
+                        if (expectedVal == null) {
+                            return true;
+                        } else {
+                            return !expectedVal.equals(value);
+                        }
+                    }
+                });
 
             } else if (CriteriaType.IN.equals(key)) {
 
@@ -186,36 +228,53 @@ public class Criteria {
 
             } else if (CriteriaType.EXISTS.equals(key)) {
 
-                boolean exp = (Boolean) expectedVal;
-                boolean act = map.containsKey(this.key);
+              final boolean exp = (Boolean) expectedVal;
+              return objectOrAnyCollectionItemMatches(map, new Predicate<Object>() {
 
-                return act == exp;
+                @Override
+                public boolean accept(final Object value) {
+                  boolean act = true;
+                  try {
+                    Object val = getKey().read(value);
+                    if(val instanceof Collection){
+                      act = !((Collection) val).isEmpty();
+                    }
+                  } catch (InvalidPathException e) {
+                    act = false;
+                  }
+                  return act == exp;
+
+                }
+
+              });
 
             } else if (CriteriaType.TYPE.equals(key)) {
 
-                Class<?> exp = (Class<?>) expectedVal;
-                Class<?> act = null;
-                if (map.containsKey(this.key)) {
-                    Object actVal = map.get(this.key);
-                    if (actVal != null) {
-                        act = actVal.getClass();
+                final Class<?> exp = (Class<?>) expectedVal;
+                return objectOrAnyCollectionItemMatches(actualVal, new Predicate<Object>() {
+
+                  @Override
+                  public boolean accept(Object value) {
+                    Class<?> act = value == null ? null : value.getClass();
+                    if (act == null) {
+                      return false;
+                    } else {
+                      return act.equals(exp);
                     }
-                }
-                if (act == null) {
-                    return false;
-                } else {
-                    return act.equals(exp);
-                }
+                  }
+                });
 
             } else if (CriteriaType.REGEX.equals(key)) {
+                final Pattern exp = (Pattern) expectedVal;
+                
+                return objectOrAnyCollectionItemMatches(actualVal, new Predicate<String>() {
 
-
-                Pattern exp = (Pattern) expectedVal;
-                String act = (String) actualVal;
-                if (act == null) {
-                    return false;
-                }
-                return exp.matcher(act).matches();
+                  @Override
+                  public boolean accept(String value) {
+                    return value != null && exp.matcher(value).matches();
+                  }
+                });
+               
 
             } else {
                 throw new UnsupportedOperationException("Criteria type not supported: " + key.name());
@@ -234,11 +293,18 @@ public class Criteria {
                 }
                 return true;
             } else {
-                if (isValue == null) {
-                    return (map.get(key) == null);
-                } else {
-                    return isValue.equals(map.get(key));
-                }
+                Object actualVal = readSafely(this.key, map);
+                return objectOrAnyCollectionItemMatches(actualVal, new Predicate<Object>() {
+                    @Override
+                    public boolean accept(Object value) {
+                        if (isValue == null) {
+                            return value == null;
+                        } else {
+                            return isValue.equals(value);
+                        }
+                    }
+                  
+                });
             }
         } else {
 
@@ -375,6 +441,7 @@ public class Criteria {
       */
     public Criteria in(Collection<?> c) {
         notNull(c, "collection can not be null");
+        checkFilterCanBeApplied(CriteriaType.IN);
         criteria.put(CriteriaType.IN, c);
         return this;
     }
@@ -399,6 +466,7 @@ public class Criteria {
      */
     public Criteria nin(Collection<?> c) {
         notNull(c, "collection can not be null");
+        checkFilterCanBeApplied(CriteriaType.NIN);
         criteria.put(CriteriaType.NIN, c);
         return this;
     }
@@ -421,6 +489,7 @@ public class Criteria {
      */
     public Criteria all(Collection<?> c) {
         notNull(c, "collection can not be null");
+        checkFilterCanBeApplied(CriteriaType.ALL);
         criteria.put(CriteriaType.ALL, c);
         return this;
     }
@@ -432,6 +501,7 @@ public class Criteria {
      * @return
      */
     public Criteria size(int s) {
+        checkFilterCanBeApplied(CriteriaType.SIZE);
         criteria.put(CriteriaType.SIZE, s);
         return this;
     }
@@ -505,6 +575,16 @@ public class Criteria {
         criteriaChain.add(new Criteria("$and").is(asList(criteria)));
         return this;
     }
+    
+    private void checkFilterCanBeApplied(CriteriaType type){
+      if (getKey().getTokenizer().size() > 2){
+        throw new IllegalArgumentException("Cannot use "+type+" filter on a multi-level path expression");
+      }
+    }
 
+    
+    private interface Predicate<T> {
+        boolean accept(T value);
+    }
 
 }
