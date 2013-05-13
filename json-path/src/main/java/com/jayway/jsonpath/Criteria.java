@@ -108,7 +108,7 @@ public class Criteria {
 
         for (CriteriaType key : this.criteria.keySet()) {
 
-            Object actualVal = map.get(this.key);
+            Object actualVal = readSafely(this.key, map);
             Object expectedVal = this.criteria.get(key);
 
             if (CriteriaType.GT.equals(key)) {
