@@ -422,6 +422,7 @@ public class Criteria {
       */
     public Criteria in(Collection<?> c) {
         notNull(c, "collection can not be null");
+        checkFilterCanBeApplied(CriteriaType.IN);
         criteria.put(CriteriaType.IN, c);
         return this;
     }
@@ -446,6 +447,7 @@ public class Criteria {
      */
     public Criteria nin(Collection<?> c) {
         notNull(c, "collection can not be null");
+        checkFilterCanBeApplied(CriteriaType.NIN);
         criteria.put(CriteriaType.NIN, c);
         return this;
     }
@@ -468,6 +470,7 @@ public class Criteria {
      */
     public Criteria all(Collection<?> c) {
         notNull(c, "collection can not be null");
+        checkFilterCanBeApplied(CriteriaType.ALL);
         criteria.put(CriteriaType.ALL, c);
         return this;
     }
@@ -479,6 +482,7 @@ public class Criteria {
      * @return
      */
     public Criteria size(int s) {
+        checkFilterCanBeApplied(CriteriaType.SIZE);
         criteria.put(CriteriaType.SIZE, s);
         return this;
     }
@@ -551,6 +555,12 @@ public class Criteria {
     public Criteria andOperator(Criteria... criteria) {
         criteriaChain.add(new Criteria("$and").is(asList(criteria)));
         return this;
+    }
+    
+    private void checkFilterCanBeApplied(CriteriaType type){
+      if (getKey().getTokenizer().size() > 2){
+        throw new IllegalArgumentException("Cannot use "+type+" filter on a multi-level path expression");
+      }
     }
 
     
