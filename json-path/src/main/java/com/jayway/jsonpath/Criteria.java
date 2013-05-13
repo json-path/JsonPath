@@ -253,14 +253,16 @@ public class Criteria {
                 }
 
             } else if (CriteriaType.REGEX.equals(key)) {
+                final Pattern exp = (Pattern) expectedVal;
+                
+                return objectOrAnyCollectionItemMatches(actualVal, new Predicate<String>() {
 
-
-                Pattern exp = (Pattern) expectedVal;
-                String act = (String) actualVal;
-                if (act == null) {
-                    return false;
-                }
-                return exp.matcher(act).matches();
+                  @Override
+                  public boolean accept(String value) {
+                    return value != null && exp.matcher(value).matches();
+                  }
+                });
+               
 
             } else {
                 throw new UnsupportedOperationException("Criteria type not supported: " + key.name());
