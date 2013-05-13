@@ -95,7 +95,13 @@ public class Criteria {
         }
     }
 
-
+    private static Object readSafely(JsonPath path, Map<String, Object> map){
+      try{
+        return path.read(map);
+      } catch (InvalidPathException e){
+        return null;
+      }
+    }
 
 
     boolean singleObjectApply(Map<String, Object> map) {
