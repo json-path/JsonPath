@@ -193,7 +193,12 @@ public class Criteria {
             } else if (CriteriaType.EXISTS.equals(key)) {
 
                 boolean exp = (Boolean) expectedVal;
-                boolean act = map.containsKey(this.key);
+                boolean act = true;
+                try{
+                  this.key.read(map);
+                }catch (InvalidPathException e){
+                  act = false;
+                }
 
                 return act == exp;
 
