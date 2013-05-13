@@ -240,10 +240,12 @@ public class Criteria {
                 }
                 return true;
             } else {
+                Object actualVal = readSafely(this.key, map);
+
                 if (isValue == null) {
-                    return (map.get(key) == null);
+                    return actualVal == null;
                 } else {
-                    return isValue.equals(map.get(key));
+                    return isValue.equals(actualVal);
                 }
             }
         } else {
