@@ -19,13 +19,6 @@ import java.util.Map;
  */
 public class JsonAssert {
 
-    private static JsonProvider jsonProvider = JsonProviderFactory.createProvider();
-
-    public static void setJsonProvider(JsonProvider jsonProvider) {
-        JsonAssert.jsonProvider = jsonProvider;
-    }
-
-
     /**
      * Creates a JSONAsserter
      *
@@ -34,7 +27,7 @@ public class JsonAssert {
      * @throws ParseException when the given JSON could not be parsed
      */
     public static JsonAsserter with(String json) {
-        return new JsonAsserterImpl(jsonProvider.parse(json));
+        return new JsonAsserterImpl(JsonProviderFactory.createProvider().parse(json));
     }
 
     /**
@@ -45,7 +38,7 @@ public class JsonAssert {
      * @throws ParseException when the given JSON could not be parsed
      */
     public static JsonAsserter with(Reader reader) throws IOException {
-        return new JsonAsserterImpl(jsonProvider.parse(convertReaderToString(reader)));
+        return new JsonAsserterImpl(JsonProviderFactory.createProvider().parse(convertReaderToString(reader)));
 
     }
 
