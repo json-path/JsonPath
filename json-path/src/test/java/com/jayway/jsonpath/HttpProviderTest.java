@@ -33,7 +33,7 @@ public class HttpProviderTest {
         try {
             inputStream =  HttpProviderFactory.getProvider().get(url);
 
-            byte[] bytes = sun.misc.IOUtils.readFully(inputStream, -1, true);
+            byte[] bytes = org.apache.commons.io.IOUtils.toByteArray(inputStream);
             
             String json = new String(bytes).trim();
 
