@@ -22,7 +22,7 @@ import com.jayway.jsonpath.internal.filter.PathTokenFilter;
 import com.jayway.jsonpath.spi.HttpProviderFactory;
 import com.jayway.jsonpath.spi.JsonProvider;
 import com.jayway.jsonpath.spi.JsonProviderFactory;
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 
 import java.io.*;
 import java.net.URL;
@@ -32,7 +32,7 @@ import java.util.Map;
 import java.util.regex.Pattern;
 
 import static java.util.Arrays.asList;
-import static org.apache.commons.lang.Validate.*;
+import static org.apache.commons.lang3.Validate.*;
 
 /**
  * <p/>

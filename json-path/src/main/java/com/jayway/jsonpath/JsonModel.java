@@ -28,7 +28,7 @@ import java.net.URL;
 import java.util.*;
 
 import static java.util.Arrays.asList;
-import static org.apache.commons.lang.Validate.*;
+import static org.apache.commons.lang3.Validate.*;
 
 /**
  * A JsonModel holds a parsed JSON document and provides easy read and write operations. In contrast to the
