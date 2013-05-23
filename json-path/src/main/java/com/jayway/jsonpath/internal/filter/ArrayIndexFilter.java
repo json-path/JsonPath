@@ -25,9 +25,22 @@ import java.util.regex.Pattern;
 public class ArrayIndexFilter extends PathTokenFilter {
 
     private static final Pattern SINGLE_ARRAY_INDEX_PATTERN = Pattern.compile("\\[\\d+\\]");
+    private static final Pattern COMMA = Pattern.compile(",");
+    private static final Pattern SPACE = Pattern.compile(" ");
+
+    
+    private final String trimmedCondition;
     
     public ArrayIndexFilter(String condition) {
         super(condition);
+        String trimmedCondition = trim(condition, 1, 1);
+
+        if(trimmedCondition.contains("@.length")){
+            trimmedCondition = trim(trimmedCondition, 1, 1);
+            trimmedCondition = trimmedCondition.replace("@.length", "");
+            trimmedCondition = trimmedCondition + ":";
+        }
+        this.trimmedCondition = trimmedCondition;
     }
 
     @Override
@@ -36,17 +49,11 @@ public class ArrayIndexFilter extends PathTokenFilter {
         List<Object> src = jsonProvider.toList(obj);
         List<Object> result = jsonProvider.createList();
 
-        String trimmedCondition = trim(condition, 1, 1);
-
-        if(trimmedCondition.contains("@.length")){
-            trimmedCondition = trim(trimmedCondition, 1, 1);
-            trimmedCondition = trimmedCondition.replace("@.length", "");
-            trimmedCondition = trimmedCondition + ":";
-        }
+        
 
 
         if (trimmedCondition.startsWith(":")) {
-            trimmedCondition = trim(trimmedCondition, 1, 0);
+            String trimmedCondition = trim(this.trimmedCondition, 1, 0);
             int get = Integer.parseInt(trimmedCondition);
             for (int i = 0; i < get; i++) {
                 result.add(src.get(i));
@@ -54,12 +61,12 @@ public class ArrayIndexFilter extends PathTokenFilter {
             return result;
 
         } else if (trimmedCondition.endsWith(":")) {
-            trimmedCondition = trim(trimmedCondition.replace(" ", ""), 1, 1);
+            String trimmedCondition = trim(SPACE.matcher(this.trimmedCondition).replaceAll(""), 1, 1);
             int get = Integer.parseInt(trimmedCondition);
             return src.get(src.size() - get);
 
         } else {
-            String[] indexArr = trimmedCondition.split(",");
+            String[] indexArr = COMMA.split(trimmedCondition);
 
             if(src.isEmpty()){
                 return result;

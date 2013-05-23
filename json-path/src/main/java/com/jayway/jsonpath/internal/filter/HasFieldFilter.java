@@ -24,8 +24,18 @@ import java.util.Map;
  */
 public class HasFieldFilter extends PathTokenFilter {
 
+    private final String trimmedCondition;
+
     public HasFieldFilter(String condition) {
         super(condition);
+        String trimmedCondition = condition;
+
+        if(condition.contains("['")){
+            trimmedCondition = trimmedCondition.replace("['", ".");
+            trimmedCondition = trimmedCondition.replace("']", "");
+        }
+
+        this.trimmedCondition = trim(trimmedCondition, 5, 2);
     }
 
     @Override
@@ -34,15 +44,6 @@ public class HasFieldFilter extends PathTokenFilter {
         //[?(@.isbn)]
         List<Object> src = jsonProvider.toList(obj);
         List<Object> result = jsonProvider.createList();
-
-        String trimmedCondition = condition;
-
-        if(condition.contains("['")){
-            trimmedCondition = trimmedCondition.replace("['", ".");
-            trimmedCondition = trimmedCondition.replace("']", "");
-        }
-
-        trimmedCondition = trim(trimmedCondition, 5, 2);
 
         for (Object item : src) {
             if(jsonProvider.isMap(item)){
