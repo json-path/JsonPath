@@ -18,8 +18,7 @@ import com.jayway.jsonpath.InvalidPathException;
 import com.jayway.jsonpath.internal.filter.eval.ExpressionEvaluator;
 import com.jayway.jsonpath.spi.JsonProvider;
 
-import java.util.List;
-import java.util.Map;
+import java.util.Collection;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -51,17 +50,16 @@ public class ArrayEvalFilter extends PathTokenFilter {
 
     @Override
     public Object filter(Object obj, JsonProvider jsonProvider) {
-        List<Object> src = null;
+        Iterable<Object> src = null;
         try {
-            src = jsonProvider.toList(obj);
+            src = jsonProvider.toIterable(obj);
         } catch (ClassCastException e){
             throw new InvalidPathException("The path fragment '" + this.condition + "' can not be applied to a JSON object only a JSON array.", e);
         }
-        List<Object> result = jsonProvider.createList();
-
+        Object result = jsonProvider.createArray();
         for (Object item : src) {
             if (isMatch(item, conditionStatement, jsonProvider)) {
-                result.add(item);
+                jsonProvider.setProperty(result, jsonProvider.length(result), item);
             }
         }
         return result;
@@ -79,19 +77,19 @@ public class ArrayEvalFilter extends PathTokenFilter {
 
     private boolean isMatch(Object check, ConditionStatement conditionStatement, JsonProvider jsonProvider) {
         if (jsonProvider.isMap(check)) {
-            Map<String, Object> obj = jsonProvider.toMap(check);
+            Collection<String> keys = jsonProvider.getPropertyKeys(check);
 
-            if (!obj.containsKey(conditionStatement.getField())) {
+            if (!keys.contains(conditionStatement.getField())) {
                 return false;
             }
 
-            Object propertyValue = obj.get(conditionStatement.getField());
+            Object propertyValue = jsonProvider.getProperty(check, conditionStatement.getField());
 
             if (jsonProvider.isContainer(propertyValue)) {
                 return false;
             }
             return ExpressionEvaluator.eval(propertyValue, conditionStatement.getOperator(), conditionStatement.getExpected());
-        } else if(jsonProvider.isList(check)) {
+        } else if(jsonProvider.isArray(check)) {
             return false;
         } else {
             return ExpressionEvaluator.eval(check, conditionStatement.getOperator(), conditionStatement.getExpected());

@@ -14,10 +14,8 @@
  */
 package com.jayway.jsonpath.internal.filter;
 
-import com.jayway.jsonpath.InvalidPathException;
 import com.jayway.jsonpath.spi.JsonProvider;
 
-import java.util.List;
 import java.util.regex.Pattern;
 
 /**
@@ -52,17 +50,16 @@ public class ArrayIndexFilter extends PathTokenFilter {
 
 
     @Override
-    public Object filter(Object obj,JsonProvider jsonProvider) {
+    public Object filter(Object obj, JsonProvider jsonProvider) {
 
-        List<Object> src = jsonProvider.toList(obj);
-        List<Object> result = jsonProvider.createList();
+        Object result = jsonProvider.createArray();
 
         if (trimmedCondition.contains(OPERATOR)) {
             if (trimmedCondition.startsWith(OPERATOR)) {
                 String trimmedCondition = trim(this.trimmedCondition, 1, 0);
                 int get = Integer.parseInt(trimmedCondition);
                 for (int i = 0; i < get; i++) {
-                    result.add(src.get(i));
+                    jsonProvider.setProperty(result, jsonProvider.length(result), jsonProvider.getProperty(obj, i));
                 }
                 return result;
 
@@ -73,13 +70,13 @@ public class ArrayIndexFilter extends PathTokenFilter {
                     if(get > 0){
                         get = get * -1;
                     }
-                    return src.get(src.size() + get);
+                    return jsonProvider.getProperty(obj, jsonProvider.length(obj) + get);
                 } else {
-                    int start = src.size() + get;
-                    int stop = src.size();
+                    int start = jsonProvider.length(obj) + get;
+                    int stop = jsonProvider.length(obj);
 
                     for (int i = start; i < stop; i ++){
-                        result.add(src.get(i));
+                        jsonProvider.setProperty(result, jsonProvider.length(result), jsonProvider.getProperty(obj, i));
                     }
                     return result;
                 }
@@ -91,23 +88,23 @@ public class ArrayIndexFilter extends PathTokenFilter {
                 int stop = Integer.parseInt(indexes[1]);
 
                 for (int i = start; i < stop; i ++){
-                    result.add(src.get(i));
+                    jsonProvider.setProperty(result, jsonProvider.length(result), jsonProvider.getProperty(obj, i));
                 }
                 return result;
             }
         } else {
             String[] indexArr = COMMA.split(trimmedCondition);
 
-            if(src.isEmpty()){
+            if(jsonProvider.length(obj) == 0){
                 return result;
             }
 
             if (indexArr.length == 1) {
-                return src.get(Integer.parseInt(indexArr[0]));
+                return jsonProvider.getProperty(obj, indexArr[0]);
 
             } else {
                 for (String idx : indexArr) {
-                    result.add(src.get(Integer.parseInt(idx.trim())));
+                    jsonProvider.setProperty(result, jsonProvider.length(result), jsonProvider.getProperty(obj, idx.trim()));
                 }
                 return result;
             }
@@ -118,8 +115,7 @@ public class ArrayIndexFilter extends PathTokenFilter {
     public Object getRef(Object obj, JsonProvider jsonProvider) {
         if(SINGLE_ARRAY_INDEX_PATTERN.matcher(condition).matches()){
             String trimmedCondition = trim(condition, 1, 1);
-            List<Object> src = jsonProvider.toList(obj);
-            return src.get(Integer.parseInt(trimmedCondition));
+            return jsonProvider.getProperty(obj, trimmedCondition);
 
         } else {
             throw new UnsupportedOperationException();

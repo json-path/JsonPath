@@ -52,7 +52,7 @@ public class JsonSmartJsonProvider extends AbstractJsonProvider {
         return containerFactory.createObjectContainer();
     }
 
-    public List<Object> createList() {
+    public List<Object> createArray() {
         return containerFactory.createArrayContainer();
     }
 

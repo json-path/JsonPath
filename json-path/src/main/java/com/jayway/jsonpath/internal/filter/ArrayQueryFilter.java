@@ -18,7 +18,6 @@ import com.jayway.jsonpath.Filter;
 import com.jayway.jsonpath.spi.JsonProvider;
 
 import java.util.LinkedList;
-import java.util.List;
 
 /**
  * @author Kalle Stenflo
@@ -34,7 +33,7 @@ public class ArrayQueryFilter extends PathTokenFilter {
 
         Filter filter = filters.poll();
 
-        return filter.doFilter(jsonProvider.toList(obj), jsonProvider);
+        return filter.doFilter(jsonProvider.toIterable(obj), jsonProvider);
 
     }
 

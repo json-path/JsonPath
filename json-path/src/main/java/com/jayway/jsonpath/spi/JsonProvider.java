@@ -18,8 +18,7 @@ import com.jayway.jsonpath.InvalidJsonException;
 
 import java.io.InputStream;
 import java.io.Reader;
-import java.util.List;
-import java.util.Map;
+import java.util.Collection;
 
 /**
  * @author Kalle Stenflo
@@ -37,60 +36,76 @@ public interface JsonProvider {
 
     String toJson(Object obj);
 
-    Map<String, Object> createMap();
+    Object createMap();
 
-    List<Object> createList();
+    Iterable createArray();
 
     
     Object clone(Object model);
 
     /**
-     * checks if object is <code>instanceof</code> <code>java.util.List</code> or <code>java.util.Map</code>
+     * checks if object is a map or an array
      *
      * @param obj object to check
-     * @return true if List or Map
+     * @return true if obj is a map or an array
      */
     boolean isContainer(Object obj);
 
     /**
-     * checks if object is <code>instanceof</code> <code>java.util.List</code>
+     * checks if object is an array
      *
      * @param obj object to check
-     * @return true if List
+     * @return true if obj is an array
      */
-     boolean isList(Object obj);
+     boolean isArray(Object obj);
 
     /**
-     * Converts give object to a List
+     * Get the length of an array or object
+     * @param obj an array or an object
+     * @return the number of entries in the array or object
+     */
+     int length(Object obj);
+     
+    /**
+     * Converts given object to an {@link Iterable}
      *
-     * @param list
-     * @return
+     * @param obj an array or an object
+     * @return the entries for an array or the values for a map
      */
-     List<Object> toList(Object list);
+     Iterable<Object> toIterable(Object obj);
 
-
+     
     /**
-     * Converts given object to a Map
+     * Returns the keys from the given object or the indexes from an array
      *
-     * @param map
-     * @return
+     * @param obj an array or an object
+     * @return the keys for an object or the indexes for an array
      */
-     Map<String, Object> toMap(Object map);
+     Collection<String> getPropertyKeys(Object obj);
 
     /**
-     * Extracts a value from a Map
+     * Extracts a value from an object or array
      *
-     * @param map
-     * @param key
-     * @return
+     * @param obj an array or an object
+     * @param key a String key or a numerical index
+     * @return the entry at the given key, i.e. obj[key]
      */
-     Object getMapValue(Object map, String key);
+     Object getProperty(Object obj, Object key);
+     
+    /**
+      * Sets a value in an object or array
+      *
+      * @param obj an array or an object
+      * @param key a String key or a numerical index
+      * @param value the value to set
+      */
+     void setProperty(Object obj, Object key, Object value);
 
     /**
-     * checks if object is <code>instanceof</code> <code>java.util.Map</code>
+     * checks if object is a map (i.e. no array)
      *
      * @param obj object to check
-     * @return true if Map
+     * @return true if the object is a map
      */
      boolean isMap(Object obj);
 
