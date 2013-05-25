@@ -90,6 +90,15 @@ public class ExpressionEvaluator {
             } else if ("!=".equals(comparator) || "<>".equals(comparator)) {
                 return !a.equals(expected);
             }
+        } else if (actual instanceof Boolean) {
+
+            Boolean a = (Boolean) actual;
+            Boolean e = Boolean.valueOf(expected);
+            if ("==".equals(comparator)) {
+                return a.equals(e);
+            } else if ("!=".equals(comparator) || "<>".equals(comparator)) {
+                return !a.equals(e);
+            }
         }
 
         return false;
