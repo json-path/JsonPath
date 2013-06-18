@@ -37,6 +37,9 @@ public class ArrayEvalFilter extends PathTokenFilter {
     @Override
     public Object filter(Object obj, JsonProvider jsonProvider) {
         //[?(@.isbn == 10)]
+        if (obj == null){
+          return null;
+        }
         List<Object> src = jsonProvider.toList(obj);
         List<Object> result = jsonProvider.createList();
 

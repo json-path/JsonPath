@@ -2,6 +2,10 @@ package com.jayway.jsonpath;
 
 import org.junit.Test;
 
+import com.jayway.jsonpath.internal.filter.FilterFactory;
+import com.jayway.jsonpath.internal.filter.PathTokenFilter;
+import com.jayway.jsonpath.spi.impl.JsonSmartJsonProvider;
+
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -128,5 +132,31 @@ public class JsonPathFilterTest {
 
         assertEquals(1, res.get(0).intValue());
     }
+    
+    @Test
+    public void array_query_filter_on_non_existent_property_returns_null(){
+      final PathTokenFilter hugePage = FilterFactory.createFilter("[?(@.wordCount >= 10000)]");
+      Filter filter = new Filter.FilterAdapter<Object>() {
+        @Override
+        public boolean accept(Object obj) {
+          return hugePage.filter(obj, new JsonSmartJsonProvider()) != null;
+        }
+      };
+      
+      assertEquals(null, JsonPath.read(DOCUMENT, "$.store.book.page[?]", filter));
+    }
+    
+    @Test
+    public void array_eval_filter_on_non_existent_property_returns_null(){
+      final JsonPath hugePage = JsonPath.compile("$.store.book.page[?(@.wordCount >= 10000)]");
+      assertEquals(null, hugePage.read(DOCUMENT));
+    }
+    
+    @Test
+    public void array_index_filter_on_non_existent_property_returns_null(){
+      final JsonPath hugePage = JsonPath.compile("$.store.book.page[12]");
+      assertEquals(null, hugePage.read(DOCUMENT));
+    }
+    
     
 }
