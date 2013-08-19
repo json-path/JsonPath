@@ -151,8 +151,22 @@ public class ExpressionEvaluator {
             default:
               throw new UnsupportedOperationException("Cannot handle operator " + operator);
           }
+        } else if (actual instanceof Boolean) {
+          switch (operator){
+            case equal:
+            case not_equal:
+            case less_or_greater_than:
+              Boolean a = (Boolean) actual;
+              Boolean e = Boolean.valueOf(expected);
+              if (operator == Operator.equal) {
+                return a.equals(e);
+              } else if (operator == Operator.not_equal || operator == Operator.less_or_greater_than) {
+                return !a.equals(e);
+            }
+            default:
+              throw new UnsupportedOperationException("Cannot handle operator " + operator);
+          }
         }
-
         return false;
     }
 }
