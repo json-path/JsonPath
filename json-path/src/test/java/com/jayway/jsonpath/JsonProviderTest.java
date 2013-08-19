@@ -1,7 +1,7 @@
 package com.jayway.jsonpath;
 
 import com.jayway.jsonpath.spi.impl.JacksonProvider;
-import org.apache.commons.lang.SerializationUtils;
+import org.apache.commons.lang3.SerializationUtils;
 import org.junit.Test;
 
 import java.io.Serializable;
