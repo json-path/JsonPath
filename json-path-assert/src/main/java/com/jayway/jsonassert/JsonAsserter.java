@@ -27,6 +27,15 @@ public interface JsonAsserter {
     <T> JsonAsserter assertThat(String path, Matcher<T> matcher);
 
     /**
+     * @param path
+     * @param matcher
+     * @param message
+     * @param <T>
+     * @return
+     */
+    <T> JsonAsserter assertThat(String path, Matcher<T> matcher, String message);
+
+    /**
      * Asserts that object specified by path is equal to the expected value.
      * If they are not, an AssertionError is thrown with the given message.
      *
@@ -37,6 +46,8 @@ public interface JsonAsserter {
      */
     <T> JsonAsserter assertEquals(String path, T expected);
 
+    <T> JsonAsserter assertEquals(String path, T expected, String message);
+
     /**
      * Checks that a path is not defined within a document. If the document contains the
      * given path, an AssertionError is thrown
@@ -45,6 +56,8 @@ public interface JsonAsserter {
      * @return this
      */
     JsonAsserter assertNotDefined(String path);
+
+    JsonAsserter assertNotDefined(String path, String message);
 
 
     /**
@@ -55,6 +68,7 @@ public interface JsonAsserter {
      * @return this to allow fluent assertion chains
      */
     JsonAsserter assertNull(String path);
+    JsonAsserter assertNull(String path, String message);
 
     /**
      * Asserts that object specified by path is NOT null. If it is, an AssertionError
@@ -64,6 +78,8 @@ public interface JsonAsserter {
      * @return this to allow fluent assertion chains
      */
     <T> JsonAsserter assertNotNull(String path);
+
+    <T> JsonAsserter assertNotNull(String path, String message);
 
     /**
      * Syntactic sugar to allow chaining assertions with a separating and() statement
