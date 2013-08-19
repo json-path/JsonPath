@@ -36,7 +36,7 @@ public class ArrayQueryFilter extends PathTokenFilter {
         }
         Filter filter = filters.poll();
 
-        return filter.doFilter((List)obj);
+        return filter.doFilter(jsonProvider.toList(obj), jsonProvider);
 
     }
 

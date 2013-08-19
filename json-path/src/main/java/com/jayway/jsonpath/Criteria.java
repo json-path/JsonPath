@@ -18,8 +18,8 @@ import java.util.*;
 import java.util.regex.Pattern;
 
 import static java.util.Arrays.asList;
-import static org.apache.commons.lang.Validate.notEmpty;
-import static org.apache.commons.lang.Validate.notNull;
+import static org.apache.commons.lang3.Validate.notEmpty;
+import static org.apache.commons.lang3.Validate.notNull;
 
 /**
  * @author Kalle Stenflo
