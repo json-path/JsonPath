@@ -24,7 +24,7 @@
     <groupId>com.jayway.jsonpath</groupId>
     <artifactId>json-path-parent</artifactId>
     <packaging>pom</packaging>
-    <version>0.8.2-SNAPSHOT</version>
+    <version>0.8.1-HBO</version>
     <url>https://github.com/jayway/JsonPath</url>
     <name>json-path-parent-pom</name>
     <description>Java JsonPath implementation</description>
@@ -215,9 +215,9 @@
             </dependency>
 
             <dependency>
-                <groupId>commons-lang</groupId>
-                <artifactId>commons-lang</artifactId>
-                <version>2.6</version>
+                <groupId>org.apache.commons</groupId>
+                <artifactId>commons-lang3</artifactId>
+                <version>3.1</version>
             </dependency>
 
             <dependency>
@@ -243,6 +243,13 @@
                 <groupId>junit</groupId>
                 <artifactId>junit</artifactId>
                 <version>4.10</version>
+                <scope>test</scope>
+            </dependency>
+            
+            <dependency>
+                <groupId>commons-io</groupId>
+                <artifactId>commons-io</artifactId>
+                <version>2.4</version>
                 <scope>test</scope>
             </dependency>
         </dependencies>
