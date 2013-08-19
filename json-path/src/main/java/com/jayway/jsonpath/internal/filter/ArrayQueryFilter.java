@@ -31,7 +31,9 @@ public class ArrayQueryFilter extends PathTokenFilter {
 
     @Override
     public Object filter(Object obj, JsonProvider jsonProvider, LinkedList<Filter> filters, boolean inArrayContext) {
-
+        if (obj == null){
+          return null;
+        }
         Filter filter = filters.poll();
 
         return filter.doFilter(jsonProvider.toList(obj), jsonProvider);
