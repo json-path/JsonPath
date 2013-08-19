@@ -9,9 +9,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import static java.util.Arrays.asList;
-import static junit.framework.Assert.assertEquals;
-import static junit.framework.Assert.assertFalse;
-import static junit.framework.Assert.assertTrue;
+import static junit.framework.Assert.*;
 
 /**
  * Created by IntelliJ IDEA.
@@ -106,6 +104,24 @@ public class JsonModelTest {
         JsonModel.model(DOCUMENT).get("store.invalid");
     }
 
+    @Test
+    public void query_for_null_property_returns_null() {
+        String documentWithNull =
+                "{ \"store\": {\n" +
+                "    \"book\": { \n" +
+                "      \"color\": null\n" +
+                "    }\n" +
+                "  }\n" +
+                "}";
 
+        Object color = JsonModel.model(documentWithNull).get("store.book.color");
+
+        assertNull(color);
+    }
+
+    @Test(expected = InvalidPathException.class)
+    public void query_for_property_on_array_throws() throws Exception {
+        JsonModel.model(DOCUMENT).get("store.book.color");
+    }
 
 }
