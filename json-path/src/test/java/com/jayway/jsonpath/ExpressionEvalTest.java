@@ -1,7 +1,11 @@
 package com.jayway.jsonpath;
 
 import com.jayway.jsonpath.internal.filter.eval.ExpressionEvaluator;
+import org.codehaus.jackson.node.BigIntegerNode;
 import org.junit.Test;
+
+import java.math.BigDecimal;
+import java.math.BigInteger;
 
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
@@ -32,6 +36,45 @@ public class ExpressionEvalTest {
         assertFalse(ExpressionEvaluator.eval(1, "==", "2"));
         assertFalse(ExpressionEvaluator.eval(1, "!=", "1"));
     }
+
+    @Test
+    public void bigint_eval() throws Exception {
+
+        assertTrue(ExpressionEvaluator.eval(new BigInteger("1"), "==", "1"));
+        assertTrue(ExpressionEvaluator.eval(new BigInteger("2"), "!=", "1"));
+        assertTrue(ExpressionEvaluator.eval(new BigInteger("2"), ">", "1"));
+        assertTrue(ExpressionEvaluator.eval(new BigInteger("2"), ">=", "1"));
+        assertTrue(ExpressionEvaluator.eval(new BigInteger("2"), ">=", "2"));
+        assertTrue(ExpressionEvaluator.eval(new BigInteger("1"), "<", "2"));
+        assertTrue(ExpressionEvaluator.eval(new BigInteger("2"), "<=", "2"));
+
+        assertFalse(ExpressionEvaluator.eval(new BigInteger("1"), ">", "2"));
+        assertFalse(ExpressionEvaluator.eval(new BigInteger("1"), ">=", "2"));
+        assertFalse(ExpressionEvaluator.eval(new BigInteger("2"), "<", "1"));
+        assertFalse(ExpressionEvaluator.eval(new BigInteger("2"), "<=", "1"));
+        assertFalse(ExpressionEvaluator.eval(new BigInteger("1"), "==", "2"));
+        assertFalse(ExpressionEvaluator.eval(new BigInteger("1"), "!=", "1"));
+    }
+
+    @Test
+    public void bigdec_eval() throws Exception {
+
+        assertTrue(ExpressionEvaluator.eval(new BigDecimal("1.1"), "==", "1.1"));
+        assertTrue(ExpressionEvaluator.eval(new BigDecimal("2"), "!=", "1"));
+        assertTrue(ExpressionEvaluator.eval(new BigDecimal("2"), ">", "1"));
+        assertTrue(ExpressionEvaluator.eval(new BigDecimal("2"), ">=", "1"));
+        assertTrue(ExpressionEvaluator.eval(new BigDecimal("2"), ">=", "2"));
+        assertTrue(ExpressionEvaluator.eval(new BigDecimal("1"), "<", "2"));
+        assertTrue(ExpressionEvaluator.eval(new BigDecimal("2"), "<=", "2"));
+
+        assertFalse(ExpressionEvaluator.eval(new BigDecimal("1"), ">", "2"));
+        assertFalse(ExpressionEvaluator.eval(new BigDecimal("1"), ">=", "2"));
+        assertFalse(ExpressionEvaluator.eval(new BigDecimal("2"), "<", "1"));
+        assertFalse(ExpressionEvaluator.eval(new BigDecimal("2"), "<=", "1"));
+        assertFalse(ExpressionEvaluator.eval(new BigDecimal("1"), "==", "2"));
+        assertFalse(ExpressionEvaluator.eval(new BigDecimal("1"), "!=", "1"));
+    }
+
 
     @Test
     public void double_eval() throws Exception {
