@@ -16,6 +16,8 @@ package com.jayway.jsonpath;
 
 import java.util.*;
 
+import com.jayway.jsonpath.spi.JsonProvider;
+
 /**
  * A filter is used to filter the content of a JSON array in a JSONPath.
  *
@@ -45,10 +47,11 @@ public abstract class Filter<T> {
     /**
      * Filters the provided list based on this filter configuration
      * @param filterItems items to filter
+     * @param jsonProvider the json provider that is used to create the result list
      * @return the filtered list
      */
-    public List<T> doFilter(List<T> filterItems) {
-        List<T> result = new ArrayList<T>();
+    public List doFilter(List<T> filterItems, JsonProvider jsonProvider) {
+        List result = jsonProvider.createList();;
         for (T filterItem : filterItems) {
             if (accept(filterItem)) {
                 result.add(filterItem);
