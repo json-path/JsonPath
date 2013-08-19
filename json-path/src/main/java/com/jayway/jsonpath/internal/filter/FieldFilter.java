@@ -27,8 +27,11 @@ import java.util.Map;
  */
 public class FieldFilter extends PathTokenFilter {
 
+    private final String[] split;
+
     public FieldFilter(String condition) {
         super(condition);
+        this.split = condition.split("','");
     }
 
     @Override
@@ -43,7 +46,7 @@ public class FieldFilter extends PathTokenFilter {
 
                         Map<String, Object> map = jsonProvider.toMap(current);
 
-                        String[] split = condition.split("','");
+                        
                         if(split.length == 1){
                             if (map.containsKey(condition)) {
                                 Object o = map.get(condition);
@@ -67,7 +70,6 @@ public class FieldFilter extends PathTokenFilter {
                 return result;
             }
         } else {
-            String[] split = condition.split("','");
 
             Map<String, Object> map = jsonProvider.toMap(obj);
             if(!map.containsKey(condition) && split.length == 1){
