@@ -15,18 +15,6 @@ import static junit.framework.Assert.assertTrue;
  * Time: 8:42 AM
  */
 public class IssuesTest {
-    @Test
-    public void issue_7() throws Exception {
-
-        String json = "{ \"foo\" : [\n" +
-                "  { \"id\": 1 },  \n" +
-                "  { \"id\": 2 },  \n" +
-                "  { \"id\": 3 }\n" +
-                "  ] }";
-
-
-        assertNull(JsonPath.read(json, "$.foo.id"));
-    }
     
     @Test
     public void issue_11() throws Exception {
