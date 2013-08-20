@@ -15,20 +15,21 @@
 package com.jayway.jsonpath;
 
 
+import com.jayway.jsonpath.internal.IOUtils;
 import com.jayway.jsonpath.internal.PathToken;
 import com.jayway.jsonpath.internal.PathTokenizer;
-import com.jayway.jsonpath.internal.IOUtils;
 import com.jayway.jsonpath.internal.filter.PathTokenFilter;
 import com.jayway.jsonpath.spi.HttpProviderFactory;
 import com.jayway.jsonpath.spi.JsonProvider;
 import com.jayway.jsonpath.spi.JsonProviderFactory;
 import org.apache.commons.lang3.StringUtils;
 
-import java.io.*;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStream;
 import java.net.URL;
 import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
 import java.util.regex.Pattern;
 
 import static java.util.Arrays.asList;

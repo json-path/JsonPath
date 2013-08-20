@@ -1,8 +1,11 @@
 package com.jayway.jsonpath;
 
+import com.jayway.jsonpath.internal.IOUtils;
 import org.hamcrest.Matchers;
+import org.junit.Assert;
 import org.junit.Test;
 
+import java.io.InputStream;
 import java.util.List;
 import java.util.regex.Matcher;
 
@@ -68,11 +71,65 @@ public class IssuesTest {
 
 
     @Test
+    public void issue_24(){
+
+        InputStream is = null;
+        try {
+            is = this.getClass().getResourceAsStream("/issue_24.json");
+
+
+            //Object o = JsonPath.read(is, "$.project[?(@.template.@key == 'foo')].field[*].@key");
+            Object o = JsonPath.read(is, "$.project.field[*].@key");
+            //Object o = JsonPath.read(is, "$.project.template[?(@.@key == 'foo')].field[*].@key");
+
+            System.out.println(o);
+
+            is.close();
+        } catch (Exception e){
+            e.printStackTrace();
+            IOUtils.closeQuietly(is);
+        }
+
+    }
+
+    @Test
+    public void issue_28_string(){
+        String json = "{\"contents\": [\"one\",\"two\",\"three\"]}";
+
+        List<String> result = JsonPath.read(json, "$.contents[?(@  == 'two')]");
+
+        assertThat(result, Matchers.contains("two"));
+        assertEquals(1, result.size());
+    }
+
+    @Test
+    public void issue_28_int(){
+        String json = "{\"contents\": [1,2,3]}";
+
+        List<Integer> result = JsonPath.read(json, "$.contents[?(@ == 2)]");
+
+        assertThat(result, Matchers.contains(2));
+        assertEquals(1, result.size());
+    }
+
+    @Test
+    public void issue_28_boolean(){
+        String json = "{\"contents\": [true, true, false]}";
+
+        List<Boolean> result = JsonPath.read(json, "$.contents[?(@  == true)]");
+
+        assertThat(result, Matchers.contains(true, true));
+        assertEquals(2, result.size());
+    }
+
+
+
+        @Test
     public void issue_22() throws Exception {
         String json = "{\"a\":[{\"b\":1,\"c\":2},{\"b\":5,\"c\":2}]}";
         System.out.println(JsonPath.read(json, "a[?(@.b==5)].d"));
     }
-    
+
     @Test
     public void issue_29_b() throws Exception {
         String json = "{\"list\": [ { \"a\":\"atext\", \"b\":{ \"b-a\":\"batext\", \"b-b\":\"bbtext\" } }, { \"a\":\"atext2\", \"b\":{ \"b-a\":\"batext2\", \"b-b\":\"bbtext2\" } } ] }";
