@@ -1,5 +1,6 @@
 package com.jayway.jsonpath;
 
+import com.jayway.jsonpath.spi.JsonProviderFactory;
 import com.jayway.jsonpath.util.ScriptEngineJsonPath;
 import org.junit.Test;
 
@@ -17,6 +18,11 @@ import static org.junit.Assert.*;
  * Time: 3:07 PM
  */
 public class JsonPathTest {
+
+
+    static {
+        //JsonProviderFactory.setDefaultProvider(JacksonProvider.class);
+    }
 
     public final static String ARRAY = "[{\"value\": 1},{\"value\": 2}, {\"value\": 3},{\"value\": 4}]";
 
@@ -71,6 +77,9 @@ public class JsonPathTest {
             "}";
 
     private final static String ARRAY_EXPAND = "[{\"parent\": \"ONE\", \"child\": {\"name\": \"NAME_ONE\"}}, [{\"parent\": \"TWO\", \"child\": {\"name\": \"NAME_TWO\"}}]]";
+
+
+
 
     @Test
     public void array_start_expands() throws Exception {

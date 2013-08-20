@@ -1,11 +1,16 @@
 Java DSL for reading and testing JSON documents.
 
 ------------------------------------------
-0.8.2                           2013-08-19
+0.9                             2013-08-19
 ------------------------------------------
 - OSGI ready
 - Bug fixes
 - Performance improvements
+- select multiple attributes
+    List<Map<String, Object>> matches = JsonPath.read(DOCUMENT, "$.store.book[*].['category', 'title']");
+    Map<String, Object> match = JsonPath.read(DOCUMENT, "$.store.bicycle['color', 'display-price']");
+
+
 
 
 ------------------------------------------
