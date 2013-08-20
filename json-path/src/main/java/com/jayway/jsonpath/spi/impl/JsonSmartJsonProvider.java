@@ -37,6 +37,8 @@ public class JsonSmartJsonProvider extends AbstractJsonProvider {
 
     private JSONParser parser;
 
+    private ContainerFactory containerFactory = ContainerFactory.FACTORY_SIMPLE;
+
     public JsonSmartJsonProvider() {
         this(Mode.SLACK);
     }
@@ -47,16 +49,17 @@ public class JsonSmartJsonProvider extends AbstractJsonProvider {
     }
 
     public Map<String, Object> createMap() {
-        return new JSONObject();
+        return containerFactory.createObjectContainer();
     }
 
     public List<Object> createList() {
-        return new JSONArray();
+        return containerFactory.createArrayContainer();
     }
 
     public Object parse(String json) {
         try {
-            return parser.parse(json, ContainerFactory.FACTORY_ORDERED);
+            //return parser.parse(json, ContainerFactory.FACTORY_ORDERED);
+            return parser.parse(json, containerFactory);
         } catch (ParseException e) {
             throw new InvalidJsonException(e);
         }
@@ -65,7 +68,7 @@ public class JsonSmartJsonProvider extends AbstractJsonProvider {
     @Override
     public Object parse(Reader jsonReader) throws InvalidJsonException {
         try {
-            return parser.parse(jsonReader, ContainerFactory.FACTORY_ORDERED);
+            return parser.parse(jsonReader, containerFactory);
         } catch (ParseException e) {
             throw new InvalidJsonException(e);
         }
@@ -74,7 +77,7 @@ public class JsonSmartJsonProvider extends AbstractJsonProvider {
     @Override
     public Object parse(InputStream jsonStream) throws InvalidJsonException {
         try {
-            return parser.parse(new InputStreamReader(jsonStream), ContainerFactory.FACTORY_ORDERED);
+            return parser.parse(new InputStreamReader(jsonStream), containerFactory);
         } catch (ParseException e) {
             throw new InvalidJsonException(e);
         }

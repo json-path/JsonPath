@@ -62,6 +62,20 @@ public class HelpTest {
             "                    \"mimeType\": \"application/octet-stream\"\n" +
             "                }\n" +
             "            ]\n" +
+            "        },\n" +
+            "        {\n" +
+            "            \"groupType\": \"series\",\n" +
+            "             \"instanceId\": \"grp://15\",\n" +
+            "             \"extra\": 1,\n" +
+            "             \"id\": \"prg://16\",\n" +
+            "            \"type\": \"group\",\n" +
+            "            \"media\": [\n" +
+            "                {\n" +
+            "                    \"classification\": \"urn:1.2.3\",\n" +
+            "                    \"uri\": \"http://yahoo.com/1.png\",\n" +
+            "                    \"mimeType\": \"application/octet-stream\"\n" +
+            "                }\n" +
+            "            ]\n" +
             "        }\n" +
             "    ],\n" +
             "    \"header\": {\n" +
@@ -71,7 +85,13 @@ public class HelpTest {
 
 
     @Test
-    public void sample_one_x(){
+    public void sample_one_a(){
+        System.out.println(JsonPath.read(JSON2, "$.['error', 'header']"));
+        System.out.println(JsonPath.read(JSON2, "$.contents[*].['groupType', 'type', 'extra']"));
+    }
+
+    @Test
+    public void sample_one_b(){
         System.out.println(JsonPath.read(JSON2, "$.['error', 'header']"));
         System.out.println(JsonPath.read(JSON2, "$.contents[*].['groupType', 'type']"));
     }

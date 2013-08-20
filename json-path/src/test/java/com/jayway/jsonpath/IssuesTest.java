@@ -20,7 +20,7 @@ import static org.junit.Assert.assertThat;
  * Time: 8:42 AM
  */
 public class IssuesTest {
-    
+
     @Test
     public void issue_11() throws Exception {
         String json = "{ \"foo\" : [] }";
@@ -71,7 +71,7 @@ public class IssuesTest {
 
 
     @Test
-    public void issue_24(){
+    public void issue_24() {
 
         InputStream is = null;
         try {
@@ -85,7 +85,7 @@ public class IssuesTest {
             System.out.println(o);
 
             is.close();
-        } catch (Exception e){
+        } catch (Exception e) {
             e.printStackTrace();
             IOUtils.closeQuietly(is);
         }
@@ -93,7 +93,7 @@ public class IssuesTest {
     }
 
     @Test
-    public void issue_28_string(){
+    public void issue_28_string() {
         String json = "{\"contents\": [\"one\",\"two\",\"three\"]}";
 
         List<String> result = JsonPath.read(json, "$.contents[?(@  == 'two')]");
@@ -103,7 +103,7 @@ public class IssuesTest {
     }
 
     @Test
-    public void issue_28_int(){
+    public void issue_28_int() {
         String json = "{\"contents\": [1,2,3]}";
 
         List<Integer> result = JsonPath.read(json, "$.contents[?(@ == 2)]");
@@ -113,7 +113,7 @@ public class IssuesTest {
     }
 
     @Test
-    public void issue_28_boolean(){
+    public void issue_28_boolean() {
         String json = "{\"contents\": [true, true, false]}";
 
         List<Boolean> result = JsonPath.read(json, "$.contents[?(@  == true)]");
@@ -123,21 +123,32 @@ public class IssuesTest {
     }
 
 
-
-        @Test
+    @Test(expected = PathNotFoundException.class)
     public void issue_22() throws Exception {
+        String json = "{\"a\":{\"b\":1,\"c\":2}}";
+        System.out.println(JsonPath.read(json, "a.d"));
+    }
+
+    @Test
+    public void issue_22b() throws Exception {
         String json = "{\"a\":[{\"b\":1,\"c\":2},{\"b\":5,\"c\":2}]}";
         System.out.println(JsonPath.read(json, "a[?(@.b==5)].d"));
+        System.out.println(JsonPath.read(json, "a[?(@.b==5)].d"));
+    }
+
+    @Test(expected = PathNotFoundException.class)
+    public void issue_26() throws Exception {
+        String json = "[{\"a\":[{\"b\":1,\"c\":2}]}]";
+        Object o = JsonPath.read(json, "$.a");
     }
 
     @Test
     public void issue_29_b() throws Exception {
         String json = "{\"list\": [ { \"a\":\"atext\", \"b\":{ \"b-a\":\"batext\", \"b-b\":\"bbtext\" } }, { \"a\":\"atext2\", \"b\":{ \"b-a\":\"batext2\", \"b-b\":\"bbtext2\" } } ] }";
         List<String> result = JsonPath.read(json, "$.list[?]", Filter.filter(Criteria.where("b.b-a").eq("batext2")));
-       
+
         assertTrue(result.size() == 1);
     }
-
 
 
 }

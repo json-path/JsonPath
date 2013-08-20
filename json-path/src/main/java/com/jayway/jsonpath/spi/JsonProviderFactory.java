@@ -21,35 +21,15 @@ import com.jayway.jsonpath.spi.impl.JsonSmartJsonProvider;
  */
 public abstract class JsonProviderFactory {
 
-	private static Class defaultProvider = null;
-	
-    public static JsonProviderFactory factory = new JsonProviderFactory() {
-        @Override
-        protected JsonProvider create() {
-			JsonProvider provider = null;
-			try {
-				if(defaultProvider != null) {
-					provider = (JsonProvider)defaultProvider.newInstance();
-				}
-			} catch(Throwable t) {
-			
-			}
-			if(provider == null) {
-				provider = new JsonSmartJsonProvider();
-			}
-			return provider;
-            //return new JacksonProvider();
-        }
-    };
+    private static JsonProvider provider = new JsonSmartJsonProvider();
 
     public static JsonProvider createProvider() {
-        return factory.create();
+        return provider;
     }
 
-    public static synchronized void setDefaultProvider(Class<? extends JsonProvider> jsonProvider) {
-        defaultProvider = jsonProvider;
+    public static synchronized void setProvider(JsonProvider jsonProvider) {
+        provider = jsonProvider;
     }
 
-    protected abstract JsonProvider create();
 
 }

@@ -16,6 +16,7 @@ package com.jayway.jsonpath.internal.filter;
 
 import com.jayway.jsonpath.Filter;
 import com.jayway.jsonpath.InvalidPathException;
+import com.jayway.jsonpath.PathNotFoundException;
 import com.jayway.jsonpath.spi.JsonProvider;
 
 import java.util.LinkedList;
@@ -38,7 +39,7 @@ public class FieldFilter extends PathTokenFilter {
     public Object filter(Object obj, JsonProvider jsonProvider, LinkedList<Filter> filters, boolean inArrayContext) {
         if (jsonProvider.isList(obj)) {
             if (!inArrayContext) {
-                throw new InvalidPathException("Trying to access field on array");
+                throw new PathNotFoundException("Trying to access the field '" + condition +"' in an array context.");
             } else {
                 List<Object> result = jsonProvider.createList();
                 for (Object current : jsonProvider.toList(obj)) {
@@ -73,7 +74,7 @@ public class FieldFilter extends PathTokenFilter {
 
             Map<String, Object> map = jsonProvider.toMap(obj);
             if(!map.containsKey(condition) && split.length == 1){
-                throw new InvalidPathException("invalid path");
+                throw new PathNotFoundException("Path '" + condition + "' not found in the current context.");
             } else {
 
                 if(split.length == 1){
@@ -83,8 +84,6 @@ public class FieldFilter extends PathTokenFilter {
                     for (String prop : split) {
                         if(map.containsKey(prop)){
                             res.put(prop, map.get(prop));
-                        } else {
-                            throw new InvalidPathException("invalid path");
                         }
                     }
                     return res;
