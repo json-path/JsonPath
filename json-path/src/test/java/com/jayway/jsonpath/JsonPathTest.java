@@ -190,7 +190,7 @@ public class JsonPathTest {
     public void access_array_by_index_from_tail() throws Exception {
 
         assertThat(JsonPath.<String>read(DOCUMENT, "$..book[(@.length-1)].author"), equalTo("J. R. R. Tolkien"));
-        assertThat(JsonPath.<String>read(DOCUMENT, "$..book[-1:].author"), equalTo("J. R. R. Tolkien"));
+        assertThat(JsonPath.<String>read(DOCUMENT, "$..book[1:].author"), equalTo("J. R. R. Tolkien"));
     }
 
     @Test

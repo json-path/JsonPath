@@ -8,6 +8,7 @@ import java.util.Map;
 
 import static org.hamcrest.Matchers.*;
 import static org.junit.Assert.assertThat;
+import static org.junit.Assert.assertTrue;
 
 /**
  * test defined in http://jsonpath.googlecode.com/svn/trunk/tests/jsonpath-test-js.html
@@ -44,7 +45,10 @@ public class ComplianceTest {
                 new Double(3.14),
                 new Boolean(true),
                 (Comparable)null));
-        assertThat(JsonPath.<Boolean>read(json, "$[-1:]"), is(equalTo(null)));
+
+        List<Object> res = JsonPath.read(json, "$[-1:]");
+
+        assertTrue(res.get(0) == null);
     }
 
     @Test

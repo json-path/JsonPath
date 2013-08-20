@@ -14,6 +14,7 @@
  */
 package com.jayway.jsonpath.internal.filter;
 
+import com.jayway.jsonpath.InvalidPathException;
 import com.jayway.jsonpath.spi.JsonProvider;
 
 import java.util.List;
@@ -27,21 +28,28 @@ public class ArrayIndexFilter extends PathTokenFilter {
     private static final Pattern SINGLE_ARRAY_INDEX_PATTERN = Pattern.compile("\\[\\d+\\]");
     private static final Pattern COMMA = Pattern.compile(",");
     private static final Pattern SPACE = Pattern.compile(" ");
+    private static final String OPERATOR = ":";
 
-    
     private final String trimmedCondition;
-    
+    private boolean usesLenght;
+
     public ArrayIndexFilter(String condition) {
         super(condition);
+
+        // remove '[' and ']'
         String trimmedCondition = trim(condition, 1, 1);
 
-        if(trimmedCondition.contains("@.length")){
+        this.usesLenght = trimmedCondition.contains("@.length");
+
+        // resolve '@.length'
+        if(usesLenght){
             trimmedCondition = trim(trimmedCondition, 1, 1);
             trimmedCondition = trimmedCondition.replace("@.length", "");
-            trimmedCondition = trimmedCondition + ":";
+            trimmedCondition = trimmedCondition + OPERATOR;
         }
         this.trimmedCondition = trimmedCondition;
     }
+
 
     @Override
     public Object filter(Object obj,JsonProvider jsonProvider) {
@@ -49,22 +57,44 @@ public class ArrayIndexFilter extends PathTokenFilter {
         List<Object> src = jsonProvider.toList(obj);
         List<Object> result = jsonProvider.createList();
 
-        
+        if (trimmedCondition.contains(OPERATOR)) {
+            if (trimmedCondition.startsWith(OPERATOR)) {
+                String trimmedCondition = trim(this.trimmedCondition, 1, 0);
+                int get = Integer.parseInt(trimmedCondition);
+                for (int i = 0; i < get; i++) {
+                    result.add(src.get(i));
+                }
+                return result;
 
+            } else if (trimmedCondition.endsWith(OPERATOR)) {
+                String trimmedCondition = trim(SPACE.matcher(this.trimmedCondition).replaceAll(""), 0, 1);
+                int get = Integer.parseInt(trimmedCondition);
+                if(get > 0 || usesLenght){
+                    if(get > 0){
+                        get = get * -1;
+                    }
+                    return src.get(src.size() + get);
+                } else {
+                    int start = src.size() + get;
+                    int stop = src.size();
 
-        if (trimmedCondition.startsWith(":")) {
-            String trimmedCondition = trim(this.trimmedCondition, 1, 0);
-            int get = Integer.parseInt(trimmedCondition);
-            for (int i = 0; i < get; i++) {
-                result.add(src.get(i));
+                    for (int i = start; i < stop; i ++){
+                        result.add(src.get(i));
+                    }
+                    return result;
+                }
+
+            } else {
+                String[] indexes = this.trimmedCondition.split(OPERATOR);
+
+                int start = Integer.parseInt(indexes[0]);
+                int stop = Integer.parseInt(indexes[1]);
+
+                for (int i = start; i < stop; i ++){
+                    result.add(src.get(i));
+                }
+                return result;
             }
-            return result;
-
-        } else if (trimmedCondition.endsWith(":")) {
-            String trimmedCondition = trim(SPACE.matcher(this.trimmedCondition).replaceAll(""), 1, 1);
-            int get = Integer.parseInt(trimmedCondition);
-            return src.get(src.size() - get);
-
         } else {
             String[] indexArr = COMMA.split(trimmedCondition);
 
