@@ -70,7 +70,7 @@ public class FieldFilter extends PathTokenFilter {
                 }
                 return result;
             }
-        } else {
+        } else if (jsonProvider.isMap(obj)){
 
             Map<String, Object> map = jsonProvider.toMap(obj);
             if(!map.containsKey(condition) && split.length == 1){
@@ -91,6 +91,8 @@ public class FieldFilter extends PathTokenFilter {
 
 
             }
+        } else {
+            throw new PathNotFoundException();
         }
     }
 

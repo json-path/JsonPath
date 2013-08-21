@@ -1,15 +1,12 @@
 package com.jayway.jsonpath;
 
 import com.jayway.jsonpath.internal.IOUtils;
-import com.jayway.jsonpath.spi.JsonProviderFactory;
-import com.jayway.jsonpath.spi.impl.JacksonProvider;
 import org.hamcrest.Matchers;
-import org.junit.Assert;
 import org.junit.Test;
 
 import java.io.InputStream;
 import java.util.List;
-import java.util.regex.Matcher;
+import java.util.Map;
 
 import static junit.framework.Assert.assertEquals;
 import static junit.framework.Assert.assertTrue;
@@ -161,12 +158,40 @@ public class IssuesTest {
 
     @Test
     public void issue_32(){
-
-
-
         String json = "{\"text\" : \"skill: \\\"Heuristic Evaluation\\\"\", \"country\" : \"\"}";
         assertEquals("skill: \"Heuristic Evaluation\"", JsonPath.read(json, "$.text"));
     }
 
+    @Test
+    public void issue_33(){
+        String json = "{ \"store\": {\n" +
+                "    \"book\": [ \n" +
+                "      { \"category\": \"reference\",\n" +
+                "        \"author\": {\n" +
+                "          \"name\": \"Author Name\",\n" +
+                "          \"age\": 36\n" +
+                "        },\n" +
+                "        \"title\": \"Sayings of the Century\",\n" +
+                "        \"price\": 8.95\n" +
+                "      },\n" +
+                "      { \"category\": \"fiction\",\n" +
+                "        \"author\": \"Evelyn Waugh\",\n" +
+                "        \"title\": \"Sword of Honour\",\n" +
+                "        \"price\": 12.99,\n" +
+                "        \"isbn\": \"0-553-21311-3\"\n" +
+                "      }\n" +
+                "    ],\n" +
+                "    \"bicycle\": {\n" +
+                "      \"color\": \"red\",\n" +
+                "      \"price\": 19.95\n" +
+                "    }\n" +
+                "  }\n" +
+                "}";
+
+        List<Map<String, Object>> result = JsonPath.read(json, "$.store.book[?(@.author.age == 36)]");
+
+        System.out.println(result);
+
+    }
 
 }

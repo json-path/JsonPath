@@ -208,6 +208,11 @@ public class JsonPath {
 
         JsonProvider jsonProvider = JsonProviderFactory.createProvider();
 
+        if(this.getPath().equals("$")){
+            //This path only references the whole object. No need to do any work here...
+            return (T)jsonObject;
+        }
+
         if (!jsonProvider.isMap(jsonObject) && !jsonProvider.isList(jsonObject)) {
             throw new IllegalArgumentException("Invalid container object");
         }

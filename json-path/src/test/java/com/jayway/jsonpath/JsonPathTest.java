@@ -1,6 +1,5 @@
 package com.jayway.jsonpath;
 
-import com.jayway.jsonpath.spi.JsonProviderFactory;
 import com.jayway.jsonpath.util.ScriptEngineJsonPath;
 import org.junit.Test;
 
@@ -245,7 +244,8 @@ public class JsonPathTest {
     @Test
     public void dots_in_predicate_works() throws Exception {
 
-        assertThat(JsonPath.<List<String>>read(PRODUCT_JSON, "$.product[?(@.attr.with.dot=='A')].codename"), hasItems("Seattle"));
+        assertThat(JsonPath.<List<String>>read(PRODUCT_JSON, "$.product[?(@.['attr.with.dot']=='A')].codename"), hasItems("Seattle"));
+        //assertThat(JsonPath.<List<String>>read(PRODUCT_JSON, "$.product[?(@.attr.with.dot=='A')].codename"), hasItems("Seattle"));
 
     }
 
