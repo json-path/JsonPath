@@ -116,7 +116,6 @@ public class JsonModelOpsTest {
         JsonModel model = JsonModel.model(rootDocument);
 
         model.opsForObject().transform(new Transformer<Map<String, Object>>() {
-            @Override
             public Object transform(Map<String, Object> obj) {
                 obj.put("name", "kalle");
                 return obj;
@@ -137,7 +136,6 @@ public class JsonModelOpsTest {
         JsonModel model = JsonModel.model(rootDocument);
 
         model.opsForArray().transform(new Transformer<List<Object>>() {
-            @Override
             public Object transform(List<Object> obj) {
                 return Collections.singletonMap("root", "new");
             }
@@ -162,7 +160,6 @@ public class JsonModelOpsTest {
         JsonModel model = JsonModel.model(rootDocument);
 
         model.opsForObject("child").transform(new Transformer<Map<String, Object>>() {
-            @Override
             public Object transform(Map<String, Object> obj) {
                 obj.put("name", "kalle");
                 return obj;
@@ -203,7 +200,6 @@ public class JsonModelOpsTest {
     public void object_can_be_transformed() throws Exception {
 
         Transformer transformer = new Transformer<Map<String, Object>>() {
-            @Override
             public Map<String, Object> transform(Map<String, Object> model) {
                 model.put("newProp", "newProp");
                 return model;
@@ -220,7 +216,6 @@ public class JsonModelOpsTest {
     @Test
     public void arrays_can_be_transformed() throws Exception {
         Transformer transformer = new Transformer<List<Object>>() {
-            @Override
             public Object transform(List<Object> model) {
 
                 for (Object o : model) {
@@ -244,7 +239,6 @@ public class JsonModelOpsTest {
         Transformer positionTransformer = new Transformer<List<Object>>() {
             private int i = 0;
 
-            @Override
             public Object transform(List<Object> model) {
                 List<Object> newList = new ArrayList<Object>();
 
@@ -257,7 +251,6 @@ public class JsonModelOpsTest {
         };
 
         Transformer multiplyingTransformer = new Transformer<List<Object>>() {
-            @Override
             public Object transform(List<Object> model) {
 
                 for (int i = 0; i < model.size(); i++) {

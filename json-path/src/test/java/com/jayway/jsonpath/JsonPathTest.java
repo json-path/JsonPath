@@ -1,6 +1,5 @@
 package com.jayway.jsonpath;
 
-import com.jayway.jsonpath.util.ScriptEngineJsonPath;
 import org.junit.Test;
 
 import java.util.List;
@@ -89,16 +88,11 @@ public class JsonPathTest {
     @Test
     public void bracket_notation_can_be_used_in_path() throws Exception {
 
-        //System.out.println(ScriptEngineJsonPath.eval(DOCUMENT, "$.['store'].['bicycle'].['dot.notation']"));
-        System.out.println(ScriptEngineJsonPath.eval(DOCUMENT, "$.store.bicycle.['dot.notation']"));
-
 
         assertEquals("new", JsonPath.read(DOCUMENT, "$.['store'].bicycle.['dot.notation']"));
         assertEquals("new", JsonPath.read(DOCUMENT, "$['store']['bicycle']['dot.notation']"));
         assertEquals("new", JsonPath.read(DOCUMENT, "$.['store']['bicycle']['dot.notation']"));
         assertEquals("new", JsonPath.read(DOCUMENT, "$.['store'].['bicycle'].['dot.notation']"));
-
-	    System.out.println(ScriptEngineJsonPath.eval(DOCUMENT, "$.store.bicycle.['dash-notation']"));
 
 	    assertEquals("dashes", JsonPath.read(DOCUMENT, "$.['store'].bicycle.['dash-notation']"));
 	    assertEquals("dashes", JsonPath.read(DOCUMENT, "$['store']['bicycle']['dash-notation']"));
