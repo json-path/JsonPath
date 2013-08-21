@@ -98,7 +98,7 @@ public class ArrayIndexFilter extends PathTokenFilter {
         } else {
             String[] indexArr = COMMA.split(trimmedCondition);
 
-            if(src.isEmpty()){
+            if(src == null || src.isEmpty()){
                 return result;
             }
 
