@@ -115,6 +115,9 @@ public class JsonPath {
         isTrue(filterCountInPath == filters.length, "Filters in path ([?]) does not match provided filters.");
 
         this.tokenizer = new PathTokenizer(jsonPath);
+
+        //System.out.println(tokenizer.toString());
+
         this.filters = new LinkedList<Filter>();
         this.filters.addAll(asList(filters));
 

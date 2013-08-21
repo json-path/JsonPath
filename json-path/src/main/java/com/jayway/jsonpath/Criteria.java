@@ -297,7 +297,7 @@ public class Criteria {
                 return objectOrAnyCollectionItemMatches(actualVal, new Predicate<Object>() {
                     @Override
                     public boolean accept(Object value) {
-                        if (isValue == null) {
+                       if (isValue == null) {
                             return value == null;
                         } else {
                             return isValue.equals(value);

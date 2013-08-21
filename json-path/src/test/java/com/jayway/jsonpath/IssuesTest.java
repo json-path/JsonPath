@@ -1,6 +1,8 @@
 package com.jayway.jsonpath;
 
 import com.jayway.jsonpath.internal.IOUtils;
+import com.jayway.jsonpath.spi.JsonProviderFactory;
+import com.jayway.jsonpath.spi.impl.JacksonProvider;
 import org.hamcrest.Matchers;
 import org.junit.Assert;
 import org.junit.Test;
@@ -148,6 +150,22 @@ public class IssuesTest {
         List<String> result = JsonPath.read(json, "$.list[?]", Filter.filter(Criteria.where("b.b-a").eq("batext2")));
 
         assertTrue(result.size() == 1);
+    }
+    @Test
+    public void issue_30() throws Exception {
+        String json = "{\"foo\" : {\"@id\" : \"123\", \"$\" : \"hello\"}}";
+
+        assertEquals("123", JsonPath.read(json, "foo.@id"));
+        assertEquals("hello", JsonPath.read(json, "foo.$"));
+    }
+
+    @Test
+    public void issue_32(){
+
+
+
+        String json = "{\"text\" : \"skill: \\\"Heuristic Evaluation\\\"\", \"country\" : \"\"}";
+        assertEquals("skill: \"Heuristic Evaluation\"", JsonPath.read(json, "$.text"));
     }
 
 

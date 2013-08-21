@@ -31,20 +31,23 @@ public class PathToken {
 
     private String fragment;
 
-    public PathToken(String fragment) {
+    private int tokenIndex;
+
+    public PathToken(String fragment, int tokenIndex) {
         this.fragment = fragment;
+        this.tokenIndex = tokenIndex;
     }
 
     public PathTokenFilter getFilter(){
-        return FilterFactory.createFilter(fragment);
+        return FilterFactory.createFilter(this);
     }
 
     public Object filter(Object model, JsonProvider jsonProvider){
-        return FilterFactory.createFilter(fragment).filter(model, jsonProvider);
+        return FilterFactory.createFilter(this).filter(model, jsonProvider);
     }
 
     public Object apply(Object model, JsonProvider jsonProvider){
-        return FilterFactory.createFilter(fragment).getRef(model, jsonProvider);
+        return FilterFactory.createFilter(this).getRef(model, jsonProvider);
     }
 
     public String getFragment() {
@@ -52,7 +55,7 @@ public class PathToken {
     }
 
     public boolean isRootToken(){
-        return "$".equals(fragment);
+        return this.tokenIndex == 0;
     }
     public boolean isArrayIndexToken(){
         return ARRAY_INDEX_PATTERN.matcher(fragment).matches();   

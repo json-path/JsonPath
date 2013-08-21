@@ -14,6 +14,8 @@
  */
 package com.jayway.jsonpath.internal.filter;
 
+import com.jayway.jsonpath.internal.PathToken;
+
 /**
  * @author Kalle Stenflo
  */
@@ -25,9 +27,11 @@ public class FilterFactory {
     private final static PathTokenFilter SCAN_FILTER = new ScanFilter("..");
     private final static PathTokenFilter ARRAY_QUERY_FILTER = new ArrayQueryFilter("[?]");
 
-    public static PathTokenFilter createFilter(String pathFragment) {
+    public static PathTokenFilter createFilter(PathToken token) {
 
-        if (DOCUMENT_FILTER.getCondition().equals(pathFragment)) {     //"$"
+        String pathFragment = token.getFragment();
+
+        if (DOCUMENT_FILTER.getCondition().equals(pathFragment) && token.isRootToken()) {     //"$"
 
             return DOCUMENT_FILTER;
 
