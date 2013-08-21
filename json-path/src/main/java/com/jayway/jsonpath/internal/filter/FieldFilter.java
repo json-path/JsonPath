@@ -15,13 +15,11 @@
 package com.jayway.jsonpath.internal.filter;
 
 import com.jayway.jsonpath.Filter;
-import com.jayway.jsonpath.InvalidPathException;
 import com.jayway.jsonpath.PathNotFoundException;
 import com.jayway.jsonpath.spi.JsonProvider;
 
+import java.util.Collection;
 import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
 
 /**
  * @author Kalle Stenflo
@@ -37,34 +35,35 @@ public class FieldFilter extends PathTokenFilter {
 
     @Override
     public Object filter(Object obj, JsonProvider jsonProvider, LinkedList<Filter> filters, boolean inArrayContext) {
-        if (jsonProvider.isList(obj)) {
+        if (jsonProvider.isArray(obj)) {
             if (!inArrayContext) {
                 throw new PathNotFoundException("Trying to access the field '" + condition +"' in an array context.");
             } else {
-                List<Object> result = jsonProvider.createList();
-                for (Object current : jsonProvider.toList(obj)) {
+                Object result = jsonProvider.createArray();
+                for (Object current : jsonProvider.toIterable(obj)) {
                     if (jsonProvider.isMap(current)) {
-
-                        Map<String, Object> map = jsonProvider.toMap(current);
-
                         
+                        Collection<String> keys = jsonProvider.getPropertyKeys(current);
+
                         if(split.length == 1){
-                            if (map.containsKey(condition)) {
-                                Object o = map.get(condition);
-                                if (jsonProvider.isList(o)) {
-                                    result.addAll(jsonProvider.toList(o));
+                            if (keys.contains(condition)) {
+                                Object o = jsonProvider.getProperty(current, condition);
+                                if (jsonProvider.isArray(o)) {
+                                    for(Object item : jsonProvider.toIterable(o)){
+                                      jsonProvider.setProperty(result, jsonProvider.length(result), item);
+                                    }
                                 } else {
-                                    result.add(map.get(condition));
+                                    jsonProvider.setProperty(result, jsonProvider.length(result), jsonProvider.getProperty(current, condition));
                                 }
                             }
                         } else {
-                            Map<String, Object> res = jsonProvider.createMap();
+                            Object res = jsonProvider.createMap();
                             for (String prop : split) {
-                                if (map.containsKey(prop)) {
-                                    res.put(prop, map.get(prop));
+                                if (keys.contains(prop)) {
+                                    jsonProvider.setProperty(res, prop, jsonProvider.getProperty(current, prop));
                                 }
                             }
-                            result.add(res);
+                            jsonProvider.setProperty(result, jsonProvider.length(result), res);
                         }
                     }
                 }
@@ -72,18 +71,18 @@ public class FieldFilter extends PathTokenFilter {
             }
         } else {
 
-            Map<String, Object> map = jsonProvider.toMap(obj);
-            if(!map.containsKey(condition) && split.length == 1){
+            Collection<String> keys = jsonProvider.getPropertyKeys(obj);
+            if(!keys.contains(condition) && split.length == 1){
                 throw new PathNotFoundException("Path '" + condition + "' not found in the current context.");
             } else {
 
                 if(split.length == 1){
-                    return map.get(condition);
+                    return jsonProvider.getProperty(obj, condition);
                 } else {
-                    Map<String, Object> res = jsonProvider.createMap();
+                    Object res = jsonProvider.createMap();
                     for (String prop : split) {
-                        if(map.containsKey(prop)){
-                            res.put(prop, map.get(prop));
+                        if(keys.contains(prop)){
+                          jsonProvider.setProperty(res, prop, jsonProvider.getProperty(obj, prop));
                         }
                     }
                     return res;
@@ -96,10 +95,10 @@ public class FieldFilter extends PathTokenFilter {
 
 
     public Object filter(Object obj, JsonProvider jsonProvider) {
-        if (jsonProvider.isList(obj)) {
+        if (jsonProvider.isArray(obj)) {
             return obj;
         } else {
-            return jsonProvider.getMapValue(obj, condition);
+            return jsonProvider.getProperty(obj, condition);
         }
     }
 

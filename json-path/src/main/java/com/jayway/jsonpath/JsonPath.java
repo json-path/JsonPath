@@ -208,7 +208,7 @@ public class JsonPath {
 
         JsonProvider jsonProvider = JsonProviderFactory.createProvider();
 
-        if (!jsonProvider.isMap(jsonObject) && !jsonProvider.isList(jsonObject)) {
+        if (!jsonProvider.isMap(jsonObject) && !jsonProvider.isArray(jsonObject)) {
             throw new IllegalArgumentException("Invalid container object");
         }
         LinkedList<Filter> contextFilters = new LinkedList<Filter>(filters);

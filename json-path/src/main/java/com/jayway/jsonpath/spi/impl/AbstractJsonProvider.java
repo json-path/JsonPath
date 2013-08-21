@@ -15,9 +15,12 @@
 package com.jayway.jsonpath.spi.impl;
 
 import com.jayway.jsonpath.spi.JsonProvider;
+
 import org.apache.commons.lang3.SerializationUtils;
 
 import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 
@@ -32,67 +35,111 @@ public abstract class AbstractJsonProvider implements JsonProvider {
     }
 
     /**
-     * checks if object is <code>instanceof</code> <code>java.util.List</code> or <code>java.util.Map</code>
+     * checks if object is a map or an array
      *
      * @param obj object to check
-     * @return true if List or Map
+     * @return true if obj is a map or an array
      */
     public boolean isContainer(Object obj) {
-        return (isList(obj) || isMap(obj));
+        return (isArray(obj) || isMap(obj));
     }
 
     /**
-     * checks if object is <code>instanceof</code> <code>java.util.List</code>
+     * checks if object is an array
      *
      * @param obj object to check
-     * @return true if List
+     * @return true if obj is an array
      */
-    public boolean isList(Object obj) {
+    public boolean isArray(Object obj) {
         return (obj instanceof List);
     }
 
     /**
-     * Converts give object to a List
+     * Extracts a value from an object or array
      *
-     * @param list object to convert
-     * @return object as list
+     * @param obj an array or an object
+     * @param key a String key or a numerical index
+     * @return the entry at the given key, i.e. obj[key]
      */
-    @SuppressWarnings({"unchecked"})
-    public List<Object> toList(Object list) {
-        return (List<Object>) list;
+    public Object getProperty(Object obj, Object key) {
+      if (isMap(obj))
+        return ((Map) obj).get(key.toString());
+      else{
+        int index = key instanceof Integer? (Integer) key : Integer.parseInt(key.toString());
+        return ((List) obj).get(index);
+      }
     }
-
+        
+    /**
+     * Sets a value in an object or array
+     *
+     * @param obj an array or an object
+     * @param key a String key or a numerical index
+     * @param value the value to set
+     */
+    public void setProperty(Object obj, Object key, Object value) {
+        if (isMap(obj))
+          ((Map) obj).put(key.toString(), value);
+        else{
+          int index = key instanceof Integer? (Integer) key : Integer.parseInt(key.toString());
+          ((List) obj).add(index, value);
+        }
+    }
+    
 
     /**
-     * Converts given object to a Map
-     *
-     * @param map object to convert
-     * @return object as map
-     */
-    @SuppressWarnings({"unchecked"})
-    public Map<String, Object> toMap(Object map) {
-        return (Map<String, Object>) map;
-    }
-
-    /**
-     * Extracts a value from a Map
-     *
-     * @param map map to read from
-     * @param key key to read
-     * @return value of key in map
-     */
-    public Object getMapValue(Object map, String key) {
-        return toMap(map).get(key);
-    }
-
-    /**
-     * checks if object is <code>instanceof</code> <code>java.util.Map</code>
+     * checks if object is a map (i.e. no array)
      *
      * @param obj object to check
-     * @return true if Map
+     * @return true if the object is a map
      */
     public boolean isMap(Object obj) {
         return (obj instanceof Map);
+    }
+    
+    /**
+     * Returns the keys from the given object or the indexes from an array
+     *
+     * @param obj an array or an object
+     * @return the keys for an object or the indexes for an array
+     */
+    public Collection<String> getPropertyKeys(Object obj) {
+        if (isArray(obj)){
+            List l = (List) obj;
+            List<String> keys = new ArrayList<String>(l.size());
+            for (int i = 0; i < l.size(); i++){
+              keys.add(String.valueOf(i));
+            }
+            return keys;
+        }
+        else{
+            return ((Map)obj).keySet();
+        }
+    }
+    
+    /**
+     * Get the length of an array or object
+     * @param obj an array or an object
+     * @return the number of entries in the array or object
+     */
+    public int length(Object obj) {
+        if (isArray(obj)){
+          return ((List)obj).size();
+        }
+        return getPropertyKeys(obj).size();
+    }
+    
+    /**
+     * Converts given object to an {@link Iterable}
+     *
+     * @param obj an array or an object
+     * @return the entries for an array or the values for a map
+     */
+    public Iterable<Object> toIterable(Object obj) {
+       if (isArray(obj))
+         return ((Iterable) obj);
+       else
+         return ((Map)obj).values();
     }
 
 }
