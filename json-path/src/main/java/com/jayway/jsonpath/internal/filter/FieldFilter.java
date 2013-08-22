@@ -37,7 +37,7 @@ public class FieldFilter extends PathTokenFilter {
     public Object filter(Object obj, JsonProvider jsonProvider, LinkedList<Filter> filters, boolean inArrayContext) {
         if (jsonProvider.isArray(obj)) {
             if (!inArrayContext) {
-                throw new PathNotFoundException("Trying to access the field '" + condition +"' in an array context.");
+                throw new PathNotFoundException("Path '" + condition + "' is being applied to an array. Arrays can not have attributes.");
             } else {
                 Object result = jsonProvider.createArray();
                 for (Object current : jsonProvider.toIterable(obj)) {
@@ -73,7 +73,7 @@ public class FieldFilter extends PathTokenFilter {
 
             Collection<String> keys = jsonProvider.getPropertyKeys(obj);
             if(!keys.contains(condition) && split.length == 1){
-                throw new PathNotFoundException("Path '" + condition + "' not found in the current context.");
+                throw new PathNotFoundException("Path '" + condition + "' not found in the current context:\n" + jsonProvider.toJson(obj));
             } else {
 
                 if(split.length == 1){
@@ -87,11 +87,9 @@ public class FieldFilter extends PathTokenFilter {
                     }
                     return res;
                 }
-
-
             }
         } else {
-            throw new PathNotFoundException();
+            throw new PathNotFoundException("Failed to access property: " + condition + " on object " + obj);
         }
     }
 
