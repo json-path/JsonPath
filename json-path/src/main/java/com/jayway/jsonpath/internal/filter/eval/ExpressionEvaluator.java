@@ -25,9 +25,16 @@ import java.util.Map;
  */
 public class ExpressionEvaluator {
 
+    private static final String NULL_VALUE = "null";
 
     public enum Operator {
-        equal("=="), not_equal("!="), less_or_greater_than("<>"), greater_than(">"), greater_than_or_equal(">="), less_than("<"), less_than_or_equal("<=");
+        equal("=="),
+        not_equal("!="),
+        less_or_greater_than("<>"), //same as not_equal
+        greater_than(">"),
+        greater_than_or_equal(">="),
+        less_than("<"),
+        less_than_or_equal("<=");
 
         private final String representation;
 
@@ -57,6 +64,21 @@ public class ExpressionEvaluator {
         if (operator == null) {
             throw new IllegalArgumentException("Unsupported operator " + comparator);
         }
+
+        if(actual == null){
+            if(operator == Operator.equal){
+                return NULL_VALUE.equals(expected);
+            } else if(operator == Operator.not_equal || operator == Operator.less_or_greater_than){
+                return !NULL_VALUE.equals(expected);
+            }
+        } else {
+            if(operator == Operator.not_equal || operator == Operator.less_or_greater_than){
+                if(NULL_VALUE.equals(expected)){
+                    return true;
+                }
+            }
+        }
+
 
         if (actual instanceof Long) {
 
@@ -173,7 +195,7 @@ public class ExpressionEvaluator {
             BigInteger a = (BigInteger) actual;
             BigInteger e = new BigInteger(expected.trim());
 
-            switch (operator){
+            switch (operator) {
                 case equal:
                     return a.compareTo(e) == 0;
                 case not_equal:
@@ -196,7 +218,7 @@ public class ExpressionEvaluator {
             BigDecimal a = (BigDecimal) actual;
             BigDecimal e = new BigDecimal(expected);
 
-            switch (operator){
+            switch (operator) {
                 case equal:
                     return a.compareTo(e) == 0;
                 case not_equal:
