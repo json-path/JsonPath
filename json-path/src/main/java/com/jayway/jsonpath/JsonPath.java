@@ -206,7 +206,7 @@ public class JsonPath {
     public <T> T read(Object jsonObject) {
         notNull(jsonObject, "json can not be null");
 
-        JsonProvider jsonProvider = JsonProviderFactory.createProvider();
+        JsonProvider jsonProvider = JsonProviderFactory.getProvider();
 
         if(this.getPath().equals("$")){
             //This path only references the whole object. No need to do any work here...
@@ -246,7 +246,7 @@ public class JsonPath {
     public <T> T read(String json) {
         notEmpty(json, "json can not be null or empty");
 
-        return (T) read(JsonProviderFactory.createProvider().parse(json));
+        return (T) read(JsonProviderFactory.getProvider().parse(json));
     }
 
     /**
@@ -264,7 +264,7 @@ public class JsonPath {
         InputStream in = null;
         try {
             in = HttpProviderFactory.getProvider().get(jsonURL);
-            return (T) read(JsonProviderFactory.createProvider().parse(in));
+            return (T) read(JsonProviderFactory.getProvider().parse(in));
         } finally {
             IOUtils.closeQuietly(in);
         }
@@ -286,7 +286,7 @@ public class JsonPath {
         FileInputStream fis = null;
         try {
             fis = new FileInputStream(jsonFile);
-            return (T) read(JsonProviderFactory.createProvider().parse(fis));
+            return (T) read(JsonProviderFactory.getProvider().parse(fis));
         } finally {
             IOUtils.closeQuietly(fis);
         }
@@ -305,7 +305,7 @@ public class JsonPath {
         notNull(jsonInputStream, "json input stream can not be null");
 
         try {
-            return (T) read(JsonProviderFactory.createProvider().parse(jsonInputStream));
+            return (T) read(JsonProviderFactory.getProvider().parse(jsonInputStream));
         } finally {
             IOUtils.closeQuietly(jsonInputStream);
         }

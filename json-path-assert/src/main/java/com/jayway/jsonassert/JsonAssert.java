@@ -27,7 +27,7 @@ public class JsonAssert {
      * @throws ParseException when the given JSON could not be parsed
      */
     public static JsonAsserter with(String json) {
-        return new JsonAsserterImpl(JsonProviderFactory.createProvider().parse(json));
+        return new JsonAsserterImpl(JsonProviderFactory.getProvider().parse(json));
     }
 
     /**
@@ -38,7 +38,7 @@ public class JsonAssert {
      * @throws ParseException when the given JSON could not be parsed
      */
     public static JsonAsserter with(Reader reader) throws IOException {
-        return new JsonAsserterImpl(JsonProviderFactory.createProvider().parse(convertReaderToString(reader)));
+        return new JsonAsserterImpl(JsonProviderFactory.getProvider().parse(convertReaderToString(reader)));
 
     }
 
