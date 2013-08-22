@@ -20,8 +20,7 @@ import com.jayway.jsonpath.PathNotFoundException;
 import com.jayway.jsonpath.internal.filter.eval.ExpressionEvaluator;
 import com.jayway.jsonpath.spi.JsonProvider;
 
-import java.util.List;
-import java.util.Map;
+import java.util.Collection;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -42,17 +41,16 @@ public class ArrayEvalFilter extends PathTokenFilter {
 
     @Override
     public Object filter(Object obj, JsonProvider jsonProvider) {
-        List<Object> src = null;
+        Iterable<Object> src = null;
         try {
-            src = jsonProvider.toList(obj);
+            src = jsonProvider.toIterable(obj);
         } catch (ClassCastException e){
             throw new InvalidPathException("The path fragment '" + this.condition + "' can not be applied to a JSON object only a JSON array.", e);
         }
-        List<Object> result = jsonProvider.createList();
-
+        Object result = jsonProvider.createArray();
         for (Object item : src) {
             if (isMatch(item, conditionStatement, jsonProvider)) {
-                result.add(item);
+                jsonProvider.setProperty(result, jsonProvider.length(result), item);
             }
         }
         return result;
@@ -69,7 +67,6 @@ public class ArrayEvalFilter extends PathTokenFilter {
     }
 
     private boolean isMatch(Object check, ConditionStatement conditionStatement, JsonProvider jsonProvider) {
-
         try {
             Object value = conditionStatement.path.read(check);
             return ExpressionEvaluator.eval(value, conditionStatement.getOperator(), conditionStatement.getExpected());
