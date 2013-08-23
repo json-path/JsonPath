@@ -1,6 +1,9 @@
 package com.jayway.jsonpath;
 
 import com.jayway.jsonpath.internal.IOUtils;
+
+import net.minidev.json.JSONObject;
+
 import org.hamcrest.Matchers;
 import org.junit.Test;
 
@@ -141,6 +144,21 @@ public class IssuesTest {
         Object o = JsonPath.read(json, "$.a");
     }
 
+    @Test
+    public void issue_29_a() throws Exception {
+        String json = "{\"list\": [ { \"a\":\"atext\", \"b.b-a\":\"batext2\", \"b\":{ \"b-a\":\"batext\", \"b-b\":\"bbtext\" } }, { \"a\":\"atext2\", \"b\":{ \"b-a\":\"batext2\", \"b-b\":\"bbtext2\" } } ] }";
+
+        List<JSONObject> result = JsonPath.read(json, "$.list[?(@['b.b-a']=='batext2')]");
+        assertEquals(1, result.size());
+        assertEquals("atext", result.get(0).get("a"));
+
+        result = JsonPath.read(json, "$.list[?(@.b.b-a=='batext2')]");
+        assertEquals(1, result.size());
+        assertEquals("atext2", result.get(0).get("a"));
+
+        
+    }
+    
     @Test
     public void issue_29_b() throws Exception {
         String json = "{\"list\": [ { \"a\":\"atext\", \"b\":{ \"b-a\":\"batext\", \"b-b\":\"bbtext\" } }, { \"a\":\"atext2\", \"b\":{ \"b-a\":\"batext2\", \"b-b\":\"bbtext2\" } } ] }";
