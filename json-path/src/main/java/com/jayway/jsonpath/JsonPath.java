@@ -192,22 +192,21 @@ public class JsonPath {
     public boolean isPathDefinite() {
         return JsonPath.isPathDefinite(getPath());
     }
-
+    
     /**
      * Applies this JsonPath to the provided json document.
      * Note that the document must be identified as either a List or Map by
      * the {@link JsonProvider}
      *
      * @param jsonObject a container Object
+     * @param jsonProvider the {@link JsonProvider} to use
      * @param <T>  expected return type
      * @return list of objects matched by the given path
      */
-    @SuppressWarnings({"unchecked"})
-    public <T> T read(Object jsonObject) {
+    public <T> T read(Object jsonObject, JsonProvider jsonProvider) {
         notNull(jsonObject, "json can not be null");
-
-        JsonProvider jsonProvider = JsonProviderFactory.getProvider();
-
+        notNull(jsonProvider, "jsonProvider can not be null");
+        
         if(this.getPath().equals("$")){
             //This path only references the whole object. No need to do any work here...
             return (T)jsonObject;
@@ -233,6 +232,27 @@ public class JsonPath {
             }
         }
         return (T) result;
+      
+    }
+    
+    
+    /**
+     * Applies this JsonPath to the provided json document.
+     * Note that the document must be identified as either a List or Map by
+     * the {@link JsonProvider}
+     *
+     * @param jsonObject a container Object
+     * @param <T>  expected return type
+     * @return list of objects matched by the given path
+     */
+    public <T> T read(Object jsonObject) {
+        notNull(jsonObject, "json can not be null");
+
+        JsonProvider jsonProvider = JsonProviderFactory.getProvider();
+        
+        return read(jsonObject, jsonProvider);
+
+       
     }
 
     /**
@@ -246,7 +266,9 @@ public class JsonPath {
     public <T> T read(String json) {
         notEmpty(json, "json can not be null or empty");
 
-        return (T) read(JsonProviderFactory.getProvider().parse(json));
+        JsonProvider jsonProvider = JsonProviderFactory.getProvider();
+        
+        return (T) read(jsonProvider.parse(json), jsonProvider);
     }
 
     /**
@@ -264,7 +286,8 @@ public class JsonPath {
         InputStream in = null;
         try {
             in = HttpProviderFactory.getProvider().get(jsonURL);
-            return (T) read(JsonProviderFactory.getProvider().parse(in));
+            JsonProvider jsonProvider = JsonProviderFactory.getProvider();
+            return (T) read(jsonProvider.parse(in), jsonProvider);
         } finally {
             IOUtils.closeQuietly(in);
         }
@@ -286,7 +309,8 @@ public class JsonPath {
         FileInputStream fis = null;
         try {
             fis = new FileInputStream(jsonFile);
-            return (T) read(JsonProviderFactory.getProvider().parse(fis));
+            JsonProvider jsonProvider = JsonProviderFactory.getProvider();
+            return (T) read(jsonProvider.parse(fis), jsonProvider);
         } finally {
             IOUtils.closeQuietly(fis);
         }
@@ -305,7 +329,8 @@ public class JsonPath {
         notNull(jsonInputStream, "json input stream can not be null");
 
         try {
-            return (T) read(JsonProviderFactory.getProvider().parse(jsonInputStream));
+            JsonProvider jsonProvider = JsonProviderFactory.getProvider();
+            return (T) read(jsonProvider.parse(jsonInputStream), jsonProvider);
         } finally {
             IOUtils.closeQuietly(jsonInputStream);
         }
