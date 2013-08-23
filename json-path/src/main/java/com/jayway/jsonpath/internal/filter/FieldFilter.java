@@ -89,7 +89,7 @@ public class FieldFilter extends PathTokenFilter {
                 }
             }
         } else {
-            throw new PathNotFoundException("Failed to access property: " + condition + " on object " + obj);
+            throw new PathNotFoundException("Failed to access property: '" + condition + "' on object " + obj);
         }
     }
 

@@ -78,7 +78,33 @@ public class JsonPathTest {
     private final static String ARRAY_EXPAND = "[{\"parent\": \"ONE\", \"child\": {\"name\": \"NAME_ONE\"}}, [{\"parent\": \"TWO\", \"child\": {\"name\": \"NAME_TWO\"}}]]";
 
 
+    @Test
+    public void null_object_in_path() {
 
+        String json = "{\n" +
+                "  \"success\": true,\n" +
+                "  \"data\": {\n" +
+                "    \"user\": 3,\n" +
+                "    \"own\": null,\n" +
+                "    \"passes\": null,\n" +
+                "    \"completed\": null\n" +
+                "  },\n" +
+                "  \"data2\": {\n" +
+                "    \"user\": 3,\n" +
+                "    \"own\": null,\n" +
+                "    \"passes\": [{\"id\":\"1\"}],\n" +
+                "    \"completed\": null\n" +
+                "  },\n" +
+                "  \"version\": 1371160528774\n" +
+                "}";
+
+        System.out.println(JsonPath.read(json, "$.data.passes[0].id"));
+        System.out.println(JsonPath.isPathDefinite("$.data.passes[0].id"));
+
+        System.out.println(JsonPath.read(json, "$.data2.passes[0].id"));
+        System.out.println(JsonPath.isPathDefinite("$.data2.passes[0].id"));
+
+    }
 
     @Test
     public void array_start_expands() throws Exception {
