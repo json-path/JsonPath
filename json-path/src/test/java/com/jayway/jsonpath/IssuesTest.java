@@ -23,7 +23,8 @@ import static org.junit.Assert.assertThat;
  */
 public class IssuesTest {
 
-    @Test
+    //@Test(expected = PathNotFoundException.class)
+    @Test()
     public void issue_11() throws Exception {
         String json = "{ \"foo\" : [] }";
         List<String> result = JsonPath.read(json, "$.foo[?(@.rel= 'item')][0].uri");
