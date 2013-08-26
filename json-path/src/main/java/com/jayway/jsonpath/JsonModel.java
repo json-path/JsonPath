@@ -126,7 +126,7 @@ public class JsonModel {
     /**
      * Prints this JsonModel to standard out
      */
-    public void print(){
+    public void print() {
         String json = toJson();
         System.out.println(JsonFormatter.prettyPrint(json));
     }
@@ -134,30 +134,28 @@ public class JsonModel {
     /**
      * Check if this JsonModel has the given definite path
      *
-     * @see com.jayway.jsonpath.JsonPath#isPathDefinite()
-     *
      * @param jsonPath path to check
      * @return true if model contains path
+     * @see com.jayway.jsonpath.JsonPath#isPathDefinite()
      */
-    public boolean hasPath(String jsonPath){
+    public boolean hasPath(String jsonPath) {
         return hasPath(JsonPath.compile(jsonPath));
     }
 
     /**
      * Check if this JsonModel has the given definite path
      *
-     * @see com.jayway.jsonpath.JsonPath#isPathDefinite()
-     *
      * @param jsonPath path to check
      * @return true if model contains path
+     * @see com.jayway.jsonpath.JsonPath#isPathDefinite()
      */
-    public boolean hasPath(JsonPath jsonPath){
+    public boolean hasPath(JsonPath jsonPath) {
 
         isTrue(jsonPath.isPathDefinite(), "hasPath can only be used for definite paths");
 
         try {
             get(jsonPath);
-        } catch(InvalidPathException e){
+        } catch (InvalidPathException e) {
             return false;
         }
         return true;
@@ -219,7 +217,7 @@ public class JsonModel {
      */
     @SuppressWarnings({"unchecked"})
     public <T> T get(String jsonPath, Filter... filters) {
-        return (T) get(JsonPath.compile(jsonPath, filters));
+        return get(JsonPath.compile(jsonPath, filters));
     }
 
     /**
@@ -233,7 +231,7 @@ public class JsonModel {
     public <T> T get(JsonPath jsonPath) {
         notNull(jsonPath, "jsonPath can not be null");
 
-        return (T) jsonPath.read(jsonObject);
+        return jsonPath.read(jsonProvider, jsonObject);
     }
 
     // --------------------------------------------------------
@@ -341,7 +339,7 @@ public class JsonModel {
      */
     public String toJson(boolean prettyPrint) {
         String json = jsonProvider.toJson(jsonObject);
-        if(prettyPrint)
+        if (prettyPrint)
             return JsonFormatter.prettyPrint(json);
         else
             return json;
@@ -378,10 +376,8 @@ public class JsonModel {
      * addressed by a definite path. In contrast to a detached model changes on the sub model
      * will be applied on the source model (the JsonModel from which the sub model was created)
      *
-     *
      * @param jsonPath the absolute path to extract a JsonModel for
      * @return the new JsonModel
-     *
      * @see com.jayway.jsonpath.JsonPath#isPathDefinite()
      */
     public JsonModel getSubModel(String jsonPath) {
@@ -393,10 +389,8 @@ public class JsonModel {
      * addressed by a definite path. In contrast to a detached model changes on the sub model
      * will be applied on the source model (the JsonModel from which the sub model was created)
      *
-     *
      * @param jsonPath the absolute path to extract a JsonModel for
      * @return the new JsonModel
-     *
      * @see com.jayway.jsonpath.JsonPath#isPathDefinite()
      */
     public JsonModel getSubModel(JsonPath jsonPath) {
@@ -424,7 +418,7 @@ public class JsonModel {
      * source model (the JsonModel from which the sub model was created).
      *
      * @param jsonPath the absolute path to extract a JsonModel for
-     * @param filters filters to expand the path
+     * @param filters  filters to expand the path
      * @return a detached JsonModel
      */
     public JsonModel getSubModelDetached(String jsonPath, Filter... filters) {
@@ -442,7 +436,7 @@ public class JsonModel {
     public JsonModel getSubModelDetached(JsonPath jsonPath) {
         notNull(jsonPath, "jsonPath can not be null");
 
-        Object subModel = jsonPath.read(jsonObject);
+        Object subModel = jsonPath.read(jsonProvider, jsonObject);
 
         if (!jsonProvider.isContainer(subModel)) {
             throw new InvalidModelException("The path " + jsonPath.getPath() + " returned an invalid model " + (subModel != null ? subModel.getClass() : "null"));
@@ -498,62 +492,114 @@ public class JsonModel {
     // --------------------------------------------------------
 
     /**
-     * Creates a JsonModel 
-     * 
+     * Creates a JsonModel
+     *
+     * @param jsonProvider JsonProvider to use
+     * @param json         json string
+     * @return a new JsonModel
+     */
+    public static JsonModel model(JsonProvider jsonProvider, String json) {
+        notNull(jsonProvider, "jsonProvider can not be null");
+        notEmpty(json, "json can not be null or empty");
+
+        return new JsonModel(json, jsonProvider);
+    }
+
+    /**
+     * Creates a JsonModel
+     *
      * @param json json string
      * @return a new JsonModel
      */
     public static JsonModel model(String json) {
-        notEmpty(json, "json can not be null or empty");
-
-        return new JsonModel(json, JsonProviderFactory.createProvider());
+        return model(JsonProviderFactory.createProvider(), json);
     }
+
     public static JsonModel create(String json) {
         return model(json);
     }
 
     /**
-     * Creates a JsonModel 
-     * 
+     * Creates a JsonModel
+     *
+     * @param jsonProvider JsonProvider to use
+     * @param jsonObject   a json container (a {@link Map} or a {@link List})
+     * @return a new JsonModel
+     */
+    public static JsonModel model(JsonProvider jsonProvider, Object jsonObject) {
+        notNull(jsonProvider, "jsonProvider can not be null");
+        notNull(jsonObject, "jsonObject can not be null");
+        return new JsonModel(jsonObject, jsonProvider);
+    }
+
+
+    /**
+     * Creates a JsonModel
+     *
      * @param jsonObject a json container (a {@link Map} or a {@link List})
      * @return a new JsonModel
      */
     public static JsonModel model(Object jsonObject) {
-        notNull(jsonObject, "jsonObject can not be null");
-
-        return new JsonModel(jsonObject, JsonProviderFactory.createProvider());
+        return model(JsonProviderFactory.createProvider(), jsonObject);
     }
+
     public static JsonModel create(Object jsonObject) {
         return model(jsonObject);
     }
 
     /**
-     * Creates a JsonModel 
-     * 
+     * Creates a JsonModel
+     *
+     * @param jsonProvider JsonProvider to use
+     * @param url pointing to a Json document
+     * @return a new JsonModel
+     */
+    public static JsonModel model(JsonProvider jsonProvider, URL url) throws IOException {
+        notNull(jsonProvider, "jsonProvider can not be null");
+        notNull(url, "url can not be null");
+
+        return new JsonModel(url, jsonProvider);
+    }
+
+    /**
+     * Creates a JsonModel
+     *
      * @param url pointing to a Json document
      * @return a new JsonModel
      */
     public static JsonModel model(URL url) throws IOException {
-        notNull(url, "url can not be null");
-
-        return new JsonModel(url, JsonProviderFactory.createProvider());
+        return model(JsonProviderFactory.createProvider(), url);
     }
-    public static JsonModel create(URL url) throws IOException  {
+
+    public static JsonModel create(URL url) throws IOException {
         return model(url);
     }
-    
+
     /**
-     * Creates a JsonModel 
-     * 
+     * Creates a JsonModel
+     *
+     * @param jsonProvider JsonProvider to use
+     * @param jsonInputStream json document stream
+     * @return a new JsonModel
+     */
+    public static JsonModel model(JsonProvider jsonProvider, InputStream jsonInputStream) throws IOException {
+        notNull(jsonProvider, "jsonProvider can not be null");
+        notNull(jsonInputStream, "jsonInputStream can not be null");
+
+        return new JsonModel(jsonInputStream, jsonProvider);
+    }
+
+    /**
+     * Creates a JsonModel
+     *
      * @param jsonInputStream json document stream
      * @return a new JsonModel
      */
     public static JsonModel model(InputStream jsonInputStream) throws IOException {
-        notNull(jsonInputStream, "jsonInputStream can not be null");
-
-        return new JsonModel(jsonInputStream, JsonProviderFactory.createProvider());
+        return model(JsonProviderFactory.createProvider(), jsonInputStream);
     }
-    public static JsonModel create(InputStream jsonInputStream) throws IOException  {
+
+    public static JsonModel create(InputStream jsonInputStream) throws IOException {
         return model(jsonInputStream);
     }
 
@@ -569,8 +615,6 @@ public class JsonModel {
         if (!jsonPath.isPathDefinite()) {
             throw new IndefinitePathException(jsonPath.getPath());
         }
-
-        JsonProvider jsonProvider = JsonProviderFactory.createProvider();
 
         Object modelRef = jsonObject;
 
@@ -605,7 +649,7 @@ public class JsonModel {
         if (pathToken.isRootToken()) {
             if (this instanceof JsonSubModel) {
                 JsonSubModel thisModel = (JsonSubModel) this;
-                
+
                 thisModel.parent.setTargetObject(thisModel.subModelPath, newValue);
             } else {
                 this.jsonObject = newValue;
@@ -631,13 +675,12 @@ public class JsonModel {
      */
     public interface ObjectMappingModelReader {
         /**
-         * Converts this JsonModel to the specified class using the configured {@link com.jayway.jsonpath.spi.MappingProvider} 
-         * 
-         * @see MappingProviderFactory
-         * 
+         * Converts this JsonModel to the specified class using the configured {@link com.jayway.jsonpath.spi.MappingProvider}
+         *
          * @param targetClass class to convert the {@link JsonModel} to
-         * @param <T> template class
+         * @param <T>         template class
          * @return the mapped model
+         * @see MappingProviderFactory
          */
         <T> T to(Class<T> targetClass);
     }
@@ -648,9 +691,9 @@ public class JsonModel {
     public interface ListMappingModelReader {
         /**
          * Converts this JsonModel to the a list of objects with the provided class using the configured {@link com.jayway.jsonpath.spi.MappingProvider}
-         * 
+         *
          * @param targetClass class to convert the {@link JsonModel} array items to
-         * @param <T> template class
+         * @param <T>         template class
          * @return the mapped mode
          */
         <T> List<T> of(Class<T> targetClass);
@@ -662,18 +705,18 @@ public class JsonModel {
 
         /**
          * Converts this JsonModel to the a {@link List} of objects with the provided class using the configured {@link com.jayway.jsonpath.spi.MappingProvider}
-         * 
+         *
          * @param targetClass class to convert the {@link JsonModel} array items to
-         * @param <T> template class
+         * @param <T>         template class
          * @return the mapped mode
          */
         <T> List<T> toListOf(Class<T> targetClass);
 
         /**
          * Converts this JsonModel to the a {@link Set} of objects with the provided class using the configured {@link com.jayway.jsonpath.spi.MappingProvider}
-         * 
+         *
          * @param targetClass class to convert the {@link JsonModel} array items to
-         * @param <T> template class
+         * @param <T>         template class
          * @return the mapped model
          */
         <T> Set<T> toSetOf(Class<T> targetClass);
@@ -681,7 +724,7 @@ public class JsonModel {
 
     /**
      * Object mapping interface used when for root object that can be either a {@link List} or a {@link Map}.
-     * It's up to the invoker to know what the conversion target can be mapped to. 
+     * It's up to the invoker to know what the conversion target can be mapped to.
      */
     public interface MappingModelReader extends ListMappingModelReader, ObjectMappingModelReader {
     }
@@ -692,7 +735,8 @@ public class JsonModel {
     public interface ObjectOps {
 
         /**
-         * Returns the operation target 
+         * Returns the operation target
+         *
          * @return the operation target
          */
         Map<String, Object> getTarget();
@@ -709,7 +753,8 @@ public class JsonModel {
 
         /**
          * Adds the value to the target map if it is not already present
-         * @param key the key
+         *
+         * @param key   the key
          * @param value the value
          * @return this {@link ObjectOps}
          */
@@ -722,6 +767,7 @@ public class JsonModel {
 
         /**
          * Tries to convert the value associated with the key to an {@link Integer}
+         *
          * @param key the key
          * @return converted value
          */
@@ -729,6 +775,7 @@ public class JsonModel {
 
         /**
          * Tries to convert the value associated with the key to an {@link Long}
+         *
          * @param key the key
          * @return converted value
          */
@@ -736,6 +783,7 @@ public class JsonModel {
 
         /**
          * Tries to convert the value associated with the key to an {@link Double}
+         *
          * @param key the key
          * @return converted value
          */
@@ -743,6 +791,7 @@ public class JsonModel {
 
         /**
          * Tries to convert the value associated with the key to an {@link String}
+         *
          * @param key the key
          * @return converted value
          */
@@ -769,8 +818,9 @@ public class JsonModel {
 
         /**
          * Map the target of this {@link ObjectOps} to the provided class
+         *
          * @param targetClass class to convert the target object to
-         * @param <T> template class
+         * @param <T>         template class
          * @return the mapped model
          */
         <T> T to(Class<T> targetClass);
@@ -783,6 +833,7 @@ public class JsonModel {
 
         /**
          * Returns the operation target
+         *
          * @return the operation target
          */
         List<Object> getTarget();
@@ -820,8 +871,8 @@ public class JsonModel {
          * @return this {@link ArrayOps}
          */
         ArrayOps transform(Transformer<List<Object>> transformer);
-        
-        
+
+
         ArrayOps each(Transformer<Object> transformer);
 
         /**
@@ -984,7 +1035,7 @@ public class JsonModel {
         public ArrayOps each(Transformer<Object> transformer) {
 
             List targetObject = getTargetObject(jsonPath, List.class);
-            for(int i = 0; i < targetObject.size(); i++){
+            for (int i = 0; i < targetObject.size(); i++) {
                 targetObject.set(i, transformer.transform(targetObject.get(i)));
             }
             return this;
