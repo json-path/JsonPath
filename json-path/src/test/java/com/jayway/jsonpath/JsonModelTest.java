@@ -54,6 +54,18 @@ public class JsonModelTest {
                     "  }\n" +
                     "}";
 
+    public final static String INVALID_DOCUMENT = "{?\\?\\?!!?~q`}}}}}\"\" \"store\": {\n";
+
+    @Test(expected = InvalidJsonException.class)
+    public void invalid_json_throws() throws Exception {
+        JsonModel.model(INVALID_DOCUMENT).get("store.id");
+    }
+
+    @Test(expected = InvalidPathException.class)
+    public void invalid_path_throws() throws Exception {
+        JsonModel.model(DOCUMENT).get("a(");
+    }
+
 
     @Test
     public void a_model_can_be_pretty_printed() throws Exception {
@@ -65,12 +77,12 @@ public class JsonModelTest {
     @Test
     public void has_path_validates() throws Exception {
         assertFalse(JsonModel.model(DOCUMENT).hasPath("store.invalid"));
-        assertFalse( JsonModel.model(DOCUMENT).hasPath("store.book[0].foo"));
+        assertFalse(JsonModel.model(DOCUMENT).hasPath("store.book[0].foo"));
 
-        assertTrue( JsonModel.model(DOCUMENT).hasPath("store.book"));
-        assertTrue( JsonModel.model(DOCUMENT).hasPath("store.book[0].title"));
+        assertTrue(JsonModel.model(DOCUMENT).hasPath("store.book"));
+        assertTrue(JsonModel.model(DOCUMENT).hasPath("store.book[0].title"));
     }
-    
+
     @Test
     public void a_json_document_can_be_fetched_with_a_URL() throws Exception {
         URL url = new URL("http://maps.googleapis.com/maps/api/geocode/json");
@@ -82,7 +94,6 @@ public class JsonModelTest {
         ByteArrayInputStream bis = new ByteArrayInputStream(DOCUMENT.getBytes());
         assertEquals("Nigel Rees", JsonModel.model(bis).get("store.book[0].author"));
     }
-
 
 
     @Test
@@ -99,20 +110,16 @@ public class JsonModelTest {
     }
 
 
-    @Test(expected = InvalidPathException.class)
-    public void invalid_path_throws() throws Exception {
-        JsonModel.model(DOCUMENT).get("store.invalid");
-    }
 
     @Test
     public void query_for_null_property_returns_null() {
         String documentWithNull =
                 "{ \"store\": {\n" +
-                "    \"book\": { \n" +
-                "      \"color\": null\n" +
-                "    }\n" +
-                "  }\n" +
-                "}";
+                        "    \"book\": { \n" +
+                        "      \"color\": null\n" +
+                        "    }\n" +
+                        "  }\n" +
+                        "}";
 
         Object color = JsonModel.model(documentWithNull).get("store.book.color");
 

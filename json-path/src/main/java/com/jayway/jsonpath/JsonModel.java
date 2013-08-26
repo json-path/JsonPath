@@ -155,7 +155,7 @@ public class JsonModel {
 
         try {
             get(jsonPath);
-        } catch (InvalidPathException e) {
+        } catch (PathNotFoundException e) {
             return false;
         }
         return true;
