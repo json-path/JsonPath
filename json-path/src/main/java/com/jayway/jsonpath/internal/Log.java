@@ -15,7 +15,7 @@ public final class Log {
     private Log() {
     }
 
-    private static boolean enabled = true;
+    private static boolean enabled = false;
 
     public static void enableDebug(){
         enabled = true;
