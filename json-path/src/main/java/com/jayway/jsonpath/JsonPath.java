@@ -101,14 +101,14 @@ import static org.apache.commons.lang3.Validate.*;
  */
 public class JsonPath {
 
+    private static final Logger LOG = LoggerFactory.getLogger(JsonPath.class.getName());
+
     private static Pattern DEFINITE_PATH_PATTERN = Pattern.compile(".*(\\.\\.|\\*|\\[[\\\\/]|\\?|,|:\\s?]|\\[\\s?:|>|\\(|<|=|\\+).*");
     private static Pattern INVALID_PATH_PATTERN = Pattern.compile("[^\\?\\+=\\-\\*/!]\\(");
 
 
     private PathTokenizer tokenizer;
     private LinkedList<Filter> filters;
-    
-    private final Logger logger = LoggerFactory.getLogger(JsonPath.class);
 
     private JsonPath(String jsonPath, Filter[] filters) {
 
@@ -126,7 +126,9 @@ public class JsonPath {
 
         this.tokenizer = new PathTokenizer(jsonPath);
 
-        logger.debug("New JsonPath:\n{}", this.tokenizer);
+        if(LOG.isDebugEnabled()){
+            LOG.debug("New JsonPath:\n{}", this.tokenizer.toString());
+        }
 
         this.filters = new LinkedList<Filter>();
         this.filters.addAll(asList(filters));
