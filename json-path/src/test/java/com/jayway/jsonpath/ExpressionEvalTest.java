@@ -198,10 +198,7 @@ public class ExpressionEvalTest {
 
         result = JsonPath.read(DOCUMENT, "$.characters[?(@.offspring)]");
         assertEquals(4, result.size());
-
-
-
-
     }
+
 
 }

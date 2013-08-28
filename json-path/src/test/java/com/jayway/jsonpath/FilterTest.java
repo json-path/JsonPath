@@ -1,7 +1,5 @@
 package com.jayway.jsonpath;
 
-import net.minidev.json.parser.JSONParser;
-
 import org.junit.Test;
 
 import java.util.Collections;
@@ -258,7 +256,7 @@ public class FilterTest {
         check.put("int", 10);
         check.put("long", 1L);
         check.put("double", 1.12D);
-        
+
         Filter shouldMarch = filter(where("string").is("foo").and("int").lt(11));
         Filter shouldNotMarch = filter(where("string").is("foo").and("int").gt(11));
 
@@ -318,107 +316,141 @@ public class FilterTest {
 
 
     @Test
-        public void arrays_of_maps_can_be_filtered() throws Exception {
+    public void arrays_of_maps_can_be_filtered() throws Exception {
 
 
-            Map<String, Object> rootGrandChild_A = new HashMap<String, Object>();
-            rootGrandChild_A.put("name", "rootGrandChild_A");
+        Map<String, Object> rootGrandChild_A = new HashMap<String, Object>();
+        rootGrandChild_A.put("name", "rootGrandChild_A");
 
-            Map<String, Object> rootGrandChild_B = new HashMap<String, Object>();
-            rootGrandChild_B.put("name", "rootGrandChild_B");
+        Map<String, Object> rootGrandChild_B = new HashMap<String, Object>();
+        rootGrandChild_B.put("name", "rootGrandChild_B");
 
-            Map<String, Object> rootGrandChild_C = new HashMap<String, Object>();
-            rootGrandChild_C.put("name", "rootGrandChild_C");
-
-
-            Map<String, Object> rootChild_A = new HashMap<String, Object>();
-            rootChild_A.put("name", "rootChild_A");
-            rootChild_A.put("children", asList(rootGrandChild_A, rootGrandChild_B, rootGrandChild_C));
-
-            Map<String, Object> rootChild_B = new HashMap<String, Object>();
-            rootChild_B.put("name", "rootChild_B");
-            rootChild_B.put("children", asList(rootGrandChild_A, rootGrandChild_B, rootGrandChild_C));
-
-            Map<String, Object> rootChild_C = new HashMap<String, Object>();
-            rootChild_C.put("name", "rootChild_C");
-            rootChild_C.put("children", asList(rootGrandChild_A, rootGrandChild_B, rootGrandChild_C));
-
-            Map<String, Object> root = new HashMap<String, Object>();
-            root.put("children", asList(rootChild_A, rootChild_B, rootChild_C));
+        Map<String, Object> rootGrandChild_C = new HashMap<String, Object>();
+        rootGrandChild_C.put("name", "rootGrandChild_C");
 
 
+        Map<String, Object> rootChild_A = new HashMap<String, Object>();
+        rootChild_A.put("name", "rootChild_A");
+        rootChild_A.put("children", asList(rootGrandChild_A, rootGrandChild_B, rootGrandChild_C));
 
-            Filter customFilter = new Filter.FilterAdapter<Map<String, Object>>() {
-                @Override
-                public boolean accept(Map<String, Object> map) {
-                    if(map.get("name").equals("rootGrandChild_A")){
-                        return true;
-                    }
-                    return false;
+        Map<String, Object> rootChild_B = new HashMap<String, Object>();
+        rootChild_B.put("name", "rootChild_B");
+        rootChild_B.put("children", asList(rootGrandChild_A, rootGrandChild_B, rootGrandChild_C));
+
+        Map<String, Object> rootChild_C = new HashMap<String, Object>();
+        rootChild_C.put("name", "rootChild_C");
+        rootChild_C.put("children", asList(rootGrandChild_A, rootGrandChild_B, rootGrandChild_C));
+
+        Map<String, Object> root = new HashMap<String, Object>();
+        root.put("children", asList(rootChild_A, rootChild_B, rootChild_C));
+
+
+        Filter customFilter = new Filter.FilterAdapter<Map<String, Object>>() {
+            @Override
+            public boolean accept(Map<String, Object> map) {
+                if (map.get("name").equals("rootGrandChild_A")) {
+                    return true;
                 }
-            };
+                return false;
+            }
+        };
 
-            Filter rootChildFilter = filter(where("name").regex(Pattern.compile("rootChild_[A|B]")));
-            Filter rootGrandChildFilter = filter(where("name").regex(Pattern.compile("rootGrandChild_[A|B]")));
+        Filter rootChildFilter = filter(where("name").regex(Pattern.compile("rootChild_[A|B]")));
+        Filter rootGrandChildFilter = filter(where("name").regex(Pattern.compile("rootGrandChild_[A|B]")));
 
-            List read = JsonPath.read(root, "children[?].children[?][?]", rootChildFilter, rootGrandChildFilter, customFilter);
-
-
-            System.out.println(read.size());
-        }
+        List read = JsonPath.read(root, "children[?].children[?][?]", rootChildFilter, rootGrandChildFilter, customFilter);
 
 
-        @Test
-        public void arrays_of_objects_can_be_filtered() throws Exception {
-            Map<String, Object> doc = new HashMap<String, Object>();
-            doc.put("items", asList(1, 2, 3));
+        System.out.println(read.size());
+    }
 
-            Filter customFilter = new Filter.FilterAdapter(){
-                @Override
-                public boolean accept(Object o) {
-                    return 1 == (Integer)o;
-                }
-            };
 
-            List<Integer> res = JsonPath.read(doc, "$.items[?]", customFilter);
+    @Test
+    public void arrays_of_objects_can_be_filtered() throws Exception {
+        Map<String, Object> doc = new HashMap<String, Object>();
+        doc.put("items", asList(1, 2, 3));
 
-            assertEquals(1, res.get(0).intValue());
-        }
-        
-        @Test
-        public void filters_can_contain_json_path_expressions() throws Exception {
-            Object doc = JsonModel.model(DOCUMENT).getJsonObject();
-          
-            assertTrue(filter(where("$.store..price").gt(10)).accept(doc));
-            assertFalse(filter(where("$.store..price").gte(100)).accept(doc));
-            assertTrue(filter(where("$.store..category").ne("fiction")).accept(doc));
-            assertFalse(filter(where("$.store.bicycle.color").ne("red")).accept(doc));
-            assertTrue(filter(where("$.store.bicycle.color").ne("blue")).accept(doc));
-            assertTrue(filter(where("$.store..color").exists(true)).accept(doc));
-            assertFalse(filter(where("$.store..flavor").exists(true)).accept(doc));
-            assertTrue(filter(where("$.store..color").regex(Pattern.compile("^r.d$"))).accept(doc));
-            assertTrue(filter(where("$.store..color").type(String.class)).accept(doc));
-            assertTrue(filter(where("$.store..price").is(12.99)).accept(doc));
-            assertFalse(filter(where("$.store..price").is(13.99)).accept(doc));
-            
-        }
-        
-        @Test
-        public void collection_based_filters_cannot_be_applied_to_multi_level_expressions(){
-          
-          try{
+        Filter customFilter = new Filter.FilterAdapter() {
+            @Override
+            public boolean accept(Object o) {
+                return 1 == (Integer) o;
+            }
+        };
+
+        List<Integer> res = JsonPath.read(doc, "$.items[?]", customFilter);
+
+        assertEquals(1, res.get(0).intValue());
+    }
+
+    @Test
+    public void filters_can_contain_json_path_expressions() throws Exception {
+        Object doc = JsonModel.model(DOCUMENT).getJsonObject();
+
+        assertTrue(filter(where("$.store..price").gt(10)).accept(doc));
+        assertFalse(filter(where("$.store..price").gte(100)).accept(doc));
+        assertTrue(filter(where("$.store..category").ne("fiction")).accept(doc));
+        assertFalse(filter(where("$.store.bicycle.color").ne("red")).accept(doc));
+        assertTrue(filter(where("$.store.bicycle.color").ne("blue")).accept(doc));
+        assertTrue(filter(where("$.store..color").exists(true)).accept(doc));
+        assertFalse(filter(where("$.store..flavor").exists(true)).accept(doc));
+        assertTrue(filter(where("$.store..color").regex(Pattern.compile("^r.d$"))).accept(doc));
+        assertTrue(filter(where("$.store..color").type(String.class)).accept(doc));
+        assertTrue(filter(where("$.store..price").is(12.99)).accept(doc));
+        assertFalse(filter(where("$.store..price").is(13.99)).accept(doc));
+
+    }
+
+    @Test
+    public void not_empty_filter_evaluates() {
+
+        String json = "{\n" +
+                "    \"fields\": [\n" +
+                "        {\n" +
+                "            \"errors\": [], \n" +
+                "            \"name\": \"\", \n" +
+                "            \"empty\": true \n" +
+                "        }, \n" +
+                "        {\n" +
+                "            \"errors\": [], \n" +
+                "            \"name\": \"foo\"\n" +
+                "        }, \n" +
+                "        {\n" +
+                "            \"errors\": [\n" +
+                "                \"first\", \n" +
+                "                \"second\"\n" +
+                "            ], \n" +
+                "            \"name\": \"invalid\"\n" +
+                "        }\n" +
+                "    ]\n" +
+                "}\n";
+
+        Object doc = JsonModel.model(json).getJsonObject();
+
+        List<Map<String, Object>> result = JsonPath.read(doc, "$.fields[?]", filter(where("errors").notEmpty()));
+        assertEquals(1, result.size());
+        System.out.println(result);
+
+        result = JsonPath.read(doc, "$.fields[?]", filter(where("name").notEmpty()));
+        assertEquals(2, result.size());
+        System.out.println(result);
+    }
+
+    @Test
+    public void collection_based_filters_cannot_be_applied_to_multi_level_expressions() {
+
+        try {
             where("$.store.*").size(4);
             fail("This should have thrown an exception");
-          } catch(IllegalArgumentException e){
-            
-          }
-          
-          try{
+        } catch (IllegalArgumentException e) {
+
+        }
+
+        try {
             where("$.store.*").in("foo");
             fail("This should have thrown an exception");
-          } catch(IllegalArgumentException e){
-            
-          }
+        } catch (IllegalArgumentException e) {
+
         }
+    }
 
 }

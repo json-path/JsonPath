@@ -26,8 +26,6 @@
     <name>json-path</name>
     <url>http://code.google.com/p/json-path/</url>
     <dependencies>
-
-
         <dependency>
             <groupId>net.minidev</groupId>
             <artifactId>json-smart</artifactId>
@@ -41,33 +39,6 @@
             <artifactId>jackson-mapper-asl</artifactId>
             <optional>true</optional>
         </dependency>
-
-
-        <!-- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~ -->
-        <!-- test dependencies            -->
-        <!-- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~ -->
-
-
-        <dependency>
-            <groupId>org.hamcrest</groupId>
-            <artifactId>hamcrest-library</artifactId>
-            <scope>test</scope>
-        </dependency>
-
-        <dependency>
-            <groupId>junit</groupId>
-            <artifactId>junit</artifactId>
-            <scope>test</scope>
-        </dependency>
-        
-        <dependency>
-            <groupId>commons-io</groupId>
-            <artifactId>commons-io</artifactId>
-            <scope>test</scope>
-        </dependency>
-        
-
-
     </dependencies>
 
     <build>

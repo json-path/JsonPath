@@ -77,6 +77,23 @@ public class JsonPathTest {
 
     private final static String ARRAY_EXPAND = "[{\"parent\": \"ONE\", \"child\": {\"name\": \"NAME_ONE\"}}, [{\"parent\": \"TWO\", \"child\": {\"name\": \"NAME_TWO\"}}]]";
 
+    @Test
+    public void bracket_notation_with_dots() {
+        String json = "{\n" +
+                "    \"store\": {\n" +
+                "        \"book\": [\n" +
+                "            {\n" +
+                "                \"author.name\": \"Nigel Rees\", \n" +
+                "                \"category\": \"reference\", \n" +
+                "                \"price\": 8.95, \n" +
+                "                \"title\": \"Sayings of the Century\"\n" +
+                "            }\n" +
+                "        ]\n" +
+                "    }\n" +
+                "}";
+
+        assertEquals("Nigel Rees", JsonPath.read(json, "$.store.book[0]['author.name']"));
+    }
 
     @Test
     public void null_object_in_path() {
