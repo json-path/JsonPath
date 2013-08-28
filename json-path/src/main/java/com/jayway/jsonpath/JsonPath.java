@@ -16,14 +16,16 @@ package com.jayway.jsonpath;
 
 
 import com.jayway.jsonpath.internal.IOUtils;
-import com.jayway.jsonpath.internal.Log;
 import com.jayway.jsonpath.internal.PathToken;
 import com.jayway.jsonpath.internal.PathTokenizer;
 import com.jayway.jsonpath.internal.filter.PathTokenFilter;
 import com.jayway.jsonpath.spi.HttpProviderFactory;
 import com.jayway.jsonpath.spi.JsonProvider;
 import com.jayway.jsonpath.spi.JsonProviderFactory;
+
 import org.apache.commons.lang3.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -105,6 +107,8 @@ public class JsonPath {
 
     private PathTokenizer tokenizer;
     private LinkedList<Filter> filters;
+    
+    private final Logger logger = LoggerFactory.getLogger(JsonPath.class);
 
     private JsonPath(String jsonPath, Filter[] filters) {
 
@@ -122,9 +126,7 @@ public class JsonPath {
 
         this.tokenizer = new PathTokenizer(jsonPath);
 
-        if(Log.isDebugEnabled()){
-            Log.debug("New JsonPath:\n{}", this.tokenizer.toString());
-        }
+        logger.debug("New JsonPath:\n{}", this.tokenizer);
 
         this.filters = new LinkedList<Filter>();
         this.filters.addAll(asList(filters));
