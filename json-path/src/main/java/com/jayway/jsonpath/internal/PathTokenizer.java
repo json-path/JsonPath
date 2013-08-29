@@ -20,11 +20,14 @@ import java.util.Formatter;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.regex.Pattern;
 
 /**
  * @author Kalle Stenflo
  */
 public class PathTokenizer implements Iterable<PathToken> {
+
+    private static Pattern INVALID_PATH_PATTERN = Pattern.compile("[^\\?\\+=\\-\\*/!]\\(");
 
     private List<PathToken> pathTokens = new LinkedList<PathToken>();
 
@@ -33,15 +36,22 @@ public class PathTokenizer implements Iterable<PathToken> {
 
     public PathTokenizer(String jsonPath) {
 
+        if (INVALID_PATH_PATTERN.matcher(jsonPath).matches()) {
+            throw new InvalidPathException("Invalid path: " + jsonPath);
+        }
+
         if (!jsonPath.startsWith("$") && !jsonPath.startsWith("$[")) {
             jsonPath = "$." + jsonPath;
         }
+
         this.pathChars = jsonPath.toCharArray();
 
 
+        List<String> tokens = splitPath();
+        int len = tokens.size();
         int i = 0;
-        for (String pathFragment : splitPath()) {
-            pathTokens.add(new PathToken(pathFragment, i));
+        for (String pathFragment : tokens) {
+            pathTokens.add(new PathToken(pathFragment, i, (i==(len-1)) ));
             i++;
         }
     }
@@ -263,12 +273,12 @@ public class PathTokenizer implements Iterable<PathToken> {
     public String toString() {
 
         StringBuilder sb = new StringBuilder();
-        sb.append("-----------------------------------------------------------------").append("\n");
+        sb.append("---------------------------------------------------------------------------").append("\n");
         sb.append("PATH: ").append(getPath()).append("\n");
-        sb.append(String.format("%-50s%-10s%-10s", "Fragment", "Root", "Array")).append("\n");
-        sb.append("-----------------------------------------------------------------").append("\n");
+        sb.append(String.format("%-50s%-10s%-10s%-10s", "Fragment", "Root", "End", "Array")).append("\n");
+        sb.append("---------------------------------------------------------------------------").append("\n");
         for (PathToken pathToken : pathTokens) {
-            sb.append(String.format("%-50s%-10b%-10b", pathToken.getFragment(), pathToken.isRootToken(), pathToken.isArrayIndexToken())).append("\n");;
+            sb.append(String.format("%-50s%-10b%-10b%-10b", pathToken.getFragment(), pathToken.isRootToken(), pathToken.isEndToken(), pathToken.isArrayIndexToken())).append("\n");
         }
         return sb.toString();
 

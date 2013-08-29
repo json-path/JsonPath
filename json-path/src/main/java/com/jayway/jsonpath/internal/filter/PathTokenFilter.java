@@ -56,4 +56,8 @@ public abstract class PathTokenFilter {
 
     public abstract boolean isArrayFilter();
 
+    @Override
+    public String toString() {
+        return getClass().getSimpleName() + " => " + condition;
+    }
 }

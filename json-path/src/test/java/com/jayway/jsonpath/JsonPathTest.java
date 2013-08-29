@@ -115,7 +115,11 @@ public class JsonPathTest {
                 "  \"version\": 1371160528774\n" +
                 "}";
 
-        System.out.println(JsonPath.read(json, "$.data.passes[0].id"));
+
+//        System.out.println(JsonPath.read(json, "$.data.passes[0].id"));
+
+
+
         System.out.println(JsonPath.isPathDefinite("$.data.passes[0].id"));
 
         System.out.println(JsonPath.read(json, "$.data2.passes[0].id"));
@@ -123,8 +127,7 @@ public class JsonPathTest {
 
     }
 
-    @Test
-    public void array_start_expands() throws Exception {
+    @Test public void array_start_expands() throws Exception {
         //assertThat(JsonPath.<List<String>>read(ARRAY_EXPAND, "$[?(@.parent = 'ONE')].child.name"), hasItems("NAME_ONE"));
         assertThat(JsonPath.<List<String>>read(ARRAY_EXPAND, "$[?(@['parent'] == 'ONE')].child.name"), hasItems("NAME_ONE"));
     }

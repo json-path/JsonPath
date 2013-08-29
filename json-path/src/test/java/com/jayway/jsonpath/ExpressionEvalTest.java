@@ -2,6 +2,7 @@ package com.jayway.jsonpath;
 
 import com.jayway.jsonpath.internal.filter.eval.ExpressionEvaluator;
 import org.codehaus.jackson.node.BigIntegerNode;
+import org.junit.Ignore;
 import org.junit.Test;
 
 import java.math.BigDecimal;
@@ -188,6 +189,7 @@ public class ExpressionEvalTest {
 
 
     @Test
+    @Ignore //TODO: finalize behaviour
     public void nulls_filter() {
 
         List<Map<String, Object>> result = JsonPath.read(DOCUMENT, "$.characters[?(@.offspring == null)]");

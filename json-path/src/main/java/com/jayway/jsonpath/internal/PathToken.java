@@ -27,15 +27,18 @@ import java.util.regex.Pattern;
  */
 public class PathToken {
     
-    private static final Pattern ARRAY_INDEX_PATTERN = Pattern.compile("\\[(\\d+)\\]");
+    private static final Pattern ARRAY_INDEX_PATTERN = Pattern.compile("\\[(\\d+)]");
 
-    private String fragment;
+    private final String fragment;
 
-    private int tokenIndex;
+    private final int tokenIndex;
 
-    public PathToken(String fragment, int tokenIndex) {
+    private final boolean endToken;
+
+    public PathToken(String fragment, int tokenIndex, boolean isEndToken) {
         this.fragment = fragment;
         this.tokenIndex = tokenIndex;
+        this.endToken = isEndToken;
     }
 
     public PathTokenFilter getFilter(){
@@ -57,6 +60,11 @@ public class PathToken {
     public boolean isRootToken(){
         return this.tokenIndex == 0;
     }
+
+    public boolean isEndToken(){
+        return this.endToken;
+    }
+
     public boolean isArrayIndexToken(){
         return ARRAY_INDEX_PATTERN.matcher(fragment).matches();   
     }

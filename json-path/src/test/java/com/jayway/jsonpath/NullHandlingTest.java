@@ -7,6 +7,7 @@ import java.util.List;
 import java.util.Map;
 
 import static junit.framework.Assert.assertEquals;
+import static junit.framework.Assert.assertNull;
 import static org.hamcrest.MatcherAssert.assertThat;
 
 /**
@@ -39,12 +40,20 @@ public class NullHandlingTest {
 
 
     @Test(expected = PathNotFoundException.class)
-    public void not_defined_property_throws_PathNotFoundException () {
-         JsonPath.read(DOCUMENT, "$.children[2].age");
+    public void not_defined_property_throws_PathNotFoundException() {
+        assertNull(JsonPath.read(DOCUMENT, "$.children[0].child.age"));
     }
 
+
     @Test
-    public void null_property_returns_null () {
+    public void last_token_defaults_to_null() {
+
+        assertNull(JsonPath.read(DOCUMENT, "$.children[2].age"));
+    }
+
+
+    @Test
+    public void null_property_returns_null() {
         Integer age = JsonPath.read(DOCUMENT, "$.children[1].age");
         assertEquals(null, age);
     }
@@ -55,12 +64,13 @@ public class NullHandlingTest {
 
         assertThat(result, Matchers.hasItems(0, null));
     }
+
     @Test
-    public void path2(){
+    public void path2() {
         System.out.println(JsonPath.read("{\"a\":[{\"b\":1,\"c\":2},{\"b\":5,\"c\":2}]}", "a[?(@.b==4)].c"));
     }
 
-    public void path(){
+    public void path() {
         System.out.println(JsonPath.read("{\"a\":[{\"b\":1,\"c\":2},{\"b\":5,\"c\":2}]}", "a[?(@.b==5)].d"));
     }
 

@@ -16,6 +16,7 @@ package com.jayway.jsonpath.internal.filter;
 
 import com.jayway.jsonpath.Filter;
 import com.jayway.jsonpath.PathNotFoundException;
+import com.jayway.jsonpath.internal.PathToken;
 import com.jayway.jsonpath.spi.JsonProvider;
 
 import java.util.Collection;
@@ -27,9 +28,11 @@ import java.util.LinkedList;
 public class FieldFilter extends PathTokenFilter {
 
     private final String[] split;
+    private final PathToken pathToken;
 
-    public FieldFilter(String condition) {
-        super(condition);
+    public FieldFilter(PathToken pathToken) {
+        super(pathToken.getFragment());
+        this.pathToken = pathToken;
         this.split = condition.split("','");
     }
 
@@ -73,7 +76,13 @@ public class FieldFilter extends PathTokenFilter {
 
             Collection<String> keys = jsonProvider.getPropertyKeys(obj);
             if(!keys.contains(condition) && split.length == 1){
-                throw new PathNotFoundException("Path '" + condition + "' not found in the current context:\n" + jsonProvider.toJson(obj));
+                //TODO: finalize behaviour
+                //throw new PathNotFoundException("Path '" + condition + "' not found in the current context:\n" + jsonProvider.toJson(obj));
+                if(pathToken.isEndToken()){
+                    return null;
+                } else {
+                    throw new PathNotFoundException("Path '" + condition + "' not found in the current context:\n" + jsonProvider.toJson(obj));
+                }
             } else {
 
                 if(split.length == 1){
