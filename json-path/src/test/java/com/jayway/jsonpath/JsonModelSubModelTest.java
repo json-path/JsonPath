@@ -91,7 +91,7 @@ public class JsonModelSubModelTest {
         JsonModel subModel = model.getSubModel("store.book[0]");
         subModel.opsForObject().transform(new Transformer<Map<String, Object>>() {
             @Override
-            public Object transform(Map<String, Object> obj) {
+            public Object transform(Map<String, Object> obj, Configuration configuration) {
                 return Collections.singletonMap("prop", "new");
             }
         });
@@ -106,7 +106,7 @@ public class JsonModelSubModelTest {
         JsonModel subModel = model.getSubModel("store.bicycle.book");
         subModel.opsForObject().transform(new Transformer<Map<String, Object>>() {
             @Override
-            public Object transform(Map<String, Object> obj) {
+            public Object transform(Map<String, Object> obj, Configuration configuration) {
                 return Collections.singletonMap("prop", "new");
             }
         });

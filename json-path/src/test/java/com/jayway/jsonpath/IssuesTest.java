@@ -134,14 +134,14 @@ public class IssuesTest {
         //Configuration configuration = Configuration.defaultConfiguration();
 
         String json = "{\"a\":{\"b\":1,\"c\":2}}";
-        System.out.println(JsonPath.read(configuration, json, "a.d"));
+        System.out.println(JsonPath.parse(json, configuration).read("a.d"));
     }
     @Test
     public void issue_22c() throws Exception {
         Configuration configuration = Configuration.builder().build();
 
         String json = "{\"a\":{\"b\":1,\"c\":2}}";
-        assertNull(JsonPath.read(configuration, json, "a.d"));
+        assertNull(JsonPath.parse(json, configuration).read("a.d"));
     }
 
 

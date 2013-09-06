@@ -767,7 +767,7 @@ public class JsonModel {
 
         /**
          * Allows transformations of the target object. the target for this {@link ObjectOps} will be be replaced
-         * with the {@link Object} returned by the {@link Transformer#transform(Object)}
+         * with the {@link Object} returned by the {@link Transformer#transform(Object, Configuration)}
          *
          * @param transformer the transformer to use
          * @return this {@link ObjectOps}
@@ -823,7 +823,7 @@ public class JsonModel {
 
         /**
          * Allows transformations of the target list. The target for this {@link ArrayOps} will be be replaced
-         * with the {@link Object} returned by the {@link Transformer#transform(Object)}
+         * with the {@link Object} returned by the {@link Transformer#transform(Object, Configuration)}
          *
          * @param transformer the transformer to use
          * @return this {@link ArrayOps}
@@ -922,7 +922,7 @@ public class JsonModel {
         @Override
         public ObjectOps transform(Transformer<Map<String, Object>> transformer) {
             Map targetObject = getTargetObject(jsonPath, Map.class);
-            Object transformed = transformer.transform(targetObject);
+            Object transformed = transformer.transform(targetObject, configuration);
             setTargetObject(jsonPath, transformed);
             return this;
         }
@@ -984,7 +984,7 @@ public class JsonModel {
 
         @Override
         public ArrayOps transform(Transformer<List<Object>> transformer) {
-            Object transformed = transformer.transform(getTargetObject(jsonPath, List.class));
+            Object transformed = transformer.transform(getTargetObject(jsonPath, List.class), configuration);
             setTargetObject(jsonPath, transformed);
             return this;
         }
@@ -994,7 +994,7 @@ public class JsonModel {
 
             List targetObject = getTargetObject(jsonPath, List.class);
             for (int i = 0; i < targetObject.size(); i++) {
-                targetObject.set(i, transformer.transform(targetObject.get(i)));
+                targetObject.set(i, transformer.transform(targetObject.get(i), configuration));
             }
             return this;
         }

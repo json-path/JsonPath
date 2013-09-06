@@ -255,11 +255,9 @@ public class JsonPath {
 
             result = filter.filter(result, configuration, contextFilters, inArrayContext);
 
-
             if(result == null && !pathToken.isEndToken()){
                 throw new PathNotFoundException("Path token: '" + pathToken.getFragment() + "' not found.");
             }
-
 
             if (!inArrayContext) {
                 inArrayContext = filter.isArrayFilter();
@@ -508,56 +506,140 @@ public class JsonPath {
     }
 
 
-    //-------
+    // --------------------------------------------------------
+    //
+    // Static Fluent API
+    //
+    // --------------------------------------------------------
+
+
+    /**
+     * Creates a {@link ParseContext} that can be used to parse a given JSON input.
+     *
+     * @param configuration configuration to use when parsing JSON
+     * @return a parsing context based on given configuration
+     */
     public static ParseContext using(Configuration configuration){
         return new JsonReader(configuration);
     }
 
+    /**
+     * Creates a {@link ParseContext} that will parse a given JSON input.
+     *
+     * @param provider provider to use when parsing JSON
+     * @return a parsing context based on given provider
+     */
     public static ParseContext using(JsonProvider provider){
         return new JsonReader(Configuration.builder().jsonProvider(provider).build());
     }
 
-    public static ReadContext parse(Object json, Configuration configuration) {
-        return new JsonReader(configuration).parse(json);
-    }
-
+    /**
+     * Parses the given JSON input using the default {@link Configuration} and
+     * returns a {@link ReadContext} for path evaluation
+     *
+     * @param json input
+     * @return a read context
+     */
     public static ReadContext parse(Object json) {
         return new JsonReader().parse(json);
     }
 
-    public static ReadContext parse(String json, Configuration configuration){
-        return new JsonReader(configuration).parse(json);
-    }
-
+    /**
+     * Parses the given JSON input using the default {@link Configuration} and
+     * returns a {@link ReadContext} for path evaluation
+     *
+     * @param json string
+     * @return a read context
+     */
     public static ReadContext parse(String json) {
         return new JsonReader().parse(json);
     }
 
-    public static ReadContext parse(InputStream json, Configuration configuration) {
-        return new JsonReader(configuration).parse(json);
-    }
-
+    /**
+     * Parses the given JSON input using the default {@link Configuration} and
+     * returns a {@link ReadContext} for path evaluation
+     *
+     * @param json stream
+     * @return a read context
+     */
     public static ReadContext parse(InputStream json) {
         return new JsonReader().parse(json);
     }
 
-    public static ReadContext parse(File json, Configuration configuration) throws IOException {
-        return new JsonReader(configuration).parse(json);
-    }
-
+    /**
+     * Parses the given JSON input using the default {@link Configuration} and
+     * returns a {@link ReadContext} for path evaluation
+     *
+     * @param json file
+     * @return a read context
+     */
     public static ReadContext parse(File json) throws IOException {
         return new JsonReader().parse(json);
     }
 
-
-    @SuppressWarnings({"unchecked"})
-    public static <T> T read(Configuration configuration, Object json, String path, Filter... filters){
-        return compile(path, filters).read(json, configuration);
+    /**
+     * Parses the given JSON input using the default {@link Configuration} and
+     * returns a {@link ReadContext} for path evaluation
+     *
+     * @param json url
+     * @return a read context
+     */
+    public static ReadContext parse(URL json) throws IOException {
+        return new JsonReader().parse(json);
     }
 
-    @SuppressWarnings({"unchecked"})
-    public static <T> T read(Configuration configuration, String json, String path, Filter... filters){
-        return read(configuration, configuration.getProvider().parse(json), path, filters);
+    /**
+     * Parses the given JSON input using the provided {@link Configuration} and
+     * returns a {@link ReadContext} for path evaluation
+     *
+     * @param json input
+     * @return a read context
+     */
+    public static ReadContext parse(Object json, Configuration configuration) {
+        return new JsonReader(configuration).parse(json);
     }
 
+    /**
+     * Parses the given JSON input using the provided {@link Configuration} and
+     * returns a {@link ReadContext} for path evaluation
+     *
+     * @param json input
+     * @return a read context
+     */
+    public static ReadContext parse(String json, Configuration configuration){
+        return new JsonReader(configuration).parse(json);
+    }
+
+    /**
+     * Parses the given JSON input using the provided {@link Configuration} and
+     * returns a {@link ReadContext} for path evaluation
+     *
+     * @param json input
+     * @return a read context
+     */
+    public static ReadContext parse(InputStream json, Configuration configuration) {
+        return new JsonReader(configuration).parse(json);
+    }
+
+    /**
+     * Parses the given JSON input using the provided {@link Configuration} and
+     * returns a {@link ReadContext} for path evaluation
+     *
+     * @param json input
+     * @return a read context
+     */
+    public static ReadContext parse(File json, Configuration configuration) throws IOException {
+        return new JsonReader(configuration).parse(json);
+    }
+
+    /**
+     * Parses the given JSON input using the provided {@link Configuration} and
+     * returns a {@link ReadContext} for path evaluation
+     *
+     * @param json input
+     * @return a read context
+     */
+    public static ReadContext parse(URL json, Configuration configuration) throws IOException {
+        return new JsonReader(configuration).parse(json);
+    }
 }

@@ -22,9 +22,10 @@ public interface Transformer<T> {
     /**
      *
      * @param obj object to transform
+     * @param configuration configuration to use
      * @return the transformed object
      */
-    public Object transform(T obj);
+    public Object transform(T obj, Configuration configuration);
 
 
 

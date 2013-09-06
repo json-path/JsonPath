@@ -35,7 +35,6 @@ public class ReadConfigurationTest {
 
         JsonPath.using(configuration).parse("{}").read("$");
 
-        JsonPath.read(configuration, "{}", "$");
 
 
 
