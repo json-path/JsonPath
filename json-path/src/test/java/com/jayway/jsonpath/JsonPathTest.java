@@ -308,12 +308,13 @@ public class JsonPathTest {
         List<String> all = JsonPath.read(DOCUMENT, "$..*");
     }
 
-    @Test(expected = IndexOutOfBoundsException.class)
+    @Test(expected = PathNotFoundException.class)
     public void access_index_out_of_bounds_does_not_throw_exception() throws Exception {
 
         Object res = JsonPath.read(DOCUMENT, "$.store.book[100].author");
 
     }
+
 
 
 

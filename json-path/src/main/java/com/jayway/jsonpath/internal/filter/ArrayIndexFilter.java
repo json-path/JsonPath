@@ -15,6 +15,7 @@
 package com.jayway.jsonpath.internal.filter;
 
 import com.jayway.jsonpath.Configuration;
+import com.jayway.jsonpath.PathNotFoundException;
 import com.jayway.jsonpath.spi.JsonProvider;
 
 import java.util.regex.Pattern;
@@ -101,20 +102,30 @@ public class ArrayIndexFilter extends PathTokenFilter {
         } else {
             String[] indexArr = COMMA.split(trimmedCondition);
 
-            if(obj == null || jsonProvider.length(obj) == 0){
-                //throw new PathNotFoundException("Failed to access array index: '" + condition + "' since the array is null or empty");
+            //if(obj == null || jsonProvider.length(obj) == 0){
+            if(obj == null){
                 return result;
             }
 
-            if (indexArr.length == 1) {
-                return jsonProvider.getProperty(obj, indexArr[0]);
+            try {
+                if (indexArr.length == 1) {
+                    /*
+                    if(jsonProvider.length(obj) == 0){
+                        throw new PathNotFoundException("Array index [" + indexArr[0] + "] not found in path");
+                    }
+                    */
 
-            } else {
-                for (String idx : indexArr) {
-                    jsonProvider.setProperty(result, jsonProvider.length(result), jsonProvider.getProperty(obj, idx.trim()));
+                    return jsonProvider.getProperty(obj, indexArr[0]);
+                } else {
+                    for (String idx : indexArr) {
+                        jsonProvider.setProperty(result, jsonProvider.length(result), jsonProvider.getProperty(obj, idx.trim()));
+                    }
+                    return result;
                 }
-                return result;
+            } catch (IndexOutOfBoundsException e){
+                throw new PathNotFoundException("Array index " + indexArr + " not found in path", e);
             }
+
         }
     }
 
