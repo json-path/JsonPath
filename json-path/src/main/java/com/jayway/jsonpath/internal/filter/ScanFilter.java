@@ -15,6 +15,7 @@
 package com.jayway.jsonpath.internal.filter;
 
 
+import com.jayway.jsonpath.Configuration;
 import com.jayway.jsonpath.spi.JsonProvider;
 
 /**
@@ -27,7 +28,8 @@ public class ScanFilter extends PathTokenFilter {
     }
 
     @Override
-    public Object filter(Object obj, JsonProvider jsonProvider) {
+    public Object filter(Object obj, Configuration configuration) {
+        JsonProvider jsonProvider = configuration.getProvider();
         Object result = jsonProvider.createArray();
         scan(obj, result, jsonProvider);
 
@@ -40,7 +42,7 @@ public class ScanFilter extends PathTokenFilter {
     }
 
     @Override
-    public Object getRef(Object obj, JsonProvider jsonProvider) {
+    public Object getRef(Object obj, Configuration configuration) {
         throw new UnsupportedOperationException();
     }
 

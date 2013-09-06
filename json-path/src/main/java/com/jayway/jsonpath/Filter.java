@@ -14,9 +14,11 @@
  */
 package com.jayway.jsonpath;
 
-import java.util.*;
-
 import com.jayway.jsonpath.spi.JsonProvider;
+
+import java.util.HashMap;
+import java.util.LinkedHashMap;
+import java.util.Map;
 
 /**
  * A filter is used to filter the content of a JSON array in a JSONPath.
@@ -47,14 +49,15 @@ public abstract class Filter<T> {
     /**
      * Filters the provided list based on this filter configuration
      * @param filterItems items to filter
-     * @param jsonProvider the json provider that is used to create the result list
+     * @param configuration the json provider configuration that is used to create the result list
      * @return the filtered list
      */
-    public Object doFilter(Iterable<T> filterItems, JsonProvider jsonProvider) {
-        Object result = jsonProvider.createArray();
+    public Object doFilter(Iterable<T> filterItems, Configuration configuration) {
+        JsonProvider provider = configuration.getProvider();
+        Object result = provider.createArray();
         for (T filterItem : filterItems) {
-            if (accept(filterItem)) {
-                jsonProvider.setProperty(result, jsonProvider.length(result), filterItem);
+            if (accept(filterItem, configuration)) {
+                provider.setProperty(result, provider.length(result), filterItem);
             }
         }
         return result;
@@ -66,6 +69,14 @@ public abstract class Filter<T> {
      * @return true if filter matches
      */
     public abstract boolean accept(T obj);
+
+    /**
+     * Check if this filter will accept or reject the given object
+     * @param obj item to check
+     * @param  configuration
+     * @return true if filter matches
+     */
+    public abstract boolean accept(T obj, Configuration configuration);
 
     /**
      * Adds a new criteria to this filter
@@ -86,6 +97,11 @@ public abstract class Filter<T> {
         @Override
         public boolean accept(T obj){
             return false;
+        }
+
+        @Override
+        public boolean accept(T obj, Configuration configuration){
+            return accept(obj);
         }
 
         @Override
@@ -116,8 +132,13 @@ public abstract class Filter<T> {
 
         @Override
         public boolean accept(Map<String, Object> map) {
+            return accept(map, Configuration.defaultConfiguration());
+        }
+
+        @Override
+        public boolean accept(Map<String, Object> map, Configuration configuration) {
             for (Criteria criterion : this.criteria.values()) {
-                if (!criterion.matches(map)) {
+                if (!criterion.matches(map, configuration)) {
                     return false;
                 }
             }

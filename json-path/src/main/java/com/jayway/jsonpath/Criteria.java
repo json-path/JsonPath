@@ -14,7 +14,6 @@
  */
 package com.jayway.jsonpath;
 
-import com.jayway.jsonpath.spi.JsonProvider;
 import org.apache.commons.lang3.Validate;
 
 import java.util.*;
@@ -74,7 +73,7 @@ public class Criteria {
         this.key = JsonPath.compile(key);
     }
 
-    public JsonPath getKey() {
+    JsonPath getKey() {
         return this.key;
     }
 
@@ -84,13 +83,13 @@ public class Criteria {
      * @param map map to check
      * @return true if criteria is a match
      */
-    public boolean matches(Map<String, Object> map) {
+    boolean matches(Map<String, Object> map, Configuration configuration) {
 
         if (this.criteriaChain.size() == 1) {
-            return criteriaChain.get(0).singleObjectApply(map);
+            return criteriaChain.get(0).singleObjectApply(map, configuration);
         } else {
             for (Criteria c : this.criteriaChain) {
-                if (!c.singleObjectApply(map)) {
+                if (!c.singleObjectApply(map, configuration)) {
                     return false;
                 }
             }
@@ -98,21 +97,21 @@ public class Criteria {
         }
     }
 
-    private static Object readSafely(JsonPath path, Map<String, Object> map){
-      try{
-        return path.read(map);
-      } catch (InvalidPathException e){
-        return null;
-      }
+    private static Object readSafely(JsonPath path, Map<String, Object> map) {
+        try {
+            return path.read(map);
+        } catch (InvalidPathException e) {
+            return null;
+        }
     }
 
     private static <T> boolean objectOrAnyCollectionItemMatches(final Object singleObjectOrCollection,
-        final Predicate<T> predicate){
-            if (singleObjectOrCollection instanceof Collection) {
-                Iterator it = ((Collection) singleObjectOrCollection).iterator();
-                while (it.hasNext()) {
-                    if (predicate.accept((T) it.next())) {
-                        return true;
+                                                                final Predicate<T> predicate) {
+        if (singleObjectOrCollection instanceof Collection) {
+            Iterator it = ((Collection) singleObjectOrCollection).iterator();
+            while (it.hasNext()) {
+                if (predicate.accept((T) it.next())) {
+                    return true;
                 }
             }
             return false;
@@ -120,11 +119,11 @@ public class Criteria {
         return predicate.accept((T) singleObjectOrCollection);
     }
 
-    boolean singleObjectApply(Map<String, Object> map) {
+    boolean singleObjectApply(Map<String, Object> map, final Configuration configuration) {
 
         for (CriteriaType key : this.criteria.keySet()) {
 
-            Object actualVal = readSafely(this.key, map);
+            final Object actualVal = readSafely(this.key, map);
             final Object expectedVal = this.criteria.get(key);
 
             if (CriteriaType.GT.equals(key)) {
@@ -136,10 +135,10 @@ public class Criteria {
                 final Number expectedNumber = (Number) expectedVal;
                 return objectOrAnyCollectionItemMatches(actualVal, new Predicate<Number>() {
 
-                  @Override
-                  public boolean accept(Number value) {
-                    return (value.doubleValue() > expectedNumber.doubleValue());
-                  }
+                    @Override
+                    public boolean accept(Number value) {
+                        return (value.doubleValue() > expectedNumber.doubleValue());
+                    }
                 });
 
             } else if (CriteriaType.GTE.equals(key)) {
@@ -151,10 +150,10 @@ public class Criteria {
                 final Number expectedNumber = (Number) expectedVal;
                 return objectOrAnyCollectionItemMatches(actualVal, new Predicate<Number>() {
 
-                  @Override
-                  public boolean accept(Number value) {
-                    return (value.doubleValue() >= expectedNumber.doubleValue());
-                  }
+                    @Override
+                    public boolean accept(Number value) {
+                        return (value.doubleValue() >= expectedNumber.doubleValue());
+                    }
                 });
 
             } else if (CriteriaType.LT.equals(key)) {
@@ -166,10 +165,10 @@ public class Criteria {
                 final Number expectedNumber = (Number) expectedVal;
                 return objectOrAnyCollectionItemMatches(actualVal, new Predicate<Number>() {
 
-                  @Override
-                  public boolean accept(Number value) {
-                    return (value.doubleValue() < expectedNumber.doubleValue());
-                  }
+                    @Override
+                    public boolean accept(Number value) {
+                        return (value.doubleValue() < expectedNumber.doubleValue());
+                    }
                 });
 
             } else if (CriteriaType.LTE.equals(key)) {
@@ -181,14 +180,14 @@ public class Criteria {
                 final Number expectedNumber = (Number) expectedVal;
                 return objectOrAnyCollectionItemMatches(actualVal, new Predicate<Number>() {
 
-                  @Override
-                  public boolean accept(Number value) {
-                    return (value.doubleValue() <= expectedNumber.doubleValue());
-                  }
+                    @Override
+                    public boolean accept(Number value) {
+                        return (value.doubleValue() <= expectedNumber.doubleValue());
+                    }
                 });
 
             } else if (CriteriaType.NE.equals(key)) {
-              
+
                 return objectOrAnyCollectionItemMatches(actualVal, new Predicate<Object>() {
 
                     @Override
@@ -231,13 +230,13 @@ public class Criteria {
 
             } else if (CriteriaType.NOT_EMPTY.equals(key)) {
 
-                if(actualVal == null){
+                if (actualVal == null) {
                     return false;
                 }
                 boolean empty = false;
                 if (actualVal instanceof Collection) {
                     empty = ((List) actualVal).isEmpty();
-                } else if(actualVal instanceof String){
+                } else if (actualVal instanceof String) {
                     empty = ((String) actualVal).isEmpty();
                 }
 
@@ -245,53 +244,56 @@ public class Criteria {
 
             } else if (CriteriaType.EXISTS.equals(key)) {
 
-              final boolean exp = (Boolean) expectedVal;
-              return objectOrAnyCollectionItemMatches(map, new Predicate<Object>() {
+                final boolean exp = (Boolean) expectedVal;
+                return objectOrAnyCollectionItemMatches(map, new Predicate<Object>() {
+                    @Override
+                    public boolean accept(final Object value) {
+                        boolean act = true;
+                        Object res;
+                        try {
+                            res = getKey().read(value, configuration.options(Option.THROW_ON_MISSING_PROPERTY));
 
-                @Override
-                public boolean accept(final Object value) {
-                  boolean act = true;
-                  try {
-                    Object val = getKey().read(value);
-                    if(val instanceof Collection){
-                      act = !((Collection) val).isEmpty();
+                            if(configuration.getProvider().isArray(res)){
+                                if(getKey().isPathDefinite()){
+                                    act = true;
+                                } else {
+                                    act = (configuration.getProvider().length(res) > 0);
+                                }
+                            }
+                        } catch (InvalidPathException e) {
+                            act = false;
+                        }
+                        return act == exp;
                     }
-                  } catch (InvalidPathException e) {
-                    act = false;
-                  }
-                  return act == exp;
-
-                }
-
-              });
+                });
 
             } else if (CriteriaType.TYPE.equals(key)) {
 
                 final Class<?> exp = (Class<?>) expectedVal;
                 return objectOrAnyCollectionItemMatches(actualVal, new Predicate<Object>() {
 
-                  @Override
-                  public boolean accept(Object value) {
-                    Class<?> act = value == null ? null : value.getClass();
-                    if (act == null) {
-                      return false;
-                    } else {
-                      return act.equals(exp);
+                    @Override
+                    public boolean accept(Object value) {
+                        Class<?> act = value == null ? null : value.getClass();
+                        if (act == null) {
+                            return false;
+                        } else {
+                            return act.equals(exp);
+                        }
                     }
-                  }
                 });
 
             } else if (CriteriaType.REGEX.equals(key)) {
                 final Pattern exp = (Pattern) expectedVal;
-                
+
                 return objectOrAnyCollectionItemMatches(actualVal, new Predicate<String>() {
 
-                  @Override
-                  public boolean accept(String value) {
-                    return value != null && exp.matcher(value).matches();
-                  }
+                    @Override
+                    public boolean accept(String value) {
+                        return value != null && exp.matcher(value).matches();
+                    }
                 });
-               
+
 
             } else {
                 throw new UnsupportedOperationException("Criteria type not supported: " + key.name());
@@ -303,7 +305,7 @@ public class Criteria {
                 Collection<Criteria> cs = (Collection<Criteria>) isValue;
                 for (Criteria crit : cs) {
                     for (Criteria c : crit.criteriaChain) {
-                        if (!c.singleObjectApply(map)) {
+                        if (!c.singleObjectApply(map, configuration)) {
                             return false;
                         }
                     }
@@ -314,13 +316,13 @@ public class Criteria {
                 return objectOrAnyCollectionItemMatches(actualVal, new Predicate<Object>() {
                     @Override
                     public boolean accept(Object value) {
-                       if (isValue == null) {
+                        if (isValue == null) {
                             return value == null;
                         } else {
                             return isValue.equals(value);
                         }
                     }
-                  
+
                 });
             }
         } else {
@@ -450,12 +452,12 @@ public class Criteria {
     }
 
     /**
-      * The <code>in</code> operator is analogous to the SQL IN modifier, allowing you
-      * to specify an array of possible matches.
-      *
-      * @param c the collection containing the values to match against
-      * @return
-      */
+     * The <code>in</code> operator is analogous to the SQL IN modifier, allowing you
+     * to specify an array of possible matches.
+     *
+     * @param c the collection containing the values to match against
+     * @return
+     */
     public Criteria in(Collection<?> c) {
         notNull(c, "collection can not be null");
         checkFilterCanBeApplied(CriteriaType.IN);
@@ -498,6 +500,7 @@ public class Criteria {
     public Criteria all(Object... o) {
         return all(Arrays.asList(o));
     }
+
     /**
      * The <code>all</code> operator is similar to $in, but instead of matching any value in the specified array all values in the array must be matched.
      *
@@ -603,14 +606,14 @@ public class Criteria {
         criteriaChain.add(new Criteria("$and").is(asList(criteria)));
         return this;
     }
-    
-    private void checkFilterCanBeApplied(CriteriaType type){
-      if (getKey().getTokenizer().size() > 2){
-        throw new IllegalArgumentException("Cannot use "+type+" filter on a multi-level path expression");
-      }
+
+    private void checkFilterCanBeApplied(CriteriaType type) {
+        if (getKey().getTokenizer().size() > 2) {
+            throw new IllegalArgumentException("Cannot use " + type + " filter on a multi-level path expression");
+        }
     }
 
-    
+
     private interface Predicate<T> {
         boolean accept(T value);
     }

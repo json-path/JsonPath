@@ -16,8 +16,8 @@ package com.jayway.jsonpath;
 
 import com.jayway.jsonpath.internal.ConvertUtils;
 import com.jayway.jsonpath.internal.JsonFormatter;
+import com.jayway.jsonpath.internal.JsonReader;
 import com.jayway.jsonpath.internal.PathToken;
-import com.jayway.jsonpath.internal.IOUtils;
 import com.jayway.jsonpath.spi.JsonProvider;
 import com.jayway.jsonpath.spi.JsonProviderFactory;
 import com.jayway.jsonpath.spi.MappingProviderFactory;
@@ -28,7 +28,8 @@ import java.net.URL;
 import java.util.*;
 
 import static java.util.Arrays.asList;
-import static org.apache.commons.lang3.Validate.*;
+import static org.apache.commons.lang3.Validate.isTrue;
+import static org.apache.commons.lang3.Validate.notNull;
 
 /**
  * A JsonModel holds a parsed JSON document and provides easy read and write operations. In contrast to the
@@ -41,69 +42,27 @@ public class JsonModel {
 
     private static final JsonPath JSON_PATH_ROOT = JsonPath.compile("$");
     private Object jsonObject;
-    private JsonProvider jsonProvider;
+    private Configuration configuration;
 
     // --------------------------------------------------------
     //
     // Constructors
     //
     // --------------------------------------------------------
-
-    private JsonModel(String jsonObject, JsonProvider jsonProvider) {
+    private JsonModel(Object jsonObject, Configuration configuration) {
         notNull(jsonObject, "json can not be null");
+        notNull(configuration, "configuration can not be null");
 
-        this.jsonProvider = jsonProvider;
-        this.jsonObject = jsonProvider.parse(jsonObject);
-    }
-
-    /**
-     * Creates a new JsonModel based on a json document.
-     * Note that the jsonObject must either a {@link List} or a {@link Map}
-     *
-     * @param jsonObject   the json object
-     * @param jsonProvider
-     */
-    private JsonModel(Object jsonObject, JsonProvider jsonProvider) {
-        notNull(jsonObject, "json can not be null");
-
-        if (!jsonProvider.isContainer(jsonObject)) {
+        if (!configuration.getProvider().isContainer(jsonObject)) {
             throw new IllegalArgumentException("Invalid container object");
         }
-        this.jsonProvider = jsonProvider;
+        this.configuration = configuration;
         this.jsonObject = jsonObject;
     }
 
-    /**
-     * Creates a new JsonModel based on an {@link InputStream}
-     *
-     * @param jsonInputStream the input stream
-     * @param jsonProvider
-     */
-    private JsonModel(InputStream jsonInputStream, JsonProvider jsonProvider) {
-        notNull(jsonInputStream, "jsonInputStream can not be null");
-        this.jsonProvider = jsonProvider;
-        this.jsonObject = jsonProvider.parse(jsonInputStream);
-    }
 
-    /**
-     * Creates a new JsonModel by fetching the content from the provided URL
-     *
-     * @param jsonURL      the URL to read
-     * @param jsonProvider
-     * @throws IOException failed to load URL
-     */
-    private JsonModel(URL jsonURL, JsonProvider jsonProvider) throws IOException {
-        notNull(jsonURL, "jsonURL can not be null");
 
-        InputStream jsonInputStream = null;
-        try {
-            jsonInputStream = jsonURL.openStream();
-            this.jsonObject = jsonProvider.parse(jsonInputStream);
-            this.jsonProvider = jsonProvider;
-        } finally {
-            IOUtils.closeQuietly(jsonInputStream);
-        }
-    }
+
 
     /**
      * Check if this JsonModel is holding a JSON array as to object
@@ -111,7 +70,7 @@ public class JsonModel {
      * @return true if root is an array
      */
     public boolean isList() {
-        return jsonProvider.isArray(jsonObject);
+        return configuration.getProvider().isArray(jsonObject);
     }
 
     /**
@@ -120,7 +79,7 @@ public class JsonModel {
      * @return true if root is an object
      */
     public boolean isMap() {
-        return jsonProvider.isMap(jsonObject);
+        return configuration.getProvider().isMap(jsonObject);
     }
 
     /**
@@ -154,7 +113,7 @@ public class JsonModel {
         isTrue(jsonPath.isPathDefinite(), "hasPath can only be used for definite paths");
 
         try {
-            get(jsonPath);
+            jsonPath.read(jsonObject, configuration.options(Option.THROW_ON_MISSING_PROPERTY));
         } catch (PathNotFoundException e) {
             return false;
         }
@@ -231,7 +190,7 @@ public class JsonModel {
     public <T> T get(JsonPath jsonPath) {
         notNull(jsonPath, "jsonPath can not be null");
 
-        return jsonPath.read(jsonProvider, jsonObject);
+        return jsonPath.read(jsonObject, configuration);
     }
 
     // --------------------------------------------------------
@@ -247,7 +206,7 @@ public class JsonModel {
      * @return array operations for this JsonModel
      */
     public ArrayOps opsForArray() {
-        isTrue(jsonProvider.isArray(jsonObject), "This JsonModel is not a JSON array");
+        isTrue(configuration.getProvider().isArray(jsonObject), "This JsonModel is not a JSON array");
         return opsForArray(JSON_PATH_ROOT);
     }
 
@@ -338,7 +297,7 @@ public class JsonModel {
      * @return
      */
     public String toJson(boolean prettyPrint) {
-        String json = jsonProvider.toJson(jsonObject);
+        String json = configuration.getProvider().toJson(jsonObject);
         if (prettyPrint)
             return JsonFormatter.prettyPrint(json);
         else
@@ -362,7 +321,7 @@ public class JsonModel {
     public String toJson(JsonPath jsonPath) {
         notNull(jsonPath, "jsonPath can not be null");
 
-        return jsonProvider.toJson(get(jsonPath));
+        return configuration.getProvider().toJson(get(jsonPath));
     }
 
     // --------------------------------------------------------
@@ -400,11 +359,11 @@ public class JsonModel {
 
         Object subModel = jsonPath.read(jsonObject);
 
-        if (!jsonProvider.isContainer(subModel)) {
+        if (!configuration.getProvider().isContainer(subModel)) {
             throw new InvalidModelException("The path " + jsonPath.getPath() + " returned an invalid model " + (subModel != null ? subModel.getClass() : "null"));
         }
 
-        return new JsonSubModel(subModel, this.jsonProvider, this, jsonPath);
+        return new JsonSubModel(subModel, this.configuration, this, jsonPath);
     }
     // --------------------------------------------------------
     //
@@ -436,15 +395,15 @@ public class JsonModel {
     public JsonModel getSubModelDetached(JsonPath jsonPath) {
         notNull(jsonPath, "jsonPath can not be null");
 
-        Object subModel = jsonPath.read(jsonProvider, jsonObject);
+        Object subModel = jsonPath.read(jsonObject, configuration);
 
-        if (!jsonProvider.isContainer(subModel)) {
+        if (!configuration.getProvider().isContainer(subModel)) {
             throw new InvalidModelException("The path " + jsonPath.getPath() + " returned an invalid model " + (subModel != null ? subModel.getClass() : "null"));
         }
 
-        subModel = jsonProvider.clone(subModel);
+        subModel = configuration.getProvider().clone(subModel);
 
-        return new JsonModel(subModel, this.jsonProvider);
+        return new JsonModel(subModel, configuration);
     }
 
     // --------------------------------------------------------
@@ -500,9 +459,8 @@ public class JsonModel {
      */
     public static JsonModel model(JsonProvider jsonProvider, String json) {
         notNull(jsonProvider, "jsonProvider can not be null");
-        notEmpty(json, "json can not be null or empty");
-
-        return new JsonModel(json, jsonProvider);
+        notNull(json, "jsonObject can not be null");
+        return new JsonModel(new JsonReader(jsonProvider).parse(json).json(), Configuration.builder().jsonProvider(jsonProvider).build());
     }
 
     /**
@@ -529,7 +487,7 @@ public class JsonModel {
     public static JsonModel model(JsonProvider jsonProvider, Object jsonObject) {
         notNull(jsonProvider, "jsonProvider can not be null");
         notNull(jsonObject, "jsonObject can not be null");
-        return new JsonModel(jsonObject, jsonProvider);
+        return new JsonModel(jsonObject, Configuration.builder().jsonProvider(jsonProvider).build());
     }
 
 
@@ -558,7 +516,7 @@ public class JsonModel {
         notNull(jsonProvider, "jsonProvider can not be null");
         notNull(url, "url can not be null");
 
-        return new JsonModel(url, jsonProvider);
+        return new JsonModel(new JsonReader(jsonProvider).parse(url).json(), Configuration.builder().jsonProvider(jsonProvider).build());
     }
 
     /**
@@ -586,7 +544,7 @@ public class JsonModel {
         notNull(jsonProvider, "jsonProvider can not be null");
         notNull(jsonInputStream, "jsonInputStream can not be null");
 
-        return new JsonModel(jsonInputStream, jsonProvider);
+        return new JsonModel(new JsonReader(jsonProvider).parse(jsonInputStream).json(), Configuration.builder().jsonProvider(jsonProvider).build());
     }
 
     /**
@@ -630,7 +588,7 @@ public class JsonModel {
             PathToken currentToken;
             do {
                 currentToken = tokens.poll();
-                modelRef = currentToken.apply(modelRef, jsonProvider);
+                modelRef = currentToken.apply(modelRef, this.configuration);
             } while (!tokens.isEmpty());
 
             if (modelRef.getClass().isAssignableFrom(clazz)) {
@@ -1100,8 +1058,8 @@ public class JsonModel {
         private final JsonModel parent;
         private final JsonPath subModelPath;
 
-        private JsonSubModel(Object jsonObject, JsonProvider jsonProvider, JsonModel parent, JsonPath subModelPath) {
-            super(jsonObject, jsonProvider);
+        private JsonSubModel(Object jsonObject, Configuration configuration, JsonModel parent, JsonPath subModelPath) {
+            super(jsonObject, configuration);
             this.parent = parent;
             this.subModelPath = subModelPath;
         }

@@ -14,10 +14,10 @@
  */
 package com.jayway.jsonpath.internal;
 
+import com.jayway.jsonpath.Configuration;
 import com.jayway.jsonpath.InvalidModelException;
 import com.jayway.jsonpath.internal.filter.FilterFactory;
 import com.jayway.jsonpath.internal.filter.PathTokenFilter;
-import com.jayway.jsonpath.spi.JsonProvider;
 
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -45,12 +45,12 @@ public class PathToken {
         return FilterFactory.createFilter(this);
     }
 
-    public Object filter(Object model, JsonProvider jsonProvider){
-        return FilterFactory.createFilter(this).filter(model, jsonProvider);
+    public Object filter(Object model, Configuration configuration){
+        return FilterFactory.createFilter(this).filter(model, configuration);
     }
 
-    public Object apply(Object model, JsonProvider jsonProvider){
-        return FilterFactory.createFilter(this).getRef(model, jsonProvider);
+    public Object apply(Object model, Configuration configuration){
+        return FilterFactory.createFilter(this).getRef(model, configuration);
     }
 
     public String getFragment() {

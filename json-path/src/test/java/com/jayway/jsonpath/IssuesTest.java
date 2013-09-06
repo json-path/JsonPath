@@ -13,6 +13,7 @@ import java.util.List;
 import java.util.Map;
 
 import static junit.framework.Assert.assertEquals;
+import static junit.framework.Assert.assertNull;
 import static junit.framework.Assert.assertTrue;
 import static org.junit.Assert.assertThat;
 
@@ -128,11 +129,23 @@ public class IssuesTest {
 
 
     @Test(expected = PathNotFoundException.class)
-    @Ignore //TODO: finalize behaviour
     public void issue_22() throws Exception {
+
+        Configuration configuration = Configuration.builder().options(Option.THROW_ON_MISSING_PROPERTY).build();
+        //Configuration configuration = Configuration.defaultConfiguration();
+
         String json = "{\"a\":{\"b\":1,\"c\":2}}";
-        System.out.println(JsonPath.read(json, "a.d"));
+        System.out.println(JsonPath.read(configuration, json, "a.d"));
     }
+    @Test
+    public void issue_22c() throws Exception {
+        Configuration configuration = Configuration.builder().build();
+
+        String json = "{\"a\":{\"b\":1,\"c\":2}}";
+        assertNull(JsonPath.read(configuration, json, "a.d"));
+    }
+
+
 
     @Test
     public void issue_22b() throws Exception {

@@ -190,7 +190,7 @@ public class FilterTest {
     }
 
     @Test
-    @Ignore //TODO: finalize behaviour
+    //@Ignore //TODO: finalize behaviour
     public void exists_filters_evaluates() throws Exception {
         Map<String, Object> check = new HashMap<String, Object>();
         check.put("foo", "foo");
@@ -202,7 +202,7 @@ public class FilterTest {
         assertTrue(filter(where("foo_null").exists(true)).accept(check));
         assertFalse(filter(where("foo_null").exists(false)).accept(check));
 
-        assertTrue(filter(where("bar").exists(false)).accept(check));
+        assertTrue(filter(where("bar").exists(false)).accept(check, Configuration.defaultConfiguration()));
         assertFalse(filter(where("bar").exists(true)).accept(check));
     }
 
@@ -374,7 +374,7 @@ public class FilterTest {
 
         Filter customFilter = new Filter.FilterAdapter() {
             @Override
-            public boolean accept(Object o) {
+            public boolean accept(Object o, Configuration configuration) {
                 return 1 == (Integer) o;
             }
         };
@@ -388,18 +388,19 @@ public class FilterTest {
     public void filters_can_contain_json_path_expressions() throws Exception {
         Object doc = JsonModel.model(DOCUMENT).getJsonObject();
 
+
         assertTrue(filter(where("$.store..price").gt(10)).accept(doc));
         assertFalse(filter(where("$.store..price").gte(100)).accept(doc));
         assertTrue(filter(where("$.store..category").ne("fiction")).accept(doc));
         assertFalse(filter(where("$.store.bicycle.color").ne("red")).accept(doc));
         assertTrue(filter(where("$.store.bicycle.color").ne("blue")).accept(doc));
         assertTrue(filter(where("$.store..color").exists(true)).accept(doc));
-        assertFalse(filter(where("$.store..flavor").exists(true)).accept(doc));
         assertTrue(filter(where("$.store..color").regex(Pattern.compile("^r.d$"))).accept(doc));
         assertTrue(filter(where("$.store..color").type(String.class)).accept(doc));
         assertTrue(filter(where("$.store..price").is(12.99)).accept(doc));
         assertFalse(filter(where("$.store..price").is(13.99)).accept(doc));
 
+        assertFalse(filter(where("$.store..flavor").exists(true)).accept(doc));
     }
 
     @Test

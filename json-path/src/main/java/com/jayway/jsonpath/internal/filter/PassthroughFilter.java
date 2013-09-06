@@ -14,7 +14,7 @@
  */
 package com.jayway.jsonpath.internal.filter;
 
-import com.jayway.jsonpath.spi.JsonProvider;
+import com.jayway.jsonpath.Configuration;
 
 /**
  * @author Kalle Stenflo
@@ -29,12 +29,13 @@ public class PassthroughFilter extends PathTokenFilter {
         this.isArrayFilter = isArrayFilter;
     }
 
-    public Object filter(Object obj, JsonProvider jsonProvider) {
+    @Override
+    public Object filter(Object obj, Configuration configuration) {
         return obj;
     }
 
     @Override
-    public Object getRef(Object obj, JsonProvider jsonProvider) {
+    public Object getRef(Object obj, Configuration configuration) {
         return obj;
     }
 

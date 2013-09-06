@@ -22,6 +22,11 @@ public class PathTest {
         }
 
         @Override
+        public boolean accept(Object obj, Configuration configuration) {
+            return true;
+        }
+
+        @Override
         public Filter addCriteria(Criteria criteria) {
             return this;
         }

@@ -10,6 +10,8 @@ import java.math.BigInteger;
 import java.util.List;
 import java.util.Map;
 
+import static com.jayway.jsonpath.Criteria.where;
+import static com.jayway.jsonpath.Filter.filter;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
@@ -189,10 +191,14 @@ public class ExpressionEvalTest {
 
 
     @Test
-    @Ignore //TODO: finalize behaviour
     public void nulls_filter() {
 
-        List<Map<String, Object>> result = JsonPath.read(DOCUMENT, "$.characters[?(@.offspring == null)]");
+        List<Map<String, Object>> result = JsonPath.read(DOCUMENT, "$.characters[?]", filter(where("offspring").exists(false)));
+        System.out.println(result);
+        assertEquals(1, result.size());
+
+
+        result = JsonPath.read(DOCUMENT, "$.characters[?(@.offspring == null)]");
         assertEquals(1, result.size());
 
         result = JsonPath.read(DOCUMENT, "$.characters[?(@.offspring != null)]");
@@ -200,6 +206,8 @@ public class ExpressionEvalTest {
 
         result = JsonPath.read(DOCUMENT, "$.characters[?(@.offspring)]");
         assertEquals(4, result.size());
+
+
     }
 
 

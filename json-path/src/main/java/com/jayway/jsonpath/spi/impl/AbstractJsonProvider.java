@@ -15,7 +15,6 @@
 package com.jayway.jsonpath.spi.impl;
 
 import com.jayway.jsonpath.spi.JsonProvider;
-
 import org.apache.commons.lang3.SerializationUtils;
 
 import java.io.Serializable;
