@@ -62,7 +62,11 @@ public class ArrayIndexFilter extends PathTokenFilter {
                 String trimmedCondition = trim(this.trimmedCondition, 1, 0);
                 int get = Integer.parseInt(trimmedCondition);
                 for (int i = 0; i < get; i++) {
-                    jsonProvider.setProperty(result, jsonProvider.length(result), jsonProvider.getProperty(obj, i));
+                    try {
+                        jsonProvider.setProperty(result, jsonProvider.length(result), jsonProvider.getProperty(obj, i));
+                    } catch (IndexOutOfBoundsException e){
+                        break;
+                    }
                 }
                 return result;
 
@@ -77,6 +81,10 @@ public class ArrayIndexFilter extends PathTokenFilter {
                 } else {
                     int start = jsonProvider.length(obj) + get;
                     int stop = jsonProvider.length(obj);
+
+                    if(start < 0){
+                        start = 0;
+                    }
 
                     for (int i = start; i < stop; i ++){
                         jsonProvider.setProperty(result, jsonProvider.length(result), jsonProvider.getProperty(obj, i));
