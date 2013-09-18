@@ -28,7 +28,6 @@ public class IssuesTest {
 
     @Test
     public void issue_36() {
-
         String json = "{\n" +
                 "\n" +
                 " \"arrayOfObjectsAndArrays\" : [ { \"k\" : [\"json\"] }, { \"k\":[\"path\"] }, { \"k\" : [\"is\"] }, { \"k\" : [\"cool\"] } ],\n" +
@@ -42,8 +41,6 @@ public class IssuesTest {
 
         assertEquals("[[\"json\"],[\"path\"],[\"is\"],[\"cool\"]]", o1.toString());
         assertEquals("[\"json\",\"path\",\"is\",\"cool\"]", o2.toString());
-
-
     }
 
     @Test(expected = PathNotFoundException.class)

@@ -17,19 +17,19 @@ import static junit.framework.Assert.assertEquals;
  * Date: 3/10/12
  * Time: 8:12 AM
  */
-@Ignore
+//@Ignore
 public class HttpProviderTest {
 
 
     private static final String EXPECTED = "{\n" +
             "   \"results\" : [],\n" +
-            "   \"status\" : \"REQUEST_DENIED\"\n" +
+            "   \"status\" : \"ZERO_RESULTS\"\n" +
             "}";
     
     @Test
     public void http_get() throws Exception {
 
-        URL url = new URL("http://maps.googleapis.com/maps/api/geocode/json");
+        URL url = new URL("http://maps.googleapis.com/maps/api/geocode/json?sensor=false");
 
         InputStream inputStream = null;
         try {

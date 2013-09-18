@@ -189,6 +189,26 @@ public class ExpressionEvalTest {
         assertTrue(ExpressionEvaluator.eval(null, "!=", "10"));
     }
 
+    @Test
+    public void and_operator_in_filter() {
+
+        Object o = JsonPath.read(DOCUMENT, "$.characters[?(@.name == 'Luke Skywalker' && @.occupation == 'Farm boy')]");
+
+        assertEquals("[{\"occupation\":\"Farm boy\",\"name\":\"Luke Skywalker\",\"aliases\":[\"Nerf herder\"],\"offspring\":null}]", o.toString());
+    }
+
+    @Test
+    public void not_equal_in_and_operator_filter() {
+
+
+        Object o = JsonPath.read(DOCUMENT, "$.characters[?(@.name == 'Luke Skywalker' && @.occupation != 'Farm boy')]");
+        assertEquals("[]", o.toString());
+
+        o = JsonPath.read(DOCUMENT, "$.characters[?(@.name == 'Luke Skywalker' && @.occupation != 'City boy')]");
+        assertEquals("[{\"occupation\":\"Farm boy\",\"name\":\"Luke Skywalker\",\"aliases\":[\"Nerf herder\"],\"offspring\":null}]", o.toString());
+
+
+    }
 
     @Test
     public void nulls_filter() {
