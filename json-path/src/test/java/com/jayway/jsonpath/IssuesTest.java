@@ -25,6 +25,27 @@ import static org.junit.Assert.assertThat;
  */
 public class IssuesTest {
 
+
+    @Test
+    public void issue_36() {
+
+        String json = "{\n" +
+                "\n" +
+                " \"arrayOfObjectsAndArrays\" : [ { \"k\" : [\"json\"] }, { \"k\":[\"path\"] }, { \"k\" : [\"is\"] }, { \"k\" : [\"cool\"] } ],\n" +
+                "\n" +
+                "  \"arrayOfObjects\" : [{\"k\" : \"json\"}, {\"k\":\"path\"}, {\"k\" : \"is\"}, {\"k\" : \"cool\"}]\n" +
+                "\n" +
+                " }";
+
+        Object o1 = JsonPath.read(json, "$.arrayOfObjectsAndArrays..k ");
+        Object o2 = JsonPath.read(json, "$.arrayOfObjects..k ");
+
+        assertEquals("[[\"json\"],[\"path\"],[\"is\"],[\"cool\"]]", o1.toString());
+        assertEquals("[\"json\",\"path\",\"is\",\"cool\"]", o2.toString());
+
+
+    }
+
     @Test(expected = PathNotFoundException.class)
     public void issue_11() throws Exception {
         String json = "{ \"foo\" : [] }";

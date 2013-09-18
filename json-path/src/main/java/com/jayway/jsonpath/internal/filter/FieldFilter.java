@@ -54,9 +54,12 @@ public class FieldFilter extends PathTokenFilter {
                         if(split.length == 1){
                             if (keys.contains(condition)) {
                                 Object o = jsonProvider.getProperty(current, condition);
-                                if (jsonProvider.isArray(o)) {
+
+                                boolean isArr = jsonProvider.isArray(o);
+                                boolean isEnd = pathToken.isEndToken();
+                                if (isArr && !isEnd) {
                                     for(Object item : jsonProvider.toIterable(o)){
-                                      jsonProvider.setProperty(result, jsonProvider.length(result), item);
+                                        jsonProvider.setProperty(result, jsonProvider.length(result), item);
                                     }
                                 } else {
                                     jsonProvider.setProperty(result, jsonProvider.length(result), jsonProvider.getProperty(current, condition));
