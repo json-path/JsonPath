@@ -57,6 +57,15 @@ public class JsonPathTest {
                     "      \"foo:bar\": \"fooBar\",\n" +
                     "      \"dot.notation\": \"new\",\n" +
 	                "      \"dash-notation\": \"dashes\"\n" +
+                    "    },\n" +
+                    "    \"foo\": {\n" +
+                    "      \"bar\": \"red\",\n" +
+                    "      \"red\": [\"bar\"],\n" +
+                    "      \"category\": \"reference\",\n" +
+                    "      \"category_array\": [\"reference\"],\n" +
+                    "      \"bar_hash\": [{\"red\": \"bar\"}],\n" +
+                    "      \"one\": 1,\n" +
+                    "      \"price\": 10\n" +
                     "    }\n" +
                     "  }\n" +
                     "}";
@@ -180,7 +189,7 @@ public class JsonPathTest {
 
         Map result = JsonPath.read(DOCUMENT, "$.store");
 
-        assertEquals(2, result.values().size());
+        assertEquals(3, result.values().size());
     }
 
     @Test
@@ -315,7 +324,17 @@ public class JsonPathTest {
 
     }
 
+    @Test
+    public void access_array_by_variable() {
+        assertEquals(JsonPath.read(DOCUMENT, "$.store.foo[$.store.foo.bar_hash[?(@.red)].red[0]]"), "red");
+        assertEquals(JsonPath.read(DOCUMENT, "$.store.foo[$.store.foo.red[0]]"), "red");
+        assertEquals(JsonPath.read(DOCUMENT, "$.store.book[$.store.foo.one].author"), "Evelyn Waugh");
 
+        assertThat(JsonPath.<List<String>>read(DOCUMENT, "$.store.foo[$.store.foo.bar]"), hasItems("bar"));
+        assertThat(JsonPath.<List<String>>read(DOCUMENT, "$..book[?(@.category==$.store.foo.category_array[0])].title"), hasItems("Sayings of the Century"));
+        assertThat(JsonPath.<List<String>>read(DOCUMENT, "$..book[?(@.category==$.store.foo.category)].title"), hasItems("Sayings of the Century"));
+        assertThat(JsonPath.<List<String>>read(DOCUMENT, "$..book[?(@['display-price'] < $.store.foo.price)].title"), hasItems("Sayings of the Century", "Moby Dick"));
+    }
 
 
 }

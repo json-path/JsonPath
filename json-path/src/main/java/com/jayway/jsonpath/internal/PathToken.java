@@ -45,12 +45,12 @@ public class PathToken {
         return FilterFactory.createFilter(this);
     }
 
-    public Object filter(Object model, Configuration configuration){
-        return FilterFactory.createFilter(this).filter(model, configuration);
+    public Object filter(Object model, Object root, Configuration configuration){
+        return FilterFactory.createFilter(this).filter(model, root, configuration);
     }
 
-    public Object apply(Object model, Configuration configuration){
-        return FilterFactory.createFilter(this).getRef(model, configuration);
+    public Object apply(Object model, Object root, Configuration configuration){
+        return FilterFactory.createFilter(this).getRef(model, root, configuration);
     }
 
     public String getFragment() {

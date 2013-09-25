@@ -68,6 +68,8 @@ public class FilterFactory {
                 } else {
                     throw new InvalidPathException("Failed to create PathTokenFilter for path fragment: " + pathFragment);
                 }
+            } else if (pathFragment.startsWith("[$")) {
+                return new FieldFilter(token);
             } else {
                 //[0]
                 //[0,1, ...]

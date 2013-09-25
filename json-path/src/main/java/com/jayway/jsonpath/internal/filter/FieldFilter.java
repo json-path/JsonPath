@@ -14,10 +14,7 @@
  */
 package com.jayway.jsonpath.internal.filter;
 
-import com.jayway.jsonpath.Configuration;
-import com.jayway.jsonpath.Filter;
-import com.jayway.jsonpath.Option;
-import com.jayway.jsonpath.PathNotFoundException;
+import com.jayway.jsonpath.*;
 import com.jayway.jsonpath.internal.PathToken;
 import com.jayway.jsonpath.spi.JsonProvider;
 
@@ -39,10 +36,14 @@ public class FieldFilter extends PathTokenFilter {
     }
 
     @Override
-    public Object filter(Object obj, Configuration configuration, LinkedList<Filter> filters, boolean inArrayContext) {
+    public Object filter(Object obj, Object root, Configuration configuration, LinkedList<Filter> filters, boolean inArrayContext) {
+        String condition = getCondition(root);
+        
         JsonProvider jsonProvider = configuration.getProvider();
         if (jsonProvider.isArray(obj)) {
-            if (!inArrayContext) {
+            if (isInt(condition)) {
+                return new ArrayIndexFilter("[" + condition + "]").filter(obj, root, configuration, filters, inArrayContext);
+            } else if (!inArrayContext) {
                 throw new PathNotFoundException("Path '" + condition + "' is being applied to an array. Arrays can not have attributes.");
             } else {
                 Object result = jsonProvider.createArray();
@@ -111,20 +112,24 @@ public class FieldFilter extends PathTokenFilter {
         }
     }
 
-
     @Override
-    public Object filter(Object obj, Configuration configuration) {
+    public Object filter(Object obj, Object root, Configuration configuration) {
+        String condition = getCondition(root);
         JsonProvider jsonProvider = configuration.getProvider();
         if (jsonProvider.isArray(obj)) {
-            return obj;
+            if (isInt(condition)) {
+                return new ArrayIndexFilter("[" + condition + "]").filter(obj, root, configuration);
+            } else {
+                return obj;
+            }
         } else {
             return jsonProvider.getProperty(obj, condition);
         }
     }
 
     @Override
-    public Object getRef(Object obj, Configuration configuration) {
-        return filter(obj, configuration);
+    public Object getRef(Object obj, Object root, Configuration configuration) {
+        return filter(obj, root, configuration);
     }
 
     @Override
@@ -132,5 +137,20 @@ public class FieldFilter extends PathTokenFilter {
         return false;
     }
 
+    public String getCondition(Object root) {
+        if (condition.startsWith("[$")) {
+            return JsonPath.read(root, trim(condition, 1, 1)).toString();
+        } else {
+            return condition;
+        }
+    }
 
+    private boolean isInt(String str) {
+        try {
+            Integer.parseInt(str);
+        } catch (NumberFormatException e) {
+            return false;
+        }
+        return true;
+    }
 }

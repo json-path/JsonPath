@@ -46,13 +46,13 @@ public abstract class PathTokenFilter {
         return res;
     }
 
-    public Object filter(Object obj, Configuration configuration, LinkedList<Filter> filters, boolean inArrayContext){
-        return filter(obj, configuration);
+    public Object filter(Object obj, Object root, Configuration configuration, LinkedList<Filter> filters, boolean inArrayContext){
+        return filter(obj, root, configuration);
     }
 
-    public abstract Object filter(Object obj, Configuration configuration);
+    public abstract Object filter(Object obj, Object root, Configuration configuration);
 
-    public abstract Object getRef(Object obj, Configuration configuration);
+    public abstract Object getRef(Object obj, Object root, Configuration configuration);
 
     public abstract boolean isArrayFilter();
 

@@ -575,6 +575,7 @@ public class JsonModel {
         }
 
         Object modelRef = jsonObject;
+        Object root = jsonObject;
 
         if (jsonPath.getTokenizer().size() == 1) {
             PathToken onlyToken = jsonPath.getTokenizer().iterator().next();
@@ -588,7 +589,7 @@ public class JsonModel {
             PathToken currentToken;
             do {
                 currentToken = tokens.poll();
-                modelRef = currentToken.apply(modelRef, this.configuration);
+                modelRef = currentToken.apply(modelRef, root, this.configuration);
             } while (!tokens.isEmpty());
 
             if (modelRef.getClass().isAssignableFrom(clazz)) {
