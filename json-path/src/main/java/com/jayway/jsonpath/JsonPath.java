@@ -15,15 +15,14 @@
 package com.jayway.jsonpath;
 
 
-import com.jayway.jsonpath.internal.IOUtils;
 import com.jayway.jsonpath.internal.JsonReader;
 import com.jayway.jsonpath.internal.PathToken;
 import com.jayway.jsonpath.internal.PathTokenizer;
+import com.jayway.jsonpath.internal.Utils;
 import com.jayway.jsonpath.internal.filter.PathTokenFilter;
 import com.jayway.jsonpath.spi.HttpProviderFactory;
 import com.jayway.jsonpath.spi.JsonProvider;
 import com.jayway.jsonpath.spi.JsonProviderFactory;
-import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -35,8 +34,8 @@ import java.net.URL;
 import java.util.LinkedList;
 import java.util.regex.Pattern;
 
+import static com.jayway.jsonpath.internal.Utils.*;
 import static java.util.Arrays.asList;
-import static org.apache.commons.lang3.Validate.*;
 
 /**
  * <p/>
@@ -117,7 +116,7 @@ public class JsonPath {
         notEmpty(jsonPath, "path can not be empty");
 
 
-        int filterCountInPath = StringUtils.countMatches(jsonPath, "[?]");
+        int filterCountInPath = Utils.countMatches(jsonPath, "[?]");
         isTrue(filterCountInPath == filters.length, "Filters in path ([?]) does not match provided filters.");
 
         this.tokenizer = new PathTokenizer(jsonPath);
@@ -326,7 +325,7 @@ public class JsonPath {
             in = HttpProviderFactory.getProvider().get(jsonURL);
             return read(configuration.getProvider().parse(in), configuration);
         } finally {
-            IOUtils.closeQuietly(in);
+            Utils.closeQuietly(in);
         }
     }
 
@@ -364,7 +363,7 @@ public class JsonPath {
             fis = new FileInputStream(jsonFile);
             return read(configuration.getProvider().parse(fis), configuration);
         } finally {
-            IOUtils.closeQuietly(fis);
+            Utils.closeQuietly(fis);
         }
     }
 
@@ -383,7 +382,7 @@ public class JsonPath {
         try {
             return read(JsonProviderFactory.createProvider().parse(jsonInputStream));
         } finally {
-            IOUtils.closeQuietly(jsonInputStream);
+            Utils.closeQuietly(jsonInputStream);
         }
     }
 
@@ -404,7 +403,7 @@ public class JsonPath {
         try {
             return read(configuration.getProvider().parse(jsonInputStream), configuration);
         } finally {
-            IOUtils.closeQuietly(jsonInputStream);
+            Utils.closeQuietly(jsonInputStream);
         }
     }
 

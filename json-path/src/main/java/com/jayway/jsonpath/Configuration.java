@@ -22,7 +22,7 @@ import java.util.Collections;
 import java.util.EnumSet;
 import java.util.Set;
 
-import static org.apache.commons.lang3.Validate.notNull;
+import static com.jayway.jsonpath.internal.Utils.*;
 
 /**
  * User: kalle

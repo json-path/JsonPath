@@ -1,7 +1,7 @@
 package com.jayway.jsonpath;
 
+import com.jayway.jsonpath.internal.Utils;
 import com.jayway.jsonpath.spi.impl.JacksonProvider;
-import org.apache.commons.lang3.SerializationUtils;
 import org.junit.Test;
 
 import java.io.Serializable;
@@ -60,7 +60,7 @@ public class JsonProviderTest {
 
         Serializable jsonObject = (Serializable) model(DOCUMENT).getJsonObject();
 
-        Object clone = SerializationUtils.clone(jsonObject);
+        Object clone = Utils.clone(jsonObject);
 
         System.out.println(model(clone).toJson());
 

@@ -14,13 +14,13 @@
  */
 package com.jayway.jsonpath;
 
-import org.apache.commons.lang3.Validate;
+import com.jayway.jsonpath.internal.Utils;
 
 import java.util.*;
 import java.util.regex.Pattern;
 
 import static java.util.Arrays.asList;
-import static org.apache.commons.lang3.Validate.notNull;
+import static com.jayway.jsonpath.internal.Utils.*;
 
 /**
  * @author Kalle Stenflo
@@ -60,14 +60,14 @@ public class Criteria {
 
 
     private Criteria(String key) {
-        Validate.notEmpty(key, "key can not be null or empty");
+        Utils.notEmpty(key, "key can not be null or empty");
         this.criteriaChain = new ArrayList<Criteria>();
         this.criteriaChain.add(this);
         this.key = JsonPath.compile(key);
     }
 
     private Criteria(List<Criteria> criteriaChain, String key) {
-        Validate.notEmpty(key, "key can not be null or empty");
+        Utils.notEmpty(key, "key can not be null or empty");
         this.criteriaChain = criteriaChain;
         this.criteriaChain.add(this);
         this.key = JsonPath.compile(key);

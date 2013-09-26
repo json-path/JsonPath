@@ -1,11 +1,9 @@
 package com.jayway.jsonpath;
 
-import com.jayway.jsonpath.internal.IOUtils;
-
+import com.jayway.jsonpath.internal.Utils;
 import net.minidev.json.JSONObject;
 
 import org.hamcrest.Matchers;
-import org.junit.Ignore;
 import org.junit.Test;
 
 import java.io.InputStream;
@@ -109,7 +107,7 @@ public class IssuesTest {
             is.close();
         } catch (Exception e) {
             e.printStackTrace();
-            IOUtils.closeQuietly(is);
+            Utils.closeQuietly(is);
         }
 
     }

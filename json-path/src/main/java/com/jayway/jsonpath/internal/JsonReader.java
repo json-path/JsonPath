@@ -10,8 +10,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
 
-import static org.apache.commons.lang3.Validate.notEmpty;
-import static org.apache.commons.lang3.Validate.notNull;
+import static com.jayway.jsonpath.internal.Utils.*;
 
 /**
  * User: kalle
@@ -70,7 +69,7 @@ public class JsonReader implements ParseContext, ReadContext {
             fis = new FileInputStream(json);
             parse(fis);
         } finally {
-            IOUtils.closeQuietly(fis);
+            Utils.closeQuietly(fis);
         }
         return this;
     }

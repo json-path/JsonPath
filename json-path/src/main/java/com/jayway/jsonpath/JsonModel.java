@@ -14,10 +14,10 @@
  */
 package com.jayway.jsonpath;
 
-import com.jayway.jsonpath.internal.ConvertUtils;
 import com.jayway.jsonpath.internal.JsonFormatter;
 import com.jayway.jsonpath.internal.JsonReader;
 import com.jayway.jsonpath.internal.PathToken;
+import com.jayway.jsonpath.internal.Utils;
 import com.jayway.jsonpath.spi.JsonProvider;
 import com.jayway.jsonpath.spi.JsonProviderFactory;
 import com.jayway.jsonpath.spi.MappingProviderFactory;
@@ -28,8 +28,7 @@ import java.net.URL;
 import java.util.*;
 
 import static java.util.Arrays.asList;
-import static org.apache.commons.lang3.Validate.isTrue;
-import static org.apache.commons.lang3.Validate.notNull;
+import static com.jayway.jsonpath.internal.Utils.*;
 
 /**
  * A JsonModel holds a parsed JSON document and provides easy read and write operations. In contrast to the
@@ -889,22 +888,22 @@ public class JsonModel {
 
         @Override
         public Integer getInteger(String key) {
-            return ConvertUtils.toInt(get(key));
+            return Utils.toInt(get(key));
         }
 
         @Override
         public Long getLong(String key) {
-            return ConvertUtils.toLong(get(key));
+            return Utils.toLong(get(key));
         }
 
         @Override
         public Double getDouble(String key) {
-            return ConvertUtils.toDouble(get(key));
+            return Utils.toDouble(get(key));
         }
 
         @Override
         public String getString(String key) {
-            return ConvertUtils.toString(get(key));
+            return Utils.toString(get(key));
         }
 
         @Override

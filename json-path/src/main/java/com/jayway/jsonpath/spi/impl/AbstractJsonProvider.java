@@ -14,8 +14,8 @@
  */
 package com.jayway.jsonpath.spi.impl;
 
+import com.jayway.jsonpath.internal.Utils;
 import com.jayway.jsonpath.spi.JsonProvider;
-import org.apache.commons.lang3.SerializationUtils;
 
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -30,7 +30,7 @@ public abstract class AbstractJsonProvider implements JsonProvider {
 
     @Override
     public Object clone(Object obj){
-        return SerializationUtils.clone((Serializable)obj);
+        return Utils.clone((Serializable) obj);
     }
 
     /**
