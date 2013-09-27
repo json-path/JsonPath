@@ -38,8 +38,8 @@ public class ArraySlicingTest {
 
     @Test
     public void get_by_position(){
-        int result = JsonPath.read(JSON_ARRAY, "$[3]");
-        assertEquals(7, result);
+        Integer result = JsonPath.read(JSON_ARRAY, "$[3]");
+        assertEquals(7, result.intValue());
     }
 
     @Test
@@ -76,14 +76,14 @@ public class ArraySlicingTest {
 
     @Test
     public void get_from_tail(){
-        int result = JsonPath.read(JSON_ARRAY, "$[3:]");
-        assertEquals(8, result);
+        Integer result = JsonPath.read(JSON_ARRAY, "$[3:]");
+        assertEquals(8, result.intValue());
     }
 
     @Test
     public void get_from_tail_length(){
-        int result = JsonPath.read(JSON_ARRAY, "$[(@.length -3)]");
-        assertEquals(8, result);
+        Integer result = JsonPath.read(JSON_ARRAY, "$[(@.length -3)]");
+        assertEquals(8, result.intValue());
     }
 
     @Test
