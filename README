@@ -1,7 +1,7 @@
 Java DSL for reading and testing JSON documents.
 
 ------------------------------------------
-0.9                             2013-09-26
+0.9.0                       2013-09-26
 ------------------------------------------
 - OSGI ready
 - Bug fixes
@@ -14,15 +14,27 @@ Java DSL for reading and testing JSON documents.
 - Array operations and slicing improved
     String JSON_ARRAY = "[1, 3, 5, 7, 8, 13, 20]";
 
-    JsonPath.read(JSON_ARRAY, "$[3]")     => 7				//no slicing
-    JsonPath.read(JSON_ARRAY, "$[0,1,2]") => [1,3,5]		//no slicing, multi index
-    JsonPath.read(JSON_ARRAY, "$[:3]")    => [1,3,5]		//from index 0 (inclusive) until index 3 (exclusive)
-    JsonPath.read(JSON_ARRAY, "$[1:5]")   => [3, 5, 7, 8]	//from index 1 (inclusive) until index 5 (exclusive)
-    JsonPath.read(JSON_ARRAY, "$[1:15]")  => IndexOutOfBoundsException
-    JsonPath.read(JSON_ARRAY, "$[-3:]")   => [8, 13, 20]	//from tail grab 3
+    //no slicing
+    JsonPath.read(JSON_ARRAY, "$[3]")     => 7			
 
-    JsonPath.read(JSON_ARRAY, "$[3:]")    => 8				//grab no 3 from tail
-    JsonPath.read(JSON_ARRAY, "$[(@.length -3)]") => 		//grab no 3 from tail (same as above)
+    //no slicing, multi index	
+    JsonPath.read(JSON_ARRAY, "$[0,1,2]") => [1,3,5]		
+
+    //from index 0 (inclusive) until index 3 (exclusive)
+    JsonPath.read(JSON_ARRAY, "$[:3]")    => [1,3,5]
+
+    //from index 1 (inclusive) until index 5 (exclusive)		
+    JsonPath.read(JSON_ARRAY, "$[1:5]")   => [3, 5, 7, 8]	
+    JsonPath.read(JSON_ARRAY, "$[1:15]")  => [3, 5, 7, 8, 13, 20]
+
+     //from tail grab 3 
+    JsonPath.read(JSON_ARRAY, "$[-3:]")   => [8, 13, 20]	
+
+    //grab no 3 from tail
+    JsonPath.read(JSON_ARRAY, "$[3:]")    => 8		
+	
+    //grab no 3 from tail (same as above)	
+    JsonPath.read(JSON_ARRAY, "$[(@.length -3)]") => 		
 
 - improved filter on primitives. Now you can compare with @
     String json = "{\"contents\": [1,2,3]}";
