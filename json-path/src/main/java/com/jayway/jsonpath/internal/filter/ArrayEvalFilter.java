@@ -96,8 +96,7 @@ public class ArrayEvalFilter extends PathTokenFilter {
         } catch (PathNotFoundException e){
             return false;
         } catch (RuntimeException e){
-            e.printStackTrace();
-            throw new RuntimeException(e);
+            throw e;
         }
     }
 
