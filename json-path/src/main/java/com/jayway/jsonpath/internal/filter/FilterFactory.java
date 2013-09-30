@@ -64,7 +64,7 @@ public class FilterFactory {
                     return new ArrayEvalFilter(pathFragment);
                 } else if (!pathFragment.contains("=") && !pathFragment.contains("<") && !pathFragment.contains(">")) {
                     //[?(@.isbn)]
-                    return new HasFieldFilter(pathFragment);
+                    return new HasPathFilter(pathFragment);
                 } else {
                     throw new InvalidPathException("Failed to create PathTokenFilter for path fragment: " + pathFragment);
                 }
