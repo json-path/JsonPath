@@ -15,18 +15,19 @@
 package com.jayway.jsonpath.internal.filter;
 
 import com.jayway.jsonpath.Configuration;
+import com.jayway.jsonpath.JsonPath;
+import com.jayway.jsonpath.Option;
+import com.jayway.jsonpath.PathNotFoundException;
 import com.jayway.jsonpath.spi.JsonProvider;
-
-import java.util.Collection;
 
 /**
  * @author Kalle Stenflo
  */
-public class HasFieldFilter extends PathTokenFilter {
+public class HasPathFilter extends PathTokenFilter {
 
-    private final String trimmedCondition;
+    private final JsonPath path;
 
-    public HasFieldFilter(String condition) {
+    public HasPathFilter(String condition) {
         super(condition);
         String trimmedCondition = condition;
 
@@ -35,7 +36,7 @@ public class HasFieldFilter extends PathTokenFilter {
             trimmedCondition = trimmedCondition.replace("']", "");
         }
 
-        this.trimmedCondition = trim(trimmedCondition, 5, 2);
+        this.path = JsonPath.compile(trim(trimmedCondition, 5, 2));
     }
 
     @Override
@@ -48,9 +49,11 @@ public class HasFieldFilter extends PathTokenFilter {
 
         for (Object item : src) {
             if(jsonProvider.isMap(item)){
-                Collection<String> keys = jsonProvider.getPropertyKeys(item);
-                if(keys.contains(trimmedCondition)){
+                try{
+                    path.read(item, Configuration.builder().options(Option.THROW_ON_MISSING_PROPERTY).jsonProvider(jsonProvider).build());
                     jsonProvider.setProperty(result, jsonProvider.length(result), item);
+                } catch (PathNotFoundException e){
+                    // the path was not found in the item
                 }
             }
         }

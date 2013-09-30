@@ -8,6 +8,7 @@ import java.util.Map;
 
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.hasItems;
+import static org.hamcrest.Matchers.hasSize;
 import static org.junit.Assert.*;
 
 /**
@@ -316,6 +317,12 @@ public class JsonPathTest {
     }
 
 
+    @Test
+    public void exists_filter_with_nested_path() throws Exception {
 
+        assertThat(JsonPath.<List<String>>read(DOCUMENT, "$..[?(@.bicycle.color)]"), hasSize(1));
+        assertThat(JsonPath.<List<String>>read(DOCUMENT, "$..[?(@.bicycle.numberOfGears)]"), hasSize(0));
+
+    }
 
 }
