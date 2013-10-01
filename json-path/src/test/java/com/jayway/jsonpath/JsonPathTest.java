@@ -1,12 +1,14 @@
 package com.jayway.jsonpath;
 
+import com.jayway.jsonpath.internal.spi.compiler.PathCompiler;
+import com.jayway.jsonpath.spi.json.JsonProviderFactory;
 import com.jayway.jsonpath.util.ScriptEngineJsonPath;
+import org.assertj.core.api.Assertions;
 import org.junit.Test;
 
 import java.util.List;
 import java.util.Map;
 
-import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.hasItems;
 import static org.hamcrest.Matchers.hasSize;
 import static org.junit.Assert.*;
@@ -62,6 +64,8 @@ public class JsonPathTest {
                     "  }\n" +
                     "}";
 
+    public final static Object OBJ_DOCUMENT = JsonProviderFactory.createProvider().parse(DOCUMENT);
+
 
     private final static String PRODUCT_JSON = "{\n" +
             "\t\"product\": [ {\n" +
@@ -77,6 +81,16 @@ public class JsonPathTest {
             "}";
 
     private final static String ARRAY_EXPAND = "[{\"parent\": \"ONE\", \"child\": {\"name\": \"NAME_ONE\"}}, [{\"parent\": \"TWO\", \"child\": {\"name\": \"NAME_TWO\"}}]]";
+
+
+    @Test(expected = PathNotFoundException.class)
+    public void missing_prop() {
+
+        Object read = JsonPath.using(Configuration.defaultConfiguration().options(Option.THROW_ON_MISSING_PROPERTY)).parse(DOCUMENT).read("$.store.book[*].fooBar");
+
+        System.out.println(read);
+
+    }
 
     @Test
     public void bracket_notation_with_dots() {
@@ -171,8 +185,8 @@ public class JsonPathTest {
 
     @Test
     public void read_path_with_colon() throws Exception {
-
-        assertEquals(JsonPath.read(DOCUMENT, "$.store.bicycle.foo:bar"), "fooBar");
+        //TODO: breaking v2
+        //assertEquals(JsonPath.read(DOCUMENT, "$.store.bicycle.foo:bar"), "fooBar");
         assertEquals(JsonPath.read(DOCUMENT, "$['store']['bicycle']['foo:bar']"), "fooBar");
     }
 
@@ -219,10 +233,17 @@ public class JsonPathTest {
 
     @Test
     public void all_store_properties() throws Exception {
+        /*
         List<Object> itemsInStore = JsonPath.read(DOCUMENT, "$.store.*");
 
         assertEquals(JsonPath.read(itemsInStore, "$.[0].[0].author"), "Nigel Rees");
         assertEquals(JsonPath.read(itemsInStore, "$.[0][0].author"), "Nigel Rees");
+        */
+        List<String> result = PathCompiler.tokenize("$.store.*").evaluate(OBJ_DOCUMENT, Configuration.defaultConfiguration()).getPathList();
+
+        Assertions.assertThat(result).containsOnly(
+                "$['store']['bicycle']",
+                "$['store']['book']");
     }
 
     @Test
@@ -234,9 +255,12 @@ public class JsonPathTest {
 
     @Test
     public void access_array_by_index_from_tail() throws Exception {
+        //TODO: breaking change
+        //assertThat(JsonPath.<String>read(DOCUMENT, "$..book[(@.length-1)].author"), equalTo("J. R. R. Tolkien"));
+        //assertThat(JsonPath.<String>read(DOCUMENT, "$..book[1:].author"), equalTo("J. R. R. Tolkien"));
 
-        assertThat(JsonPath.<String>read(DOCUMENT, "$..book[(@.length-1)].author"), equalTo("J. R. R. Tolkien"));
-        assertThat(JsonPath.<String>read(DOCUMENT, "$..book[1:].author"), equalTo("J. R. R. Tolkien"));
+        assertThat(JsonPath.<List<String>>read(DOCUMENT, "$..book[(@.length-1)].author"), hasItems("J. R. R. Tolkien"));
+        assertThat(JsonPath.<List<String>>read(DOCUMENT, "$..book[1:].author"), hasItems("Evelyn Waugh","Herman Melville","J. R. R. Tolkien"));
     }
 
     @Test

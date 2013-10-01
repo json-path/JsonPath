@@ -27,8 +27,12 @@ import java.net.URL;
 public interface ParseContext {
 
     ReadContext parse(String json);
+
     ReadContext parse(Object json);
-    ReadContext parse(InputStream  json);
+
+    ReadContext parse(InputStream json);
+
     ReadContext parse(File json) throws IOException;
+
     ReadContext parse(URL json) throws IOException;
 }

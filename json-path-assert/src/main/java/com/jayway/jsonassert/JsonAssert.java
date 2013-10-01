@@ -3,8 +3,7 @@ package com.jayway.jsonassert;
 
 import com.jayway.jsonassert.impl.JsonAsserterImpl;
 import com.jayway.jsonassert.impl.matcher.*;
-import com.jayway.jsonpath.spi.JsonProvider;
-import com.jayway.jsonpath.spi.JsonProviderFactory;
+import com.jayway.jsonpath.spi.json.JsonProviderFactory;
 import org.hamcrest.Matcher;
 
 import java.io.*;

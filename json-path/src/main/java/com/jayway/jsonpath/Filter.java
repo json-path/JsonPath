@@ -14,31 +14,31 @@
  */
 package com.jayway.jsonpath;
 
-import com.jayway.jsonpath.spi.JsonProvider;
+import com.jayway.jsonpath.spi.json.JsonProvider;
 
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.LinkedHashMap;
-import java.util.Map;
 
 /**
  * A filter is used to filter the content of a JSON array in a JSONPath.
- *
+ * <p/>
  * Sample
- *
+ * <p/>
  * <code>
  * String doc = {"items": [{"name" : "john"}, {"name": "bob"}]}
- *
+ * <p/>
  * List<String> names = JsonPath.read(doc, "$items[?].name", Filter.filter(Criteria.where("name").is("john"));
  * </code>
  *
- * @see Criteria
- *
  * @author Kalle Stenflo
+ * @see Criteria
  */
 public abstract class Filter<T> {
 
     /**
      * Creates a new filter based on given criteria
+     *
      * @param criteria the filter criteria
      * @return a new filter
      */
@@ -48,7 +48,8 @@ public abstract class Filter<T> {
 
     /**
      * Filters the provided list based on this filter configuration
-     * @param filterItems items to filter
+     *
+     * @param filterItems   items to filter
      * @param configuration the json provider configuration that is used to create the result list
      * @return the filtered list
      */
@@ -65,6 +66,7 @@ public abstract class Filter<T> {
 
     /**
      * Check if this filter will accept or reject the given object
+     *
      * @param obj item to check
      * @return true if filter matches
      */
@@ -72,8 +74,9 @@ public abstract class Filter<T> {
 
     /**
      * Check if this filter will accept or reject the given object
-     * @param obj item to check
-     * @param  configuration
+     *
+     * @param obj           item to check
+     * @param configuration
      * @return true if filter matches
      */
     public abstract boolean accept(T obj, Configuration configuration);
@@ -95,23 +98,24 @@ public abstract class Filter<T> {
     public static abstract class FilterAdapter<T> extends Filter<T> {
 
         @Override
-        public boolean accept(T obj){
+        public boolean accept(T obj) {
             return false;
         }
 
         @Override
-        public boolean accept(T obj, Configuration configuration){
+        public boolean accept(T obj, Configuration configuration) {
             return accept(obj);
         }
+
 
         @Override
         public Filter addCriteria(Criteria criteria) {
             throw new UnsupportedOperationException("can not add criteria to a FilterAdapter.");
         }
+
     }
 
-
-    private static class MapFilter extends FilterAdapter<Map<String, Object>> {
+    private static class MapFilter extends FilterAdapter<Object> {
 
         private HashMap<String, Criteria> criteria = new LinkedHashMap<String, Criteria>();
 
@@ -120,8 +124,8 @@ public abstract class Filter<T> {
         }
 
         public MapFilter addCriteria(Criteria criteria) {
-            Criteria existing = this.criteria.get(criteria.getKey().getPath());
-            String key = criteria.getKey().getPath();
+            String key = criteria.getKey().toString();
+            Criteria existing = this.criteria.get(key);
             if (existing == null) {
                 this.criteria.put(key, criteria);
             } else {
@@ -131,18 +135,36 @@ public abstract class Filter<T> {
         }
 
         @Override
-        public boolean accept(Map<String, Object> map) {
+        public boolean accept(Object map) {
             return accept(map, Configuration.defaultConfiguration());
         }
 
         @Override
-        public boolean accept(Map<String, Object> map, Configuration configuration) {
+        public boolean accept(Object map, Configuration configuration) {
             for (Criteria criterion : this.criteria.values()) {
                 if (!criterion.matches(map, configuration)) {
                     return false;
                 }
             }
             return true;
+        }
+
+        @Override
+        public String toString() {
+            StringBuilder sb = new StringBuilder();
+            sb.append("[?(");
+
+            Iterator<Criteria> criteriaIterator = criteria.values().iterator();
+            Criteria criterion = criteriaIterator.next();
+            sb.append(criterion.toString());
+
+            while (criteriaIterator.hasNext()) {
+                sb.append(" && ")
+                        .append(criteriaIterator.next().toString());
+            }
+            sb.append(")]");
+
+            return sb.toString();
         }
     }
 }

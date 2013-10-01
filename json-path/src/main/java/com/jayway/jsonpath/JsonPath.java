@@ -15,27 +15,22 @@
 package com.jayway.jsonpath;
 
 
-import com.jayway.jsonpath.internal.JsonReader;
-import com.jayway.jsonpath.internal.PathToken;
-import com.jayway.jsonpath.internal.PathTokenizer;
-import com.jayway.jsonpath.internal.Utils;
-import com.jayway.jsonpath.internal.filter.PathTokenFilter;
-import com.jayway.jsonpath.spi.HttpProviderFactory;
-import com.jayway.jsonpath.spi.JsonProvider;
-import com.jayway.jsonpath.spi.JsonProviderFactory;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import com.jayway.jsonpath.internal.*;
+import com.jayway.jsonpath.internal.spi.compiler.PathCompiler;
+import com.jayway.jsonpath.spi.http.HttpProviderFactory;
+import com.jayway.jsonpath.spi.json.JsonProvider;
+import com.jayway.jsonpath.spi.json.JsonProviderFactory;
+import com.jayway.jsonpath.spi.compiler.Path;
 
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
-import java.util.LinkedList;
+import java.util.List;
 import java.util.regex.Pattern;
 
 import static com.jayway.jsonpath.internal.Utils.*;
-import static java.util.Arrays.asList;
 
 /**
  * <p/>
@@ -100,46 +95,14 @@ import static java.util.Arrays.asList;
  */
 public class JsonPath {
 
-    private static final Logger LOG = LoggerFactory.getLogger(JsonPath.class.getName());
+    private static final Pattern DEFINITE_PATH_PATTERN = Pattern.compile(".*(\\.\\.|\\*|\\[[\\\\/]|\\?|,|:\\s?]|\\[\\s?:|>|\\(|<|=|\\+).*");
 
-    private static Pattern DEFINITE_PATH_PATTERN = Pattern.compile(".*(\\.\\.|\\*|\\[[\\\\/]|\\?|,|:\\s?]|\\[\\s?:|>|\\(|<|=|\\+).*");
+    private final Path path;
 
-
-
-    private PathTokenizer tokenizer;
-    private LinkedList<Filter> filters;
-
-    private JsonPath(String jsonPath, Filter[] filters) {
-
+    private JsonPath(String jsonPath, Filter2[] filters) {
         notNull(jsonPath, "path can not be null");
-        jsonPath = jsonPath.trim();
-        notEmpty(jsonPath, "path can not be empty");
-
-
-        int filterCountInPath = Utils.countMatches(jsonPath, "[?]");
-        isTrue(filterCountInPath == filters.length, "Filters in path ([?]) does not match provided filters.");
-
-        this.tokenizer = new PathTokenizer(jsonPath);
-
-        if(LOG.isDebugEnabled()){
-            LOG.debug("New JsonPath:\n{}", this.tokenizer.toString());
-        }
-
-        this.filters = new LinkedList<Filter>();
-        this.filters.addAll(asList(filters));
-
+        this.path = PathCompiler.tokenize(jsonPath, filters);
     }
-
-    PathTokenizer getTokenizer() {
-        return this.tokenizer;
-    }
-
-
-    public JsonPath copy() {
-        Filter[] filterCopy = filters.isEmpty()?new Filter[0]:new Filter[filters.size()];
-        return new JsonPath(tokenizer.getPath(), filters.toArray(filterCopy));
-    }
-
 
     /**
      * Returns the string representation of this JsonPath
@@ -147,7 +110,7 @@ public class JsonPath {
      * @return path as String
      */
     public String getPath() {
-        return this.tokenizer.getPath();
+        return this.path.toString();
     }
 
     /**
@@ -172,7 +135,6 @@ public class JsonPath {
      */
     public static boolean isPathDefinite(String path) {
         String preparedPath = path.replaceAll("\"[^\"\\\\\\n\r]*\"", "");
-
         return !DEFINITE_PATH_PATTERN.matcher(preparedPath).matches();
     }
 
@@ -198,7 +160,7 @@ public class JsonPath {
      * @return true if path is definite (points to single item)
      */
     public boolean isPathDefinite() {
-        return JsonPath.isPathDefinite(getPath());
+        return path.isDefinite();
     }
 
     /**
@@ -208,7 +170,7 @@ public class JsonPath {
      *
      * @param jsonObject a container Object
      * @param <T>        expected return type
-     * @return list of objects matched by the given path
+     * @return object(s) matched by the given path
      */
     @SuppressWarnings({"unchecked"})
     public <T> T read(Object jsonObject) {
@@ -220,49 +182,39 @@ public class JsonPath {
      * Note that the document must be identified as either a List or Map by
      * the {@link JsonProvider}
      *
-     * @param jsonObject   a container Object
+     * @param jsonObject    a container Object
      * @param configuration configuration to use
-     * @param <T>          expected return type
-     * @return list of objects matched by the given path
+     * @param <T>           expected return type
+     * @return object(s) matched by the given path
      */
     public <T> T read(Object jsonObject, Configuration configuration) {
-        notNull(jsonObject, "json can not be null");
-        notNull(configuration, "configuration can not be null");
 
-        if (this.getPath().equals("$")) {
-            //This path only references the whole object. No need to do any work here...
-            return (T) jsonObject;
-        }
+        return path.evaluate(jsonObject, configuration).get();
+    }
 
-        if (!configuration.getProvider().isContainer(jsonObject)) {
-            throw new IllegalArgumentException("Invalid container object");
-        }
+    /**
+     * Applies this JsonPath to the provided json document.
+     * Note that the document must be identified as either a List or Map by
+     * the {@link JsonProvider}
+     *
+     * @param jsonObject a container Object
+     * @return list of definite path strings to object matched by path
+     */
+    public List<String> readPathList(Object jsonObject) {
+        return readPathList(jsonObject, Configuration.defaultConfiguration());
+    }
 
-        LinkedList<Filter> contextFilters = new LinkedList<Filter>(filters);
-
-
-        Object result = jsonObject;
-
-        boolean inArrayContext = false;
-
-        for (PathToken pathToken : tokenizer) {
-            PathTokenFilter filter = pathToken.getFilter();
-
-            if(LOG.isDebugEnabled()){
-                LOG.debug("Applying filter: " + filter  + " to " + result);
-            }
-
-            result = filter.filter(result, configuration, contextFilters, inArrayContext);
-
-            if(result == null && !pathToken.isEndToken()){
-                throw new PathNotFoundException("Path token: '" + pathToken.getFragment() + "' not found.");
-            }
-
-            if (!inArrayContext) {
-                inArrayContext = filter.isArrayFilter();
-            }
-        }
-        return (T) result;
+    /**
+     * Applies this JsonPath to the provided json document.
+     * Note that the document must be identified as either a List or Map by
+     * the {@link JsonProvider}
+     *
+     * @param jsonObject    a container Object
+     * @param configuration configuration to use
+     * @return list of definite path strings to object matched by path
+     */
+    public List<String> readPathList(Object jsonObject, Configuration configuration) {
+        return path.evaluate(jsonObject, configuration).getPathList();
     }
 
     /**
@@ -280,9 +232,9 @@ public class JsonPath {
     /**
      * Applies this JsonPath to the provided json string
      *
-     * @param json         a json string
+     * @param json          a json string
      * @param configuration configuration to use
-     * @param <T>          expected return type
+     * @param <T>           expected return type
      * @return list of objects matched by the given path
      */
     @SuppressWarnings({"unchecked"})
@@ -309,9 +261,9 @@ public class JsonPath {
     /**
      * Applies this JsonPath to the provided json URL
      *
-     * @param jsonURL      url to read from
+     * @param jsonURL       url to read from
      * @param configuration configuration to use
-     * @param <T>          expected return type
+     * @param <T>           expected return type
      * @return list of objects matched by the given path
      * @throws IOException
      */
@@ -346,9 +298,9 @@ public class JsonPath {
     /**
      * Applies this JsonPath to the provided json file
      *
-     * @param jsonFile     file to read from
+     * @param jsonFile      file to read from
      * @param configuration configuration to use
-     * @param <T>          expected return type
+     * @param <T>           expected return type
      * @return list of objects matched by the given path
      * @throws IOException
      */
@@ -390,7 +342,7 @@ public class JsonPath {
      * Applies this JsonPath to the provided json input stream
      *
      * @param jsonInputStream input stream to read from
-     * @param configuration configuration to use
+     * @param configuration   configuration to use
      * @param <T>             expected return type
      * @return list of objects matched by the given path
      * @throws IOException
@@ -420,7 +372,7 @@ public class JsonPath {
      * @param filters  filters to be applied to the filter place holders  [?] in the path
      * @return compiled JsonPath
      */
-    public static JsonPath compile(String jsonPath, Filter... filters) {
+    public static JsonPath compile(String jsonPath, Filter2... filters) {
         notEmpty(jsonPath, "json can not be null or empty");
 
         return new JsonPath(jsonPath, filters);
@@ -443,8 +395,9 @@ public class JsonPath {
      * @return list of objects matched by the given path
      */
     @SuppressWarnings({"unchecked"})
-    public static <T> T read(Object json, String jsonPath, Filter... filters) {
-        return compile(jsonPath, filters).read(json);
+    public static <T> T read(Object json, String jsonPath, Filter2... filters) {
+        //return compile(jsonPath, filters).read(json);
+        return new JsonReader().parse(json).read(jsonPath, filters);
     }
 
 
@@ -458,7 +411,7 @@ public class JsonPath {
      * @return list of objects matched by the given path
      */
     @SuppressWarnings({"unchecked"})
-    public static <T> T read(String json, String jsonPath, Filter... filters) {
+    public static <T> T read(String json, String jsonPath, Filter2... filters) {
         return new JsonReader().parse(json).read(jsonPath, filters);
     }
 
@@ -472,7 +425,7 @@ public class JsonPath {
      * @return list of objects matched by the given path
      */
     @SuppressWarnings({"unchecked"})
-    public static <T> T read(URL jsonURL, String jsonPath, Filter... filters) throws IOException {
+    public static <T> T read(URL jsonURL, String jsonPath, Filter2... filters) throws IOException {
         return new JsonReader().parse(jsonURL).read(jsonPath, filters);
     }
 
@@ -486,7 +439,7 @@ public class JsonPath {
      * @return list of objects matched by the given path
      */
     @SuppressWarnings({"unchecked"})
-    public static <T> T read(File jsonFile, String jsonPath, Filter... filters) throws IOException {
+    public static <T> T read(File jsonFile, String jsonPath, Filter2... filters) throws IOException {
         return new JsonReader().parse(jsonFile).read(jsonPath, filters);
     }
 
@@ -500,7 +453,7 @@ public class JsonPath {
      * @return list of objects matched by the given path
      */
     @SuppressWarnings({"unchecked"})
-    public static <T> T read(InputStream jsonInputStream, String jsonPath, Filter... filters) throws IOException {
+    public static <T> T read(InputStream jsonInputStream, String jsonPath, Filter2... filters) throws IOException {
         return new JsonReader().parse(jsonInputStream).read(jsonPath, filters);
     }
 
@@ -518,7 +471,7 @@ public class JsonPath {
      * @param configuration configuration to use when parsing JSON
      * @return a parsing context based on given configuration
      */
-    public static ParseContext using(Configuration configuration){
+    public static ParseContext using(Configuration configuration) {
         return new JsonReader(configuration);
     }
 
@@ -528,7 +481,7 @@ public class JsonPath {
      * @param provider provider to use when parsing JSON
      * @return a parsing context based on given provider
      */
-    public static ParseContext using(JsonProvider provider){
+    public static ParseContext using(JsonProvider provider) {
         return new JsonReader(Configuration.builder().jsonProvider(provider).build());
     }
 
@@ -605,7 +558,7 @@ public class JsonPath {
      * @param json input
      * @return a read context
      */
-    public static ReadContext parse(String json, Configuration configuration){
+    public static ReadContext parse(String json, Configuration configuration) {
         return new JsonReader(configuration).parse(json);
     }
 

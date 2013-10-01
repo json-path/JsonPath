@@ -3,8 +3,9 @@ package com.jayway.jsonpath.reader;
 import com.jayway.jsonpath.Configuration;
 import com.jayway.jsonpath.JsonPath;
 import com.jayway.jsonpath.Option;
-import com.jayway.jsonpath.spi.JsonProvider;
-import com.jayway.jsonpath.spi.JsonProviderFactory;
+import com.jayway.jsonpath.spi.json.JsonProvider;
+import com.jayway.jsonpath.spi.json.JsonProviderFactory;
+import org.junit.Test;
 
 /**
  * User: kalle
@@ -16,7 +17,7 @@ public class ReadConfigurationTest {
     private static JsonProvider provider = JsonProviderFactory.createProvider();
 
 
-    //@Test
+    @Test
     public void fluent() {
 
         Configuration configuration = Configuration.defaultConfiguration();
@@ -34,9 +35,12 @@ public class ReadConfigurationTest {
         JsonPath.parse("{}", configuration).read("$");
 
         JsonPath.using(configuration).parse("{}").read("$");
-
-
-
+           /*
+        Object updatedJsonModel = JsonPath.parse("{...}")
+                          .write("$['store'][1]['name']", "new name")
+                          .write("$.store[1].age", 43)
+                          .get();
+        */
 
     }
 }

@@ -1,0 +1,118 @@
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <title>JsonPath</title>
+        <link rel="stylesheet" href="/static/css/bootstrap.css">
+        <link rel="stylesheet" href="//netdna.bootstrapcdn.com/font-awesome/4.0.3/css/font-awesome.min.css">
+
+        <script type="text/javascript" src="//ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
+        <script type="text/javascript" src="/static/js/jsonpath-0.8.0.js"></script>
+        <script type="text/javascript" src="/static/js/bootstrap.js"></script>
+        <script src="//google-code-prettify.googlecode.com/svn/loader/run_prettify.js"></script>
+    </head>
+    <body role="document">
+        <div class="container">
+            <div class="jumbotron">
+                <h3>JSONPath evaluator</h3>
+            </div>
+            <div class="row">
+                <div class="col-md-6">
+                    <form method="post">
+                        <div class="form-group">
+                            <select id="templates" name="template" class="form-control" onChange='window.location="?template=" + this.value;'>
+                            {{#templates}}
+                                <option value="{{value}}" {{selected}}>{{name}}</option>
+                            {{/templates}}
+                            </select>
+                        </div>
+
+                        <div class="form-group">
+                            <textarea id="json" name="json" rows="20" class="form-control">{{json}}</textarea>
+                        </div>
+
+                        <div class="radio">
+                            <label>
+                                <input type="radio" name="type" id="optTypeValue" value="value" {{value-checked}} />
+                                Matching values
+                            </label>
+                        </div>
+                        <div class="radio">
+                            <label>
+                                <input type="radio" name="type" id="optTypePath" value="path" {{path-checked}} />
+                                Normalized path expressions
+                            </label>
+                        </div>
+
+                        <div class="input-group">
+                            <input id="path" name="path" value="{{path}}" placeholder="Enter path" class="form-control"/>
+                            <span class="input-group-btn">
+                                <button class="btn btn-default" type="submit">Go!</button>
+                            </span>
+                        </div>
+                    </form>
+                </div>
+                <div class="col-md-6">
+                    <ul id="tabs" class="nav nav-tabs" data-tabs="tabs">
+                        <li class="active"><a href="#jayway" data-toggle="tab">Jayway</a></li>
+                        <li><a href="#boon" data-toggle="tab">Boon</a></li>
+                        <li><a href="#nebhale" data-toggle="tab">Nebhale</a></li>
+                        <li><a href="#goessner" data-toggle="tab">Gossner</a></li>
+                    </ul>
+                    <div id="my-tab-content" class="tab-content">
+                        {{#results}}
+                            <div class="tab-pane {{active}}" id="{{provider}}">
+                                <br/>
+                                <span id="{{provider}}-time">{{time}}</span>&nbsp;millis
+                                <hr/>
+                                {{^error}}
+                                <div class="row">
+                                    <div class="col-md-12">
+                                        <pre class="prettyprint" style="background-color: transparent; border: none;">{{result}}</pre>
+                                    </div>
+                                </div>
+                                {{/error}}
+                                {{#error}}
+                                    <p class="bg-danger">{{error}}</p>
+                                {{/error}}
+                            </div>
+                        {{/results}}
+                        <div class="tab-pane" id="goessner">
+                            <br/>
+                            <span id="goessner-time"></span>&nbsp;millis
+                            <hr/>
+                            <div class="row">
+                                <div class="col-md-12">
+                                    <pre id="goessner-res" class="prettyprint" style="background-color: transparent; border: none;"></pre>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </body>
+    <script>
+        $( document ).ready(function() {
+            if( $('#jayway').length )
+            {
+                //var value = $("#optTypeValue").prop("checked", true);
+                var value = $("#optTypeValue").is(':checked');
+                var start = new Date().getTime();
+                var json = JSON.parse($('#json').val());
+                var path = $('#path').val();
+                var res = '';
+                if(value){
+                    res = jsonPath(json, path, {resultType:"VALUE"});
+                } else {
+                    res = jsonPath(json, path, {resultType:"PATH"});
+                }
+                var elapsed = new Date().getTime() - start;
+
+                $("#goessner-time").html(elapsed);
+                $("#goessner-res").text(JSON.stringify(res, null, '   '));
+            }
+        });
+    </script>
+</html>

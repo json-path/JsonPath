@@ -14,15 +14,15 @@
  */
 package com.jayway.jsonpath;
 
-import com.jayway.jsonpath.spi.JsonProvider;
-import com.jayway.jsonpath.spi.JsonProviderFactory;
+import com.jayway.jsonpath.spi.json.JsonProvider;
+import com.jayway.jsonpath.spi.json.JsonProviderFactory;
 
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.EnumSet;
 import java.util.Set;
 
-import static com.jayway.jsonpath.internal.Utils.*;
+import static com.jayway.jsonpath.internal.Utils.notNull;
 
 /**
  * User: kalle
@@ -33,16 +33,16 @@ public class Configuration {
 
 
     private final JsonProvider provider;
-    private final EnumSet<Option> options;
+    private final Set<Option> options;
 
     private Configuration(JsonProvider provider, EnumSet<Option> options) {
         notNull(provider, "provider can not be null");
         notNull(options, "options can not be null");
         this.provider = provider;
-        this.options = options;
+        this.options = Collections.unmodifiableSet(options);
     }
 
-    public Configuration provider(JsonProvider provider){
+    public Configuration provider(JsonProvider provider) {
         return Configuration.builder().jsonProvider(provider).options(options).build();
     }
 
@@ -50,7 +50,7 @@ public class Configuration {
         return provider;
     }
 
-    public Configuration options(Option... options){
+    public Configuration options(Option... options) {
         return Configuration.builder().jsonProvider(provider).options(options).build();
     }
 
@@ -58,15 +58,15 @@ public class Configuration {
         return Collections.unmodifiableSet(options);
     }
 
-    public static Configuration defaultConfiguration(){
+    public static Configuration defaultConfiguration() {
         return new Configuration(JsonProviderFactory.createProvider(), EnumSet.noneOf(Option.class));
     }
 
-    public static ConfigurationBuilder builder(){
+    public static ConfigurationBuilder builder() {
         return new ConfigurationBuilder();
     }
 
-    public static class ConfigurationBuilder  {
+    public static class ConfigurationBuilder {
 
         private JsonProvider provider;
         private EnumSet<Option> options = EnumSet.noneOf(Option.class);
@@ -86,8 +86,8 @@ public class Configuration {
             return this;
         }
 
-        public Configuration build(){
-            if(provider == null){
+        public Configuration build() {
+            if (provider == null) {
                 provider = JsonProviderFactory.createProvider();
             }
             return new Configuration(provider, options);

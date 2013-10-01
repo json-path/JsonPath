@@ -4,7 +4,6 @@ import org.hamcrest.Matchers;
 import org.junit.Test;
 
 import java.util.List;
-import java.util.Map;
 
 import static junit.framework.Assert.assertEquals;
 import static junit.framework.Assert.assertNull;
@@ -41,7 +40,7 @@ public class NullHandlingTest {
 
     @Test(expected = PathNotFoundException.class)
     public void not_defined_property_throws_PathNotFoundException() {
-        assertNull(JsonPath.read(DOCUMENT, "$.children[0].child.age"));
+        JsonPath.read(DOCUMENT, "$.children[0].child.age");
     }
 
 

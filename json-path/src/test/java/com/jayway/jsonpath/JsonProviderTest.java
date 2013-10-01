@@ -1,12 +1,7 @@
 package com.jayway.jsonpath;
 
-import com.jayway.jsonpath.internal.Utils;
-import com.jayway.jsonpath.spi.impl.JacksonProvider;
+import com.jayway.jsonpath.internal.spi.json.JacksonProvider;
 import org.junit.Test;
-
-import java.io.Serializable;
-
-import static com.jayway.jsonpath.JsonModel.model;
 
 /**
  * Created by IntelliJ IDEA.
@@ -55,16 +50,7 @@ public class JsonProviderTest {
 
 
 
-    @Test
-    public void clone_test() throws Exception {
 
-        Serializable jsonObject = (Serializable) model(DOCUMENT).getJsonObject();
-
-        Object clone = Utils.clone(jsonObject);
-
-        System.out.println(model(clone).toJson());
-
-    }
 
 
     @Test
