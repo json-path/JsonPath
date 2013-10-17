@@ -138,8 +138,8 @@ public class FieldFilter extends PathTokenFilter {
     }
 
     public String getCondition(Object root) {
-        if (condition.startsWith("[$")) {
-            return JsonPath.read(root, trim(condition, 1, 1)).toString();
+        if (condition.matches("^\\[\\ *\\$.*")) {
+            return JsonPath.read(root, trim(condition, condition.indexOf("$"), 1)).toString();
         } else {
             return condition;
         }

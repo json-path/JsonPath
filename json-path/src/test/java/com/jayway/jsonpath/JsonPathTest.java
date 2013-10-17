@@ -328,6 +328,7 @@ public class JsonPathTest {
     public void access_array_by_variable() {
         assertEquals(JsonPath.read(DOCUMENT, "$.store.foo[$.store.foo.bar_hash[?(@.red)].red[0]]"), "red");
         assertEquals(JsonPath.read(DOCUMENT, "$.store.foo[$.store.foo.red[0]]"), "red");
+        assertEquals(JsonPath.read(DOCUMENT, "$.store.foo[ $.store.foo.red[0]]"), "red");
         assertEquals(JsonPath.read(DOCUMENT, "$.store.book[$.store.foo.one].author"), "Evelyn Waugh");
 
         assertThat(JsonPath.<List<String>>read(DOCUMENT, "$.store.foo[$.store.foo.bar]"), hasItems("bar"));
