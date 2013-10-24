@@ -19,7 +19,7 @@
     <parent>
         <groupId>com.jayway.jsonpath</groupId>
         <artifactId>json-path-parent</artifactId>
-        <version>0.9.1-SNAPSHOT</version>
+        <version>0.9.1</version>
     </parent>
     <artifactId>json-path</artifactId>
     <packaging>bundle</packaging>

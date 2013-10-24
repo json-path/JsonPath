@@ -24,7 +24,7 @@
     <groupId>com.jayway.jsonpath</groupId>
     <artifactId>json-path-parent</artifactId>
     <packaging>pom</packaging>
-    <version>0.9.1-SNAPSHOT</version>
+    <version>0.9.1</version>
     <url>https://github.com/jayway/JsonPath</url>
     <name>json-path-parent-pom</name>
     <description>Java JsonPath implementation</description>
