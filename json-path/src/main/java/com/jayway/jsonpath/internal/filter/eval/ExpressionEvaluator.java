@@ -14,6 +14,8 @@
  */
 package com.jayway.jsonpath.internal.filter.eval;
 
+import com.jayway.jsonpath.spi.JsonValueWrapper;
+
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.util.Collections;
@@ -58,7 +60,12 @@ public class ExpressionEvaluator {
     }
 
 
-    public static <T> boolean eval(T actual, String comparator, String expected) {
+    public static <T> boolean eval(T actualObject, String comparator, String expected) {
+
+        Object actual = actualObject;
+        if(actualObject != null && actualObject instanceof JsonValueWrapper) {
+            actual = ((JsonValueWrapper)actualObject).getValue();
+        }
 
         Operator operator = operatorsByRepresentation.get(comparator);
         if (operator == null) {
