@@ -21,22 +21,24 @@ import com.jayway.jsonpath.spi.impl.JacksonProvider;
  */
 public abstract class MappingProviderFactory {
 
+    public static String objectMapperClassName = "com.fasterxml.jackson.databind.ObjectMapper";
 
     public static MappingProviderFactory factory = new MappingProviderFactory() {
 
         private MappingProvider provider = null;
+
 
         @Override
         protected MappingProvider create() {
             if (this.provider == null) {
                 synchronized (MappingProviderFactory.class) {
                     try {
-                        Class.forName("org.codehaus.jackson.map.ObjectMapper");
+                        Class.forName(objectMapperClassName);
 
                         provider = new JacksonProvider();
                         return provider;
                     } catch (ClassNotFoundException e) {
-                        throw new RuntimeException("org.codehaus.jackson.map.ObjectMapper not found on classpath. This is an optional dependency needed for POJO conversions.", e);
+                        throw new RuntimeException( objectMapperClassName + " not found on classpath. This is an optional dependency needed for POJO conversions.", e);
                     }
                 }
             } else {

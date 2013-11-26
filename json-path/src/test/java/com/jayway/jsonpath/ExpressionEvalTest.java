@@ -1,8 +1,6 @@
 package com.jayway.jsonpath;
 
 import com.jayway.jsonpath.internal.filter.eval.ExpressionEvaluator;
-import org.codehaus.jackson.node.BigIntegerNode;
-import org.junit.Ignore;
 import org.junit.Test;
 
 import java.math.BigDecimal;
@@ -12,9 +10,7 @@ import java.util.Map;
 
 import static com.jayway.jsonpath.Criteria.where;
 import static com.jayway.jsonpath.Filter.filter;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.*;
 
 /**
  * Created by IntelliJ IDEA.
