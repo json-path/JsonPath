@@ -14,18 +14,20 @@
  */
 package com.jayway.jsonpath.spi.impl;
 
+import com.fasterxml.jackson.core.JsonGenerator;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.type.CollectionType;
 import com.jayway.jsonpath.InvalidJsonException;
 import com.jayway.jsonpath.spi.MappingProvider;
 import com.jayway.jsonpath.spi.Mode;
-import org.codehaus.jackson.JsonGenerator;
-import org.codehaus.jackson.map.ObjectMapper;
-import org.codehaus.jackson.map.type.CollectionType;
 
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.Reader;
 import java.io.StringWriter;
 import java.util.*;
+
+
 
 /**
  * @author Kalle Stenflo
