@@ -356,7 +356,7 @@ public class JsonModel {
 
         isTrue(jsonPath.isPathDefinite(), "You can only get subModels with a definite path. Use getDetachedModel if path is not definite.");
 
-        Object subModel = jsonPath.read(jsonObject);
+        Object subModel = jsonPath.read(jsonObject, configuration);
 
         if (!configuration.getProvider().isContainer(subModel)) {
             throw new InvalidModelException("The path " + jsonPath.getPath() + " returned an invalid model " + (subModel != null ? subModel.getClass() : "null"));
