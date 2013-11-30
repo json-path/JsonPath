@@ -30,7 +30,8 @@ import java.util.regex.Pattern;
 public class ArrayEvalFilter extends PathTokenFilter {
 
     private static final Pattern CONDITION_STATEMENT_PATTERN = Pattern.compile("\\[\\s?\\?\\(.*?[!=<>]+.*?\\)\\s?]");
-    private static final Pattern PATTERN = Pattern.compile("\\s?(@.*?)\\s?([!=<>]+)\\s?(.*?)\\s?");
+    private static final Pattern CONDITION_PATTERN = Pattern.compile("\\s?(@.*?)\\s?([!=<>]+)\\s?(.*?)\\s?");
+    private static final Pattern FIELD_EXISTS_PATTERN = Pattern.compile("\\s?(@.*?)\\s?(.*?)\\s?");
 
 
 
@@ -86,7 +87,7 @@ public class ArrayEvalFilter extends PathTokenFilter {
     private boolean isMatch(Object check, Configuration configuration, ConditionStatement... conditionStatements) {
         try {
             for (ConditionStatement conditionStatement : conditionStatements) {
-                Object value = conditionStatement.path.read(check, configuration.options(Option.THROW_ON_MISSING_PROPERTY));
+                Object value = (check != null) ? conditionStatement.path.read(check, configuration.options(Option.THROW_ON_MISSING_PROPERTY)) : null;
                 boolean match =  ExpressionEvaluator.eval(value, conditionStatement.getOperator(), conditionStatement.getExpected());
                 if(!match){
                     return false;
@@ -105,16 +106,19 @@ public class ArrayEvalFilter extends PathTokenFilter {
     }
 
     static ConditionStatement createConditionStatement(String condition) {
-        Matcher matcher = PATTERN.matcher(condition);
-        if (matcher.matches()) {
-            String property = matcher.group(1).trim();
-            String operator = matcher.group(2).trim();
-            String expected = matcher.group(3).trim();
-
+        Matcher conditionMatcher = CONDITION_PATTERN.matcher(condition);
+        if (conditionMatcher.matches()) {
+            String property = conditionMatcher.group(1).trim();
+            String operator = conditionMatcher.group(2).trim();
+            String expected = conditionMatcher.group(3).trim();
             return new ConditionStatement(condition, property, operator, expected);
-        } else {
-            return null;
         }
+        Matcher fieldExistsMatcher = FIELD_EXISTS_PATTERN.matcher(condition);
+        if (fieldExistsMatcher.matches()) {
+            // Field exists check, the single '@' in: $.menu.items[?(@ && @.id == 'ViewSVG')].id
+            return new ConditionStatement(condition, "@.", "!=", "null");
+        }
+        return null;
     }
 
     static class ConditionStatement {
