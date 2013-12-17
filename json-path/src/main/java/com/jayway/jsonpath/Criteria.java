@@ -97,9 +97,9 @@ public class Criteria {
         }
     }
 
-    private static Object readSafely(JsonPath path, Map<String, Object> map) {
+    private static Object readSafely(JsonPath path, Map<String, Object> map, Configuration configuration) {
         try {
-            return path.read(map);
+            return path.read(map, configuration);
         } catch (InvalidPathException e) {
             return null;
         }
@@ -123,7 +123,7 @@ public class Criteria {
 
         for (CriteriaType key : this.criteria.keySet()) {
 
-            final Object actualVal = readSafely(this.key, map);
+            final Object actualVal = readSafely(this.key, map, configuration);
             final Object expectedVal = this.criteria.get(key);
 
             if (CriteriaType.GT.equals(key)) {
@@ -312,7 +312,7 @@ public class Criteria {
                 }
                 return true;
             } else {
-                Object actualVal = readSafely(this.key, map);
+                Object actualVal = readSafely(this.key, map, configuration);
                 return objectOrAnyCollectionItemMatches(actualVal, new Predicate<Object>() {
                     @Override
                     public boolean accept(Object value) {
