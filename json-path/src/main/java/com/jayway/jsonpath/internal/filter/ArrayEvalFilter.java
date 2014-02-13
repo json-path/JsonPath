@@ -31,8 +31,7 @@ public class ArrayEvalFilter extends PathTokenFilter {
 
     private static final Pattern CONDITION_STATEMENT_PATTERN = Pattern.compile("\\[\\s?\\?\\(.*\\)\\s?]");
     private static final Pattern CONDITION_PATTERN = Pattern.compile("\\s?(@.*?)\\s?([!=<>]+)\\s?(.*?)\\s?");
-    private static final Pattern FIELD_EXISTS_PATTERN = Pattern.compile("\\s?@\\s?(.*?)\\s?");
-    private static final Pattern HASPATH_PATTERN = Pattern.compile("\\s?(@\\..*)\\s?(.*?)\\s?");
+    private static final Pattern HASPATH_PATTERN = Pattern.compile("\\s?(@.*)\\s?(.*?)\\s?");
     private static final Pattern REGEX_PATTERN = Pattern.compile("\\s?\\/(.*)\\/\\.test\\((@\\..*)\\)\\s?");
 
     private Expression[] expressions;
@@ -114,11 +113,6 @@ public class ArrayEvalFilter extends PathTokenFilter {
             String regex = regexMatcher.group(1).trim();
             String field = regexMatcher.group(2).trim();
             return new RegexExpression(regex, field);
-        }
-        Matcher fieldExistsMatcher = FIELD_EXISTS_PATTERN.matcher(condition);
-        if (fieldExistsMatcher.matches()) {
-            // Field exists check, the single '@' in: $.menu.items[?(@ && @.id == 'ViewSVG')].id
-            return new OperatorExpression(condition, "@.", "!=", "null");
         }
         return null;
     }
