@@ -30,27 +30,27 @@ public class ArrayEvalFilterTest {
         //assertEquals(new ArrayEvalFilter.ConditionStatement("@.length", ">", "0"), ArrayEvalFilter.createConditionStatement("[?(@.length>0)]"));
 
         //int array
-        assertEquals(new ArrayEvalFilter.ConditionStatement("@", "==", "5"), ArrayEvalFilter.createConditionStatement("@==5"));
-        assertEquals(new ArrayEvalFilter.ConditionStatement("@", "==", "5"), ArrayEvalFilter.createConditionStatement("@ == 5"));
-        assertEquals(new ArrayEvalFilter.ConditionStatement("@", "==", "5"), ArrayEvalFilter.createConditionStatement(" @ == 5 "));
-        assertEquals(new ArrayEvalFilter.ConditionStatement("@", "==", "5"), ArrayEvalFilter.createConditionStatement("@ ==5"));
-        assertEquals(new ArrayEvalFilter.ConditionStatement("@", "==", "5"), ArrayEvalFilter.createConditionStatement("@== 5 "));
+        assertEquals(new ArrayEvalFilter.OperatorExpression("@", "==", "5"), ArrayEvalFilter.createExpression("@==5"));
+        assertEquals(new ArrayEvalFilter.OperatorExpression("@", "==", "5"), ArrayEvalFilter.createExpression("@ == 5"));
+        assertEquals(new ArrayEvalFilter.OperatorExpression("@", "==", "5"), ArrayEvalFilter.createExpression(" @ == 5 "));
+        assertEquals(new ArrayEvalFilter.OperatorExpression("@", "==", "5"), ArrayEvalFilter.createExpression("@ ==5"));
+        assertEquals(new ArrayEvalFilter.OperatorExpression("@", "==", "5"), ArrayEvalFilter.createExpression("@== 5 "));
 
         //String array
-        assertEquals(new ArrayEvalFilter.ConditionStatement("@", "==", "one"), ArrayEvalFilter.createConditionStatement("@=='one'"));
-        assertEquals(new ArrayEvalFilter.ConditionStatement("@", "==", "one monkey"), ArrayEvalFilter.createConditionStatement("@ == 'one monkey' "));
-        assertEquals(new ArrayEvalFilter.ConditionStatement("@", "==", "two"), ArrayEvalFilter.createConditionStatement("@  == 'two'"));
+        assertEquals(new ArrayEvalFilter.OperatorExpression("@", "==", "one"), ArrayEvalFilter.createExpression("@=='one'"));
+        assertEquals(new ArrayEvalFilter.OperatorExpression("@", "==", "one monkey"), ArrayEvalFilter.createExpression("@ == 'one monkey' "));
+        assertEquals(new ArrayEvalFilter.OperatorExpression("@", "==", "two"), ArrayEvalFilter.createExpression("@  == 'two'"));
 
         //Sub item dot notation
-        assertEquals(new ArrayEvalFilter.ConditionStatement("@.name", "==", "true"), ArrayEvalFilter.createConditionStatement("@.name == true"));
+        assertEquals(new ArrayEvalFilter.OperatorExpression("@.name", "==", "true"), ArrayEvalFilter.createExpression("@.name == true"));
 
         //Sub item bracket notation
-        assertEquals(new ArrayEvalFilter.ConditionStatement("@['name']", "==", "true"), ArrayEvalFilter.createConditionStatement("@['name'] == true"));
-        assertEquals(new ArrayEvalFilter.ConditionStatement("@.['name']", "==", "true"), ArrayEvalFilter.createConditionStatement("@.['name'] == true"));
+        assertEquals(new ArrayEvalFilter.OperatorExpression("@['name']", "==", "true"), ArrayEvalFilter.createExpression("@['name'] == true"));
+        assertEquals(new ArrayEvalFilter.OperatorExpression("@.['name']", "==", "true"), ArrayEvalFilter.createExpression("@.['name'] == true"));
 
         //Sub path notation
-        assertEquals(new ArrayEvalFilter.ConditionStatement("@['name']['age']", "!=", "true"), ArrayEvalFilter.createConditionStatement("@['name']['age'] != true"));
-        assertEquals(new ArrayEvalFilter.ConditionStatement("@.['name'].age", ">", "true"), ArrayEvalFilter.createConditionStatement("@.['name'].age > true"));
+        assertEquals(new ArrayEvalFilter.OperatorExpression("@['name']['age']", "!=", "true"), ArrayEvalFilter.createExpression("@['name']['age'] != true"));
+        assertEquals(new ArrayEvalFilter.OperatorExpression("@.['name'].age", ">", "true"), ArrayEvalFilter.createExpression("@.['name'].age > true"));
 
     }
 
