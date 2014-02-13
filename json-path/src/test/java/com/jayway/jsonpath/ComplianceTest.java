@@ -32,7 +32,7 @@ public class ComplianceTest {
         //assertThat(JsonPath.<List<String>>read(json, "$[*]"), hasItems("a", "b", "e"));   //low
 
     }
-    
+
     @Test
     public void test_two() throws Exception {
         String json = "[ 1, \"2\", 3.14, true, null ]";
@@ -118,7 +118,7 @@ public class ComplianceTest {
         assertThat(JsonPath.<List<String>>read(json, "$.menu.items[?(@ && @.id == 'ViewSVG')].id"), hasItems("ViewSVG"));
 
         //assertThat(JsonPath.<List<String>>read(json, "$.menu.items[?(@ && @.id && !@.label)].id"), hasItems("?")); //low
-        //assertThat(JsonPath.<List<String>>read(json, "$.menu.items[?(@ && @.label && /SVG/.test(@.label))].id"), hasItems("?")); //low
+        assertThat(JsonPath.<List<String>>read(json, "$.menu.items[?(@ && @.label && /SVG/.test(@.label))].id"), hasItems("CopySVG", "ViewSVG")); //low
         //assertThat(JsonPath.<List<String>>read(json, "$.menu.items[?(!@)]"), hasItems("?")); //low
         //assertThat(JsonPath.<List<String>>read(json, "$..[0]"), hasItems("?")); //low
 
@@ -145,7 +145,7 @@ public class ComplianceTest {
         "p": [ "$[0]",
                "$[4]",
                "$[*]",
-    	   "$[-1:]"
+           "$[-1:]"
              ]
       },
       --three
@@ -199,7 +199,7 @@ public class ComplianceTest {
         "p": [ "$.menu.items[?(@ && @.id && !@.label)].id",
                "$.menu.items[?(@ && @.label && /SVG/.test(@.label))].id",
                "$.menu.items[?(!@)]",
-    		   "$..[0]"
+               "$..[0]"
              ]
       },
       --five
@@ -207,8 +207,8 @@ public class ComplianceTest {
                b: [5,6,7,8]
              },
         "p": [ "$..[0]",
-    	       "$..[-1:]",
-    		   "$..[?(@%2==0)]"
+               "$..[-1:]",
+               "$..[?(@%2==0)]"
              ]
       },
       { "o": { lin: {color:"red", x:2, y:3},

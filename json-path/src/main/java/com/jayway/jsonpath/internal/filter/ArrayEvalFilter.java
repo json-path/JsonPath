@@ -33,6 +33,7 @@ public class ArrayEvalFilter extends PathTokenFilter {
     private static final Pattern CONDITION_PATTERN = Pattern.compile("\\s?(@.*?)\\s?([!=<>]+)\\s?(.*?)\\s?");
     private static final Pattern FIELD_EXISTS_PATTERN = Pattern.compile("\\s?@\\s?(.*?)\\s?");
     private static final Pattern HASPATH_PATTERN = Pattern.compile("\\s?(@\\..*)\\s?(.*?)\\s?");
+    private static final Pattern REGEX_PATTERN = Pattern.compile("\\s?\\/(.*)\\/\\.test\\((@\\..*)\\)\\s?");
 
     private Expression[] expressions;
 
@@ -107,6 +108,12 @@ public class ArrayEvalFilter extends PathTokenFilter {
         if (hasPathMatcher.matches()) {
             // evaluates @ or @.foo in expressions
             return new HasPathExpression(condition);
+        }
+        Matcher regexMatcher = REGEX_PATTERN.matcher(condition);
+        if (regexMatcher.matches()) {
+            String regex = regexMatcher.group(1).trim();
+            String field = regexMatcher.group(2).trim();
+            return new RegexExpression(regex, field);
         }
         Matcher fieldExistsMatcher = FIELD_EXISTS_PATTERN.matcher(condition);
         if (fieldExistsMatcher.matches()) {
@@ -238,5 +245,35 @@ public class ArrayEvalFilter extends PathTokenFilter {
             }
             return false;
         }
+    }
+
+    static class RegexExpression extends Expression {
+        private Pattern pattern;
+        private JsonPath path;
+
+        public RegexExpression(String regex, String field) {
+            pattern = Pattern.compile(regex);
+            if(field.startsWith("@.")){
+                this.path = JsonPath.compile(field.replace("@.", "$."));
+            } else {
+                this.path = JsonPath.compile(field.replace("@", "$"));
+            }
+        }
+
+        @Override
+        public boolean evaluate(Object obj, Configuration configuration) {
+            JsonProvider jsonProvider = configuration.getProvider();
+
+            if(jsonProvider.isMap(obj)){
+                try{
+                    Object value = (obj != null) ? path.read(obj, configuration.options(Option.THROW_ON_MISSING_PROPERTY)) : null;
+                    return (value instanceof String) && pattern.matcher((String)value).find();
+                } catch (PathNotFoundException e){
+                    return false;
+                }
+            }
+            return false;
+        }
+
     }
 }
