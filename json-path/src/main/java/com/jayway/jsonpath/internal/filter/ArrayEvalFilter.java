@@ -96,6 +96,10 @@ public class ArrayEvalFilter extends PathTokenFilter {
     }
 
     static Expression createExpression(String condition) {
+        condition = condition.trim();
+        if (condition.startsWith("!")) {
+            return new NegationExpression(createExpression(condition.substring(1)));
+        }
         Matcher conditionMatcher = CONDITION_PATTERN.matcher(condition);
         if (conditionMatcher.matches()) {
             String property = conditionMatcher.group(1).trim();
@@ -269,5 +273,18 @@ public class ArrayEvalFilter extends PathTokenFilter {
             return false;
         }
 
+    }
+
+    static class NegationExpression extends Expression {
+        private Expression expression;
+
+        public NegationExpression(Expression expression) {
+            this.expression = expression;
+        }
+
+        @Override
+        public boolean evaluate(Object check, Configuration configuration) {
+            return !expression.evaluate(check, configuration);
+        }
     }
 }
