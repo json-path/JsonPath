@@ -29,12 +29,12 @@ import java.util.regex.Pattern;
  */
 public class ArrayEvalFilter extends PathTokenFilter {
 
-    private static final Pattern CONDITION_STATEMENT_PATTERN = Pattern.compile("\\[\\s?\\?\\(.*?[!=<>]+.*?\\)\\s?]");
-    private static final Pattern PATTERN = Pattern.compile("\\s?(@.*?)\\s?([!=<>]+)\\s?(.*?)\\s?");
+    private static final Pattern CONDITION_STATEMENT_PATTERN = Pattern.compile("\\[\\s?\\?\\(.*\\)\\s?]");
+    private static final Pattern CONDITION_PATTERN = Pattern.compile("\\s?(@.*?)\\s?([!=<>]+)\\s?(.*?)\\s?");
+    private static final Pattern HASPATH_PATTERN = Pattern.compile("\\s?(@.*)\\s?(.*?)\\s?");
+    private static final Pattern REGEX_PATTERN = Pattern.compile("\\s?\\/(.*)\\/\\.test\\((@\\..*)\\)\\s?");
 
-
-
-    private  ConditionStatement[] conditionStatements;
+    private Expression[] expressions;
 
     public ArrayEvalFilter(String condition) {
         super(condition);
@@ -47,13 +47,11 @@ public class ArrayEvalFilter extends PathTokenFilter {
 
         String[] split = condition.split("&&");
 
-        conditionStatements = new ConditionStatement[split.length];
-        for(int i = 0; i < split.length; i++){
-            conditionStatements[i] = createConditionStatement(split[i]);
+        expressions = new Expression[split.length];
+        for (int i = 0; i < split.length; i++) {
+            expressions[i] = createExpression(split[i]);
         }
     }
-
-
 
     @Override
     public Object filter(Object obj, Configuration configuration) {
@@ -66,7 +64,7 @@ public class ArrayEvalFilter extends PathTokenFilter {
         }
         Object result = jsonProvider.createArray();
         for (Object item : src) {
-            if (isMatch(item, configuration, conditionStatements)) {
+            if (isMatch(item, configuration, expressions)) {
                 jsonProvider.setProperty(result, jsonProvider.length(result), item);
             }
         }
@@ -83,41 +81,51 @@ public class ArrayEvalFilter extends PathTokenFilter {
         return true;
     }
 
-    private boolean isMatch(Object check, Configuration configuration, ConditionStatement... conditionStatements) {
-        try {
-            for (ConditionStatement conditionStatement : conditionStatements) {
-                Object value = conditionStatement.path.read(check, configuration.options(Option.THROW_ON_MISSING_PROPERTY));
-                boolean match =  ExpressionEvaluator.eval(value, conditionStatement.getOperator(), conditionStatement.getExpected());
-                if(!match){
-                    return false;
-                }
+    private boolean isMatch(Object check, Configuration configuration, Expression... expressions) {
+        for (Expression expression: expressions) {
+            boolean match =  expression.evaluate(check, configuration);
+            if(!match){
+                return false;
             }
-            return true;
-        } catch (PathNotFoundException e){
-            return false;
-        } catch (RuntimeException e){
-            throw e;
         }
+        return true;
     }
 
     static boolean isConditionStatement(String condition) {
         return CONDITION_STATEMENT_PATTERN.matcher(condition).matches();
     }
 
-    static ConditionStatement createConditionStatement(String condition) {
-        Matcher matcher = PATTERN.matcher(condition);
-        if (matcher.matches()) {
-            String property = matcher.group(1).trim();
-            String operator = matcher.group(2).trim();
-            String expected = matcher.group(3).trim();
-
-            return new ConditionStatement(condition, property, operator, expected);
-        } else {
-            return null;
+    static Expression createExpression(String condition) {
+        condition = condition.trim();
+        if (condition.startsWith("!")) {
+            return new NegationExpression(createExpression(condition.substring(1)));
         }
+        Matcher conditionMatcher = CONDITION_PATTERN.matcher(condition);
+        if (conditionMatcher.matches()) {
+            String property = conditionMatcher.group(1).trim();
+            String operator = conditionMatcher.group(2).trim();
+            String expected = conditionMatcher.group(3).trim();
+            return new OperatorExpression(condition, property, operator, expected);
+        }
+        Matcher hasPathMatcher = HASPATH_PATTERN.matcher(condition);
+        if (hasPathMatcher.matches()) {
+            // evaluates @ or @.foo in expressions
+            return new HasPathExpression(condition);
+        }
+        Matcher regexMatcher = REGEX_PATTERN.matcher(condition);
+        if (regexMatcher.matches()) {
+            String regex = regexMatcher.group(1).trim();
+            String field = regexMatcher.group(2).trim();
+            return new RegexExpression(regex, field);
+        }
+        return null;
     }
 
-    static class ConditionStatement {
+    static abstract class Expression {
+        public abstract boolean evaluate(Object check, Configuration configuration);
+    }
+
+    static class OperatorExpression extends Expression {
         private final String condition;
         private final String field;
         private final String operator;
@@ -125,7 +133,7 @@ public class ArrayEvalFilter extends PathTokenFilter {
         private final JsonPath path;
 
 
-        ConditionStatement(String condition, String field, String operator, String expected) {
+        OperatorExpression(String condition, String field, String operator, String expected) {
             this.condition = condition;
             this.field = field;
             this.operator = operator;
@@ -143,7 +151,7 @@ public class ArrayEvalFilter extends PathTokenFilter {
                 this.path = JsonPath.compile(this.field.replace("@", "$"));
             }
         }
-        ConditionStatement(String field, String operator, String expected) {
+        OperatorExpression(String field, String operator, String expected) {
             this(null, field, operator, expected);
         }
 
@@ -168,8 +176,18 @@ public class ArrayEvalFilter extends PathTokenFilter {
         }
 
         @Override
+        public boolean evaluate(Object check, Configuration configuration) {
+            try {
+                Object value = (check != null) ? path.read(check, configuration.options(Option.THROW_ON_MISSING_PROPERTY)) : null;
+                return ExpressionEvaluator.eval(value, operator, expected);
+            } catch (PathNotFoundException e){
+                return false;
+            }
+        }
+
+        @Override
         public String toString() {
-            return "ConditionStatement{" +
+            return "OperatorExpression{" +
                     "field='" + field + '\'' +
                     ", operator='" + operator + '\'' +
                     ", expected='" + expected + '\'' +
@@ -181,7 +199,7 @@ public class ArrayEvalFilter extends PathTokenFilter {
             if (this == o) return true;
             if (o == null || getClass() != o.getClass()) return false;
 
-            ConditionStatement that = (ConditionStatement) o;
+            OperatorExpression that = (OperatorExpression) o;
 
             if (expected != null ? !expected.equals(that.expected) : that.expected != null) return false;
             if (field != null ? !field.equals(that.field) : that.field != null) return false;
@@ -196,6 +214,77 @@ public class ArrayEvalFilter extends PathTokenFilter {
             result = 31 * result + (operator != null ? operator.hashCode() : 0);
             result = 31 * result + (expected != null ? expected.hashCode() : 0);
             return result;
+        }
+
+    }
+
+    static class HasPathExpression extends Expression {
+        private final JsonPath path;
+
+        public HasPathExpression(String condition) {
+            if(condition.startsWith("@.")){
+                this.path = JsonPath.compile(condition.replace("@.", "$."));
+            } else {
+                this.path = JsonPath.compile(condition.replace("@", "$"));
+            }
+        }
+
+        @Override
+        public boolean evaluate(Object obj, Configuration configuration) {
+            JsonProvider jsonProvider = configuration.getProvider();
+
+            if(jsonProvider.isMap(obj)){
+                try{
+                    path.read(obj, Configuration.builder().options(Option.THROW_ON_MISSING_PROPERTY).jsonProvider(jsonProvider).build());
+                    return true;
+                } catch (PathNotFoundException e){
+                    return false;
+                }
+            }
+            return false;
+        }
+    }
+
+    static class RegexExpression extends Expression {
+        private Pattern pattern;
+        private JsonPath path;
+
+        public RegexExpression(String regex, String field) {
+            pattern = Pattern.compile(regex);
+            if(field.startsWith("@.")){
+                this.path = JsonPath.compile(field.replace("@.", "$."));
+            } else {
+                this.path = JsonPath.compile(field.replace("@", "$"));
+            }
+        }
+
+        @Override
+        public boolean evaluate(Object obj, Configuration configuration) {
+            JsonProvider jsonProvider = configuration.getProvider();
+
+            if(jsonProvider.isMap(obj)){
+                try{
+                    Object value = (obj != null) ? path.read(obj, configuration.options(Option.THROW_ON_MISSING_PROPERTY)) : null;
+                    return (value instanceof String) && pattern.matcher((String)value).find();
+                } catch (PathNotFoundException e){
+                    return false;
+                }
+            }
+            return false;
+        }
+
+    }
+
+    static class NegationExpression extends Expression {
+        private Expression expression;
+
+        public NegationExpression(Expression expression) {
+            this.expression = expression;
+        }
+
+        @Override
+        public boolean evaluate(Object check, Configuration configuration) {
+            return !expression.evaluate(check, configuration);
         }
     }
 }
