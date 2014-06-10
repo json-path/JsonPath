@@ -14,10 +14,10 @@
  */
 package com.jayway.jsonpath.internal.spi.json;
 
+import com.fasterxml.jackson.core.JsonGenerator;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.jayway.jsonpath.InvalidJsonException;
 import com.jayway.jsonpath.spi.json.Mode;
-import org.codehaus.jackson.JsonGenerator;
-import org.codehaus.jackson.map.ObjectMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
