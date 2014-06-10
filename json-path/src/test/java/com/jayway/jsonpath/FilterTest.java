@@ -10,8 +10,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.regex.Pattern;
 
-import static com.jayway.jsonpath.Criteria2.where;
-import static com.jayway.jsonpath.Filter2.filter;
+import static com.jayway.jsonpath.Criteria.where;
+import static com.jayway.jsonpath.Filter.filter;
 import static java.util.Arrays.asList;
 import static junit.framework.Assert.*;
 import static org.hamcrest.CoreMatchers.is;
@@ -269,7 +269,7 @@ public class FilterTest {
                 "]";
 
 
-        Filter2 filter = filter(
+        Filter filter = filter(
                 where("first-name").is("Jock")
                 .and("address.state").is("Texas"));
 
@@ -307,8 +307,8 @@ public class FilterTest {
         check.put("long", 1L);
         check.put("double", 1.12D);
 
-        Filter2 shouldMarch = filter(where("string").is("foo").and("int").lt(11));
-        Filter2 shouldNotMarch = filter(where("string").is("foo").and("int").gt(11));
+        Filter shouldMarch = filter(where("string").is("foo").and("int").lt(11));
+        Filter shouldNotMarch = filter(where("string").is("foo").and("int").gt(11));
 
         assertTrue(shouldMarch.apply(check, conf));
         assertFalse(shouldNotMarch.apply(check, conf));
@@ -324,7 +324,7 @@ public class FilterTest {
         check.put("long", 1L);
         check.put("double", 1.12D);
 
-        Filter2 filter = filter(where("string").is("foo").and("int").lt(11));
+        Filter filter = filter(where("string").is("foo").and("int").lt(11));
 
         assertTrue(filter.apply(check, conf));
 
@@ -344,11 +344,11 @@ public class FilterTest {
         check.put("long", 1L);
         check.put("double", 1.12D);
 
-        Filter2 filter = filter(where("string").is("foo"));
+        Filter filter = filter(where("string").is("foo"));
 
         assertTrue(filter.apply(check, conf));
 
-        Criteria2 criteria = where("string").is("not eq");
+        Criteria criteria = where("string").is("not eq");
 
         filter.addCriteria(criteria);
 

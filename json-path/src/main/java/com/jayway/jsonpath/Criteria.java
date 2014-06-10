@@ -1,360 +1,295 @@
-/*
- * Copyright 2011 the original author or authors.
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *       http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
 package com.jayway.jsonpath;
 
 import com.jayway.jsonpath.internal.spi.compiler.PathCompiler;
 import com.jayway.jsonpath.spi.compiler.Path;
-import com.jayway.jsonpath.internal.Utils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
-import java.util.*;
+import java.math.BigDecimal;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.regex.Pattern;
 
-import static com.jayway.jsonpath.internal.Utils.isNumeric;
+import static com.jayway.jsonpath.internal.Utils.join;
 import static com.jayway.jsonpath.internal.Utils.notNull;
-import static java.util.Arrays.asList;
+
 
 /**
- * @author Kalle Stenflo
+ *
  */
-public class Criteria {
+public class Criteria implements Predicate {
 
+    private static final Logger logger = LoggerFactory.getLogger(Criteria.class);
 
-    private enum CriteriaType {
-        GT,
-        GTE,
-        LT,
-        LTE,
-        NE,
-        IN,
-        NIN,
-        ALL,
-        SIZE,
-        EXISTS,
-        TYPE,
-        REGEX,
-        NOT_EMPTY,
-        OR
-    }
-
-    /**
-     * Custom "not-null" object as we have to be able to work with {@literal null} values as well.
-     */
-    private static final Object NOT_SET = new Object();
-
-    //private final JsonPath key;
-    //private final Path key;
-    private final Path key;
+    private final Path path;
+    private CriteriaType criteriaType;
+    private Object expected;
 
     private final List<Criteria> criteriaChain;
 
-    private final LinkedHashMap<CriteriaType, Object> criteria = new LinkedHashMap<CriteriaType, Object>();
+    private enum CriteriaType {
+        EQ {
+            @Override
+            boolean eval(Object expected, Object actual, Configuration configuration) {
+                boolean res = (0 == safeCompare(expected, actual, configuration));
+                logger.debug("[{}] {} [{}] => {}", actual, name(), expected, res);
+                return res;
+            }
+        },
+        NE {
+            @Override
+            boolean eval(Object expected, Object actual, Configuration configuration) {
+                boolean res = (0 != safeCompare(expected, actual, configuration));
+                logger.debug("[{}] {} [{}] => {}", actual, name(), expected, res);
+                return res;
+            }
+        },
+        GT {
+            @Override
+            boolean eval(Object expected, Object actual, Configuration configuration) {
+                if ((expected == null) ^ (actual == null)) {
+                    return false;
+                }
+                boolean res = (0 > safeCompare(expected, actual, configuration));
+                logger.debug("[{}] {} [{}] => {}", actual, name(), expected, res);
+                return res;
+            }
+        },
+        GTE {
+            @Override
+            boolean eval(Object expected, Object actual, Configuration configuration) {
+                if ((expected == null) ^ (actual == null)) {
+                    return false;
+                }
+                boolean res = (0 >= safeCompare(expected, actual, configuration));
+                logger.debug("[{}] {} [{}] => {}", actual, name(), expected, res);
+                return res;
+            }
+        },
+        LT {
+            @Override
+            boolean eval(Object expected, Object actual, Configuration configuration) {
+                if ((expected == null) ^ (actual == null)) {
+                    return false;
+                }
+                boolean res = (0 < safeCompare(expected, actual, configuration));
+                logger.debug("[{}] {} [{}] => {}", actual, name(), expected, res);
+                return res;
+            }
+        },
+        LTE {
+            @Override
+            boolean eval(Object expected, Object actual, Configuration configuration) {
+                if ((expected == null) ^ (actual == null)) {
+                    return false;
+                }
+                boolean res = (0 <= safeCompare(expected, actual, configuration));
+                logger.debug("[{}] {} [{}] => {}", actual, name(), expected, res);
+                return res;
+            }
+        },
+        IN {
+            @Override
+            boolean eval(Object expected, Object actual, Configuration configuration) {
+                boolean res = false;
+                Collection exps = (Collection) expected;
+                for (Object exp : exps) {
+                    if (0 == safeCompare(exp, actual, configuration)) {
+                        res = true;
+                        break;
+                    }
+                }
+                logger.debug("[{}] {} [{}] => {}", actual, name(), join(", ", exps), res);
+                return res;
+            }
+        },
+        NIN {
+            @Override
+            boolean eval(Object expected, Object actual, Configuration configuration) {
+                Collection nexps = (Collection) expected;
+                boolean res = !nexps.contains(actual);
+                logger.debug("[{}] {} [{}] => {}", actual, name(), join(", ", nexps), res);
+                return res;
+            }
+        },
+        ALL {
+            @Override
+            boolean eval(Object expected, Object actual, Configuration configuration) {
+                boolean res = true;
+                Collection exps = (Collection) expected;
+                if (configuration.getProvider().isArray(actual)) {
+                    for (Object exp : exps) {
+                        boolean found = false;
+                        for (Object check : configuration.getProvider().toIterable(actual)) {
+                            if (0 == safeCompare(exp, check, configuration)) {
+                                found = true;
+                                break;
+                            }
+                        }
+                        if (!found) {
+                            res = false;
+                            break;
+                        }
+                    }
+                    logger.debug("[{}] {} [{}] => {}", join(", ", configuration.getProvider().toIterable(actual)), name(), join(", ", exps), res);
+                } else {
+                    res = false;
+                    logger.debug("[{}] {} [{}] => {}", "<NOT AN ARRAY>", name(), join(", ", exps), res);
+                }
+                return res;
+            }
+        },
+        SIZE {
+            @Override
+            boolean eval(Object expected, Object actual, Configuration configuration) {
+                int size = (Integer) expected;
+                boolean res;
+                if (configuration.getProvider().isArray(actual)) {
+                    int length = configuration.getProvider().length(actual);
+                    res = length == size;
+                    logger.debug("Array with size {} {} {} => {}", length, name(), size, res);
+                } else if (actual instanceof String) {
+                    int length = ((String) actual).length();
+                    res = length == size;
+                    logger.debug("String with length {} {} {} => {}", length, name(), size, res);
+                } else {
+                    res = false;
+                    logger.debug("{} {} {} => {}", actual == null ? "null" : actual.getClass().getName(), name(), size, res);
+                }
+                return res;
+            }
+        },
+        EXISTS {
+            @Override
+            boolean eval(Object expected, Object actual, Configuration configuration) {
+                //This must be handled outside
+                throw new UnsupportedOperationException();
+            }
+        },
+        TYPE {
+            @Override
+            boolean eval(Object expected, Object actual, Configuration configuration) {
+                final Class<?> expType = (Class<?>) expected;
+                final Class<?> actType = actual == null ? null : actual.getClass();
+                if (actType != null) {
+                    return expType.isAssignableFrom(actType);
+                }
+                return false;
+            }
+        },
+        REGEX {
+            @Override
+            boolean eval(Object expected, Object actual, Configuration configuration) {
+                boolean res = false;
+                final Pattern pattern = (Pattern) expected;
+                if (actual != null && actual instanceof String) {
+                    res = pattern.matcher(actual.toString()).matches();
+                }
+                logger.debug("[{}] {} [{}] => {}", actual, name(), expected.toString(), res);
+                return res;
+            }
+        },
+        MATCHES {
+            @Override
+            boolean eval(Object expected, Object actual, Configuration configuration) {
+                Predicate exp = (Predicate) expected;
+                return exp.apply(actual, configuration);
+            }
+        },
+        NOT_EMPTY {
+            @Override
+            boolean eval(Object expected, Object actual, Configuration configuration) {
+                boolean res = false;
+                if (actual != null) {
+                    if (configuration.getProvider().isArray(actual)) {
+                        int len = configuration.getProvider().length(actual);
+                        res = (0 != len);
+                        logger.debug("array length = {} {} => {}", len, name(), res);
+                    } else if (actual instanceof String) {
+                        int len = ((String) actual).length();
+                        res = (0 != len);
+                        logger.debug("string length = {} {} => {}", len, name(), res);
+                    }
+                }
+                return res;
+            }
+        };
 
-    private Object isValue = NOT_SET;
+        abstract boolean eval(Object expected, Object actual, Configuration configuration);
 
+        public static CriteriaType parse(String str) {
+            if ("==".equals(str)) {
+                return EQ;
+            } else if (">".equals(str)) {
+                return GT;
+            } else if (">=".equals(str)) {
+                return GTE;
+            } else if ("<".equals(str)) {
+                return LT;
+            } else if ("<=".equals(str)) {
+                return LTE;
+            } else if ("!=".equals(str)) {
+                return NE;
+            } else {
+                throw new UnsupportedOperationException("CriteriaType " + str + " can not be parsed");
+            }
+        }
+    }
 
-    private Criteria(String key) {
-        Utils.notEmpty(key, "key can not be null or empty");
-        this.criteriaChain = new ArrayList<Criteria>();
+    private Criteria(List<Criteria> criteriaChain, Path path) {
+        if (!path.isDefinite()) {
+            throw new InvalidCriteriaException("A criteria path must be definite. The path " + path.toString() + " is not!");
+        }
+        this.path = path;
+        this.criteriaChain = criteriaChain;
         this.criteriaChain.add(this);
-        this.key = PathCompiler.tokenize(key);
     }
 
     private Criteria(Path path) {
-        Utils.notNull(path, "path can not be null");
-        this.criteriaChain = new ArrayList<Criteria>();
-        this.criteriaChain.add(this);
-        this.key = path;
+        this(new LinkedList<Criteria>(), path);
     }
 
-    private Criteria(List<Criteria> criteriaChain, String key) {
-        Utils.notEmpty(key, "key can not be null or empty");
-        this.criteriaChain = criteriaChain;
-        //this.key = JsonPath.compile(key);
-        this.criteriaChain.add(this);
-        //this.key = PathCompiler.compile(key);
-        this.key = PathCompiler.tokenize(key);
-
+    private Criteria(Path path, CriteriaType criteriaType, Object expected) {
+        this(new LinkedList<Criteria>(), path);
+        this.criteriaType = criteriaType;
+        this.expected = expected;
     }
 
-    //JsonPath getKey() {
-    //Path getKey() {
-    Path getKey() {
-        return this.key;
-    }
 
-    /**
-     * Checks if this criteria matches the given map
-     *
-     * @param map map to check
-     * @return true if criteria is a match
-     */
-    boolean matches(Object map, Configuration configuration) {
-        for (Criteria c : this.criteriaChain) {
-            if (!c.singleObjectApply(map, configuration)) {
+    @Override
+    public boolean apply(Object model, Configuration configuration) {
+        for (Criteria criteria : criteriaChain) {
+            if (!criteria.eval(model, configuration)) {
                 return false;
             }
         }
         return true;
     }
 
-    //private static Object readSafely(JsonPath path, Map<String, Object> map) {
-    //private static Object readSafely(Path path, Object map) {
-    private static Object readSafely(Path path, Object map) {
-        try {
-            return path.evaluate(map, Configuration.defaultConfiguration()).get();
-            //return PathEvaluator.evaluate(path, map, JsonProviderFactory.createProvider(), Collections.EMPTY_SET).getResult();
-            //return path. read(map);
-        } catch (InvalidPathException e) {
-            return null;
-        }
-    }
-
-    private static <T> boolean objectOrAnyCollectionItemMatches(final Object singleObjectOrCollection,
-                                                                final Predicate<T> predicate) {
-        if (singleObjectOrCollection instanceof Collection) {
-            Iterator it = ((Collection) singleObjectOrCollection).iterator();
-            while (it.hasNext()) {
-                if (predicate.accept((T) it.next())) {
-                    return true;
-                }
-            }
-            return false;
-        }
-        return predicate.accept((T) singleObjectOrCollection);
-    }
-
-    private boolean singleObjectApply(Object map, final Configuration configuration) {
-
-        for (CriteriaType key : this.criteria.keySet()) {
-
-            final Object actualVal = readSafely(this.key, map);
-            final Object expectedVal = this.criteria.get(key);
-
-            if (CriteriaType.GT.equals(key)) {
-
-                if (expectedVal == null || actualVal == null) {
-                    return false;
-                }
-
-                final Number expectedNumber = (Number) expectedVal;
-                return objectOrAnyCollectionItemMatches(actualVal, new Predicate<Number>() {
-
-                    @Override
-                    public boolean accept(Number value) {
-                        return (value.doubleValue() > expectedNumber.doubleValue());
-                    }
-                });
-
-            } else if (CriteriaType.GTE.equals(key)) {
-
-                if (expectedVal == null || actualVal == null) {
-                    return false;
-                }
-
-                final Number expectedNumber = (Number) expectedVal;
-                return objectOrAnyCollectionItemMatches(actualVal, new Predicate<Number>() {
-
-                    @Override
-                    public boolean accept(Number value) {
-                        return (value.doubleValue() >= expectedNumber.doubleValue());
-                    }
-                });
-
-            } else if (CriteriaType.LT.equals(key)) {
-
-                if (expectedVal == null || actualVal == null) {
-                    return false;
-                }
-
-                final Number expectedNumber = (Number) expectedVal;
-                return objectOrAnyCollectionItemMatches(actualVal, new Predicate<Number>() {
-
-                    @Override
-                    public boolean accept(Number value) {
-                        return (value.doubleValue() < expectedNumber.doubleValue());
-                    }
-                });
-
-            } else if (CriteriaType.LTE.equals(key)) {
-
-                if (expectedVal == null || actualVal == null) {
-                    return false;
-                }
-
-                final Number expectedNumber = (Number) expectedVal;
-                return objectOrAnyCollectionItemMatches(actualVal, new Predicate<Number>() {
-
-                    @Override
-                    public boolean accept(Number value) {
-                        return (value.doubleValue() <= expectedNumber.doubleValue());
-                    }
-                });
-
-            } else if (CriteriaType.NE.equals(key)) {
-
-                return objectOrAnyCollectionItemMatches(actualVal, new Predicate<Object>() {
-
-                    @Override
-                    public boolean accept(Object value) {
-                        if (expectedVal == null && value == null) {
-                            return false;
-                        }
-                        if (expectedVal == null) {
-                            return true;
-                        } else {
-                            return !expectedVal.equals(value);
-                        }
-                    }
-                });
-
-            } else if (CriteriaType.IN.equals(key)) {
-
-                Collection exp = (Collection) expectedVal;
-
-                return exp.contains(actualVal);
-
-            } else if (CriteriaType.NIN.equals(key)) {
-
-                Collection exp = (Collection) expectedVal;
-
-                return !exp.contains(actualVal);
-            } else if (CriteriaType.ALL.equals(key)) {
-
-                Collection exp = (Collection) expectedVal;
-                Collection act = (Collection) actualVal;
-
-                return act.containsAll(exp);
-
-            } else if (CriteriaType.SIZE.equals(key)) {
-
-                int exp = (Integer) expectedVal;
-                List act = (List) actualVal;
-
-                return (act.size() == exp);
-
-            } else if (CriteriaType.NOT_EMPTY.equals(key)) {
-
-                if (actualVal == null) {
-                    return false;
-                }
-                boolean empty = false;
-                if (actualVal instanceof Collection) {
-                    empty = ((List) actualVal).isEmpty();
-                } else if (actualVal instanceof String) {
-                    empty = ((String) actualVal).isEmpty();
-                }
-
-                return !empty;
-
-            } else if (CriteriaType.EXISTS.equals(key)) {
-                if (configuration.getProvider().isArray(map)) {
-                    return false;
-                }
-                final boolean exp = (Boolean) expectedVal;
-                return objectOrAnyCollectionItemMatches(map, new Predicate<Object>() {
-                    @Override
-                    public boolean accept(final Object value) {
-                        boolean act = true;
-                        Object res;
-                        try {
-                            Set<Option> options = new HashSet<Option>() {{
-                                add(Option.THROW_ON_MISSING_PROPERTY);
-                            }};
-
-                            //res = getKey().read(value, configuration.options(Option.THROW_ON_MISSING_PROPERTY));
-                            //res = PathEvaluator.evaluate(getKey(), value, configuration.getProvider(), options).getResult();
-                            res = getKey().evaluate(value, Configuration.defaultConfiguration().options(Option.THROW_ON_MISSING_PROPERTY)).get();
-                            if (configuration.getProvider().isArray(res)) {
-                                //if(getKey().isDefinite()){
-                                //if(getKey().isDefinite()){
-                                if (getKey().isDefinite()) {
-                                    act = true;
-                                } else {
-                                    act = (configuration.getProvider().length(res) > 0);
-                                }
-                            }
-                        } catch (InvalidPathException e) {
-                            act = false;
-                        }
-                        return act == exp;
-                    }
-                });
-
-            } else if (CriteriaType.TYPE.equals(key)) {
-
-                final Class<?> exp = (Class<?>) expectedVal;
-                return objectOrAnyCollectionItemMatches(actualVal, new Predicate<Object>() {
-
-                    @Override
-                    public boolean accept(Object value) {
-                        Class<?> act = value == null ? null : value.getClass();
-                        if (act == null) {
-                            return false;
-                        } else {
-                            return act.equals(exp);
-                        }
-                    }
-                });
-
-            } else if (CriteriaType.REGEX.equals(key)) {
-                final Pattern exp = (Pattern) expectedVal;
-
-                return objectOrAnyCollectionItemMatches(actualVal, new Predicate<String>() {
-
-                    @Override
-                    public boolean accept(String value) {
-                        return value != null && exp.matcher(value).matches();
-                    }
-                });
-
-
-            } else {
-                throw new UnsupportedOperationException("Criteria type not supported: " + key.name());
-            }
-        }
-        if (isValue != NOT_SET) {
-
-            if (isValue instanceof Collection) {
-                Collection<Criteria> cs = (Collection<Criteria>) isValue;
-                for (Criteria crit : cs) {
-                    for (Criteria c : crit.criteriaChain) {
-                        if (!c.singleObjectApply(map, configuration)) {
-                            return false;
-                        }
-                    }
-                }
-                return true;
-            } else {
-                Object actualVal = readSafely(this.key, map);
-                return objectOrAnyCollectionItemMatches(actualVal, new Predicate<Object>() {
-                    @Override
-                    public boolean accept(Object value) {
-                        if (isValue == null) {
-                            return value == null;
-                        } else {
-                            return isValue.equals(value);
-                        }
-                    }
-
-                });
+    private boolean eval(Object model, Configuration configuration) {
+        if (CriteriaType.EXISTS == criteriaType) {
+            boolean exists = ((Boolean) expected);
+            try {
+                path.evaluate(model, configuration.options(Option.THROW_ON_MISSING_PROPERTY)).get();
+                return exists == true;
+            } catch (PathNotFoundException e) {
+                return exists == false;
             }
         } else {
 
+            try {
+                final Object actual = path.evaluate(model, configuration).get();
+                return criteriaType.eval(expected, actual, configuration);
+            } catch (CompareException e) {
+                return false;
+            } catch (PathNotFoundException e) {
+                return false;
+            }
         }
-        return true;
     }
+
 
     /**
      * Static factory method to create a Criteria using the provided key
@@ -374,7 +309,7 @@ public class Criteria {
      */
 
     public static Criteria where(String key) {
-        return new Criteria(key);
+        return where(PathCompiler.tokenize(key));
     }
 
     /**
@@ -384,7 +319,7 @@ public class Criteria {
      * @return the criteria builder
      */
     public Criteria and(String key) {
-        return new Criteria(this.criteriaChain, key);
+        return new Criteria(this.criteriaChain, PathCompiler.tokenize(key));
     }
 
     /**
@@ -394,14 +329,8 @@ public class Criteria {
      * @return
      */
     public Criteria is(Object o) {
-        if (isValue != NOT_SET) {
-            throw new InvalidCriteriaException(
-                    "Multiple 'is' values declared. You need to use 'and' with multiple criteria");
-        }
-        if (this.criteria.size() > 0 && "$not".equals(this.criteria.keySet().toArray()[this.criteria.size() - 1])) {
-            throw new InvalidCriteriaException("Invalid query: 'not' can't be used with 'is' - use 'ne' instead.");
-        }
-        this.isValue = o;
+        this.criteriaType = CriteriaType.TYPE.EQ;
+        this.expected = o;
         return this;
     }
 
@@ -422,7 +351,8 @@ public class Criteria {
      * @return
      */
     public Criteria ne(Object o) {
-        criteria.put(CriteriaType.NE, o);
+        this.criteriaType = CriteriaType.TYPE.NE;
+        this.expected = o;
         return this;
     }
 
@@ -433,7 +363,8 @@ public class Criteria {
      * @return
      */
     public Criteria lt(Object o) {
-        criteria.put(CriteriaType.LT, o);
+        this.criteriaType = CriteriaType.TYPE.LT;
+        this.expected = o;
         return this;
     }
 
@@ -444,7 +375,8 @@ public class Criteria {
      * @return
      */
     public Criteria lte(Object o) {
-        criteria.put(CriteriaType.LTE, o);
+        this.criteriaType = CriteriaType.TYPE.LTE;
+        this.expected = o;
         return this;
     }
 
@@ -455,7 +387,8 @@ public class Criteria {
      * @return
      */
     public Criteria gt(Object o) {
-        criteria.put(CriteriaType.GT, o);
+        this.criteriaType = CriteriaType.TYPE.GT;
+        this.expected = o;
         return this;
     }
 
@@ -466,7 +399,21 @@ public class Criteria {
      * @return
      */
     public Criteria gte(Object o) {
-        criteria.put(CriteriaType.GTE, o);
+        this.criteriaType = CriteriaType.TYPE.GTE;
+        this.expected = o;
+        return this;
+    }
+
+    /**
+     * Creates a criterion using a Regex
+     *
+     * @param pattern
+     * @return
+     */
+    public Criteria regex(Pattern pattern) {
+        notNull(pattern, "pattern can not be null");
+        this.criteriaType = CriteriaType.TYPE.REGEX;
+        this.expected = pattern;
         return this;
     }
 
@@ -478,10 +425,6 @@ public class Criteria {
      * @return
      */
     public Criteria in(Object... o) {
-        if (o.length > 1 && o[1] instanceof Collection) {
-            throw new InvalidCriteriaException("You can only pass in one argument of type "
-                    + o[1].getClass().getName());
-        }
         return in(Arrays.asList(o));
     }
 
@@ -494,8 +437,8 @@ public class Criteria {
      */
     public Criteria in(Collection<?> c) {
         notNull(c, "collection can not be null");
-        checkFilterCanBeApplied(CriteriaType.IN);
-        criteria.put(CriteriaType.IN, c);
+        this.criteriaType = CriteriaType.TYPE.IN;
+        this.expected = c;
         return this;
     }
 
@@ -519,11 +462,10 @@ public class Criteria {
      */
     public Criteria nin(Collection<?> c) {
         notNull(c, "collection can not be null");
-        checkFilterCanBeApplied(CriteriaType.NIN);
-        criteria.put(CriteriaType.NIN, c);
+        this.criteriaType = CriteriaType.TYPE.NIN;
+        this.expected = c;
         return this;
     }
-
 
     /**
      * The <code>all</code> operator is similar to $in, but instead of matching any value
@@ -545,38 +487,28 @@ public class Criteria {
      */
     public Criteria all(Collection<?> c) {
         notNull(c, "collection can not be null");
-        checkFilterCanBeApplied(CriteriaType.ALL);
-        criteria.put(CriteriaType.ALL, c);
+        this.criteriaType = CriteriaType.TYPE.ALL;
+        this.expected = c;
         return this;
     }
 
     /**
      * The <code>size</code> operator matches:
-     *
+     * <p/>
      * <ol>
-     *     <li>array with the specified number of elements.</li>
-     *     <li>string with given length.</li>
+     * <li>array with the specified number of elements.</li>
+     * <li>string with given length.</li>
      * </ol>
      *
      * @param size
      * @return
      */
     public Criteria size(int size) {
-        checkFilterCanBeApplied(CriteriaType.SIZE);
-        criteria.put(CriteriaType.SIZE, size);
+        this.criteriaType = CriteriaType.TYPE.SIZE;
+        this.expected = size;
         return this;
     }
 
-    /**
-     * The <code>notEmpty</code> operator checks that an array is not empty.
-     *
-     * @return
-     */
-    public Criteria notEmpty() {
-        checkFilterCanBeApplied(CriteriaType.NOT_EMPTY);
-        criteria.put(CriteriaType.NOT_EMPTY, null);
-        return this;
-    }
 
     /**
      * Check for existence (or lack thereof) of a field.
@@ -585,7 +517,8 @@ public class Criteria {
      * @return
      */
     public Criteria exists(boolean b) {
-        criteria.put(CriteriaType.EXISTS, b);
+        this.criteriaType = CriteriaType.TYPE.EXISTS;
+        this.expected = b;
         return this;
     }
 
@@ -597,120 +530,94 @@ public class Criteria {
      */
     public Criteria type(Class<?> t) {
         notNull(t, "type can not be null");
-        criteria.put(CriteriaType.TYPE, t);
+        this.criteriaType = CriteriaType.TYPE.TYPE;
+        this.expected = t;
         return this;
     }
 
-
     /**
-     * Creates a criterion using a Regex
+     * The <code>notEmpty</code> operator checks that an array or String is not empty.
      *
-     * @param pattern
      * @return
      */
-    public Criteria regex(Pattern pattern) {
-        notNull(pattern, "pattern can not be null");
-        criteria.put(CriteriaType.REGEX, pattern);
+    public Criteria notEmpty() {
+        this.criteriaType = CriteriaType.TYPE.NOT_EMPTY;
+        this.expected = null;
         return this;
     }
 
-    public Criteria matches(String operator, String expected) {
-        Object check;
+    /**
+     * The <code>matches</code> operator checks that an object matches the given predicate.
+     *
+     * @return
+     */
+    public Criteria matches(Predicate p) {
+        this.criteriaType = CriteriaType.TYPE.MATCHES;
+        this.expected = p;
+        return this;
+    }
 
+    private static int safeCompare(Object expected, Object actual, Configuration configuration) {
+        if (isNullish(expected) && !isNullish(actual)) {
+            return -1;
+        } else if (!isNullish(expected) && isNullish(actual)) {
+            return 1;
+        } else if (isNullish(expected) && isNullish(actual)) {
+            return 0;
+        } else if (expected instanceof String && actual instanceof String) {
+            return ((String) expected).compareTo((String) actual);
+        } else if (expected instanceof Number && actual instanceof Number) {
+            return new BigDecimal(expected.toString()).compareTo(new BigDecimal(actual.toString()));
+        } else if (expected instanceof String && actual instanceof Number) {
+            return new BigDecimal(expected.toString()).compareTo(new BigDecimal(actual.toString()));
+        } else if (expected instanceof String && actual instanceof Boolean) {
+            Boolean e = Boolean.valueOf((String)expected);
+            Boolean a = (Boolean) actual;
+            return e.compareTo(a);
+        } else if (expected instanceof Boolean && actual instanceof Boolean) {
+            Boolean e = (Boolean) expected;
+            Boolean a = (Boolean) actual;
+            return e.compareTo(a);
+        } else {
+            logger.debug("Can not compare a {} with a {}", expected.getClass().getName(), actual.getClass().getName());
+            throw new CompareException();
+        }
+
+    }
+
+    private static boolean isNullish(Object o){
+        return (o == null || ((o instanceof String) && ("null".equals(o))));
+    }
+
+    private static class CompareException extends RuntimeException {
+    }
+
+
+    public static Criteria create(String path, String operator, String expected) {
         if (expected.startsWith("'") && expected.endsWith("'")) {
-            check = expected.substring(1, expected.length() - 1);
-        } else if ("true".equals(expected)) {
-            check = Boolean.TRUE;
-        } else if ("false".equals(expected)) {
-            check = Boolean.FALSE;
-        } else if ("null".equals(expected)) {
-            check = null;
-        } else if (isNumeric(expected)) {
-            if (expected.contains(".")) {
-                check = Double.parseDouble(expected);
-            } else {
-                check = Integer.parseInt(expected);
-            }
+            expected = expected.substring(1, expected.length() - 1);
+        }
+
+        Path p = PathCompiler.tokenize(path);
+
+        if("$".equals(path) && (operator == null || operator.isEmpty()) && (expected == null || expected.isEmpty()) ){
+            return new Criteria(p, CriteriaType.NE, null);
+        } else if (operator.isEmpty()) {
+            return Criteria.where(path).exists(true);
         } else {
-            throw new UnsupportedOperationException("Type not supported: " + expected);
+            return new Criteria(p, CriteriaType.parse(operator), expected);
         }
-        if ("==".equals(operator)) {
-            return is(check);
-        } else if (">".equals(operator)) {
-            return gt(check);
-        } else if (">=".equals(operator)) {
-            return gte(check);
-        } else if ("<".equals(operator)) {
-            return lt(check);
-        } else if ("<=".equals(operator)) {
-            return lte(check);
-        } else if ("!=".equals(operator)) {
-            return ne(check);
-        } else if ("<>".equals(operator)) {
-            return ne(check);
-        } else {
-            throw new UnsupportedOperationException("Operator not supported: " + operator);
-        }
-
-    }
-
-    /**
-     * Creates an 'or' criteria using the $or operator for all of the provided criteria
-     *
-     * @param criteria
-     */
-    /*
-    public Criteria orOperator(Criteria... criteria) {
-        criteriaChain.add(new Criteria("$or").is(asList(criteria)));
-        return this;
-    }
-    */
-
-    /**
-     * Creates a 'nor' criteria using the $nor operator for all of the provided criteria
-     *
-     * @param criteria
-     */
-    /*
-    public Criteria norOperator(Criteria... criteria) {
-        criteriaChain.add(new Criteria("$nor").is(asList(criteria)));
-        return this;
-    }*/
-
-    /**
-     * Creates an 'and' criteria using the $and operator for all of the provided criteria
-     *
-     * @param criteria
-     */
-    public Criteria andOperator(Criteria... criteria) {
-        criteriaChain.add(new Criteria("$and").is(asList(criteria)));
-        return this;
-    }
-
-    private void checkFilterCanBeApplied(CriteriaType type) {
-        //if (getKey().getTokenizer().size() > 2) {
-        //if(getKey().getComponents().length > 2) {
-        if (getKey().tokenCount() > 2) {
-            throw new IllegalArgumentException("Cannot use " + type + " filter on a multi-level path expression");
-        }
-    }
-
-
-    private interface Predicate<T> {
-        boolean accept(T value);
     }
 
     @Override
     public String toString() {
         StringBuilder sb = new StringBuilder();
-
-        Iterator<Criteria> iterator = criteriaChain.iterator();
-        Criteria c = iterator.next();
-
-        if (c.isValue != NOT_SET) {
-            sb.append("@").append(key.toString().substring(1) + " == " + ((c.isValue instanceof String) ? ("'" + c.isValue + "'") : c.isValue.toString()));
-        }
+        sb.append(path.toString())
+                .append("|")
+                .append(criteriaType.name())
+                .append("|")
+                .append(expected)
+                .append("|");
         return sb.toString();
     }
-
 }

@@ -38,7 +38,7 @@ public interface ReadContext {
      * @param <T>
      * @return result
      */
-    <T> T read(String path, Filter2... filters);
+    <T> T read(String path, Filter... filters);
 
     /**
      * Reads the given path from this context
@@ -56,7 +56,7 @@ public interface ReadContext {
      * @param filters filters
      * @return list of definite path strings to object matched by path
      */
-    List<String> readPathList(String path, Filter2... filters);
+    List<String> readPathList(String path, Filter... filters);
 
     /**
      * Reads the given path list from this context

@@ -75,4 +75,45 @@ public class ComplianceTest {
         assertThat(JsonPath.<String>read(json, "$.points[(@.length - 1)].id"), equalTo("i6"));
     }
 
+    @Test
+    public void test_four() throws Exception {
+        String json = "{ \"menu\": {\n" +
+                "                 \"header\": \"SVG Viewer\",\n" +
+                "                 \"items\": [\n" +
+                "                     {\"id\": \"Open\"},\n" +
+                "                     {\"id\": \"OpenNew\", \"label\": \"Open New\"},\n" +
+                "                     null,\n" +
+                "                     {\"id\": \"ZoomIn\", \"label\": \"Zoom In\"},\n" +
+                "                     {\"id\": \"ZoomOut\", \"label\": \"Zoom Out\"},\n" +
+                "                     {\"id\": \"OriginalView\", \"label\": \"Original View\"},\n" +
+                "                     null,\n" +
+                "                     {\"id\": \"Quality\"},\n" +
+                "                     {\"id\": \"Pause\"},\n" +
+                "                     {\"id\": \"Mute\"},\n" +
+                "                     null,\n" +
+                "                     {\"id\": \"Find\", \"label\": \"Find...\"},\n" +
+                "                     {\"id\": \"FindAgain\", \"label\": \"Find Again\"},\n" +
+                "                     {\"id\": \"Copy\"},\n" +
+                "                     {\"id\": \"CopyAgain\", \"label\": \"Copy Again\"},\n" +
+                "                     {\"id\": \"CopySVG\", \"label\": \"Copy SVG\"},\n" +
+                "                     {\"id\": \"ViewSVG\", \"label\": \"View SVG\"},\n" +
+                "                     {\"id\": \"ViewSource\", \"label\": \"View Source\"},\n" +
+                "                     {\"id\": \"SaveAs\", \"label\": \"Save As\"},\n" +
+                "                     null,\n" +
+                "                     {\"id\": \"Help\"},\n" +
+                "                     {\"id\": \"About\", \"label\": \"About Adobe CVG Viewer...\"}\n" +
+                "                 ]\n" +
+                "               }\n" +
+                "             }";
+
+        //assertThat(JsonPath.<List<String>>read(json, "$.menu.items[?(@)]"), Matchers.is(notNullValue()));
+        assertThat(JsonPath.<List<String>>read(json, "$.menu.items[?(@ && @.id == 'ViewSVG')].id"), hasItems("ViewSVG"));
+
+        //assertThat(JsonPath.<List<String>>read(json, "$.menu.items[?(@ && @.id && !@.label)].id"), hasItems("?")); //low
+        //assertThat(JsonPath.<List<String>>read(json, "$.menu.items[?(@ && @.label && /SVG/.test(@.label))].id"), hasItems("?")); //low
+        //assertThat(JsonPath.<List<String>>read(json, "$.menu.items[?(!@)]"), hasItems("?")); //low
+        //assertThat(JsonPath.<List<String>>read(json, "$..[0]"), hasItems("?")); //low
+
+    }
+
 }

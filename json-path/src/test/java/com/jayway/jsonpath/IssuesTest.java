@@ -260,7 +260,7 @@ public class IssuesTest {
     @Test
     public void issue_29_b() throws Exception {
         String json = "{\"list\": [ { \"a\":\"atext\", \"b\":{ \"b-a\":\"batext\", \"b-b\":\"bbtext\" } }, { \"a\":\"atext2\", \"b\":{ \"b-a\":\"batext2\", \"b-b\":\"bbtext2\" } } ] }";
-        List<String> result = JsonPath.read(json, "$.list[?]", Filter2.filter(Criteria2.where("b.b-a").eq("batext2")));
+        List<String> result = JsonPath.read(json, "$.list[?]", Filter.filter(Criteria.where("b.b-a").eq("batext2")));
 
         assertTrue(result.size() == 1);
     }

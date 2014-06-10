@@ -2,7 +2,6 @@ package com.jayway.jsonpath.internal.spi.compiler;
 
 import com.jayway.jsonpath.Configuration;
 import com.jayway.jsonpath.Filter;
-import com.jayway.jsonpath.Filter2;
 import com.jayway.jsonpath.InvalidPathException;
 
 import java.util.Collection;
@@ -23,13 +22,13 @@ class FilterPathToken extends PathToken {
             "[?,?,?,?,?]"
     };
 
-    private final Collection<Filter2> filters;
+    private final Collection<Filter> filters;
 
-    public FilterPathToken(Filter2 filter) {
+    public FilterPathToken(Filter filter) {
         this.filters = asList(filter);
     }
 
-    public FilterPathToken(Collection<Filter2> filters) {
+    public FilterPathToken(Collection<Filter> filters) {
         this.filters = filters;
     }
 
@@ -52,7 +51,7 @@ class FilterPathToken extends PathToken {
     public boolean accept(Object obj, Configuration configuration) {
         boolean accept = true;
 
-        for (Filter2 filter : filters) {
+        for (Filter filter : filters) {
             if (!filter.apply (obj, configuration)) {
                 accept = false;
                 break;

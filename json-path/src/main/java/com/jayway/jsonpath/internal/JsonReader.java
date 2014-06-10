@@ -89,7 +89,7 @@ public class JsonReader implements ParseContext, ReadContext {
     }
 
     @Override
-    public <T> T read(String path, Filter2... filters) {
+    public <T> T read(String path, Filter... filters) {
         notEmpty(path, "path can not be null or empty");
         return read(JsonPath.compile(path, filters));
     }
@@ -101,7 +101,7 @@ public class JsonReader implements ParseContext, ReadContext {
     }
 
     @Override
-    public List<String> readPathList(String path, Filter2... filters) {
+    public List<String> readPathList(String path, Filter... filters) {
         notEmpty(path, "path can not be null or empty");
         return readPathList(JsonPath.compile(path, filters));
     }

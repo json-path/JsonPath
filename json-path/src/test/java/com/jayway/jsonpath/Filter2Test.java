@@ -6,8 +6,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.regex.Pattern;
 
-import static com.jayway.jsonpath.Criteria2.*;
-import static com.jayway.jsonpath.Filter2.filter;
+import static com.jayway.jsonpath.Criteria.*;
+import static com.jayway.jsonpath.Filter.filter;
 import static org.assertj.core.api.Assertions.assertThat;
 
 public class Filter2Test {
