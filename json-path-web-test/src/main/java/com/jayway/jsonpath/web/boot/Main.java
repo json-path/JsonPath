@@ -21,25 +21,35 @@ import org.glassfish.jersey.servlet.ServletContainer;
 public class Main {
 
     public static void main(String[] args) throws Exception {
-        Server s = new Server();
+        int port = 8080;
+        if(args.length > 0){
+            try {
+                port = Integer.parseInt(args[0]);
+            } catch (NumberFormatException nfe) {
+                System.out.println("Invalid usage! Port argument must be an integer (if not supplied " + port + " is used)");
+            }
+        }
+        System.out.println("Server started on port: " + port);
 
-        s.setConnectors(new Connector[] { createConnector(s) });
+        Server server = new Server();
+
+        server.setConnectors(new Connector[]{createConnector(server, port)});
 
         ServletContextHandler context = new ServletContextHandler(NO_SESSIONS);
         context.setContextPath("/");
         ServletHolder servletHolder = new ServletHolder(createJerseyServlet());
         servletHolder.setInitOrder(1);
         context.addServlet(servletHolder, "/*");
-        s.setHandler(context);
+        server.setHandler(context);
 
-        s.start();
-        s.join();
+        server.start();
+        server.join();
     }
 
-    private static ServerConnector createConnector(Server s){
+    private static ServerConnector createConnector(Server s, int port){
         ServerConnector connector = new ServerConnector(s);
         connector.setHost("localhost");
-        connector.setPort(8080);
+        connector.setPort(port);
         return connector;
     }
 

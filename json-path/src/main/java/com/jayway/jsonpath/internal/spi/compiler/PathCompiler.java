@@ -312,16 +312,6 @@ public class PathCompiler {
 
             criteria.add(createCriteria(pathBuffer, operatorBuffer, valueBuffer));
 
-            /*
-            Iterator<Criteria2> iterator = criteria.iterator();
-            Criteria2 current = iterator.next();
-            Filter2 filter = Filter2.filter(current);
-            while (iterator.hasNext()) {
-                filter. addCriteria(iterator.next());
-            }
-
-            return new FilterPathToken(filter);
-            */
             Filter2 filter2 =  Filter2.filter(criteria);
 
             return new FilterPathToken(filter2);
@@ -329,21 +319,6 @@ public class PathCompiler {
 
         private Criteria2 createCriteria(StringBuilder pathBuffer, StringBuilder operatorBuffer, StringBuilder valueBuffer) {
             return Criteria2.create(pathBuffer.toString().trim(), operatorBuffer.toString().trim(), valueBuffer.toString().trim());
-
-                    /*
-            String value = valueBuffer.toString().trim();
-            Path path = PathCompiler.tokenize(pathBuffer.toString().trim());
-            String operator = operatorBuffer.toString().trim();
-
-
-
-
-            if (operator.isEmpty() && value.isEmpty()) {
-                return Criteria.where(path).exists(true);
-            } else {
-                return Criteria.where(path).matches(operator, value);
-            }
-            */
         }
 
         private boolean isAnd(char c) {

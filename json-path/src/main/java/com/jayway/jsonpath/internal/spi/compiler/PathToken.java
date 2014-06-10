@@ -36,11 +36,15 @@ abstract class PathToken {
 
     void handleArrayIndex(int index, String currentPath, Object json, EvaluationContextImpl ctx) {
         String evalPath = currentPath + "[" + index + "]";
-        Object evalHit = ctx.jsonProvider().getProperty(json, index);
-        if (isLeaf()) {
-            ctx.addResult(evalPath, evalHit);
-        } else {
-            next().evaluate(evalPath, evalHit, ctx);
+        try {
+            Object evalHit = ctx.jsonProvider().getProperty(json, index);
+            if (isLeaf()) {
+                ctx.addResult(evalPath, evalHit);
+            } else {
+                next().evaluate(evalPath, evalHit, ctx);
+            }
+        } catch (IndexOutOfBoundsException e) {
+            throw new PathNotFoundException("Index out of bounds when evaluating path " + currentPath + "[" + index + "]");
         }
     }
 

@@ -20,7 +20,7 @@ class PropertyPathToken extends PathToken {
     @Override
     void evaluate(String currentPath, Object model, EvaluationContextImpl ctx) {
         if (!ctx.jsonProvider().isMap(model)) {
-            throw new PathNotFoundException("Property " + currentPath + " not found!");
+            throw new PathNotFoundException("Property ['" + property + "'] not found in path " + currentPath);
         }
 
         handleObjectProperty(currentPath, model, ctx, property);
