@@ -38,6 +38,9 @@ class ArrayPathToken extends PathToken {
 
     @Override
     void evaluate(String currentPath, Object model, EvaluationContextImpl ctx) {
+        if(model == null){
+            throw new PathNotFoundException("The path " + currentPath + " is null");
+        }
         if (!ctx.jsonProvider().isArray(model)) {
             throw new InvalidPathException(format("Filter: %s can only be applied to arrays. Current context is: %s", toString(), model));
         }
