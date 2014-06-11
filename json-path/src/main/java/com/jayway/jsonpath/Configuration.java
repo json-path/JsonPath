@@ -24,11 +24,6 @@ import java.util.Set;
 
 import static com.jayway.jsonpath.internal.Utils.notNull;
 
-/**
- * User: kalle
- * Date: 8/30/13
- * Time: 12:05 PM
- */
 public class Configuration {
 
 

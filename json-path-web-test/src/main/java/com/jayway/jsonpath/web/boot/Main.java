@@ -1,9 +1,5 @@
 package com.jayway.jsonpath.web.boot;
 
-import static org.eclipse.jetty.servlet.ServletContextHandler.NO_SESSIONS;
-
-import java.io.IOException;
-
 import com.jayway.jsonpath.web.resource.IndexResource;
 import com.jayway.jsonpath.web.resource.StaticResource;
 import org.eclipse.jetty.server.Connector;
@@ -15,6 +11,10 @@ import org.glassfish.jersey.jackson.JacksonFeature;
 import org.glassfish.jersey.server.ResourceConfig;
 import org.glassfish.jersey.server.mvc.mustache.MustacheMvcFeature;
 import org.glassfish.jersey.servlet.ServletContainer;
+
+import java.io.IOException;
+
+import static org.eclipse.jetty.servlet.ServletContextHandler.NO_SESSIONS;
 
 
 

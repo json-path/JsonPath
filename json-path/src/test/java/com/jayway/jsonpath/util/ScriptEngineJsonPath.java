@@ -4,16 +4,11 @@ import javax.script.Invocable;
 import javax.script.ScriptEngine;
 import javax.script.ScriptEngineManager;
 import javax.script.ScriptException;
+
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Scanner;
 
-/**
- * Created by IntelliJ IDEA.
- * User: kallestenflo
- * Date: 11/8/11
- * Time: 1:01 PM
- */
 public class ScriptEngineJsonPath {
 
     private static ScriptEngineManager manager = new ScriptEngineManager();

@@ -1,6 +1,10 @@
 package com.jayway.jsonpath.internal;
 
-import com.jayway.jsonpath.*;
+import com.jayway.jsonpath.Configuration;
+import com.jayway.jsonpath.Filter;
+import com.jayway.jsonpath.JsonPath;
+import com.jayway.jsonpath.ParseContext;
+import com.jayway.jsonpath.ReadContext;
 import com.jayway.jsonpath.spi.http.HttpProviderFactory;
 
 import java.io.File;
@@ -13,11 +17,6 @@ import java.util.List;
 import static com.jayway.jsonpath.internal.Utils.notEmpty;
 import static com.jayway.jsonpath.internal.Utils.notNull;
 
-/**
- * User: kalle
- * Date: 8/30/13
- * Time: 12:17 PM
- */
 public class JsonReader implements ParseContext, ReadContext {
 
     private final Configuration configuration;

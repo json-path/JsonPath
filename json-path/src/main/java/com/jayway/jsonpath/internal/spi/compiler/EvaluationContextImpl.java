@@ -2,8 +2,8 @@ package com.jayway.jsonpath.internal.spi.compiler;
 
 import com.jayway.jsonpath.Configuration;
 import com.jayway.jsonpath.Option;
-import com.jayway.jsonpath.spi.json.JsonProvider;
 import com.jayway.jsonpath.spi.compiler.EvaluationContext;
+import com.jayway.jsonpath.spi.json.JsonProvider;
 
 import java.util.ArrayList;
 import java.util.List;

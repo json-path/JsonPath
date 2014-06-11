@@ -15,12 +15,13 @@
 package com.jayway.jsonpath;
 
 
-import com.jayway.jsonpath.internal.*;
+import com.jayway.jsonpath.internal.JsonReader;
+import com.jayway.jsonpath.internal.Utils;
 import com.jayway.jsonpath.internal.spi.compiler.PathCompiler;
+import com.jayway.jsonpath.spi.compiler.Path;
 import com.jayway.jsonpath.spi.http.HttpProviderFactory;
 import com.jayway.jsonpath.spi.json.JsonProvider;
 import com.jayway.jsonpath.spi.json.JsonProviderFactory;
-import com.jayway.jsonpath.spi.compiler.Path;
 
 import java.io.File;
 import java.io.FileInputStream;

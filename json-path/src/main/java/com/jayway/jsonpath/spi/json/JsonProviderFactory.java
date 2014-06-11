@@ -14,7 +14,6 @@
  */
 package com.jayway.jsonpath.spi.json;
 
-import com.jayway.jsonpath.internal.spi.json.JacksonProvider;
 import com.jayway.jsonpath.internal.spi.json.JsonSmartJsonProvider;
 
 /**

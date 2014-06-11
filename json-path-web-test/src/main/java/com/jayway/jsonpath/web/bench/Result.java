@@ -2,8 +2,6 @@ package com.jayway.jsonpath.web.bench;
 
 import com.jayway.jsonpath.internal.JsonFormatter;
 
-import java.util.List;
-
 public class Result {
 
     public final String provider;

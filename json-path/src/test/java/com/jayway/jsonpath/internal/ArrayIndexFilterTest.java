@@ -8,11 +8,6 @@ import java.util.List;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 
-/**
- * User: kalle
- * Date: 9/9/13
- * Time: 8:10 AM
- */
 public class ArrayIndexFilterTest {
 
     private static final String JSON =  "[1, 3, 5, 7, 8, 13, 20]";

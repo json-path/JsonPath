@@ -9,11 +9,6 @@ import static junit.framework.Assert.assertEquals;
 import static junit.framework.Assert.assertNull;
 import static org.hamcrest.MatcherAssert.assertThat;
 
-/**
- * User: kalle
- * Date: 8/22/13
- * Time: 10:39 AM
- */
 public class NullHandlingTest {
 
     public static final String DOCUMENT = "{\n" +

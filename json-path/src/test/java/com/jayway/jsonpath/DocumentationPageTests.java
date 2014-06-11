@@ -2,11 +2,6 @@ package com.jayway.jsonpath;
 
 import org.junit.Test;
 
-/**
- * User: kalle
- * Date: 8/23/13
- * Time: 10:58 AM
- */
 public class DocumentationPageTests {
 
 

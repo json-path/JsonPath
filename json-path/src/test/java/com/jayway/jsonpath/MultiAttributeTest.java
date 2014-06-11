@@ -1,17 +1,5 @@
 package com.jayway.jsonpath;
 
-import org.junit.Test;
-
-import java.util.List;
-
-import static org.assertj.core.api.Assertions.assertThat;
-
-
-/**
- * User: kalle
- * Date: 8/20/13
- * Time: 8:03 AM
- */
 public class MultiAttributeTest {
 
     public final static String DOCUMENT =

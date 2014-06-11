@@ -3,12 +3,6 @@ package com.jayway.jsonpath;
 import com.jayway.jsonpath.internal.spi.json.JacksonProvider;
 import org.junit.Test;
 
-/**
- * Created by IntelliJ IDEA.
- * User: kallestenflo
- * Date: 11/8/11
- * Time: 10:40 PM
- */
 public class JsonProviderTest {
 
     public final static String ARRAY = "[{\"value\": 1},{\"value\": 2}, {\"value\": 3},{\"value\": 4}]";

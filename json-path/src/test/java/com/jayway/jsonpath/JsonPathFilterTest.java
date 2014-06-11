@@ -1,23 +1,5 @@
 package com.jayway.jsonpath;
 
-import org.junit.Test;
-
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.regex.Pattern;
-
-import static com.jayway.jsonpath.Criteria.where;
-import static com.jayway.jsonpath.Filter.filter;
-import static java.util.Arrays.asList;
-import static junit.framework.Assert.assertEquals;
-
-/**
- * Created by IntelliJ IDEA.
- * User: kallestenflo
- * Date: 3/5/12
- * Time: 4:24 PM
- */
 public class JsonPathFilterTest {
     
     public final static String DOCUMENT =

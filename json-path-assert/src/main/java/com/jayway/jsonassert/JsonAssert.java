@@ -2,20 +2,24 @@ package com.jayway.jsonassert;
 
 
 import com.jayway.jsonassert.impl.JsonAsserterImpl;
-import com.jayway.jsonassert.impl.matcher.*;
+import com.jayway.jsonassert.impl.matcher.CollectionMatcher;
+import com.jayway.jsonassert.impl.matcher.IsCollectionWithSize;
+import com.jayway.jsonassert.impl.matcher.IsEmptyCollection;
+import com.jayway.jsonassert.impl.matcher.IsMapContainingKey;
+import com.jayway.jsonassert.impl.matcher.IsMapContainingValue;
 import com.jayway.jsonpath.spi.json.JsonProviderFactory;
 import org.hamcrest.Matcher;
 
-import java.io.*;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.Reader;
+import java.io.StringWriter;
+import java.io.Writer;
 import java.text.ParseException;
 import java.util.Collection;
 import java.util.Map;
 
-/**
- * User: kalle stenflo
- * Date: 1/24/11
- * Time: 9:31 PM
- */
 public class JsonAssert {
 
     /**

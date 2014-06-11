@@ -5,12 +5,6 @@ import com.jayway.jsonpath.spi.json.JsonProviderFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-/**
- * Created by IntelliJ IDEA.
- * User: kallestenflo
- * Date: 2/4/11
- * Time: 9:32 PM
- */
 public class ExpressionEvalTest {
 
     private static final Logger logger = LoggerFactory.getLogger(ExpressionEvalTest.class);

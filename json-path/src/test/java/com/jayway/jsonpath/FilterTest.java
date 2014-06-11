@@ -17,12 +17,6 @@ import static junit.framework.Assert.*;
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
 
-/**
- * Created by IntelliJ IDEA.
- * User: kallestenflo
- * Date: 3/5/12
- * Time: 12:27 PM
- */
 public class FilterTest {
 
     public final static String DOCUMENT =

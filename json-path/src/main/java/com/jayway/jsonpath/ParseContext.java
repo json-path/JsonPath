@@ -19,11 +19,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
 
-/**
- * User: kalle
- * Date: 8/30/13
- * Time: 12:03 PM
- */
 public interface ParseContext {
 
     ReadContext parse(String json);

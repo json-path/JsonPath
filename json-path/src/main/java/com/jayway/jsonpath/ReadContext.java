@@ -16,11 +16,6 @@ package com.jayway.jsonpath;
 
 import java.util.List;
 
-/**
- * User: kalle
- * Date: 8/30/13
- * Time: 12:03 PM
- */
 public interface ReadContext {
 
     /**

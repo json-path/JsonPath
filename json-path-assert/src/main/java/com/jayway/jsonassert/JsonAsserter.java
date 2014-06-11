@@ -2,11 +2,6 @@ package com.jayway.jsonassert;
 
 import org.hamcrest.Matcher;
 
-/**
- * User: kallestenflo
- * Date: 1/24/11
- * Time: 9:22 PM
- */
 public interface JsonAsserter {
 
     /**

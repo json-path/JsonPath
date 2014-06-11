@@ -7,11 +7,6 @@ import com.jayway.jsonpath.spi.json.JsonProvider;
 import com.jayway.jsonpath.spi.json.JsonProviderFactory;
 import org.junit.Test;
 
-/**
- * User: kalle
- * Date: 8/29/13
- * Time: 12:09 PM
- */
 public class ReadConfigurationTest {
 
     private static JsonProvider provider = JsonProviderFactory.createProvider();

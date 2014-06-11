@@ -1,7 +1,5 @@
 package com.jayway.jsonpath.internal;
 
-import java.util.Arrays;
-
 public class Parser {
 
     public enum Token {

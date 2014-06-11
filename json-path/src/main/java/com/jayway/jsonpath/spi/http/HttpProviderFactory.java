@@ -5,12 +5,6 @@ import java.io.InputStream;
 import java.net.URL;
 import java.net.URLConnection;
 
-/**
- * Created by IntelliJ IDEA.
- * User: kallestenflo
- * Date: 3/10/12
- * Time: 7:39 AM
- */
 public abstract class HttpProviderFactory {
 
     public static HttpProviderFactory factory = new HttpProviderFactory() {

@@ -14,12 +14,6 @@ import static junit.framework.Assert.*;
 import static org.hamcrest.Matchers.is;
 import static org.junit.Assert.assertThat;
 
-/**
- * Created by IntelliJ IDEA.
- * User: kallestenflo
- * Date: 2/29/12
- * Time: 8:42 AM
- */
 public class IssuesTest {
 
     private static final JsonProvider jp = JsonProviderFactory.createProvider();
@@ -322,6 +316,23 @@ public class IssuesTest {
 
 
         assertEquals(1, JsonPath.read(json, "$[0].a"));
+    }
+
+    @Test(expected = PathNotFoundException.class)
+    public void a_test() {
+
+        String json ="{\n" +
+                "  \"success\": true,\n" +
+                "  \"data\": {\n" +
+                "    \"user\": 3,\n" +
+                "    \"own\": null,\n" +
+                "    \"passes\": null,\n" +
+                "    \"completed\": null\n" +
+                "  },\n" +
+                "  \"version\": 1371160528774\n" +
+                "}";
+
+        Object read = JsonPath.read(json, "$.data.passes[0].id");
     }
 
 }

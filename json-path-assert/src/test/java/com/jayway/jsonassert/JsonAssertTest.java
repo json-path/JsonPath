@@ -8,11 +8,6 @@ import java.io.InputStream;
 import static com.jayway.jsonassert.JsonAssert.*;
 import static org.hamcrest.Matchers.*;
 
-/**
- * User: kalle stenflo
- * Date: 1/21/11
- * Time: 4:04 PM
- */
 public class JsonAssertTest {
 
     public final static String JSON =

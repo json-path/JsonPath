@@ -2,7 +2,6 @@ package com.jayway.jsonpath.web.bench;
 
 import com.jayway.jsonpath.JsonPath;
 import com.jayway.jsonpath.internal.spi.json.JacksonProvider;
-import com.jayway.jsonpath.spi.json.JsonProvider;
 import com.jayway.jsonpath.spi.json.JsonProviderFactory;
 import io.gatling.jsonpath.JsonPath$;
 import org.boon.json.JsonParser;
@@ -54,7 +53,7 @@ public class Bench {
             } else if(res instanceof Boolean){
                 result = res.toString();
             } else {
-                result = res != null ? JsonProviderFactory.createProvider().toJson(res) : null;
+                result = res != null ? JsonProviderFactory.createProvider().toJson(res) : "null";
             }
             return new Result("jayway", time, result, error);
         }

@@ -13,12 +13,6 @@ import static org.hamcrest.Matchers.hasItems;
 import static org.hamcrest.Matchers.hasSize;
 import static org.junit.Assert.*;
 
-/**
- * Created by IntelliJ IDEA.
- * User: kallestenflo
- * Date: 2/2/11
- * Time: 3:07 PM
- */
 public class JsonPathTest {
 
 
