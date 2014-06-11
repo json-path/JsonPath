@@ -12,7 +12,6 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
-import java.util.List;
 
 import static com.jayway.jsonpath.internal.Utils.notEmpty;
 import static com.jayway.jsonpath.internal.Utils.notNull;
@@ -99,15 +98,4 @@ public class JsonReader implements ParseContext, ReadContext {
         return path.read(json, configuration);
     }
 
-    @Override
-    public List<String> readPathList(String path, Filter... filters) {
-        notEmpty(path, "path can not be null or empty");
-        return readPathList(JsonPath.compile(path, filters));
-    }
-
-    @Override
-    public List<String> readPathList(JsonPath path) {
-        notNull(path, "path can not be null");
-        return path.readPathList(json, configuration);
-    }
 }

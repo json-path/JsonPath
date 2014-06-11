@@ -26,7 +26,6 @@ import static com.jayway.jsonpath.internal.Utils.notNull;
 
 public class Configuration {
 
-
     private final JsonProvider provider;
     private final Set<Option> options;
 

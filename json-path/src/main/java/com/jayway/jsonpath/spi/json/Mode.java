@@ -14,9 +14,6 @@
  */
 package com.jayway.jsonpath.spi.json;
 
-/**
- * @author Kalle Stenflo
- */
 public enum Mode {
 
     SLACK(-1),

@@ -28,9 +28,6 @@ import java.io.Reader;
 import java.util.List;
 import java.util.Map;
 
-/**
- * @author Kalle Stenflo
- */
 public class JsonSmartJsonProvider extends AbstractJsonProvider {
 
     private Mode mode;

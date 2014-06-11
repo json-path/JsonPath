@@ -14,9 +14,7 @@
  */
 package com.jayway.jsonpath;
 
-/**
- * @author Kalle Stenflo
- */
+
 @SuppressWarnings("serial")
 public class InvalidJsonException extends RuntimeException {
 

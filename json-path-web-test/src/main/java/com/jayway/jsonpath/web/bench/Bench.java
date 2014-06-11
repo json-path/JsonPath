@@ -1,6 +1,8 @@
 package com.jayway.jsonpath.web.bench;
 
+import com.jayway.jsonpath.Configuration;
 import com.jayway.jsonpath.JsonPath;
+import com.jayway.jsonpath.Option;
 import com.jayway.jsonpath.internal.spi.json.JacksonProvider;
 import com.jayway.jsonpath.spi.json.JsonProviderFactory;
 import io.gatling.jsonpath.JsonPath$;
@@ -32,14 +34,23 @@ public class Bench {
         String error = null;
         long time;
         Object res = null;
-        long now = System.currentTimeMillis();
 
+        //Configuration configuration = Configuration.defaultConfiguration();
+        Configuration configuration = Configuration.defaultConfiguration().options(Option.ALWAYS_RETURN_LIST);
+        if(!value){
+            configuration = configuration.options(Option.AS_PATH_LIST);
+        }
+
+        long now = System.currentTimeMillis();
         try {
+
+            res = JsonPath.using(configuration).parse(json).read(path);
+            /*
             if(value) {
                 res = JsonPath.parse(json).read(path);
             } else {
                 res = JsonPath.parse(json).readPathList(path);
-            }
+            }*/
 
         } catch (Exception e){
             error = getError(e);

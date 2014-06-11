@@ -20,9 +20,6 @@ import java.io.InputStream;
 import java.io.Reader;
 import java.util.Collection;
 
-/**
- * @author Kalle Stenflo
- */
 public interface JsonProvider {
 
     Mode getMode();

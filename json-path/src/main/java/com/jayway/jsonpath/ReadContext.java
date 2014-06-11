@@ -14,8 +14,6 @@
  */
 package com.jayway.jsonpath;
 
-import java.util.List;
-
 public interface ReadContext {
 
     /**
@@ -43,22 +41,5 @@ public interface ReadContext {
      * @return result
      */
     <T> T read(JsonPath path);
-
-    /**
-     * Reads the given path list from this context
-     *
-     * @param path    a container Object
-     * @param filters filters
-     * @return list of definite path strings to object matched by path
-     */
-    List<String> readPathList(String path, Filter... filters);
-
-    /**
-     * Reads the given path list from this context
-     *
-     * @param path path to apply
-     * @return list of definite path strings to object matched by path
-     */
-    List<String> readPathList(JsonPath path);
 
 }

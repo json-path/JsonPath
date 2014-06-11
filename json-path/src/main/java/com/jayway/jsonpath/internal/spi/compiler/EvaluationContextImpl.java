@@ -3,6 +3,7 @@ package com.jayway.jsonpath.internal.spi.compiler;
 import com.jayway.jsonpath.Configuration;
 import com.jayway.jsonpath.Option;
 import com.jayway.jsonpath.spi.compiler.EvaluationContext;
+import com.jayway.jsonpath.spi.compiler.Path;
 import com.jayway.jsonpath.spi.json.JsonProvider;
 
 import java.util.ArrayList;
@@ -17,14 +18,15 @@ class EvaluationContextImpl implements EvaluationContext {
     private final Configuration configuration;
     private final Object objectResult;
     private final List<String> pathResult;
-    private final boolean isDefinite;
+    private final Path path;
     private int resultIndex = 0;
 
-    EvaluationContextImpl(Configuration configuration, boolean isDefinite) {
+    EvaluationContextImpl(Path path, Configuration configuration) {
+        this.path = path;
         this.configuration = configuration;
         this.objectResult = configuration.getProvider().createArray();
         this.pathResult = new ArrayList<String>();
-        this.isDefinite = isDefinite;
+
     }
 
     void addResult(String path, Object model) {
@@ -49,15 +51,35 @@ class EvaluationContextImpl implements EvaluationContext {
 
     @Override
     public <T> T get() {
-        if (isDefinite) {
+        if (path.isDefinite()) {
             return (T) jsonProvider().getProperty(objectResult, 0);
         }
         return (T) objectResult;
     }
 
     @Override
+    public Object getWithOptions() {
+        if(configuration.getOptions().contains(Option.AS_PATH_LIST)) {
+
+            Object array = configuration.getProvider().createArray();
+            int i = 0;
+            for (String p : pathResult) {
+                configuration.getProvider().setProperty(array, i, p);
+                i++;
+            }
+            return array;
+
+        } else if(configuration.getOptions().contains(Option.ALWAYS_RETURN_LIST)){
+
+            return objectResult;
+
+        } else {
+            return get();
+        }
+    }
+
+    @Override
     public List<String> getPathList() {
         return pathResult;
     }
-
 }

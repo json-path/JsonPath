@@ -24,7 +24,7 @@ class CompiledPath implements Path {
             logger.debug("Evaluating path: {}", toString());
         }
 
-        EvaluationContextImpl ctx = new EvaluationContextImpl(configuration, isDefinite());
+        EvaluationContextImpl ctx = new EvaluationContextImpl(this, configuration);
         root.evaluate("", model, ctx);
 
         if(logger.isDebugEnabled()) {

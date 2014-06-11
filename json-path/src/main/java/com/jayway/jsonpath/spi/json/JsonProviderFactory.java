@@ -16,9 +16,6 @@ package com.jayway.jsonpath.spi.json;
 
 import com.jayway.jsonpath.internal.spi.json.JsonSmartJsonProvider;
 
-/**
- * @author Kalle Stenflo
- */
 public abstract class JsonProviderFactory {
 
     private static JsonProvider provider = new JsonSmartJsonProvider();

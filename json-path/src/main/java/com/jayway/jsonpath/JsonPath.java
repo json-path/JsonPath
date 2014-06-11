@@ -28,8 +28,6 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
-import java.util.List;
-import java.util.regex.Pattern;
 
 import static com.jayway.jsonpath.internal.Utils.*;
 
@@ -91,12 +89,8 @@ import static com.jayway.jsonpath.internal.Utils.*;
  * <code>
  * String author = JsonPath.read(json, "$.store.book[1].author")
  * </code>
- *
- * @author Kalle Stenflo
  */
 public class JsonPath {
-
-    private static final Pattern DEFINITE_PATH_PATTERN = Pattern.compile(".*(\\.\\.|\\*|\\[[\\\\/]|\\?|,|:\\s?]|\\[\\s?:|>|\\(|<|=|\\+).*");
 
     private final Path path;
 
@@ -115,28 +109,10 @@ public class JsonPath {
     }
 
     /**
-     * Checks if a path points to a single item or if it potentially returns multiple items
-     * <p/>
-     * a path is considered <strong>not</strong> definite if it contains a scan fragment ".."
-     * or an array position fragment that is not based on a single index
-     * <p/>
-     * <p/>
-     * definite path examples are:
-     * <p/>
-     * $store.book
-     * $store.book[1].title
-     * <p/>
-     * not definite path examples are:
-     * <p/>
-     * $..book
-     * $.store.book[1,2]
-     * $.store.book[?(@.category = 'fiction')]
-     *
-     * @return true if path is definite (points to single item)
+     * @see JsonPath#isDefinite()
      */
     public static boolean isPathDefinite(String path) {
-        String preparedPath = path.replaceAll("\"[^\"\\\\\\n\r]*\"", "");
-        return !DEFINITE_PATH_PATTERN.matcher(preparedPath).matches();
+        return compile(path).isDefinite();
     }
 
 
@@ -155,12 +131,13 @@ public class JsonPath {
      * not definite path examples are:
      * <p/>
      * $..book
+     * $.store.book[*]
      * $.store.book[1,2]
      * $.store.book[?(@.category = 'fiction')]
      *
      * @return true if path is definite (points to single item)
      */
-    public boolean isPathDefinite() {
+    public boolean isDefinite() {
         return path.isDefinite();
     }
 
@@ -189,33 +166,7 @@ public class JsonPath {
      * @return object(s) matched by the given path
      */
     public <T> T read(Object jsonObject, Configuration configuration) {
-
-        return path.evaluate(jsonObject, configuration).get();
-    }
-
-    /**
-     * Applies this JsonPath to the provided json document.
-     * Note that the document must be identified as either a List or Map by
-     * the {@link JsonProvider}
-     *
-     * @param jsonObject a container Object
-     * @return list of definite path strings to object matched by path
-     */
-    public List<String> readPathList(Object jsonObject) {
-        return readPathList(jsonObject, Configuration.defaultConfiguration());
-    }
-
-    /**
-     * Applies this JsonPath to the provided json document.
-     * Note that the document must be identified as either a List or Map by
-     * the {@link JsonProvider}
-     *
-     * @param jsonObject    a container Object
-     * @param configuration configuration to use
-     * @return list of definite path strings to object matched by path
-     */
-    public List<String> readPathList(Object jsonObject, Configuration configuration) {
-        return path.evaluate(jsonObject, configuration).getPathList();
+        return (T)path.evaluate(jsonObject, configuration).getWithOptions();
     }
 
     /**

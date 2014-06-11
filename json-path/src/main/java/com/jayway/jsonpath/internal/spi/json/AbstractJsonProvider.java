@@ -23,9 +23,6 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 
-/**
- * @author Kalle Stenflo
- */
 public abstract class AbstractJsonProvider implements JsonProvider {
 
     @Override
