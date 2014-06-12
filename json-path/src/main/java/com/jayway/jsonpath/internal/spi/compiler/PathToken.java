@@ -7,9 +7,6 @@ import com.jayway.jsonpath.internal.Utils;
 
 import java.util.List;
 
-/**
- *
- */
 abstract class PathToken {
 
     private PathToken next;
@@ -70,16 +67,13 @@ abstract class PathToken {
     }
 
     private Object readObjectProperty(String property, Object model, EvaluationContextImpl ctx) {
-        if (ctx.options().contains(Option.THROW_ON_MISSING_PROPERTY) && !ctx.jsonProvider().getPropertyKeys(model).contains(property)) {
-            throw new PathNotFoundException("Path [" + property + "] not found in the current context" );
-        }
-        return ctx.jsonProvider().getProperty(model, property);
+        return ctx.jsonProvider().getMapValue(model, property, ctx.options().contains(Option.THROW_ON_MISSING_PROPERTY));
     }
 
     void handleArrayIndex(int index, String currentPath, Object json, EvaluationContextImpl ctx) {
         String evalPath = currentPath + "[" + index + "]";
         try {
-            Object evalHit = ctx.jsonProvider().getProperty(json, index);
+            Object evalHit = ctx.jsonProvider().getArrayIndex(json, index);
             if (isLeaf()) {
                 ctx.addResult(evalPath, evalHit);
             } else {

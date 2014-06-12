@@ -78,7 +78,7 @@ class ScanPathToken extends PathToken {
 
         for (String property : properties) {
             String evalPath = currentPath + "['" + property + "']";
-            Object propertyModel = ctx.jsonProvider().getProperty(model, property);
+            Object propertyModel = ctx.jsonProvider().getMapValue(model, property);
             walk(evalPath, propertyModel, ctx, predicate, predicateMatches);
         }
 

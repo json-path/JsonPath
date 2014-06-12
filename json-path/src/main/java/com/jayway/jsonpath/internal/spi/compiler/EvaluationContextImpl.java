@@ -52,7 +52,7 @@ class EvaluationContextImpl implements EvaluationContext {
     @Override
     public <T> T get() {
         if (path.isDefinite()) {
-            return (T) jsonProvider().getProperty(objectResult, 0);
+            return (T) jsonProvider().getArrayIndex(objectResult, 0);
         }
         return (T) objectResult;
     }

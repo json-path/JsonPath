@@ -14,6 +14,7 @@
  */
 package com.jayway.jsonpath.internal.spi.json;
 
+import com.jayway.jsonpath.PathNotFoundException;
 import com.jayway.jsonpath.internal.Utils;
 import com.jayway.jsonpath.spi.json.JsonProvider;
 
@@ -49,6 +50,47 @@ public abstract class AbstractJsonProvider implements JsonProvider {
     public boolean isArray(Object obj) {
         return (obj instanceof List);
     }
+
+
+    /**
+     * Extracts a value from an array
+     *
+     * @param obj an array
+     * @param idx index
+     * @return the entry at the given index
+     */
+    public Object getArrayIndex(Object obj, int idx) {
+        return ((List) obj).get(idx);
+    }
+
+    /**
+     * Extracts a value from an map
+     *
+     * @param obj a map
+     * @param key property key
+     * @return the map entry
+     */
+    public Object getMapValue(Object obj, String key){
+        return ((Map) obj).get(key);
+    }
+
+    /**
+     * Extracts a value from an map
+     *
+     * @param obj a map
+     * @param key property key
+     * @param throwOnMissing if true a PathNotFoundException is thrown if property is missing
+     * @return the map entry
+     */
+    public Object getMapValue(Object obj, String key, boolean throwOnMissing){
+        Map m = (Map) obj;
+        if(!m.containsKey(key)){
+            throw new PathNotFoundException("Property ['" + key + "'] not found in the current context" );
+        } else {
+            return m.get(key);
+        }
+    }
+
 
     /**
      * Extracts a value from an object or array

@@ -19,6 +19,7 @@ import com.jayway.jsonpath.InvalidJsonException;
 import java.io.InputStream;
 import java.io.Reader;
 import java.util.Collection;
+import java.util.List;
 
 public interface JsonProvider {
 
@@ -89,6 +90,34 @@ public interface JsonProvider {
      * @return the entry at the given key, i.e. obj[key]
      */
     Object getProperty(Object obj, Object key);
+
+    /**
+     * Extracts a value from an array
+     *
+     * @param obj an array
+     * @param idx index
+     * @return the entry at the given index
+     */
+    Object getArrayIndex(Object obj, int idx);
+
+    /**
+     * Extracts a value from an map
+     *
+     * @param obj a map
+     * @param key property key
+     * @return the map entry
+     */
+    Object getMapValue(Object obj, String key);
+
+    /**
+     * Extracts a value from an map
+     *
+     * @param obj a map
+     * @param key property key
+     * @param throwOnMissing if true a PathNotFoundException is thrown if property is not defined
+     * @return the map entry
+     */
+    Object getMapValue(Object obj, String key, boolean throwOnMissing);
 
     /**
      * Sets a value in an object or array
