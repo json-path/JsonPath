@@ -13,9 +13,11 @@ import javax.ws.rs.FormParam;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
+import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response;
 
 import java.util.HashMap;
 import java.util.List;
@@ -23,7 +25,7 @@ import java.util.Map;
 
 import static java.util.Arrays.asList;
 
-@Path("")
+@Path("/")
 @Produces(MediaType.TEXT_HTML)
 public class IndexResource {
 
@@ -32,21 +34,37 @@ public class IndexResource {
     public final static Map<String, String> TEMPLATES = loadTemplates();
 
     @GET
+    @Path("templates/{template}")
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response getTemplate(@PathParam("template") @DefaultValue("goessner") String template){
+        return Response.ok(TEMPLATES.get(template)).build();
+    }
+
+
+    @POST
+    @Path("eval")
+    @Consumes(MediaType.APPLICATION_FORM_URLENCODED)
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response getTemplate(@FormParam("json") String json,
+                                @FormParam("path") String path,
+                                @FormParam("type") String type,
+                                @FormParam("flagWrap")  boolean flagWrap,
+                                @FormParam("flagMerge")  boolean flagMerge,
+                                @FormParam("flagSuppress")  boolean flagSuppress ){
+
+        boolean value = "VALUE".equalsIgnoreCase(type);
+
+        Map<String, Result> resultMap = new Bench(json, path, value, flagWrap, flagMerge, flagSuppress).runAll();
+
+        return Response.ok(resultMap).build();
+    }
+
+    @GET
     public Viewable get(@QueryParam("template") @DefaultValue("goessner") String template){
          return createView(TEMPLATES.get(template), "$.store.book[0].title", true, template, null);
     }
 
-    @POST
-    @Consumes(MediaType.APPLICATION_FORM_URLENCODED)
-    public Viewable post(@FormParam("json") String json,
-                         @FormParam("path") String path,
-                         @FormParam("type") String type,
-                         @FormParam("template")  String template){
 
-        boolean value = "VALUE".equalsIgnoreCase(type);
-
-        return createView(json, path, value, template, new Bench(json, path, value, true, true).runAll());
-    }
 
     private Viewable createView(String json, String path, boolean value, String selectedTemplate, List<Result> results){
         Map<String, Object> res = new HashMap<String, Object>();
@@ -70,6 +88,7 @@ public class IndexResource {
             String twentyK = IOUtils.toString(Thread.currentThread().getContextClassLoader().getResourceAsStream("json/20k.json"));
 
             Map<String, String> templates = new HashMap<String, String>();
+            templates.put("blank", "null");
             templates.put("goessner", goessner);
             templates.put("twitter", twitter);
             templates.put("webapp", webapp);

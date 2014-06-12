@@ -59,8 +59,10 @@ class EvaluationContextImpl implements EvaluationContext {
 
     @Override
     public Object getWithOptions() {
-        if(configuration.getOptions().contains(Option.AS_PATH_LIST)) {
+        boolean optAsPathList = configuration.getOptions().contains(Option.AS_PATH_LIST);
+        boolean optAlwaysReturnList = configuration.getOptions().contains(Option.ALWAYS_RETURN_LIST);
 
+        if (optAsPathList) {
             Object array = configuration.getProvider().createArray();
             int i = 0;
             for (String p : pathResult) {
@@ -68,11 +70,8 @@ class EvaluationContextImpl implements EvaluationContext {
                 i++;
             }
             return array;
-
-        } else if(configuration.getOptions().contains(Option.ALWAYS_RETURN_LIST)){
-
+        } else if (optAlwaysReturnList) {
             return objectResult;
-
         } else {
             return get();
         }

@@ -34,7 +34,16 @@ public enum Option {
     /**
      * When multiple properties are queried eg @..['foo', 'bar'] these properties are extracted and put in a new Map.
      */
-    MERGE_MULTI_PROPS
+    MERGE_MULTI_PROPS,
+
+    /**
+     * Suppress all exceptions when evaluating path.
+     * <br/>
+     * If an exception is thrown and the option {@link Option#ALWAYS_RETURN_LIST} an empty list is returned.
+     * If an exception is thrown and the option {@link Option#ALWAYS_RETURN_LIST} is not present null is returned.
+     * The option {@link Option#THROW_ON_MISSING_PROPERTY} has precedence over this option.
+     */
+    SUPPRESS_EXCEPTIONS
 
 
 }
