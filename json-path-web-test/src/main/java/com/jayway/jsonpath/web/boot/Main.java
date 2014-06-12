@@ -1,6 +1,6 @@
 package com.jayway.jsonpath.web.boot;
 
-import com.jayway.jsonpath.web.resource.IndexResource;
+import com.jayway.jsonpath.web.resource.ApiResource;
 import com.jayway.jsonpath.web.resource.StaticResource;
 import org.eclipse.jetty.server.Connector;
 import org.eclipse.jetty.server.Server;
@@ -9,7 +9,6 @@ import org.eclipse.jetty.servlet.ServletContextHandler;
 import org.eclipse.jetty.servlet.ServletHolder;
 import org.glassfish.jersey.jackson.JacksonFeature;
 import org.glassfish.jersey.server.ResourceConfig;
-import org.glassfish.jersey.server.mvc.mustache.MustacheMvcFeature;
 import org.glassfish.jersey.servlet.ServletContainer;
 
 import java.io.IOException;
@@ -55,12 +54,9 @@ public class Main {
 
     private static ServletContainer createJerseyServlet() throws IOException {
         ResourceConfig resourceConfig = new ResourceConfig();
-        resourceConfig.property(MustacheMvcFeature.TEMPLATE_BASE_PATH, "templates");
-
-        resourceConfig.register(MustacheMvcFeature.class);
         resourceConfig.register(JacksonFeature.class);
 
-        resourceConfig.register(new IndexResource());
+        resourceConfig.register(new ApiResource());
         resourceConfig.register(new StaticResource());
 
         return new ServletContainer(resourceConfig);

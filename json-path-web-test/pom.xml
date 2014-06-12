@@ -23,15 +23,9 @@
             <artifactId>jetty-all</artifactId>
             <version>9.2.0.v20140526</version>
         </dependency>
-
         <dependency>
             <groupId>org.glassfish.jersey.containers</groupId>
             <artifactId>jersey-container-servlet</artifactId>
-            <version>2.9.1</version>
-        </dependency>
-        <dependency>
-            <groupId>org.glassfish.jersey.ext</groupId>
-            <artifactId>jersey-mvc-mustache</artifactId>
             <version>2.9.1</version>
         </dependency>
         <dependency>

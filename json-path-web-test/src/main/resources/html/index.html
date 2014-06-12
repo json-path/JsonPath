@@ -3,92 +3,88 @@
         <meta charset="utf-8">
         <meta http-equiv="X-UA-Compatible" content="IE=edge">
         <meta name="viewport" content="width=device-width, initial-scale=1">
-        <title>JsonPath</title>
-        <link rel="stylesheet" href="/static/css/bootstrap.css">
-        <link rel="stylesheet" href="//netdna.bootstrapcdn.com/font-awesome/4.0.3/css/font-awesome.min.css">
-        <link rel="stylesheet" href="//google-code-prettify.googlecode.com/svn/loader/prettify.css">
+        <title>JSONPath evaluator</title>
+        <link rel="stylesheet" href="/css/bootstrap.min.css">
+        <link rel="stylesheet" href="/css/prettify.css">
+        <link rel="stylesheet" href="/css/font-awesome.min.css">
 
-        <script type="text/javascript" src="//google-code-prettify.googlecode.com/svn/loader/prettify.js?autoload=false"></script>
-        <script type="text/javascript" src="//ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
-        <script type="text/javascript" src="//ajax.googleapis.com/ajax/libs/jqueryui/1.10.4/jquery-ui.min.js"></script>
-
-        <script type="text/javascript" src="/static/js/jsonpath-0.8.0.js"></script>
-        <script type="text/javascript" src="/static/js/bootstrap.js"></script>
+        <script type="text/javascript" src="/js/prettify.js"></script>
+        <script type="text/javascript" src="/js/jquery.min.js"></script>
+        <script type="text/javascript" src="/js/jsonpath-0.8.0.js"></script>
+        <script type="text/javascript" src="/js/bootstrap.min.js"></script>
     </head>
     <body role="document">
         <div class="container">
             <h3>JSONPath evaluator</h3>
             <div class="row">
                 <div class="col-md-6">
-                    <form id="form">
-                        <div class="form-group">
-                            <select id="selTemplates" name="template" class="form-control">
-                                <option value="blank"></option>
-                                <option value="goessner">goessner</option>
-                                <option value="twitter">twitter</option>
-                                <option value="webapp">webapp</option>
-                                <option value="20k">20k</option>
-                            </select>
-                        </div>
+                    <div class="form-group">
+                        <select id="selTemplates" name="template" class="form-control">
+                            <option value="blank"></option>
+                            <option value="goessner.json">goessner</option>
+                            <option value="twitter.json">twitter</option>
+                            <option value="webxml.json">webapp</option>
+                            <option value="20k.json">20k</option>
+                        </select>
+                    </div>
 
-                        <div class="form-group">
-                            <textarea id="txtJson" name="json" rows="15" class="form-control" placeholder="Select a template above or enter JSON"></textarea>
-                        </div>
+                    <div class="form-group">
+                        <textarea id="txtJson" name="json" rows="15" class="form-control" placeholder="Select a template above or enter JSON"></textarea>
+                    </div>
 
-                        <div class="input-group">
-                            <input id="txtPath" name="path" value="{{path}}" placeholder="Enter path" class="form-control"/>
-                            <span class="input-group-btn">
-                                <button id="submit" class="btn btn-default" type="button">Go!</button>
-                            </span>
-                        </div>
+                    <div class="input-group">
+                        <span id="path-status-tool" class="input-group-addon" data-toggle="tooltip" data-placement="top" title="Invalid path"><span id="path-status" class="glyphicon glyphicon-ban-circle"></span></span>
+                        <input id="txtPath" name="path" placeholder="Enter path" autocomplete="off" class="form-control"/>
+                        <span class="input-group-btn">
+                            <button id="submit" class="btn btn-primary" type="button">Go!</button>
+                        </span>
+                    </div>
 
-                        <br/>
+                    <br/>
 
-                        <div class="row">
-                            <div class="col-md-6">
-                            <fieldset>
-                                <legend>Result options</legend>
-                                <div class="radio">
-                                    <label>
-                                        <input type="radio" name="rbType" value="VALUE" checked/>
-                                        Matching values
-                                    </label>
-                                </div>
-                                <div class="radio">
-                                    <label>
-                                        <input type="radio" name="rbType" value="PATH"/>
-                                        Normalized path expressions
-                                    </label>
-                                </div>
-                            </fieldset>
+                    <div class="row">
+                        <div class="col-md-6">
+                        <fieldset>
+                            <legend>Result options</legend>
+                            <div class="radio">
+                                <label>
+                                    <input type="radio" name="rbType" value="VALUE" checked/>
+                                    Matching values
+                                </label>
                             </div>
-
-                            <div class="col-md-6">
-                            <fieldset>
-                                <legend>Jayway options</legend>
-                                <div class="checkbox">
-                                    <label>
-                                        <input type="checkbox" name="flagWrap" id="cbFlagWrap" />
-                                        Always return result as list
-                                    </label>
-                                </div>
-                                <div class="checkbox">
-                                    <label>
-                                        <input type="checkbox" name="flagMerge" id="cbFlagMerge" />
-                                        Merge multi props to new object
-                                    </label>
-                                </div>
-                                <div class="checkbox">
-                                    <label>
-                                        <input type="checkbox" name="flagSuppress" id="cbFlagSuppress" />
-                                        Suppress exceptions
-                                    </label>
-                                </div>
-                            </fieldset>
+                            <div class="radio">
+                                <label>
+                                    <input type="radio" name="rbType" value="PATH"/>
+                                    Normalized path expressions
+                                </label>
                             </div>
+                        </fieldset>
                         </div>
 
-                    </form>
+                        <div class="col-md-6">
+                        <fieldset>
+                            <legend>Jayway options</legend>
+                            <div class="checkbox">
+                                <label>
+                                    <input type="checkbox" name="flagWrap" id="cbFlagWrap" />
+                                    Always return result as list
+                                </label>
+                            </div>
+                            <div class="checkbox">
+                                <label>
+                                    <input type="checkbox" name="flagMerge" id="cbFlagMerge" />
+                                    Merge multi props to new object
+                                </label>
+                            </div>
+                            <div class="checkbox">
+                                <label>
+                                    <input type="checkbox" name="flagSuppress" id="cbFlagSuppress" />
+                                    Suppress exceptions
+                                </label>
+                            </div>
+                        </fieldset>
+                        </div>
+                    </div>
                 </div>
                 <div class="col-md-6">
 
@@ -156,10 +152,15 @@
     <script>
 
         $( document ).ready(function() {
+            $('#path-status-tool').tooltip({
+                container: 'body',
+                delay: 0
+            });
+
             $('#selTemplates').on('change',  function() {
                 var val = this.value;
                 $.ajax({
-                    url: "/templates/" + val,
+                    url: "/json/" + val,
                     success: function(data){
                         if(data){
                             data = JSON.stringify(data, null, '   ');
@@ -169,6 +170,42 @@
                 });
             });
 
+
+            $('#txtPath').keyup(function(e) {
+                clearTimeout($.data(this, 'timer'));
+                if (e.keyCode === 13) {
+                    $('#submit').click();
+                    e.preventDefault();
+                } else {
+                    $(this).data('timer', setTimeout(checkPath, 500));
+                }
+
+            });
+            function checkPath(force) {
+                var pathString = $("#txtPath").val();
+                if (!force && pathString.length < 1) return;
+
+                $.get('/api/validate/?path=' + pathString, function(data) {
+                    if(data){
+                        if(data.result === -1){
+                            $('#path-status').removeClass().addClass('glyphicon glyphicon-ban-circle');
+                            $('#path-status-tool').attr('data-original-title', 'Invalid path').tooltip('fixTitle');
+                        }
+                        else if(data.result === 0){
+                            $('#path-status').removeClass().addClass('glyphicon glyphicon-record');
+                            $('#path-status-tool').attr('data-original-title', 'Definite').tooltip('fixTitle');
+                        }
+                        else if(data.result === 1){
+                            $('#path-status').removeClass().addClass('glyphicon glyphicon-align-justify');
+                            $('#path-status-tool').attr('data-original-title', 'Not definite').tooltip('fixTitle');
+
+                        }
+                    }
+                });
+
+            }
+
+
             $('#submit').on('click', function() {
 
                 var json = $('#txtJson').val();
@@ -177,21 +214,21 @@
                 var data = {
                     json: json,
                     path: path,
-                    type: $('input[name=rbType]:checked', '#form').val(),
+                    type: $('input[name=rbType]:checked').val(),
                     flagWrap: $('#cbFlagWrap').prop('checked'),
                     flagMerge: $('#cbFlagMerge').prop('checked'),
                     flagSuppress: $('#cbFlagSuppress').prop('checked')
                 }
                 console.log(data);
                 $.ajax({
-                    url: "/eval",
+                    url: "/api/eval",
                     type: 'POST',
                     dataType: 'json',
                     data: data,
                     success: function(data) {
 
                         $('#jayway-time').text(data.jayway.time);
-                        $('#jayway-res').text(data.jayway.result).effect( "highlight", {color: '#428bca'} );
+                        $('#jayway-res').hide().text(data.jayway.result).fadeIn();
                         if(data.jayway.error){
                             $('#jayway-error').text(data.jayway.error).show();
                         } else {
@@ -200,7 +237,7 @@
 
 
                         $('#boon-time').text(data.boon.time);
-                        $('#boon-res').text(data.boon.result).effect( "highlight", {color: '#428bca'} );
+                        $('#boon-res').hide().text(data.boon.result).fadeIn();
                         if(data.boon.error){
                             $('#boon-error').text(data.boon.error).show();
                         } else {
@@ -208,7 +245,7 @@
                         }
 
                         $('#nebhale-time').text(data.nebhale.time);
-                        $('#nebhale-res').text(data.nebhale.result).effect( "highlight", {color: '#428bca'} );
+                        $('#nebhale-res').hide().text(data.nebhale.result).fadeIn();
                         if(data.nebhale.error){
                             $('#nebhale-error').text(data.nebhale.error).show();
                         } else {
@@ -220,9 +257,10 @@
                         var elapsed = new Date().getTime() - start;
 
                         $("#goessner-time").text(elapsed);
-                        $("#goessner-res").text(JSON.stringify(res, null, '   '));
+                        $("#goessner-res").hide().text(JSON.stringify(res, null, '   ')).fadeIn();;
 
                         $('.prettyprinted').removeClass('prettyprinted');
+
                         prettyPrint();
                     }
                 });
