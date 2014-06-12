@@ -16,6 +16,7 @@ package com.jayway.jsonpath.internal.spi.json;
 
 import com.fasterxml.jackson.core.JsonGenerator;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.ObjectReader;
 import com.jayway.jsonpath.InvalidJsonException;
 import com.jayway.jsonpath.spi.json.Mode;
 import org.slf4j.Logger;
@@ -25,7 +26,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.Reader;
 import java.io.StringWriter;
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -34,9 +35,9 @@ public class JacksonProvider extends AbstractJsonProvider {
 
     private static final Logger logger = LoggerFactory.getLogger(JacksonProvider.class);
 
-    private ObjectMapper objectMapper = new ObjectMapper();
+    private static final ObjectMapper objectMapper = new ObjectMapper();
+    private static final ObjectReader objectReader = objectMapper.reader().withType(Object.class);
 
-    @Override
     public Mode getMode() {
         return Mode.STRICT;
     }
@@ -44,7 +45,7 @@ public class JacksonProvider extends AbstractJsonProvider {
     @Override
     public Object parse(String json) throws InvalidJsonException {
         try {
-            return objectMapper.readValue(json, Object.class);
+            return objectReader.readValue(json);
         } catch (IOException e) {
             logger.debug("Invalid JSON: \n" + json);
             throw new InvalidJsonException(e);
@@ -54,7 +55,7 @@ public class JacksonProvider extends AbstractJsonProvider {
     @Override
     public Object parse(Reader jsonReader) throws InvalidJsonException {
         try {
-            return objectMapper.readValue(jsonReader, Object.class);
+            return objectReader.readValue(jsonReader);
         } catch (IOException e) {
             throw new InvalidJsonException(e);
         }
@@ -63,7 +64,7 @@ public class JacksonProvider extends AbstractJsonProvider {
     @Override
     public Object parse(InputStream jsonStream) throws InvalidJsonException {
         try {
-            return objectMapper.readValue(jsonStream, Object.class);
+            return objectReader.readValue(jsonStream);
         } catch (IOException e) {
             throw new InvalidJsonException(e);
         }
@@ -73,9 +74,11 @@ public class JacksonProvider extends AbstractJsonProvider {
     public String toJson(Object obj) {
         StringWriter writer = new StringWriter();
         try {
-            JsonGenerator jsonGenerator = objectMapper.getJsonFactory().createJsonGenerator(writer);
-            objectMapper.writeValue(jsonGenerator, obj);
+            JsonGenerator generator = objectMapper.getFactory().createGenerator(writer);
+            objectMapper.writeValue(generator, obj);
+            writer.flush();
             writer.close();
+            generator.close();
             return writer.getBuffer().toString();
         } catch (IOException e) {
             throw new InvalidJsonException();
@@ -84,7 +87,7 @@ public class JacksonProvider extends AbstractJsonProvider {
 
     @Override
     public Map<String, Object> createMap() {
-        return new HashMap<String, Object>();
+        return new LinkedHashMap<String, Object>();
     }
 
     @Override

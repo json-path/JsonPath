@@ -42,10 +42,10 @@ public class Runner {
 
     public static void main(String[] args) {
 
-        JsonPath jp = JsonPath.compile("$.store.book[3]");
+        JsonPath jp = JsonPath.compile("$.store.book[*].category");
         ReadContext readContext = JsonPath.parse(DOCUMENT);
         long start = System.currentTimeMillis();
-        for (long i = 0; i < 100000; i++) {
+        for (long i = 0; i < 50000000; i++) {
 
             readContext.read(jp);
         }

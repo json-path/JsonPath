@@ -86,7 +86,6 @@ class ScanPathToken extends PathToken {
 
     private Predicate createScanPredicate(final PathToken target, final EvaluationContextImpl ctx) {
         if (target instanceof PropertyPathToken) {
-
             return new Predicate() {
                 private PropertyPathToken propertyPathToken = (PropertyPathToken) target;
 
@@ -98,7 +97,7 @@ class ScanPathToken extends PathToken {
                 @Override
                 public boolean matches(Object model) {
                     Collection<String> keys = ctx.jsonProvider().getPropertyKeys(model);
-                    return keys.contains(propertyPathToken.getProperty());
+                    return keys.containsAll(propertyPathToken.getProperties());
                 }
             };
         } else if (target instanceof ArrayPathToken) {

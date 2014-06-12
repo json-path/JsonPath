@@ -23,15 +23,18 @@ public enum Option {
 
     /**
      * Makes this implementation more compliant to the Goessner spec. All results are returned as Lists.
-     *
      */
     ALWAYS_RETURN_LIST,
 
     /**
-     * returns a list of path strings representing the path of the evaluation hits
-     *
+     * Returns a list of path strings representing the path of the evaluation hits
      */
-    AS_PATH_LIST
+    AS_PATH_LIST,
+
+    /**
+     * When multiple properties are queried eg @..['foo', 'bar'] these properties are extracted and put in a new Map.
+     */
+    MERGE_MULTI_PROPS
 
 
 }

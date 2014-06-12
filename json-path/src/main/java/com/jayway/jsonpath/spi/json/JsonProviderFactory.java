@@ -14,12 +14,12 @@
  */
 package com.jayway.jsonpath.spi.json;
 
-import com.jayway.jsonpath.internal.spi.json.JsonSmartJsonProvider;
+import com.jayway.jsonpath.internal.spi.json.JacksonProvider;
 
 public abstract class JsonProviderFactory {
 
-    private static JsonProvider provider = new JsonSmartJsonProvider();
-    //private static JsonProvider provider = new JacksonProvider();
+    //private static JsonProvider provider = new JsonSmartJsonProvider();
+    private static JsonProvider provider = new JacksonProvider();
 
     public static JsonProvider createProvider() {
         return provider;

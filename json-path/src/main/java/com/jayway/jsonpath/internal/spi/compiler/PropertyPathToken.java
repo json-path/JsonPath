@@ -1,29 +1,32 @@
 package com.jayway.jsonpath.internal.spi.compiler;
 
 import com.jayway.jsonpath.PathNotFoundException;
+import com.jayway.jsonpath.internal.Utils;
+
+import java.util.List;
 
 /**
  *
  */
 class PropertyPathToken extends PathToken {
 
-    private final String property;
+    private final List<String> properties;
 
-    public PropertyPathToken(String property) {
-        this.property = property;
+    public PropertyPathToken(List<String> properties) {
+        this.properties = properties;
     }
 
-    public String getProperty() {
-        return property;
+    public List<String> getProperties() {
+        return properties;
     }
 
     @Override
     void evaluate(String currentPath, Object model, EvaluationContextImpl ctx) {
         if (!ctx.jsonProvider().isMap(model)) {
-            throw new PathNotFoundException("Property ['" + property + "'] not found in path " + currentPath);
+            throw new PathNotFoundException("Property " + getPathFragment() + " not found in path " + currentPath);
         }
 
-        handleObjectProperty(currentPath, model, ctx, property);
+        handleObjectProperty(currentPath, model, ctx, properties);
     }
 
     @Override
@@ -34,8 +37,8 @@ class PropertyPathToken extends PathToken {
     @Override
     public String getPathFragment() {
         return new StringBuilder()
-                .append("['")
-                .append(property)
-                .append("']").toString();
+                .append("[")
+                .append(Utils.join(", ", "'", properties))
+                .append("]").toString();
     }
 }

@@ -1,7 +1,6 @@
 package com.jayway.jsonpath.internal.spi.compiler;
 
 import com.jayway.jsonpath.Configuration;
-import com.jayway.jsonpath.internal.JsonFormatter;
 import com.jayway.jsonpath.spi.compiler.EvaluationContext;
 import com.jayway.jsonpath.spi.compiler.Path;
 import org.slf4j.Logger;
@@ -27,21 +26,12 @@ class CompiledPath implements Path {
         EvaluationContextImpl ctx = new EvaluationContextImpl(this, configuration);
         root.evaluate("", model, ctx);
 
-        if(logger.isDebugEnabled()) {
-            logger.debug("Found:\n{}", JsonFormatter.prettyPrint(ctx.configuration().getProvider().toJson(ctx.getPathList())));
-        }
-
         return ctx;
     }
 
     @Override
     public boolean isDefinite() {
         return root.isPathDefinite();
-    }
-
-    @Override
-    public int tokenCount() {
-        return root.getTokenCount();
     }
 
     @Override

@@ -45,7 +45,7 @@ public class PathCompiler {
         String cacheKey = path + filterList.toString();
         Path p = cache.get(cacheKey);
         if(p != null){
-            return p;
+            //return p;
         }
 
         RootPathToken root = null;
@@ -340,37 +340,31 @@ public class PathCompiler {
 
         //"['foo']"
         private PathToken analyzeProperty() {
-            String property = null;
-
+            List<String> properties = new ArrayList<String>();
             StringBuilder buffer = new StringBuilder();
 
             boolean propertyIsOpen = false;
-            boolean propertyDone = false;
 
             while (current != ']') {
                 switch (current) {
                     case '\'':
                         if (propertyIsOpen) {
-                            property = buffer.toString();
+                            properties.add(buffer.toString());
+                            buffer = new StringBuilder();
                             propertyIsOpen = false;
-                            propertyDone = true;
                         } else {
                             propertyIsOpen = true;
                         }
                         break;
                     default:
                         if (propertyIsOpen) {
-                            if(propertyDone){
-                                //Don't understand how to create a "Normalized path expressions" for this type of query
-                                throw new InvalidPathException("Only single properties are supported.");
-                            }
                             buffer.append(current);
                         }
                         break;
                 }
                 current = chars[++i];
             }
-            return new PropertyPathToken(property);
+            return new PropertyPathToken(properties);
         }
 
 

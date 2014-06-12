@@ -46,75 +46,87 @@ class ArrayPathToken extends PathToken {
         }
 
         try {
-            if (operation == Operation.SINGLE_INDEX) {
-                handleArrayIndex(criteria.get(0), currentPath, model, ctx);
-            } else if (operation == Operation.INDEX_SEQUENCE) {
-                for (Integer idx : criteria) {
-                    handleArrayIndex(criteria.get(idx), currentPath, model, ctx);
-                }
-            } else if (Operation.CONTEXT_SIZE == operation) {
-                int length = ctx.jsonProvider().length(model);
-                int idx = length + criteria.get(0);
-                handleArrayIndex(idx, currentPath, model, ctx);
-            }
-            //[2:]
-            else if (Operation.SLICE_FROM == operation) {
-                int input = criteria.get(0);
-                int length = ctx.jsonProvider().length(model);
-                int from = input;
-                if (from < 0) {
-                    //calculate slice start from array length
-                    from = length + from;
-                }
-                from = Math.max(0, from);
+            int idx;
+            int input;
+            int length;
+            int from;
+            int to;
 
-                logger.debug("Slice from index on array with length: {}. From index: {} to: {}. Input: {}", length, from, length - 1, toString());
+            switch (operation){
+                case SINGLE_INDEX:
+                    handleArrayIndex(criteria.get(0), currentPath, model, ctx);
+                    break;
 
-                if (length == 0 || from >= length) {
-                    return;
-                }
-                for (int i = from; i < length; i++) {
-                    handleArrayIndex(i, currentPath, model, ctx);
-                }
-            }
-            //[:2]
-            else if (Operation.SLICE_TO == operation) {
-                int input = criteria.get(0);
-                int length = ctx.jsonProvider().length(model);
-                int to = input;
-                if (to < 0) {
-                    //calculate slice end from array length
-                    to = length + to;
-                }
-                to = Math.min(length, to);
+                case INDEX_SEQUENCE:
+                    for (Integer i : criteria) {
+                        handleArrayIndex(criteria.get(i), currentPath, model, ctx);
+                    }
+                    break;
 
-                logger.debug("Slice to index on array with length: {}. From index: 0 to: {}. Input: {}", length, to, toString());
+                case CONTEXT_SIZE:
+                    length = ctx.jsonProvider().length(model);
+                    idx = length + criteria.get(0);
+                    handleArrayIndex(idx, currentPath, model, ctx);
+                    break;
 
-                if (length == 0) {
-                    return;
+                case SLICE_FROM: //[2:]
+                    input = criteria.get(0);
+                    length = ctx.jsonProvider().length(model);
+                    from = input;
+                    if (from < 0) {
+                        //calculate slice start from array length
+                        from = length + from;
+                    }
+                    from = Math.max(0, from);
+
+                    logger.debug("Slice from index on array with length: {}. From index: {} to: {}. Input: {}", length, from, length - 1, toString());
+
+                    if (length == 0 || from >= length) {
+                        return;
+                    }
+                    for (int i = from; i < length; i++) {
+                        handleArrayIndex(i, currentPath, model, ctx);
+                    }
+                    break;
+
+                case SLICE_TO : //[:2]
+                    input = criteria.get(0);
+                    length = ctx.jsonProvider().length(model);
+                    to = input;
+                    if (to < 0) {
+                        //calculate slice end from array length
+                        to = length + to;
+                    }
+                    to = Math.min(length, to);
+
+                    logger.debug("Slice to index on array with length: {}. From index: 0 to: {}. Input: {}", length, to, toString());
+
+                    if (length == 0) {
+                        return;
+                    }
+                    for (int i = 0; i < to; i++) {
+                        handleArrayIndex(i, currentPath, model, ctx);
+                    }
+                    break;
+
+                case SLICE_BETWEEN : //[2:4]
+                    from = criteria.get(0);
+                    to = criteria.get(1);
+                    length = ctx.jsonProvider().length(model);
+
+                    to = Math.min(length, to);
+
+                    if (from >= to || length == 0) {
+                        return;
+                    }
+
+                    logger.debug("Slice between indexes on array with length: {}. From index: {} to: {}. Input: {}", length, from, to, toString());
+
+                    for (int i = from; i < to; i++) {
+                        handleArrayIndex(i, currentPath, model, ctx);
+                    }
+                    break;
                 }
-                for (int i = 0; i < to; i++) {
-                    handleArrayIndex(i, currentPath, model, ctx);
-                }
-            }
-            //[2:4]
-            else if (Operation.SLICE_BETWEEN == operation) {
-                int from = criteria.get(0);
-                int to = criteria.get(1);
-                int length = ctx.jsonProvider().length(model);
-
-                to = Math.min(length, to);
-
-                if (from >= to || length == 0) {
-                    return;
-                }
-
-                logger.debug("Slice between indexes on array with length: {}. From index: {} to: {}. Input: {}", length, from, to, toString());
-
-                for (int i = from; i < to; i++) {
-                    handleArrayIndex(i, currentPath, model, ctx);
-                }
-            }
         } catch (IndexOutOfBoundsException e) {
             throw new PathNotFoundException("Index out of bounds when evaluating path " + currentPath);
         }
