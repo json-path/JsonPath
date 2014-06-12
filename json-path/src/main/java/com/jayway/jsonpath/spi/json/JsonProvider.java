@@ -19,9 +19,10 @@ import com.jayway.jsonpath.InvalidJsonException;
 import java.io.InputStream;
 import java.io.Reader;
 import java.util.Collection;
-import java.util.List;
 
 public interface JsonProvider {
+
+    static final Object UNDEFINED = new Object();
 
     Mode getMode();
 
@@ -114,10 +115,10 @@ public interface JsonProvider {
      *
      * @param obj a map
      * @param key property key
-     * @param throwOnMissing if true a PathNotFoundException is thrown if property is not defined
+     * @param signalUndefined if true the constant {@link com.jayway.jsonpath.spi.json.JsonProvider#UNDEFINED} is returned for missing properties
      * @return the map entry
      */
-    Object getMapValue(Object obj, String key, boolean throwOnMissing);
+    Object getMapValue(Object obj, String key, boolean signalUndefined);
 
     /**
      * Sets a value in an object or array

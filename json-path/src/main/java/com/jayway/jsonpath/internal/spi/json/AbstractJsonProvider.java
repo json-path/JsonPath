@@ -14,7 +14,6 @@
  */
 package com.jayway.jsonpath.internal.spi.json;
 
-import com.jayway.jsonpath.PathNotFoundException;
 import com.jayway.jsonpath.internal.Utils;
 import com.jayway.jsonpath.spi.json.JsonProvider;
 
@@ -79,13 +78,13 @@ public abstract class AbstractJsonProvider implements JsonProvider {
      *
      * @param obj a map
      * @param key property key
-     * @param throwOnMissing if true a PathNotFoundException is thrown if property is missing
+     * @param signalUndefined if true the constant {@link com.jayway.jsonpath.spi.json.JsonProvider#UNDEFINED} is returned for missing properties
      * @return the map entry
      */
-    public Object getMapValue(Object obj, String key, boolean throwOnMissing){
+    public Object getMapValue(Object obj, String key, boolean signalUndefined){
         Map m = (Map) obj;
-        if(!m.containsKey(key) && throwOnMissing){
-            throw new PathNotFoundException("Property ['" + key + "'] not found in the current context" );
+        if(!m.containsKey(key) && signalUndefined){
+            return JsonProvider.UNDEFINED;
         } else {
             return m.get(key);
         }

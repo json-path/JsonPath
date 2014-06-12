@@ -4,6 +4,7 @@ import com.jayway.jsonpath.InvalidPathException;
 import com.jayway.jsonpath.Option;
 import com.jayway.jsonpath.PathNotFoundException;
 import com.jayway.jsonpath.internal.Utils;
+import com.jayway.jsonpath.spi.json.JsonProvider;
 
 import java.util.List;
 
@@ -67,7 +68,11 @@ abstract class PathToken {
     }
 
     private Object readObjectProperty(String property, Object model, EvaluationContextImpl ctx) {
-        return ctx.jsonProvider().getMapValue(model, property, ctx.options().contains(Option.THROW_ON_MISSING_PROPERTY));
+        Object val = ctx.jsonProvider().getMapValue(model, property, ctx.options().contains(Option.THROW_ON_MISSING_PROPERTY));
+        if(val == JsonProvider.UNDEFINED){
+            throw new PathNotFoundException("Property ['" + property + "'] not found in the current context" );
+        }
+        return val;
     }
 
     void handleArrayIndex(int index, String currentPath, Object json, EvaluationContextImpl ctx) {
