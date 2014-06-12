@@ -84,7 +84,7 @@ public abstract class AbstractJsonProvider implements JsonProvider {
      */
     public Object getMapValue(Object obj, String key, boolean throwOnMissing){
         Map m = (Map) obj;
-        if(!m.containsKey(key)){
+        if(!m.containsKey(key) && throwOnMissing){
             throw new PathNotFoundException("Property ['" + key + "'] not found in the current context" );
         } else {
             return m.get(key);
