@@ -163,7 +163,7 @@
                     url: "/json/" + val,
                     success: function(data){
                         if(data){
-                            data = JSON.stringify(data, null, '   ');
+                            data = toJsonString(data);
                         }
                         $("#txtJson").val(data);
                     }
@@ -191,8 +191,6 @@
 
                 if(pathString.length ==0){
                     updateDisplay('glyphicon-ban-circle', 'Invalid path');
-                    //$('#path-status').removeClass().addClass('glyphicon glyphicon-ban-circle');
-                    //$('#path-status-tool').attr('data-original-title', 'Invalid path').tooltip('fixTitle');
                     return;
                 }
 
@@ -200,19 +198,12 @@
                     if(data){
                         if(data.result === -1){
                             updateDisplay('glyphicon-ban-circle', 'Invalid path');
-                            //$('#path-status').removeClass().addClass('glyphicon glyphicon-ban-circle');
-                            //$('#path-status-tool').attr('data-original-title', 'Invalid path').tooltip('fixTitle');
                         }
                         else if(data.result === 0){
                             updateDisplay('glyphicon-record', 'Path is definite');
-                            //$('#path-status').removeClass().addClass('glyphicon glyphicon-record');
-                            //$('#path-status-tool').attr('data-original-title', 'Definite').tooltip('fixTitle');
                         }
                         else if(data.result === 1){
                             updateDisplay('glyphicon-align-justify', 'Path is indefinite');
-                            //$('#path-status').removeClass().addClass('glyphicon glyphicon-align-justify');
-                            //$('#path-status-tool').attr('data-original-title', 'Not definite').tooltip('fixTitle');
-
                         }
                     }
                 });
@@ -271,7 +262,7 @@
                         var elapsed = new Date().getTime() - start;
 
                         $("#goessner-time").text(elapsed);
-                        $("#goessner-res").hide().text(JSON.stringify(res, null, '   ')).fadeIn();;
+                        $("#goessner-res").hide().text(toJsonString(res)).fadeIn();
 
                         $('.prettyprinted').removeClass('prettyprinted');
 
@@ -281,5 +272,15 @@
             });
 
         });
+
+        var toJsonString = function(src){
+            var str = JSON.stringify(src, null, '   ');
+            if(str){
+                str = str.replace(/": /g, '" : ');
+                str = str.replace(/": \[/g, '" : [');
+                str = str.replace(/": {/g, '" : {');
+            }
+            return str;
+        };
     </script>
 </html>
