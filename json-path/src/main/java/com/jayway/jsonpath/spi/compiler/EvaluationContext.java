@@ -19,17 +19,11 @@ public interface EvaluationContext {
      * @param <T> expected return type
      * @return evaluation result
      */
-    <T> T get();
+    <T> T getValue();
 
-    /**
-     * This method does adhere to configuration settings like
-     *
-     * {@link com.jayway.jsonpath.Option#ALWAYS_RETURN_LIST}
-     * {@link com.jayway.jsonpath.Option#AS_PATH_LIST}
-     *
-     * @return evaluation result
-     */
-    Object getWithOptions();
+
+    <T> T getPath();
+
 
     /**
      * Convenience method to get list of hits as String path representations

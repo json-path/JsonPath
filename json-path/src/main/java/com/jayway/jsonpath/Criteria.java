@@ -272,7 +272,7 @@ public class Criteria implements Predicate {
         if (CriteriaType.EXISTS == criteriaType) {
             boolean exists = ((Boolean) expected);
             try {
-                path.evaluate(model, configuration.options(Option.THROW_ON_MISSING_PROPERTY)).get();
+                path.evaluate(model, configuration.options(Option.THROW_ON_MISSING_PROPERTY)).getValue();
                 return exists == true;
             } catch (PathNotFoundException e) {
                 return exists == false;
@@ -280,7 +280,7 @@ public class Criteria implements Predicate {
         } else {
 
             try {
-                final Object actual = path.evaluate(model, configuration).get();
+                final Object actual = path.evaluate(model, configuration).getValue();
                 return criteriaType.eval(expected, actual, configuration);
             } catch (CompareException e) {
                 return false;

@@ -73,7 +73,7 @@ public class JsonPathFilterTest {
         Filter customFilter = new Filter.FilterAdapter<Map<String, Object>>() {
             @Override
             public boolean accept(Map<String, Object> map) {
-                if(map.get("name").equals("rootGrandChild_A")){
+                if(map.getValue("name").equals("rootGrandChild_A")){
                     return true;
                 }
                 return false;
@@ -109,7 +109,7 @@ public class JsonPathFilterTest {
         
         List<Integer> res = JsonPath.read(doc, "$.items[?]", customFilter);
 
-        assertEquals(1, res.get(0).intValue());
+        assertEquals(1, res.getValue(0).intValue());
     }
 
     */

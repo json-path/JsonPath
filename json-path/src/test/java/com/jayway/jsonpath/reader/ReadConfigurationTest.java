@@ -34,7 +34,7 @@ public class ReadConfigurationTest {
         Object updatedJsonModel = JsonPath.parse("{...}")
                           .write("$['store'][1]['name']", "new name")
                           .write("$.store[1].age", 43)
-                          .get();
+                          .getValue();
         */
 
     }

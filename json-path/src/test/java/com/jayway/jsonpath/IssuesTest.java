@@ -141,8 +141,8 @@ public class IssuesTest {
 
         System.out.println(result);
 
-        //assertThat(result.get(0), is(new Double(10.1)));
-        //assertThat(result.get(1), is(new Double(21.0)));
+        //assertThat(result.getValue(0), is(new Double(10.1)));
+        //assertThat(result.getValue(1), is(new Double(21.0)));
     }
 
 

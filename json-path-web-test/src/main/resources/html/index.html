@@ -4,9 +4,9 @@
         <meta http-equiv="X-UA-Compatible" content="IE=edge">
         <meta name="viewport" content="width=device-width, initial-scale=1">
         <title>JSONPath evaluator</title>
+        <link href="//netdna.bootstrapcdn.com/font-awesome/4.1.0/css/font-awesome.min.css" rel="stylesheet">
         <link rel="stylesheet" href="/css/bootstrap.min.css">
         <link rel="stylesheet" href="/css/prettify.css">
-        <link rel="stylesheet" href="/css/font-awesome.min.css">
 
         <script type="text/javascript" src="/js/prettify.js"></script>
         <script type="text/javascript" src="/js/jquery.min.js"></script>
@@ -21,9 +21,9 @@
                     <div class="form-group">
                         <select id="selTemplates" name="template" class="form-control">
                             <option value="blank"></option>
-                            <option value="goessner.json">goessner</option>
-                            <option value="twitter.json">twitter</option>
-                            <option value="webxml.json">webapp</option>
+                            <option value="goessner.json">Goessner examle</option>
+                            <option value="twitter.json">Twitter API</option>
+                            <option value="webxml.json">Webapp</option>
                             <option value="20k.json">20k</option>
                         </select>
                     </div>
@@ -33,7 +33,7 @@
                     </div>
 
                     <div class="input-group">
-                        <span id="path-status-tool" class="input-group-addon" data-toggle="tooltip" data-placement="top" title="Invalid path"><span id="path-status" class="glyphicon glyphicon-ban-circle"></span></span>
+                        <span id="path-status-tool" class="input-group-addon" data-toggle="tooltip" data-placement="top" title="Invalid path"><span id="path-status" class="fa fa-ban"></span></span>
                         <input id="txtPath" name="path" placeholder="Enter path" autocomplete="off" class="form-control"/>
                         <span class="input-group-btn">
                             <button id="submit" class="btn btn-primary" type="button">Go!</button>
@@ -45,7 +45,7 @@
                     <div class="row">
                         <div class="col-md-6">
                         <fieldset>
-                            <legend>Result options</legend>
+                            <legend>JSONPath options</legend>
                             <div class="radio">
                                 <label>
                                     <input type="radio" name="rbType" value="VALUE" checked/>
@@ -66,20 +66,20 @@
                             <legend>Jayway options</legend>
                             <div class="checkbox">
                                 <label>
+                                    <input type="checkbox" name="flagSuppress" id="cbFlagSuppress" />
+                                    Suppress exceptions
+                                </label>
+                            </div>
+                            <div class="checkbox">
+                                <label>
                                     <input type="checkbox" name="flagWrap" id="cbFlagWrap" />
-                                    Always return result as list
+                                    Always return result list
                                 </label>
                             </div>
                             <div class="checkbox">
                                 <label>
                                     <input type="checkbox" name="flagMerge" id="cbFlagMerge" />
                                     Merge multi props to new object
-                                </label>
-                            </div>
-                            <div class="checkbox">
-                                <label>
-                                    <input type="checkbox" name="flagSuppress" id="cbFlagSuppress" />
-                                    Suppress exceptions
                                 </label>
                             </div>
                         </fieldset>
@@ -185,25 +185,25 @@
                 var pathString = $("#txtPath").val();
 
                 var updateDisplay = function(icon, tooltip){
-                    $('#path-status').removeClass().addClass('glyphicon ' + icon);
+                    $('#path-status').removeClass().addClass('fa ' + icon);
                     $('#path-status-tool').attr('data-original-title', tooltip).tooltip('fixTitle');
                 };
 
                 if(pathString.length ==0){
-                    updateDisplay('glyphicon-ban-circle', 'Invalid path');
+                    updateDisplay('fa-ban', 'Invalid path');
                     return;
                 }
 
                 $.get('/api/validate/?path=' + pathString, function(data) {
                     if(data){
                         if(data.result === -1){
-                            updateDisplay('glyphicon-ban-circle', 'Invalid path');
+                            updateDisplay('fa-ban', 'Invalid path');
                         }
                         else if(data.result === 0){
-                            updateDisplay('glyphicon-record', 'Path is definite');
+                            updateDisplay('fa-bullseye', 'Path is definite');
                         }
                         else if(data.result === 1){
-                            updateDisplay('glyphicon-align-justify', 'Path is indefinite');
+                            updateDisplay('fa-navicon', 'Path is indefinite');
                         }
                     }
                 });

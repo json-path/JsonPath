@@ -24,39 +24,41 @@ abstract class PathToken {
             String property = properties.get(0);
             String evalPath = currentPath + "['" + property + "']";
             Object propertyVal = readObjectProperty(property, model, ctx);
+            if(propertyVal == JsonProvider.UNDEFINED){
+                return;
+            }
             if (isLeaf()) {
                 ctx.addResult(evalPath, propertyVal);
             } else {
                 next().evaluate(evalPath, propertyVal, ctx);
             }
         } else {
-            if(ctx.configuration().getOptions().contains(Option.MERGE_MULTI_PROPS)) {
+            String evalPath = currentPath + "[" + Utils.join(", ", "'", properties) + "]";
 
-                String evalPath = currentPath + "[" + Utils.join(", ", "'", properties) + "]";
-                if (!isLeaf()) {
-                    throw new InvalidPathException("Multi properties can only be used as path leafs: " + evalPath);
-                } else {
-                    Object map = ctx.jsonProvider().createMap();
-                    for (String property : properties) {
-                        if(hasProperty(property, model, ctx)) {
-                            Object propertyVal = readObjectProperty(property, model, ctx);
-                            ctx.jsonProvider().setProperty(map, property, propertyVal);
-                        }
+            if (!isLeaf()) {
+                throw new InvalidPathException("Multi properties can only be used as path leafs: " + evalPath);
+            }
+
+            if(ctx.configuration().getOptions().contains(Option.MERGE_MULTI_PROPS)) {
+                Object map = ctx.jsonProvider().createMap();
+                for (String property : properties) {
+                    Object propertyVal = readObjectProperty(property, model, ctx);
+                    if(propertyVal == JsonProvider.UNDEFINED){
+                        continue;
                     }
-                    ctx.addResult(evalPath, map);
+                    ctx.jsonProvider().setProperty(map, property, propertyVal);
                 }
+                ctx.addResult(evalPath, map);
 
             } else {
-                if (!isLeaf()) {
-                    String evalPath = currentPath + "[" + Utils.join(", ", "'", properties) + "]";
-                    throw new InvalidPathException("Multi properties can only be used as path leafs: " + evalPath);
-                } else {
-                    for (String property : properties) {
-                        String evalPath = currentPath + "['" + property + "']";
-                        if(hasProperty(property, model, ctx)) {
-                            Object propertyVal = readObjectProperty(property, model, ctx);
-                            ctx.addResult(evalPath, propertyVal);
+                for (String property : properties) {
+                    evalPath = currentPath + "['" + property + "']";
+                    if(hasProperty(property, model, ctx)) {
+                        Object propertyVal = readObjectProperty(property, model, ctx);
+                        if(propertyVal == JsonProvider.UNDEFINED){
+                            continue;
                         }
+                        ctx.addResult(evalPath, propertyVal);
                     }
                 }
             }
@@ -68,9 +70,11 @@ abstract class PathToken {
     }
 
     private Object readObjectProperty(String property, Object model, EvaluationContextImpl ctx) {
-        Object val = ctx.jsonProvider().getMapValue(model, property, ctx.options().contains(Option.THROW_ON_MISSING_PROPERTY));
+        Object val = ctx.jsonProvider().getMapValue(model, property, true);
         if(val == JsonProvider.UNDEFINED){
-            throw new PathNotFoundException("Property ['" + property + "'] not found in the current context" );
+            if(ctx.options().contains(Option.THROW_ON_MISSING_PROPERTY)) {
+                throw new PathNotFoundException("Property ['" + property + "'] not found in the current context");
+            }
         }
         return val;
     }
