@@ -59,7 +59,7 @@ class ArrayPathToken extends PathToken {
 
                 case INDEX_SEQUENCE:
                     for (Integer i : criteria) {
-                        handleArrayIndex(criteria.get(i), currentPath, model, ctx);
+                        handleArrayIndex(i, currentPath, model, ctx);
                     }
                     break;
 
