@@ -181,23 +181,37 @@
                 }
 
             });
-            function checkPath(force) {
+            function checkPath() {
                 var pathString = $("#txtPath").val();
-                if (!force && pathString.length < 1) return;
+
+                var updateDisplay = function(icon, tooltip){
+                    $('#path-status').removeClass().addClass('glyphicon ' + icon);
+                    $('#path-status-tool').attr('data-original-title', tooltip).tooltip('fixTitle');
+                };
+
+                if(pathString.length ==0){
+                    updateDisplay('glyphicon-ban-circle', 'Invalid path');
+                    //$('#path-status').removeClass().addClass('glyphicon glyphicon-ban-circle');
+                    //$('#path-status-tool').attr('data-original-title', 'Invalid path').tooltip('fixTitle');
+                    return;
+                }
 
                 $.get('/api/validate/?path=' + pathString, function(data) {
                     if(data){
                         if(data.result === -1){
-                            $('#path-status').removeClass().addClass('glyphicon glyphicon-ban-circle');
-                            $('#path-status-tool').attr('data-original-title', 'Invalid path').tooltip('fixTitle');
+                            updateDisplay('glyphicon-ban-circle', 'Invalid path');
+                            //$('#path-status').removeClass().addClass('glyphicon glyphicon-ban-circle');
+                            //$('#path-status-tool').attr('data-original-title', 'Invalid path').tooltip('fixTitle');
                         }
                         else if(data.result === 0){
-                            $('#path-status').removeClass().addClass('glyphicon glyphicon-record');
-                            $('#path-status-tool').attr('data-original-title', 'Definite').tooltip('fixTitle');
+                            updateDisplay('glyphicon-record', 'Path is definite');
+                            //$('#path-status').removeClass().addClass('glyphicon glyphicon-record');
+                            //$('#path-status-tool').attr('data-original-title', 'Definite').tooltip('fixTitle');
                         }
                         else if(data.result === 1){
-                            $('#path-status').removeClass().addClass('glyphicon glyphicon-align-justify');
-                            $('#path-status-tool').attr('data-original-title', 'Not definite').tooltip('fixTitle');
+                            updateDisplay('glyphicon-align-justify', 'Path is indefinite');
+                            //$('#path-status').removeClass().addClass('glyphicon glyphicon-align-justify');
+                            //$('#path-status-tool').attr('data-original-title', 'Not definite').tooltip('fixTitle');
 
                         }
                     }
@@ -253,7 +267,7 @@
                         }
 
                         var start = new Date().getTime();
-                        var res = jsonPath(JSON.parse(json), path, {resultType: $('input[name=rbType]:checked', '#form').val() });
+                        var res = jsonPath(JSON.parse(json), path, {resultType: $('input[name=rbType]:checked').val() });
                         var elapsed = new Date().getTime() - start;
 
                         $("#goessner-time").text(elapsed);
