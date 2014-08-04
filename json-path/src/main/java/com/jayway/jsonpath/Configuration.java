@@ -55,8 +55,13 @@ public class Configuration {
     }
 
     public Set<Option> getOptions() {
-        return Collections.unmodifiableSet(options);
+        return options;
     }
+
+    public boolean containsOption(Option option){
+        return options.contains(option);
+    }
+
 
     public static Configuration defaultConfiguration() {
         return new Configuration(JsonProviderFactory.createProvider(), EnumSet.noneOf(Option.class));

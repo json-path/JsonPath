@@ -39,7 +39,7 @@ abstract class PathToken {
                 throw new InvalidPathException("Multi properties can only be used as path leafs: " + evalPath);
             }
 
-            if(ctx.configuration().getOptions().contains(Option.MERGE_MULTI_PROPS)) {
+            if(ctx.configuration().containsOption(Option.MERGE_MULTI_PROPS)) {
                 Object map = ctx.jsonProvider().createMap();
                 for (String property : properties) {
                     Object propertyVal = readObjectProperty(property, model, ctx);

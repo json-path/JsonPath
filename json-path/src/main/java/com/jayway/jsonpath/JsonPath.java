@@ -165,12 +165,11 @@ public class JsonPath {
      * @param <T>           expected return type
      * @return object(s) matched by the given path
      */
-
     public <T> T read(Object jsonObject, Configuration configuration) {
-        boolean optAsPathList = configuration.getOptions().contains(Option.AS_PATH_LIST);
-        boolean optAlwaysReturnList = configuration.getOptions().contains(Option.ALWAYS_RETURN_LIST);
-        boolean optSuppressExceptions = configuration.getOptions().contains(Option.SUPPRESS_EXCEPTIONS);
-        boolean optThrowOnMissingProperty = configuration.getOptions().contains(Option.THROW_ON_MISSING_PROPERTY);
+        boolean optAsPathList = configuration.containsOption(Option.AS_PATH_LIST);
+        boolean optAlwaysReturnList = configuration.containsOption(Option.ALWAYS_RETURN_LIST);
+        boolean optSuppressExceptions = configuration.containsOption(Option.SUPPRESS_EXCEPTIONS);
+        boolean optThrowOnMissingProperty = configuration.containsOption(Option.THROW_ON_MISSING_PROPERTY);
 
         try {
             if(optAsPathList){

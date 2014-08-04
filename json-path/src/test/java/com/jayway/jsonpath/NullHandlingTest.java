@@ -42,6 +42,11 @@ public class NullHandlingTest {
     @Test
     public void last_token_defaults_to_null() {
 
+
+        //Configuration configuration = Configuration.builder().options(Option.SUPPRESS_EXCEPTIONS).build();
+
+        //assertNull(JsonPath.parse(DOCUMENT, configuration).read("$.children[2].age"));
+
         assertNull(JsonPath.read(DOCUMENT, "$.children[2].age"));
     }
 

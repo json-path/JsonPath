@@ -8,8 +8,11 @@ import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
+import static junit.framework.Assert.assertNull;
 import static org.assertj.core.api.Assertions.assertThat;
 
 public class PropertyPathTokenTest {
@@ -39,9 +42,16 @@ public class PropertyPathTokenTest {
     @Test
     public void property_not_found() {
 
-        String result = JsonPath.read(SIMPLE_MAP, "$.not-found");
+        //String result = JsonPath.read(SIMPLE_MAP, "$.not-found");
 
-        assertThat(result).isNull();
+        //assertThat(result).isNull();
+
+        Configuration configuration = Configuration.builder().options(Option.SUPPRESS_EXCEPTIONS).build();
+
+        String json = "{\"a\":{\"b\":1,\"c\":2}}";
+        assertNull(JsonPath.parse(SIMPLE_MAP, configuration).read("$.not-found"));
+
+
     }
 
     @Test(expected = PathNotFoundException.class)

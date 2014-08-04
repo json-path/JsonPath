@@ -3,14 +3,18 @@ package com.jayway.jsonpath;
 import com.jayway.jsonpath.internal.Utils;
 import com.jayway.jsonpath.spi.json.JsonProvider;
 import com.jayway.jsonpath.spi.json.JsonProviderFactory;
+import org.assertj.core.api.Assertions;
+import org.assertj.core.data.MapEntry;
 import org.hamcrest.Matchers;
 import org.junit.Test;
 
 import java.io.InputStream;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
 import static junit.framework.Assert.*;
+import static org.assertj.core.api.Assertions.failBecauseExceptionWasNotThrown;
 import static org.hamcrest.Matchers.is;
 import static org.junit.Assert.assertThat;
 
@@ -214,7 +218,8 @@ public class IssuesTest {
     }
     @Test
     public void issue_22c() throws Exception {
-        Configuration configuration = Configuration.builder().build();
+        //Configuration configuration = Configuration.builder().build();
+        Configuration configuration = Configuration.builder().options(Option.SUPPRESS_EXCEPTIONS).build();
 
         String json = "{\"a\":{\"b\":1,\"c\":2}}";
         assertNull(JsonPath.parse(json, configuration).read("a.d"));
@@ -335,4 +340,75 @@ public class IssuesTest {
         Object read = JsonPath.read(json, "$.data.passes[0].id");
     }
 
+
+    @Test
+    public void issue_42() {
+
+        String json = "{" +
+                "        \"list\": [{" +
+                "            \"name\": \"My (String)\" " +
+                "        }] " +
+                "    }";
+
+        List<Map<String, String>> result = JsonPath.read(json, "$.list[?(@.name == 'My (String)')]");
+
+        Assertions.assertThat(result).containsExactly(Collections.singletonMap("name", "My (String)"));
+    }
+
+    @Test
+    public void issue_43() {
+
+        String json = "{\"test\":null}";
+
+        Assertions.assertThat(JsonPath.read(json, "test")).isNull();
+
+        Assertions.assertThat(JsonPath.using(Configuration.defaultConfiguration().options(Option.SUPPRESS_EXCEPTIONS)).parse(json).read("nonExistingProperty")).isNull();
+
+        try {
+            JsonPath.read(json, "nonExistingProperty");
+
+            failBecauseExceptionWasNotThrown(PathNotFoundException.class);
+        } catch (PathNotFoundException e){
+            Assertions.assertThat(e).hasMessage("No results for path: $['nonExistingProperty']");
+        }
+
+
+        try {
+            JsonPath.read(json, "nonExisting.property");
+
+            failBecauseExceptionWasNotThrown(PathNotFoundException.class);
+        } catch (PathNotFoundException e){
+            Assertions.assertThat(e).hasMessage("No results for path: $['nonExisting']['property']");
+        }
+
+    }
+
+
+    @Test
+    public void issue_45() {
+        String json = "{\"rootkey\":{\"sub.key\":\"value\"}}";
+
+        Assertions.assertThat(JsonPath.read(json, "rootkey['sub.key']")).isEqualTo("value");
+    }
+
+    @Test
+    public void issue_46() {
+
+
+
+
+        String json = "{\"a\": {}}";
+
+        Configuration configuration = Configuration.defaultConfiguration().options(Option.SUPPRESS_EXCEPTIONS);
+        Assertions.assertThat(JsonPath.using(configuration).parse(json).read("a.x")).isNull();
+
+        try {
+            JsonPath.read(json, "a.x");
+
+            failBecauseExceptionWasNotThrown(PathNotFoundException.class);
+        } catch (PathNotFoundException e){
+            Assertions.assertThat(e).hasMessage("No results for path: $['a']['x']");
+        }
+
+    }
 }

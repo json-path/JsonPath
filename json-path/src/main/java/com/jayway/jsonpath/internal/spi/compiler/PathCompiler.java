@@ -252,20 +252,13 @@ public class PathCompiler {
 
             boolean functionBracketOpened = false;
             boolean functionBracketClosed = false;
+            boolean propertyOpen = false;
 
             current = chars[++i]; //skip the '?'
 
             while (current != ']' || bracketCount != 0) {
 
                 switch (current) {
-                    case '(':
-                        functionBracketOpened = true;
-                        break;
-
-                    case ')':
-                        functionBracketClosed = true;
-                        break;
-
                     case '[':
                         bracketCount++;
                         pathBuffer.append(current);
@@ -280,7 +273,26 @@ public class PathCompiler {
                         pathBuffer.append('$');
                         break;
 
+                    case '(':
+                        if(!propertyOpen) {
+                            functionBracketOpened = true;
+                            break;
+                        }
+
+                    case ')':
+                        if(!propertyOpen) {
+                            functionBracketClosed = true;
+                            break;
+                        }
+
                     default:
+                        if('\'' == current){
+                            if (propertyOpen){
+                                propertyOpen = false;
+                            } else {
+                                propertyOpen = true;
+                            }
+                        }
                         if (bracketCount == 0 && isOperatorChar(current)) {
                             operatorBuffer.append(current);
 
