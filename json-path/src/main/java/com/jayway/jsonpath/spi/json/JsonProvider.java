@@ -37,7 +37,7 @@ public interface JsonProvider {
 
     Object createMap();
 
-    Iterable createArray();
+    Object createArray();
 
 
     Object clone(Object model);
