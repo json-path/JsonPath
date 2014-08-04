@@ -1,6 +1,7 @@
 package com.jayway.jsonpath;
 
 import org.hamcrest.Matchers;
+import org.junit.Ignore;
 import org.junit.Test;
 
 import java.util.List;
@@ -40,7 +41,11 @@ public class NullHandlingTest {
 
 
     @Test
+    @Ignore
+
     public void last_token_defaults_to_null() {
+
+        //FIXME
 
 
         //Configuration configuration = Configuration.builder().options(Option.SUPPRESS_EXCEPTIONS).build();
