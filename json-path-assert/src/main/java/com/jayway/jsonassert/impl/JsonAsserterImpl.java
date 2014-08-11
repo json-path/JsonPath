@@ -13,9 +13,7 @@ import static org.hamcrest.Matchers.*;
 
 public class JsonAsserterImpl implements JsonAsserter {
 
-
     private final Object jsonObject;
-
 
     /**
      * Instantiates a new JSONAsserter
@@ -26,13 +24,19 @@ public class JsonAsserterImpl implements JsonAsserter {
         this.jsonObject = jsonObject;
     }
 
-
     /**
      * {@inheritDoc}
      */
     @SuppressWarnings("unchecked")
     public <T> JsonAsserter assertThat(String path, Matcher<T> matcher) {
-        T obj = JsonPath.<T>read(jsonObject, path);
+        T obj = null;
+        
+        try {
+            obj = JsonPath.<T>read(jsonObject, path);
+        } catch (Exception e) {
+            throw new AssertionError(String.format("Error reading JSON path [%s]", path), e);
+        }
+
         if (!matcher.matches(obj)) {
 
             throw new AssertionError(String.format("JSON path [%s] doesn't match.\nExpected:\n%s\nActual:\n%s", path, matcher.toString(), obj));

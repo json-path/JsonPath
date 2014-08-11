@@ -1,7 +1,5 @@
 package com.jayway.jsonpath.internal;
 
-import com.jayway.jsonpath.InvalidConversionException;
-
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.Closeable;
