@@ -12,6 +12,10 @@ public interface EvaluationContext {
      */
     Configuration configuration();
 
+    Object getValueResult();
+
+    Object getPathResult();
+
     /**
      * This method does not adhere to configuration settings. It will return a single object (not wrapped in a List) even if the
      * configuration contains the {@link com.jayway.jsonpath.Option#ALWAYS_RETURN_LIST}

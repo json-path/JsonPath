@@ -70,4 +70,12 @@ class FilterPathToken extends PathToken {
     boolean isTokenDefinite() {
         return false;
     }
+
+    @Override
+    public FilterPathToken clone() {
+        FilterPathToken pathToken = new FilterPathToken(filters);
+        cloneTo(pathToken);
+        return pathToken;
+    }
+
 }

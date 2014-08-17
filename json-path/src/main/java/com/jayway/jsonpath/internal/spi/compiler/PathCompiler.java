@@ -50,7 +50,11 @@ public class PathCompiler {
         }
 
         RootPathToken root = null;
-
+        PathToken pathToken = null;
+        /**
+         * Track previous path token we looped through, for setting previous links.
+         */
+        PathToken previousPathToken = null;
 
         char[] chars = path.toCharArray();
         int i = 0;
@@ -104,11 +108,19 @@ public class PathCompiler {
                     i += positions;
                     break;
             }
+
+            pathToken = PathComponentAnalyzer.analyze(fragment, filterList);
+
+            // set the previous link
+            pathToken.setPrevious(previousPathToken);
+
             if (root == null) {
-                root = (RootPathToken) PathComponentAnalyzer.analyze(fragment, filterList);
+                root = (RootPathToken) pathToken;
             } else {
-                root.append(PathComponentAnalyzer.analyze(fragment, filterList));
+                root.append(pathToken);
             }
+
+            previousPathToken = pathToken;
 
         } while (i < chars.length);
 

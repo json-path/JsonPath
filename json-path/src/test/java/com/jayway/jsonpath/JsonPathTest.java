@@ -1,11 +1,13 @@
 package com.jayway.jsonpath;
 
 import com.jayway.jsonpath.internal.spi.compiler.PathCompiler;
+import com.jayway.jsonpath.spi.json.JsonProvider;
 import com.jayway.jsonpath.spi.json.JsonProviderFactory;
 import com.jayway.jsonpath.util.ScriptEngineJsonPath;
 import org.assertj.core.api.Assertions;
 import org.junit.Test;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -190,6 +192,70 @@ public class JsonPathTest {
         Map result = JsonPath.read(DOCUMENT, "$.store");
 
         assertEquals(2, result.values().size());
+    }
+
+    @Test
+    public void write_store_book_author() throws Exception {
+
+        JsonPath path = JsonPath.compile("$.store.book[0].author");
+
+        String writeAuthor = "Douglas Adams";
+        Map jsonMap = path.write(DOCUMENT, writeAuthor);
+
+        JsonProvider provider = JsonProviderFactory.createProvider();
+        String json = provider.toJson(jsonMap);
+        String readAuthor = path.read(json);
+        assertEquals(writeAuthor, readAuthor);
+    }
+
+    @Test
+    public void write_store_book_authors() throws Exception {
+
+        JsonPath path = JsonPath.compile("$.store.book[0,1].author");
+
+        String writeAuthor = "Douglas Adams";
+        Map jsonMap = path.write(DOCUMENT, writeAuthor);
+
+        JsonProvider provider = JsonProviderFactory.createProvider();
+        String json = provider.toJson(jsonMap);
+        List<String> readAuthors = path.read(json);
+
+        for (String readAuthor : readAuthors) {
+            assertEquals(writeAuthor, readAuthor);
+        }
+    }
+
+    @Test
+    public void write_store_book_0_shallow() throws Exception {
+
+        JsonPath path = JsonPath.compile("$.store.book[0]");
+
+        String writeBook = "Book";
+        Map jsonMap = path.write(DOCUMENT, writeBook);
+
+        JsonProvider provider = JsonProviderFactory.createProvider();
+        String json = provider.toJson(jsonMap);
+        String readBook = path.read(json);
+
+        assertEquals(writeBook, readBook);
+    }
+
+    @Test
+    public void write_store_book_0_deep() throws Exception {
+
+        JsonPath path = JsonPath.compile("$.store.book[0]");
+
+        HashMap<String, Object> writeBook = new HashMap<String, Object>();
+        String writeBookAuthor = "New Author";
+        writeBook.put("author", writeBookAuthor);
+        Map jsonMap = path.write(DOCUMENT, writeBook);
+
+        JsonProvider provider = JsonProviderFactory.createProvider();
+        String json = provider.toJson(jsonMap);
+        JsonPath readPath = JsonPath.compile("$.store.book[0].author");
+        String readBookAuthor = readPath.read(json);
+
+        assertEquals(writeBookAuthor, readBookAuthor);
     }
 
     @Test

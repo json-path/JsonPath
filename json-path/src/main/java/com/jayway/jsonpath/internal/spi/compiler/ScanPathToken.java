@@ -171,4 +171,12 @@ class ScanPathToken extends PathToken {
 
         boolean matches(Object model);
     }
+
+    @Override
+    public ScanPathToken clone() {
+        ScanPathToken pathToken = new ScanPathToken();
+        cloneTo(pathToken);
+        return pathToken;
+    }
+
 }

@@ -13,7 +13,7 @@ import static java.lang.String.format;
 /**
  *
  */
-class ArrayPathToken extends PathToken {
+public class ArrayPathToken extends PathToken {
 
     private static final Logger logger = LoggerFactory.getLogger(ArrayPathToken.class);
 
@@ -34,6 +34,10 @@ class ArrayPathToken extends PathToken {
         this.criteria = criteria;
         this.operation = operation;
         this.isDefinite = (Operation.SINGLE_INDEX == operation || Operation.CONTEXT_SIZE == operation);
+    }
+
+    public List<Integer> getCriteria() {
+        return criteria;
     }
 
     @Override
@@ -167,4 +171,12 @@ class ArrayPathToken extends PathToken {
     boolean isTokenDefinite() {
         return isDefinite;
     }
+
+    @Override
+    public ArrayPathToken clone() {
+        ArrayPathToken pathToken = new ArrayPathToken(criteria, operation);
+        cloneTo(pathToken);
+        return pathToken;
+    }
+
 }

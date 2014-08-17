@@ -6,7 +6,7 @@ import org.slf4j.LoggerFactory;
 /**
  *
  */
-class RootPathToken extends PathToken /*implements Path*/ {
+public class RootPathToken extends PathToken /*implements Path*/ {
 
     private static final Logger logger = LoggerFactory.getLogger(RootPathToken.class);
 
@@ -18,9 +18,21 @@ class RootPathToken extends PathToken /*implements Path*/ {
         this.tokenCount = 1;
     }
 
+    public PathToken getTail() {
+        return tail;
+    }
+
+    public void setTail(PathToken tail) {
+        this.tail = tail;
+    }
+
     @Override
     public int getTokenCount() {
         return tokenCount;
+    }
+
+    public void setTokenCount(int tokenCount) {
+        this.tokenCount = tokenCount;
     }
 
     public RootPathToken append(PathToken next) {
@@ -63,4 +75,25 @@ class RootPathToken extends PathToken /*implements Path*/ {
     boolean isTokenDefinite() {
         return true;
     }
+
+    public PathToken walkToTail() {
+        PathToken next = this;
+        while (next != null && ! next.isLeaf()) {
+            next = next.next();
+        }
+        return next;
+    }
+
+    @Override
+    public RootPathToken clone() {
+        RootPathToken pathToken = new RootPathToken();
+        // deep clone 'next' path
+        cloneTo(pathToken);
+        // get new tail clone
+        PathToken tail = pathToken.walkToTail();
+        pathToken.setTail(tail);
+        pathToken.setTokenCount(tokenCount);
+        return pathToken;
+    }
+
 }

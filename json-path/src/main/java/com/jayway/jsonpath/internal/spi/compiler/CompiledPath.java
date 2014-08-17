@@ -6,14 +6,17 @@ import com.jayway.jsonpath.spi.compiler.Path;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-class CompiledPath implements Path {
+public class CompiledPath implements Path {
 
     private static final Logger logger = LoggerFactory.getLogger(CompiledPath.class);
 
-    private final PathToken root;
+    private final RootPathToken root;
 
+    public RootPathToken getRoot() {
+        return root;
+    }
 
-    public CompiledPath(PathToken root) {
+    public CompiledPath(RootPathToken root) {
         this.root = root;
     }
 
@@ -32,6 +35,16 @@ class CompiledPath implements Path {
     @Override
     public boolean isDefinite() {
         return root.isPathDefinite();
+    }
+
+    @Override
+    public Path clone() {
+        RootPathToken newRoot = null;
+        if (root != null) {
+            newRoot = root.clone();
+        }
+        Path path = new CompiledPath(newRoot);
+        return path;
     }
 
     @Override

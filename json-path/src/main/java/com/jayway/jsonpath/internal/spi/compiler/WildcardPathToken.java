@@ -30,4 +30,12 @@ class WildcardPathToken extends PathToken {
     public String getPathFragment() {
         return "[*]";
     }
+
+    @Override
+    public ScanPathToken clone() {
+        ScanPathToken pathToken = new ScanPathToken();
+        cloneTo(pathToken);
+        return pathToken;
+    }
+
 }

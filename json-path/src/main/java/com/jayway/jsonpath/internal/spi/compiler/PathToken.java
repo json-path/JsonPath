@@ -8,10 +8,27 @@ import com.jayway.jsonpath.spi.json.JsonProvider;
 
 import java.util.List;
 
-abstract class PathToken {
+public abstract class PathToken {
 
+    private PathToken previous;
     private PathToken next;
     private Boolean definite = null;
+
+    public PathToken getPrevious() {
+        return previous;
+    }
+
+    public void setPrevious(PathToken previous) {
+        this.previous = previous;
+    }
+
+    public void setNext(PathToken next) {
+        this.next = next;
+    }
+
+    public void setDefinte(Boolean definite) {
+        this.definite = definite;
+    }
 
     PathToken appendTailToken(PathToken next) {
         this.next = next;
@@ -94,14 +111,14 @@ abstract class PathToken {
     }
 
 
-    PathToken next() {
+    public PathToken next() {
         if (isLeaf()) {
             throw new IllegalStateException("Current path token is a leaf");
         }
         return next;
     }
 
-    boolean isLeaf() {
+    public boolean isLeaf() {
         return next == null;
     }
 
@@ -153,5 +170,28 @@ abstract class PathToken {
     abstract boolean isTokenDefinite();
 
     abstract String getPathFragment();
+
+    @Override
+    abstract public PathToken clone();
+
+    /**
+     * Deep clone this path's fields to the provided path.
+     * While next links are cloned, previous links are only updated, to prevent infinite recursion.
+     * Cannot use standard clone and super calls for sub-classes due to abstract modifier.
+     *
+     * @param pathToken
+     */
+    public void cloneTo(PathToken pathToken) {
+        PathToken newNext;
+        if (next != null) {
+            newNext = next.clone();
+            newNext.setPrevious(pathToken);
+        }
+        else {
+            newNext = null;
+        }
+        pathToken.setNext(newNext);
+        pathToken.setDefinte(definite);
+    }
 
 }

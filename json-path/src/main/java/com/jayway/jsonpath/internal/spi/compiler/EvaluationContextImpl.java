@@ -49,6 +49,15 @@ class EvaluationContextImpl implements EvaluationContext {
         return configuration;
     }
 
+    @Override
+    public Object getValueResult() {
+        return valueResult;
+    }
+
+    @Override
+    public Object getPathResult() {
+        return pathResult;
+    }
 
     @Override
     public <T> T getValue() {
