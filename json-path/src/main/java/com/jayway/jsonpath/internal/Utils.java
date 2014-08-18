@@ -12,6 +12,7 @@ import java.io.ObjectStreamClass;
 import java.io.OutputStream;
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 
@@ -27,7 +28,13 @@ public final class Utils {
      * @return
      */
     public static List<Integer> createRange(int start, int end) {
-        List<Integer> range = new ArrayList<Integer>();
+        if (end <= start) {
+            throw new IllegalArgumentException("Cannot create range from " + start + " to " + end + ", end must be greater than start.");
+        }
+        if (start == end-1) {
+            return Collections.emptyList();
+        }
+        List<Integer> range = new ArrayList<Integer>(end-start-1);
         for (int i = start; i < end; i++) {
             range.add(i);
         }
@@ -40,7 +47,6 @@ public final class Utils {
         if (!iter.hasNext()) {
             return "";
         }
-
         StringBuilder buffer = new StringBuilder();
         buffer.append(wrap).append(iter.next()).append(wrap);
         while (iter.hasNext()) {
