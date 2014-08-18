@@ -29,7 +29,7 @@ public class Criteria implements Predicate {
 
     private final List<Criteria> criteriaChain;
 
-    private enum CriteriaType {
+    private static enum CriteriaType {
         EQ {
             @Override
             boolean eval(Object expected, Object actual, Configuration configuration) {
@@ -329,7 +329,7 @@ public class Criteria implements Predicate {
      * @return
      */
     public Criteria is(Object o) {
-        this.criteriaType = CriteriaType.TYPE.EQ;
+        this.criteriaType = CriteriaType.EQ;
         this.expected = o;
         return this;
     }
@@ -351,7 +351,7 @@ public class Criteria implements Predicate {
      * @return
      */
     public Criteria ne(Object o) {
-        this.criteriaType = CriteriaType.TYPE.NE;
+        this.criteriaType = CriteriaType.NE;
         this.expected = o;
         return this;
     }
@@ -363,7 +363,7 @@ public class Criteria implements Predicate {
      * @return
      */
     public Criteria lt(Object o) {
-        this.criteriaType = CriteriaType.TYPE.LT;
+        this.criteriaType = CriteriaType.LT;
         this.expected = o;
         return this;
     }
@@ -375,7 +375,7 @@ public class Criteria implements Predicate {
      * @return
      */
     public Criteria lte(Object o) {
-        this.criteriaType = CriteriaType.TYPE.LTE;
+        this.criteriaType = CriteriaType.LTE;
         this.expected = o;
         return this;
     }
@@ -387,7 +387,7 @@ public class Criteria implements Predicate {
      * @return
      */
     public Criteria gt(Object o) {
-        this.criteriaType = CriteriaType.TYPE.GT;
+        this.criteriaType = CriteriaType.GT;
         this.expected = o;
         return this;
     }
@@ -399,7 +399,7 @@ public class Criteria implements Predicate {
      * @return
      */
     public Criteria gte(Object o) {
-        this.criteriaType = CriteriaType.TYPE.GTE;
+        this.criteriaType = CriteriaType.GTE;
         this.expected = o;
         return this;
     }
@@ -412,7 +412,7 @@ public class Criteria implements Predicate {
      */
     public Criteria regex(Pattern pattern) {
         notNull(pattern, "pattern can not be null");
-        this.criteriaType = CriteriaType.TYPE.REGEX;
+        this.criteriaType = CriteriaType.REGEX;
         this.expected = pattern;
         return this;
     }
@@ -437,7 +437,7 @@ public class Criteria implements Predicate {
      */
     public Criteria in(Collection<?> c) {
         notNull(c, "collection can not be null");
-        this.criteriaType = CriteriaType.TYPE.IN;
+        this.criteriaType = CriteriaType.IN;
         this.expected = c;
         return this;
     }
@@ -462,7 +462,7 @@ public class Criteria implements Predicate {
      */
     public Criteria nin(Collection<?> c) {
         notNull(c, "collection can not be null");
-        this.criteriaType = CriteriaType.TYPE.NIN;
+        this.criteriaType = CriteriaType.NIN;
         this.expected = c;
         return this;
     }
@@ -487,7 +487,7 @@ public class Criteria implements Predicate {
      */
     public Criteria all(Collection<?> c) {
         notNull(c, "collection can not be null");
-        this.criteriaType = CriteriaType.TYPE.ALL;
+        this.criteriaType = CriteriaType.ALL;
         this.expected = c;
         return this;
     }
@@ -504,7 +504,7 @@ public class Criteria implements Predicate {
      * @return
      */
     public Criteria size(int size) {
-        this.criteriaType = CriteriaType.TYPE.SIZE;
+        this.criteriaType = CriteriaType.SIZE;
         this.expected = size;
         return this;
     }
@@ -517,7 +517,7 @@ public class Criteria implements Predicate {
      * @return
      */
     public Criteria exists(boolean b) {
-        this.criteriaType = CriteriaType.TYPE.EXISTS;
+        this.criteriaType = CriteriaType.EXISTS;
         this.expected = b;
         return this;
     }
@@ -530,7 +530,7 @@ public class Criteria implements Predicate {
      */
     public Criteria type(Class<?> t) {
         notNull(t, "type can not be null");
-        this.criteriaType = CriteriaType.TYPE.TYPE;
+        this.criteriaType = CriteriaType.TYPE;
         this.expected = t;
         return this;
     }
@@ -541,7 +541,7 @@ public class Criteria implements Predicate {
      * @return
      */
     public Criteria notEmpty() {
-        this.criteriaType = CriteriaType.TYPE.NOT_EMPTY;
+        this.criteriaType = CriteriaType.NOT_EMPTY;
         this.expected = null;
         return this;
     }
@@ -552,7 +552,7 @@ public class Criteria implements Predicate {
      * @return
      */
     public Criteria matches(Predicate p) {
-        this.criteriaType = CriteriaType.TYPE.MATCHES;
+        this.criteriaType = CriteriaType.MATCHES;
         this.expected = p;
         return this;
     }
