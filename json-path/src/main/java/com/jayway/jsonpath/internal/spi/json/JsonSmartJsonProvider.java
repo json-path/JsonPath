@@ -16,9 +16,11 @@ package com.jayway.jsonpath.internal.spi.json;
 
 import com.jayway.jsonpath.InvalidJsonException;
 import com.jayway.jsonpath.spi.json.Mode;
+
 import net.minidev.json.JSONArray;
 import net.minidev.json.JSONObject;
-import net.minidev.json.parser.ContainerFactory;
+import net.minidev.json.mapper.AMapper;
+import net.minidev.json.mapper.DefaultMapperOrdered;
 import net.minidev.json.parser.JSONParser;
 import net.minidev.json.parser.ParseException;
 
@@ -30,10 +32,9 @@ import java.util.Map;
 
 public class JsonSmartJsonProvider extends AbstractJsonProvider {
 
-    private Mode mode;
+    private final Mode mode;
 
-    private ContainerFactory containerFactory = ContainerFactory.FACTORY_ORDERED;
-    //private ContainerFactory containerFactory = ContainerFactory.FACTORY_SIMPLE;
+    private final static AMapper<?> orderedMapper = DefaultMapperOrdered.DEFAULT;
 
     public JsonSmartJsonProvider() {
         this(Mode.SLACK);
@@ -43,17 +44,17 @@ public class JsonSmartJsonProvider extends AbstractJsonProvider {
         this.mode = mode;
     }
 
-    public Map<String, Object> createMap() {
-        return containerFactory.createObjectContainer();
+    public Object createMap() {
+        return orderedMapper.createObject();
     }
 
-    public List<Object> createArray() {
-        return containerFactory.createArrayContainer();
+    public Object createArray() {
+        return orderedMapper.createArray();
     }
 
     public Object parse(String json) {
         try {
-            return createParser().parse(json, containerFactory);
+            return createParser().parse(json, orderedMapper);
         } catch (ParseException e) {
             throw new InvalidJsonException(e);
         }
@@ -62,7 +63,7 @@ public class JsonSmartJsonProvider extends AbstractJsonProvider {
     @Override
     public Object parse(Reader jsonReader) throws InvalidJsonException {
         try {
-            return createParser().parse(jsonReader, containerFactory);
+            return createParser().parse(jsonReader, orderedMapper);
         } catch (ParseException e) {
             throw new InvalidJsonException(e);
         }
@@ -71,7 +72,7 @@ public class JsonSmartJsonProvider extends AbstractJsonProvider {
     @Override
     public Object parse(InputStream jsonStream) throws InvalidJsonException {
         try {
-            return createParser().parse(new InputStreamReader(jsonStream), containerFactory);
+            return createParser().parse(new InputStreamReader(jsonStream), orderedMapper);
         } catch (ParseException e) {
             throw new InvalidJsonException(e);
         }
