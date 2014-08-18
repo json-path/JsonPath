@@ -1,6 +1,5 @@
 package com.jayway.jsonpath.internal;
 
-import com.jayway.jsonpath.InvalidConversionException;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -16,7 +15,7 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
-public class Utils {
+public final class Utils {
 
     public static final String CR = System.getProperty("line.separator");
 
@@ -470,4 +469,6 @@ public class Utils {
         }
 
     }
+
+    private Utils () {}
 }
