@@ -63,7 +63,6 @@ public class PathFormalizer extends Parser {
             buffer.flush();
         }
         for (Fragment f : buffer.getFragments()) {
-            System.out.println("Fragment: " + f.frag + " Type: " + f.type);
             formalized.append(f.toString());
         }
         return formalized.toString();
@@ -177,15 +176,6 @@ public class PathFormalizer extends Parser {
         INDEX
     }
 
-    public static void main(String[] args) {
 
-        String path = "$.store['foo'].arr[10].monkey..book[?(@.isbn)].isbn";
-        System.out.println(path);
-        PathFormalizer p = new PathFormalizer(path);
-        String f = p.formalize();
-        System.out.println(f);
-
-
-    }
 
 }
