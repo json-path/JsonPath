@@ -4,7 +4,6 @@ import com.jayway.jsonpath.internal.Utils;
 import com.jayway.jsonpath.spi.json.JsonProvider;
 import com.jayway.jsonpath.spi.json.JsonProviderFactory;
 import org.assertj.core.api.Assertions;
-import org.assertj.core.data.MapEntry;
 import org.hamcrest.Matchers;
 import org.junit.Test;
 
@@ -13,14 +12,29 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
-import static junit.framework.Assert.*;
+import static junit.framework.Assert.assertNull;
+import static junit.framework.Assert.assertTrue;
 import static org.assertj.core.api.Assertions.failBecauseExceptionWasNotThrown;
 import static org.hamcrest.Matchers.is;
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertThat;
 
 public class IssuesTest {
 
     private static final JsonProvider jp = JsonProviderFactory.createProvider();
+
+    @Test
+    public void full_ones_can_be_filtered() {
+        String json = "[\n" +
+                " {\"kind\" : \"full\"},\n" +
+                " {\"kind\" : \"empty\"}\n" +
+                "]";
+
+        List<Map<String, String>> fullOnes = JsonPath.read(json, "$[?(@.kind == full)]");
+
+        assertEquals(1, fullOnes.size());
+        assertEquals("full", fullOnes.get(0).get("kind"));
+    }
 
     @Test
     public void issue_36() {
@@ -210,8 +224,8 @@ public class IssuesTest {
     @Test(expected = PathNotFoundException.class)
     public void issue_22() throws Exception {
 
-        Configuration configuration = Configuration.builder().options(Option.THROW_ON_MISSING_PROPERTY).build();
-        //Configuration configuration = Configuration.defaultConfiguration();
+        //Configuration configuration = Configuration.builder().options(Option.THROW_ON_MISSING_PROPERTY).build();
+        Configuration configuration = Configuration.defaultConfiguration();
 
         String json = "{\"a\":{\"b\":1,\"c\":2}}";
         System.out.println(JsonPath.parse(json, configuration).read("a.d"));
@@ -230,8 +244,8 @@ public class IssuesTest {
     @Test
     public void issue_22b() throws Exception {
         String json = "{\"a\":[{\"b\":1,\"c\":2},{\"b\":5,\"c\":2}]}";
-        System.out.println(JsonPath.read(json, "a[?(@.b==5)].d"));
-        System.out.println(JsonPath.read(json, "a[?(@.b==5)].d"));
+        List<Object> res = JsonPath.using(Configuration.defaultConfiguration().options(Option.DEFAULT_PATH_LEAF_TO_NULL)).parse(json).read("a[?(@.b==5)].d");
+        Assertions.assertThat(res).hasSize(1).containsNull();
     }
 
     @Test(expected = PathNotFoundException.class)
@@ -369,7 +383,7 @@ public class IssuesTest {
 
             failBecauseExceptionWasNotThrown(PathNotFoundException.class);
         } catch (PathNotFoundException e){
-            Assertions.assertThat(e).hasMessage("No results for path: $['nonExistingProperty']");
+
         }
 
 
@@ -378,7 +392,6 @@ public class IssuesTest {
 
             failBecauseExceptionWasNotThrown(PathNotFoundException.class);
         } catch (PathNotFoundException e){
-            Assertions.assertThat(e).hasMessage("No results for path: $['nonExisting']['property']");
         }
 
     }

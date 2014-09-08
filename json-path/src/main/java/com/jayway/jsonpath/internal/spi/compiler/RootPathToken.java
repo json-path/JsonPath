@@ -28,23 +28,7 @@ class RootPathToken extends PathToken /*implements Path*/ {
         this.tokenCount++;
         return this;
     }
-     /*
-    @Override
-    public EvaluationContextImpl evaluate(Object model, Configuration configuration) {
-        if(logger.isDebugEnabled()) {
-            logger.debug("Evaluating path: {}", toString());
-        }
 
-        EvaluationContextImpl ctx = new EvaluationContextImpl(configuration, isDefinite());
-        evaluate("", model, ctx);
-
-        if(logger.isDebugEnabled()) {
-            logger.debug("Found:\n{}", JsonFormatter.prettyPrint(ctx.configuration().getProvider().toJson(ctx.getPathList())));
-        }
-
-        return ctx;
-    }
-     */
     @Override
     void evaluate(String currentPath, Object model, EvaluationContextImpl ctx) {
         if (isLeaf()) {

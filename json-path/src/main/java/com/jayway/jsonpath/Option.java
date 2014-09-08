@@ -19,7 +19,8 @@ public enum Option {
     /**
      * Throw {@link PathNotFoundException} when JsonPath tries to read a property that does not exists.
      */
-    THROW_ON_MISSING_PROPERTY,
+    //THROW_ON_MISSING_PROPERTY,
+    DEFAULT_PATH_LEAF_TO_NULL,
 
     /**
      * Makes this implementation more compliant to the Goessner spec. All results are returned as Lists.

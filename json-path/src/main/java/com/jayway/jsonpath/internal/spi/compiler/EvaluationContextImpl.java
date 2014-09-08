@@ -8,9 +8,10 @@ import com.jayway.jsonpath.spi.compiler.Path;
 import com.jayway.jsonpath.spi.json.JsonProvider;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 import java.util.Set;
+
+import static com.jayway.jsonpath.internal.Utils.notNull;
 
 /**
  *
@@ -24,6 +25,8 @@ class EvaluationContextImpl implements EvaluationContext {
     private int resultIndex = 0;
 
     EvaluationContextImpl(Path path, Configuration configuration) {
+        notNull(path, "path can not be null");
+        notNull(configuration, "configuration can not be null");
         this.path = path;
         this.configuration = configuration;
         this.valueResult = configuration.getProvider().createArray();
@@ -50,6 +53,7 @@ class EvaluationContextImpl implements EvaluationContext {
     }
 
 
+    @SuppressWarnings("unchecked")
     @Override
     public <T> T getValue() {
         if (path.isDefinite()) {
@@ -61,6 +65,7 @@ class EvaluationContextImpl implements EvaluationContext {
         return (T) valueResult;
     }
 
+    @SuppressWarnings("unchecked")
     @Override
     public <T> T getPath() {
         if(resultIndex == 0){

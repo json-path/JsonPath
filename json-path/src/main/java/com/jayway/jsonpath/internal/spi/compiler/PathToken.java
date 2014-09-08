@@ -25,7 +25,20 @@ abstract class PathToken {
             String evalPath = currentPath + "['" + property + "']";
             Object propertyVal = readObjectProperty(property, model, ctx);
             if(propertyVal == JsonProvider.UNDEFINED){
-                return;
+                if(isLeaf()) {
+                    if(ctx.options().contains(Option.DEFAULT_PATH_LEAF_TO_NULL)){
+                        propertyVal =  null;
+                    } else {
+                        if(ctx.options().contains(Option.SUPPRESS_EXCEPTIONS)){
+                            return;
+                        } else {
+                            throw new PathNotFoundException("No results for path: " + evalPath);
+                        }
+
+                    }
+                } else {
+                    return;
+                }
             }
             if (isLeaf()) {
                 ctx.addResult(evalPath, propertyVal);
@@ -44,7 +57,11 @@ abstract class PathToken {
                 for (String property : properties) {
                     Object propertyVal = readObjectProperty(property, model, ctx);
                     if(propertyVal == JsonProvider.UNDEFINED){
-                        continue;
+                        if(ctx.options().contains(Option.DEFAULT_PATH_LEAF_TO_NULL)){
+                            propertyVal = null;
+                        } else {
+                            continue;
+                        }
                     }
                     ctx.jsonProvider().setProperty(map, property, propertyVal);
                 }
@@ -56,7 +73,11 @@ abstract class PathToken {
                     if(hasProperty(property, model, ctx)) {
                         Object propertyVal = readObjectProperty(property, model, ctx);
                         if(propertyVal == JsonProvider.UNDEFINED){
-                            continue;
+                            if(ctx.options().contains(Option.DEFAULT_PATH_LEAF_TO_NULL)){
+                                propertyVal = null;
+                            } else {
+                                continue;
+                            }
                         }
                         ctx.addResult(evalPath, propertyVal);
                     }
@@ -70,13 +91,7 @@ abstract class PathToken {
     }
 
     private Object readObjectProperty(String property, Object model, EvaluationContextImpl ctx) {
-        Object val = ctx.jsonProvider().getMapValue(model, property, true);
-        if(val == JsonProvider.UNDEFINED){
-            if(ctx.options().contains(Option.THROW_ON_MISSING_PROPERTY)) {
-                throw new PathNotFoundException("Property ['" + property + "'] not found in the current context");
-            }
-        }
-        return val;
+        return ctx.jsonProvider().getMapValue(model, property, true);
     }
 
     void handleArrayIndex(int index, String currentPath, Object json, EvaluationContextImpl ctx) {
@@ -89,7 +104,7 @@ abstract class PathToken {
                 next().evaluate(evalPath, evalHit, ctx);
             }
         } catch (IndexOutOfBoundsException e) {
-            throw new PathNotFoundException("Index out of bounds when evaluating path " + currentPath + "[" + index + "]");
+            throw new PathNotFoundException("Index out of bounds when evaluating path " + evalPath);
         }
     }
 

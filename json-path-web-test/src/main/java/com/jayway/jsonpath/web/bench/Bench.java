@@ -25,14 +25,16 @@ public class Bench {
     private final boolean flagWrap;
     private final boolean flagMerge;
     private final boolean flagSuppress;
+    private final boolean flagNullLeaf;
 
-    public Bench(String json, String path, boolean optionAsValues, boolean flagWrap, boolean flagMerge, boolean flagSuppress) {
+    public Bench(String json, String path, boolean optionAsValues, boolean flagWrap, boolean flagMerge, boolean flagSuppress, boolean flagNullLeaf) {
         this.json = json;
         this.path = path;
         this.optionAsValues = optionAsValues;
         this.flagWrap = flagWrap;
         this.flagMerge = flagMerge;
         this.flagSuppress = flagSuppress;
+        this.flagNullLeaf = flagNullLeaf;
     }
 
     public Result runJayway() {
@@ -54,6 +56,9 @@ public class Bench {
         }
         if (!optionAsValues) {
             configuration = configuration.addOptions(Option.AS_PATH_LIST);
+        }
+        if(flagNullLeaf){
+            configuration = configuration.addOptions(Option.DEFAULT_PATH_LEAF_TO_NULL);
         }
 
         long now = System.currentTimeMillis();

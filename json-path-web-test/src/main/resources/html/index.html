@@ -82,6 +82,12 @@
                                     Merge multi props to new object
                                 </label>
                             </div>
+                            <div class="checkbox">
+                                <label>
+                                    <input type="checkbox" name="flagNullLeaf" id="cbFlagNullLeaf" />
+                                    Return null for missing leaf
+                                </label>
+                            </div>
                         </fieldset>
                         </div>
                     </div>
@@ -222,6 +228,7 @@
                     type: $('input[name=rbType]:checked').val(),
                     flagWrap: $('#cbFlagWrap').prop('checked'),
                     flagMerge: $('#cbFlagMerge').prop('checked'),
+                    flagNullLeaf: $('#cbFlagNullLeaf').prop('checked'),
                     flagSuppress: $('#cbFlagSuppress').prop('checked')
                 }
                 console.log(data);
