@@ -31,7 +31,7 @@ public interface ReadContext {
      * @param <T>
      * @return result
      */
-    <T> T read(String path, Filter... filters);
+    <T> T read(String path, Predicate... filters);
 
     /**
      * Reads the given path from this context

@@ -192,9 +192,19 @@ public class Criteria implements Predicate {
         },
         MATCHES {
             @Override
-            boolean eval(Object expected, Object actual, Configuration configuration) {
+            boolean eval(Object expected, final Object actual, final Configuration configuration) {
                 Predicate exp = (Predicate) expected;
-                return exp.apply(actual, configuration);
+                return exp.apply(new PredicateContext() {
+                    @Override
+                    public Object target() {
+                        return actual;
+                    }
+
+                    @Override
+                    public Configuration configuration() {
+                        return configuration;
+                    }
+                });
             }
         },
         NOT_EMPTY {
@@ -258,27 +268,27 @@ public class Criteria implements Predicate {
 
 
     @Override
-    public boolean apply(Object model, Configuration configuration) {
+    public boolean apply(PredicateContext ctx) {
         for (Criteria criteria : criteriaChain) {
-            if (!criteria.eval(model, configuration)) {
+            if (!criteria.eval(ctx)) {
                 return false;
             }
         }
         return true;
     }
 
-    private boolean eval(Object model, Configuration configuration) {
+    private boolean eval(PredicateContext ctx) {
         if (CriteriaType.EXISTS == criteriaType) {
             boolean exists = ((Boolean) expected);
             try {
                 //path.evaluate(model, configuration.options(Option.THROW_ON_MISSING_PROPERTY)).getValue();
 
-                Configuration c = configuration;
+                Configuration c = ctx.configuration();
                 if(c.containsOption(Option.ALWAYS_RETURN_LIST) || c.containsOption(Option.SUPPRESS_EXCEPTIONS)){
                     c = c.options();
                 }
 
-                path.evaluate(model, c).getValue();
+                path.evaluate(ctx.target(), c).getValue();
                 return exists;
             } catch (PathNotFoundException e) {
                 return !exists;
@@ -286,8 +296,8 @@ public class Criteria implements Predicate {
         } else {
 
             try {
-                final Object actual = path.evaluate(model, configuration).getValue();
-                return criteriaType.eval(expected, actual, configuration);
+                final Object actual = path.evaluate(ctx.target(), ctx.configuration()).getValue();
+                return criteriaType.eval(expected, actual, ctx.configuration());
             } catch (CompareException e) {
                 return false;
             } catch (PathNotFoundException e) {

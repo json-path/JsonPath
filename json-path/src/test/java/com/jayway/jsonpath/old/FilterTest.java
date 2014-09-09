@@ -1,5 +1,6 @@
 package com.jayway.jsonpath.old;
 
+import com.jayway.jsonpath.BaseTest;
 import com.jayway.jsonpath.Configuration;
 import com.jayway.jsonpath.Filter;
 import com.jayway.jsonpath.InvalidCriteriaException;
@@ -21,7 +22,7 @@ import static junit.framework.Assert.*;
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
 
-public class FilterTest {
+public class FilterTest extends BaseTest {
 
     public final static String DOCUMENT =
             "{ \"store\": {\n" +
@@ -68,38 +69,40 @@ public class FilterTest {
     //-------------------------------------------------
     @Test
     public void is_filters_evaluates() throws Exception {
-        Map<String, Object> check = new HashMap<String, Object>();
+        final Map<String, Object> check = new HashMap<String, Object>();
         check.put("foo", "foo");
         check.put("bar", null);
 
-        assertTrue(filter(where("bar").is(null)).apply(check, conf));
-        assertTrue(filter(where("foo").is("foo")).apply(check, conf));
-        assertFalse(filter(where("foo").is("xxx")).apply(check, conf));
-        assertFalse(filter(where("bar").is("xxx")).apply(check, conf));
+        assertTrue(filter(where("bar").is(null)).apply(createPredicateContext(check)));
+        assertTrue(filter(where("foo").is("foo")).apply(createPredicateContext(check)));
+        assertFalse(filter(where("foo").is("xxx")).apply(createPredicateContext(check)));
+        assertFalse(filter(where("bar").is("xxx")).apply(createPredicateContext(check)));
     }
+
+
 
     @Test
     public void ne_filters_evaluates() throws Exception {
-        Map<String, Object> check = new HashMap<String, Object>();
+        final Map<String, Object> check = new HashMap<String, Object>();
         check.put("foo", "foo");
         check.put("bar", null);
 
-        assertTrue(filter(where("foo").ne(null)).apply(check, conf));
-        assertTrue(filter(where("foo").ne("not foo")).apply(check, conf));
-        assertFalse(filter(where("foo").ne("foo")).apply(check, conf));
-        assertFalse(filter(where("bar").ne(null)).apply(check, conf));
+        assertTrue(filter(where("foo").ne(null)).apply(createPredicateContext(check)));
+        assertTrue(filter(where("foo").ne("not foo")).apply(createPredicateContext(check)));
+        assertFalse(filter(where("foo").ne("foo")).apply(createPredicateContext(check)));
+        assertFalse(filter(where("bar").ne(null)).apply(createPredicateContext(check)));
     }
 
     @Test
     public void gt_filters_evaluates() throws Exception {
-        Map<String, Object> check = new HashMap<String, Object>();
+        final Map<String, Object> check = new HashMap<String, Object>();
         check.put("foo", 12.5D);
         check.put("foo_null", null);
 
-        assertTrue(filter(where("foo").gt(12D)).apply(check, conf));
-        assertFalse(filter(where("foo").gt(null)).apply(check, conf));
-        assertFalse(filter(where("foo").gt(20D)).apply(check, conf));
-        assertFalse(filter(where("foo_null").gt(20D)).apply(check, conf));
+        assertTrue(filter(where("foo").gt(12D)).apply(createPredicateContext(check)));
+        assertFalse(filter(where("foo").gt(null)).apply(createPredicateContext(check)));
+        assertFalse(filter(where("foo").gt(20D)).apply(createPredicateContext(check)));
+        assertFalse(filter(where("foo_null").gt(20D)).apply(createPredicateContext(check)));
     }
 
     @Test
@@ -108,11 +111,11 @@ public class FilterTest {
         check.put("foo", 12.5D);
         check.put("foo_null", null);
 
-        assertTrue(filter(where("foo").gte(12D)).apply(check, conf));
-        assertTrue(filter(where("foo").gte(12.5D)).apply(check, conf));
-        assertFalse(filter(where("foo").gte(null)).apply(check, conf));
-        assertFalse(filter(where("foo").gte(20D)).apply(check, conf));
-        assertFalse(filter(where("foo_null").gte(20D)).apply(check, conf));
+        assertTrue(filter(where("foo").gte(12D)).apply(createPredicateContext(check)));
+        assertTrue(filter(where("foo").gte(12.5D)).apply(createPredicateContext(check)));
+        assertFalse(filter(where("foo").gte(null)).apply(createPredicateContext(check)));
+        assertFalse(filter(where("foo").gte(20D)).apply(createPredicateContext(check)));
+        assertFalse(filter(where("foo_null").gte(20D)).apply(createPredicateContext(check)));
     }
 
     @Test
@@ -121,10 +124,10 @@ public class FilterTest {
         check.put("foo", 10.5D);
         check.put("foo_null", null);
 
-        //assertTrue(filter(where("foo").lt(12D)).apply(check, conf));
-        assertFalse(filter(where("foo").lt(null)).apply(check, conf));
-        //assertFalse(filter(where("foo").lt(5D)).apply(check, conf));
-        //assertFalse(filter(where("foo_null").lt(5D)).apply(check, conf));
+        //assertTrue(filter(where("foo").lt(12D)).apply(createPredicateContext(check)));
+        assertFalse(filter(where("foo").lt(null)).apply(createPredicateContext(check)));
+        //assertFalse(filter(where("foo").lt(5D)).apply(createPredicateContext(check)));
+        //assertFalse(filter(where("foo_null").lt(5D)).apply(createPredicateContext(check)));
     }
 
     @Test
@@ -133,10 +136,10 @@ public class FilterTest {
         check.put("foo", 12.5D);
         check.put("foo_null", null);
 
-        assertTrue(filter(where("foo").lte(13D)).apply(check, conf));
-        assertFalse(filter(where("foo").lte(null)).apply(check, conf));
-        assertFalse(filter(where("foo").lte(5D)).apply(check, conf));
-        assertFalse(filter(where("foo_null").lte(5D)).apply(check, conf));
+        assertTrue(filter(where("foo").lte(13D)).apply(createPredicateContext(check)));
+        assertFalse(filter(where("foo").lte(null)).apply(createPredicateContext(check)));
+        assertFalse(filter(where("foo").lte(5D)).apply(createPredicateContext(check)));
+        assertFalse(filter(where("foo_null").lte(5D)).apply(createPredicateContext(check)));
     }
 
     @Test
@@ -145,15 +148,15 @@ public class FilterTest {
         check.put("item", 3);
         check.put("null_item", null);
 
-        assertTrue(filter(where("item").in(1, 2, 3)).apply(check, conf));
-        assertTrue(filter(where("item").in(asList(1, 2, 3))).apply(check, conf));
-        assertFalse(filter(where("item").in(4, 5, 6)).apply(check, conf));
-        assertFalse(filter(where("item").in(asList(4, 5, 6))).apply(check, conf));
-        assertFalse(filter(where("item").in(asList('A'))).apply(check, conf));
-        assertFalse(filter(where("item").in(asList((Object) null))).apply(check, conf));
+        assertTrue(filter(where("item").in(1, 2, 3)).apply(createPredicateContext(check)));
+        assertTrue(filter(where("item").in(asList(1, 2, 3))).apply(createPredicateContext(check)));
+        assertFalse(filter(where("item").in(4, 5, 6)).apply(createPredicateContext(check)));
+        assertFalse(filter(where("item").in(asList(4, 5, 6))).apply(createPredicateContext(check)));
+        assertFalse(filter(where("item").in(asList('A'))).apply(createPredicateContext(check)));
+        assertFalse(filter(where("item").in(asList((Object) null))).apply(createPredicateContext(check)));
 
-        assertTrue(filter(where("null_item").in((Object) null)).apply(check, conf));
-        assertFalse(filter(where("null_item").in(1, 2, 3)).apply(check, conf));
+        assertTrue(filter(where("null_item").in((Object) null)).apply(createPredicateContext(check)));
+        assertFalse(filter(where("null_item").in(1, 2, 3)).apply(createPredicateContext(check)));
     }
 
     @Test
@@ -162,14 +165,14 @@ public class FilterTest {
         check.put("item", 3);
         check.put("null_item", null);
 
-        assertTrue(filter(where("item").nin(4, 5)).apply(check, conf));
-        assertTrue(filter(where("item").nin(asList(4, 5))).apply(check, conf));
-        assertTrue(filter(where("item").nin(asList('A'))).apply(check, conf));
-        assertTrue(filter(where("null_item").nin(1, 2, 3)).apply(check, conf));
-        assertTrue(filter(where("item").nin(asList((Object) null))).apply(check, conf));
+        assertTrue(filter(where("item").nin(4, 5)).apply(createPredicateContext(check)));
+        assertTrue(filter(where("item").nin(asList(4, 5))).apply(createPredicateContext(check)));
+        assertTrue(filter(where("item").nin(asList('A'))).apply(createPredicateContext(check)));
+        assertTrue(filter(where("null_item").nin(1, 2, 3)).apply(createPredicateContext(check)));
+        assertTrue(filter(where("item").nin(asList((Object) null))).apply(createPredicateContext(check)));
 
-        assertFalse(filter(where("item").nin(3)).apply(check, conf));
-        assertFalse(filter(where("item").nin(asList(3))).apply(check, conf));
+        assertFalse(filter(where("item").nin(3)).apply(createPredicateContext(check)));
+        assertFalse(filter(where("item").nin(asList(3))).apply(createPredicateContext(check)));
     }
 
     @Test
@@ -177,8 +180,8 @@ public class FilterTest {
         Map<String, Object> check = new HashMap<String, Object>();
         check.put("items", asList(1, 2, 3));
 
-        assertTrue(filter(where("items").all(1, 2, 3)).apply(check, conf));
-        assertFalse(filter(where("items").all(1, 2, 3, 4)).apply(check, conf));
+        assertTrue(filter(where("items").all(1, 2, 3)).apply(createPredicateContext(check)));
+        assertFalse(filter(where("items").all(1, 2, 3, 4)).apply(createPredicateContext(check)));
     }
 
     @Test
@@ -187,9 +190,9 @@ public class FilterTest {
         check.put("items", asList(1, 2, 3));
         check.put("items_empty", Collections.emptyList());
 
-        assertTrue(filter(where("items").size(3)).apply(check, conf));
-        assertTrue(filter(where("items_empty").size(0)).apply(check, conf));
-        assertFalse(filter(where("items").size(2)).apply(check, conf));
+        assertTrue(filter(where("items").size(3)).apply(createPredicateContext(check)));
+        assertTrue(filter(where("items_empty").size(0)).apply(createPredicateContext(check)));
+        assertFalse(filter(where("items").size(2)).apply(createPredicateContext(check)));
     }
 
     @Test
@@ -199,14 +202,14 @@ public class FilterTest {
         check.put("foo", "foo");
         check.put("foo_null", null);
 
-        assertTrue(filter(where("foo").exists(true)).apply(check, conf));
-        assertFalse(filter(where("foo").exists(false)).apply(check, conf));
+        assertTrue(filter(where("foo").exists(true)).apply(createPredicateContext(check)));
+        assertFalse(filter(where("foo").exists(false)).apply(createPredicateContext(check)));
 
-        assertTrue(filter(where("foo_null").exists(true)).apply(check, conf));
-        assertFalse(filter(where("foo_null").exists(false)).apply(check, conf));
+        assertTrue(filter(where("foo_null").exists(true)).apply(createPredicateContext(check)));
+        assertFalse(filter(where("foo_null").exists(false)).apply(createPredicateContext(check)));
 
-        assertTrue(filter(where("bar").exists(false)).apply(check, conf));
-        assertFalse(filter(where("bar").exists(true)).apply(check, conf));
+        assertTrue(filter(where("bar").exists(false)).apply(createPredicateContext(check)));
+        assertFalse(filter(where("bar").exists(true)).apply(createPredicateContext(check)));
     }
 
     @Test
@@ -218,18 +221,18 @@ public class FilterTest {
         check.put("long", 1L);
         check.put("double", 1.12D);
 
-        assertFalse(filter(where("string_null").type(String.class)).apply(check, conf));
-        assertTrue(filter(where("string").type(String.class)).apply(check, conf));
-        assertFalse(filter(where("string").type(Number.class)).apply(check, conf));
+        assertFalse(filter(where("string_null").type(String.class)).apply(createPredicateContext(check)));
+        assertTrue(filter(where("string").type(String.class)).apply(createPredicateContext(check)));
+        assertFalse(filter(where("string").type(Number.class)).apply(createPredicateContext(check)));
 
-        assertTrue(filter(where("int").type(Integer.class)).apply(check, conf));
-        assertFalse(filter(where("int").type(Long.class)).apply(check, conf));
+        assertTrue(filter(where("int").type(Integer.class)).apply(createPredicateContext(check)));
+        assertFalse(filter(where("int").type(Long.class)).apply(createPredicateContext(check)));
 
-        assertTrue(filter(where("long").type(Long.class)).apply(check, conf));
-        assertFalse(filter(where("long").type(Integer.class)).apply(check, conf));
+        assertTrue(filter(where("long").type(Long.class)).apply(createPredicateContext(check)));
+        assertFalse(filter(where("long").type(Integer.class)).apply(createPredicateContext(check)));
 
-        assertTrue(filter(where("double").type(Double.class)).apply(check, conf));
-        assertFalse(filter(where("double").type(Integer.class)).apply(check, conf));
+        assertTrue(filter(where("double").type(Double.class)).apply(createPredicateContext(check)));
+        assertFalse(filter(where("double").type(Integer.class)).apply(createPredicateContext(check)));
     }
 
     @Test
@@ -238,10 +241,10 @@ public class FilterTest {
         check.put("name", "kalle");
         check.put("name_null", null);
 
-        assertFalse(filter(where("name_null").regex(Pattern.compile(".alle"))).apply(check, conf));
-        assertTrue(filter(where("name").regex(Pattern.compile(".alle"))).apply(check, conf));
-        assertFalse(filter(where("name").regex(Pattern.compile("KALLE"))).apply(check, conf));
-        assertTrue(filter(where("name").regex(Pattern.compile("KALLE", Pattern.CASE_INSENSITIVE))).apply(check, conf));
+        assertFalse(filter(where("name_null").regex(Pattern.compile(".alle"))).apply(createPredicateContext(check)));
+        assertTrue(filter(where("name").regex(Pattern.compile(".alle"))).apply(createPredicateContext(check)));
+        assertFalse(filter(where("name").regex(Pattern.compile("KALLE"))).apply(createPredicateContext(check)));
+        assertTrue(filter(where("name").regex(Pattern.compile("KALLE", Pattern.CASE_INSENSITIVE))).apply(createPredicateContext(check)));
 
     }
 
@@ -308,9 +311,10 @@ public class FilterTest {
         Filter shouldMarch = filter(where("string").is("foo").and("int").lt(11));
         Filter shouldNotMarch = filter(where("string").is("foo").and("int").gt(11));
 
-        assertTrue(shouldMarch.apply(check, conf));
-        assertFalse(shouldNotMarch.apply(check, conf));
+        assertTrue(shouldMarch.apply(createPredicateContext(check)));
+        assertFalse(shouldNotMarch.apply(createPredicateContext(check)));
     }
+
 
     /*
     @Test
@@ -325,11 +329,11 @@ public class FilterTest {
 
         Filter filter = filter(where("string").is("foo").and("int").lt(11));
 
-        assertTrue(filter.apply(check, conf));
+        assertTrue(filter.apply(createPredicateContext(check)));
 
         filter.addCriteria(where("long").ne(1L));
 
-        assertFalse(filter.apply(check, conf));
+        assertFalse(filter.apply(createPredicateContext(check)));
 
     }
     */
@@ -347,21 +351,21 @@ public class FilterTest {
 
         Filter filter = filter(where("string").is("foo"));
 
-        assertTrue(filter.apply(check, conf));
+        assertTrue(filter.apply(createPredicateContext(check)));
 
         Criteria criteria = where("string").is("not eq");
 
         filter.addCriteria(criteria);
 
-        assertFalse(filter.apply(check, conf));
+        assertFalse(filter.apply(createPredicateContext(check)));
 
 
         filter = filter(where("string").is("foo").and("string").is("not eq"));
-        assertFalse(filter.apply(check, conf));
+        assertFalse(filter.apply(createPredicateContext(check)));
 
 
         filter = filter(where("string").is("foo").and("string").is("foo"));
-        assertTrue(filter.apply(check, conf));
+        assertTrue(filter.apply(createPredicateContext(check)));
 
     }
     */
@@ -399,7 +403,7 @@ public class FilterTest {
 
         Filter customFilter = new Filter.FilterAdapter<Map<String, Object>>() {
             @Override
-            public boolean apply(check, confMap<String, Object> map) {
+            public boolean apply(createPredicateContext(check)Map<String, Object> map) {
                 if (map.getValue("name").equals("rootGrandChild_A")) {
                     return true;
                 }
@@ -428,7 +432,7 @@ public class FilterTest {
 
         Filter customFilter = new Filter.FilterAdapter() {
             @Override
-            public boolean apply(check, confObject o, Configuration configuration) {
+            public boolean apply(createPredicateContext(check)Object o, Configuration configuration) {
                 return 1 == (Integer) o;
             }
         };
@@ -445,7 +449,7 @@ public class FilterTest {
         Object doc = JsonProviderFactory.createProvider().parse(DOCUMENT);
 
 
-        assertFalse(filter(where("$.store.bicycle.color").ne("red")).apply(doc, conf));
+        assertFalse(filter(where("$.store.bicycle.color").ne("red")).apply(createPredicateContext(doc)));
         /*
         assertFalse(filter(where("store..price").gt(10)).apply(doc, conf));
         assertFalse(filter(where("$.store..price").gte(100)).apply(doc, conf));

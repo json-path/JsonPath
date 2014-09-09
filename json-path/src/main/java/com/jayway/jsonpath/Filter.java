@@ -8,28 +8,28 @@ import java.util.List;
  */
 public class Filter implements Predicate {
 
-    private List<Criteria> criteriaList = new ArrayList<Criteria>();
+    private List<Predicate> criteriaList = new ArrayList<Predicate>();
 
-    private Filter(Criteria criteria) {
+    private Filter(Predicate criteria) {
         this.criteriaList.add(criteria);
     }
 
-    private Filter(List<Criteria> criteriaList) {
+    private Filter(List<Predicate> criteriaList) {
         this.criteriaList = criteriaList;
     }
 
-    public static Filter filter(Criteria criteria) {
+    public static Filter filter(Predicate criteria) {
         return new Filter(criteria);
     }
 
-    public static Filter filter(List<Criteria> criteriaList) {
+    public static Filter filter(List<Predicate> criteriaList) {
         return new Filter(criteriaList);
     }
 
     @Override
-    public boolean apply(Object target, Configuration configuration) {
-        for (Criteria criteria : criteriaList) {
-            if (!criteria.apply(target, configuration)) {
+    public boolean apply(PredicateContext ctx) {
+        for (Predicate criteria : criteriaList) {
+            if (!criteria.apply(ctx)) {
                 return false;
             }
         }
@@ -39,7 +39,7 @@ public class Filter implements Predicate {
     @Override
     public String toString() {
         StringBuilder sb = new StringBuilder();
-        for (Criteria crit : criteriaList) {
+        for (Predicate crit : criteriaList) {
             sb.append(crit.toString());
         }
         return sb.toString();

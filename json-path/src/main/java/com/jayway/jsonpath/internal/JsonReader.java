@@ -1,9 +1,9 @@
 package com.jayway.jsonpath.internal;
 
 import com.jayway.jsonpath.Configuration;
-import com.jayway.jsonpath.Filter;
 import com.jayway.jsonpath.JsonPath;
 import com.jayway.jsonpath.ParseContext;
+import com.jayway.jsonpath.Predicate;
 import com.jayway.jsonpath.ReadContext;
 import com.jayway.jsonpath.spi.http.HttpProviderFactory;
 
@@ -87,7 +87,7 @@ public class JsonReader implements ParseContext, ReadContext {
     }
 
     @Override
-    public <T> T read(String path, Filter... filters) {
+    public <T> T read(String path, Predicate... filters) {
         notEmpty(path, "path can not be null or empty");
         return read(JsonPath.compile(path, filters));
     }
