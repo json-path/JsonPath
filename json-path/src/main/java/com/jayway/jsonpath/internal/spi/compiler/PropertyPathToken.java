@@ -8,7 +8,7 @@ import java.util.List;
 /**
  *
  */
-class PropertyPathToken extends PathToken {
+public class PropertyPathToken extends PathToken {
 
     private final List<String> properties;
 
@@ -41,4 +41,12 @@ class PropertyPathToken extends PathToken {
                 .append(Utils.join(", ", "'", properties))
                 .append("]").toString();
     }
+
+    @Override
+    public PropertyPathToken clone() {
+        PropertyPathToken pathToken = new PropertyPathToken(properties);
+        cloneTo(pathToken);
+        return pathToken;
+    }
+
 }

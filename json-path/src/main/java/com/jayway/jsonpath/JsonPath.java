@@ -17,7 +17,8 @@ package com.jayway.jsonpath;
 
 import com.jayway.jsonpath.internal.JsonReader;
 import com.jayway.jsonpath.internal.Utils;
-import com.jayway.jsonpath.internal.spi.compiler.PathCompiler;
+import com.jayway.jsonpath.internal.spi.compiler.*;
+import com.jayway.jsonpath.spi.compiler.EvaluationContext;
 import com.jayway.jsonpath.spi.compiler.Path;
 import com.jayway.jsonpath.spi.http.HttpProviderFactory;
 import com.jayway.jsonpath.spi.json.JsonProvider;
@@ -28,6 +29,8 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
+import java.util.List;
+import java.util.Map;
 
 import static com.jayway.jsonpath.internal.Utils.*;
 
@@ -203,6 +206,63 @@ public class JsonPath {
 
 
     /**
+     * Writes the provided value at this path to the provided json document.
+     * Note that the document must be identified as either a List or Map by
+     * the {@link JsonProvider}
+     *
+     * @param jsonObject    a container Object
+     * @param value         value to set
+     * @param configuration configuration to use
+     * @return a modified container object
+     */
+    public Map write(Object jsonObject, Object value, Configuration configuration) {
+
+        // new configuration that will always return list
+        Configuration.ConfigurationBuilder builder = new Configuration.ConfigurationBuilder();
+        Configuration readConfig = builder
+                .jsonProvider(configuration.getProvider())
+                .options(Option.ALWAYS_RETURN_LIST)
+                .build();
+
+        // clone the path for manipulation to prevent modifications by reference
+        Path clonedPath = path.clone();
+        RootPathToken clonedRoot = clonedPath.getRoot();
+        PathToken tail = clonedRoot.getTail();
+        PathToken parent = tail.getPrevious();
+        parent.setNext(null);
+
+        // get results for parent paths
+        EvaluationContext res = clonedPath.evaluate(jsonObject, readConfig);
+
+        for (Object valueResult : (List<Object>) res.getValueResult()) {
+            Class clazz = valueResult.getClass();
+            // set index value in array
+            if (List.class.isAssignableFrom(clazz)) {
+
+                ArrayPathToken arrayPathToken = (ArrayPathToken) tail;
+                List<Integer> criteria = arrayPathToken.getCriteria();
+                Integer index = criteria.get(0);
+
+                List list = (List) valueResult;
+                list.set(index, value);
+            }
+            // set property value on object
+            else if (Map.class.isAssignableFrom(clazz)) {
+
+                PropertyPathToken propertyPathToken = (PropertyPathToken) tail;
+                List<String> properties = propertyPathToken.getProperties();
+                String key = properties.get(0);
+
+                Map map = (Map) valueResult;
+                map.put(key, value);
+            }
+        }
+
+        return (Map) jsonObject;
+    }
+
+
+    /**
      * Applies this JsonPath to the provided json string
      *
      * @param json a json string
@@ -212,6 +272,18 @@ public class JsonPath {
     @SuppressWarnings({"unchecked"})
     public <T> T read(String json) {
         return read(json, Configuration.defaultConfiguration());
+    }
+
+    /**
+     * Writes the provided value at this path to the provided json string.
+     *
+     * @param json a json string
+     * @param value value to set at path
+     * @return a modified container object
+     */
+    public Map write(String json, Object value) {
+        Configuration configuration = Configuration.defaultConfiguration();
+        return write(json, value, configuration);
     }
 
     /**
@@ -228,6 +300,18 @@ public class JsonPath {
         notNull(configuration, "jsonProvider can not be null");
 
         return read(configuration.getProvider().parse(json), configuration);
+    }
+
+    /**
+     *
+     * @param json a json string
+     * @param value value to set at path
+     * @param configuration
+     * @return a modified container object
+     */
+    public Map write(String json, Object value, Configuration configuration) {
+        Object jsonObject = configuration.getProvider().parse(json);
+        return write(jsonObject, value, configuration);
     }
 
     /**
