@@ -14,14 +14,27 @@
  */
 package com.jayway.jsonpath.spi.json;
 
-import com.jayway.jsonpath.internal.spi.json.JsonSmartJsonProvider;
-
 public abstract class JsonProviderFactory {
 
-    private static JsonProvider provider = new JsonSmartJsonProvider();
-    //private static JsonProvider provider = new JacksonProvider();
+    private static JsonProvider provider = null;
+
+    private static final String DEFAULT_JSON_PROVIDER = "com.jayway.jsonpath.internal.spi.json.JsonSmartJsonProvider";
+    //private static final String DEFAULT_JSON_PROVIDER = "com.jayway.jsonpath.internal.spi.json.JacksonProvider";
+
 
     public static JsonProvider createProvider() {
+
+        if(provider == null){
+            synchronized (JsonProviderFactory.class){
+                if(provider == null){
+                    try {
+                        provider = (JsonProvider) Class.forName(DEFAULT_JSON_PROVIDER).newInstance();
+                    } catch (Exception e) {
+                        throw new RuntimeException("Failed to create JsonProvider", e);
+                    }
+                }
+            }
+        }
         return provider;
     }
 

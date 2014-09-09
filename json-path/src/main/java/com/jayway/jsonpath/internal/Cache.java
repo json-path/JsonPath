@@ -1,7 +1,5 @@
 package com.jayway.jsonpath.internal;
 
-import com.jayway.jsonpath.spi.compiler.Path;
-
 import java.util.Deque;
 import java.util.LinkedList;
 import java.util.Map;

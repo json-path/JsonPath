@@ -1,7 +1,7 @@
 package com.jayway.jsonpath;
 
-import com.jayway.jsonpath.internal.spi.compiler.PathCompiler;
-import com.jayway.jsonpath.spi.compiler.Path;
+import com.jayway.jsonpath.internal.Path;
+import com.jayway.jsonpath.internal.PathCompiler;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -315,7 +315,7 @@ public class Criteria implements Predicate {
      */
 
     public static Criteria where(String key) {
-        return where(PathCompiler.tokenize(key));
+        return where(PathCompiler.compile(key));
     }
 
     /**
@@ -325,7 +325,7 @@ public class Criteria implements Predicate {
      * @return the criteria builder
      */
     public Criteria and(String key) {
-        return new Criteria(this.criteriaChain, PathCompiler.tokenize(key));
+        return new Criteria(this.criteriaChain, PathCompiler.compile(key));
     }
 
     /**
@@ -605,7 +605,7 @@ public class Criteria implements Predicate {
             expected = expected.substring(1, expected.length() - 1);
         }
 
-        Path p = PathCompiler.tokenize(path);
+        Path p = PathCompiler.compile(path);
 
         if("$".equals(path) && (operator == null || operator.isEmpty()) && (expected == null || expected.isEmpty()) ){
             return new Criteria(p, CriteriaType.NE, null);

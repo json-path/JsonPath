@@ -16,9 +16,9 @@ package com.jayway.jsonpath;
 
 
 import com.jayway.jsonpath.internal.JsonReader;
+import com.jayway.jsonpath.internal.Path;
+import com.jayway.jsonpath.internal.PathCompiler;
 import com.jayway.jsonpath.internal.Utils;
-import com.jayway.jsonpath.internal.spi.compiler.PathCompiler;
-import com.jayway.jsonpath.spi.compiler.Path;
 import com.jayway.jsonpath.spi.http.HttpProviderFactory;
 import com.jayway.jsonpath.spi.json.JsonProvider;
 import com.jayway.jsonpath.spi.json.JsonProviderFactory;
@@ -96,7 +96,7 @@ public class JsonPath {
 
     private JsonPath(String jsonPath, Filter[] filters) {
         notNull(jsonPath, "path can not be null");
-        this.path = PathCompiler.tokenize(jsonPath, filters);
+        this.path = PathCompiler.compile(jsonPath, filters);
     }
 
     /**
@@ -387,7 +387,6 @@ public class JsonPath {
         return new JsonReader().parse(json).read(jsonPath, filters);
     }
 
-
     /**
      * Creates a new JsonPath and applies it to the provided Json string
      *
@@ -401,6 +400,14 @@ public class JsonPath {
     public static <T> T read(String json, String jsonPath, Filter... filters) {
         return new JsonReader().parse(json).read(jsonPath, filters);
     }
+
+    //FIXME : remove this or not
+    public static <T> T read(String json, String jsonPath, Class<T> clazz, Filter... filters) {
+        Object res = new JsonReader().parse(json).read(jsonPath, filters);
+
+        return clazz.cast(res);
+    }
+
 
     /**
      * Creates a new JsonPath and applies it to the provided Json object
