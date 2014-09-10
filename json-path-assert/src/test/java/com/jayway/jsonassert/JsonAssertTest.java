@@ -46,7 +46,7 @@ public class JsonAssertTest {
 
     @Test
     public void invalid_path() throws Exception {
-        with(JSON).assertThat("$.store.book[*].fooBar", collectionWithSize(equalTo(4)));
+        with(JSON).assertThat("$.store.book[*].fooBar", emptyCollection());
     }
 
     @Test(expected = AssertionError.class)
