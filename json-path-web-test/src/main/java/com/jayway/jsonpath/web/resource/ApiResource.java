@@ -19,7 +19,7 @@ import javax.ws.rs.core.Response;
 import java.util.Collections;
 import java.util.Map;
 
-@Path("/api/")
+@Path("/")
 @Produces(MediaType.TEXT_HTML)
 public class ApiResource {
 
@@ -27,7 +27,7 @@ public class ApiResource {
 
 
     @GET
-    @Path("validate")
+    @Path("/validate")
     @Produces(MediaType.APPLICATION_JSON)
     public Response validate(@QueryParam("path") String path){
         int result = -1;
@@ -41,7 +41,7 @@ public class ApiResource {
 
 
     @POST
-    @Path("eval")
+    @Path("/eval")
     @Consumes(MediaType.APPLICATION_FORM_URLENCODED)
     @Produces(MediaType.APPLICATION_JSON)
     public Response getTemplate(@FormParam("json") String json,
@@ -49,11 +49,12 @@ public class ApiResource {
                                 @FormParam("type") String type,
                                 @FormParam("flagWrap")  boolean flagWrap,
                                 @FormParam("flagMerge")  boolean flagMerge,
+                                @FormParam("flagNullLeaf")  boolean flagNullLeaf,
                                 @FormParam("flagSuppress")  boolean flagSuppress ){
 
         boolean value = "VALUE".equalsIgnoreCase(type);
 
-        Map<String, Result> resultMap = new Bench(json, path, value, flagWrap, flagMerge, flagSuppress).runAll();
+        Map<String, Result> resultMap = new Bench(json, path, value, flagWrap, flagMerge, flagSuppress, flagNullLeaf).runAll();
 
         return Response.ok(resultMap).build();
     }

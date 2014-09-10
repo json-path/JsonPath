@@ -31,7 +31,18 @@ public interface ReadContext {
      * @param <T>
      * @return result
      */
-    <T> T read(String path, Filter... filters);
+    <T> T read(String path, Predicate... filters);
+
+    /**
+     * Reads the given path from this context
+     *
+     * @param path    path to read
+     * @param type    expected return type (will try to convert)
+     * @param filters filters
+     * @param <T>
+     * @return result
+     */
+    <T> T read(String path, Class<T> type, Predicate... filters);
 
     /**
      * Reads the given path from this context
@@ -41,5 +52,17 @@ public interface ReadContext {
      * @return result
      */
     <T> T read(JsonPath path);
+
+    /**
+     * Reads the given path from this context
+     *
+     * @param path path to apply
+     * @param type    expected return type (will try to convert)
+     * @param <T>
+     * @return result
+     */
+    <T> T read(JsonPath path, Class<T> type);
+
+
 
 }

@@ -114,6 +114,7 @@ public abstract class AbstractJsonProvider implements JsonProvider {
      * @param key   a String key or a numerical index
      * @param value the value to set
      */
+    @SuppressWarnings("unchecked")
     public void setProperty(Object obj, Object key, Object value) {
         if (isMap(obj))
             ((Map) obj).put(key.toString(), value);
@@ -146,6 +147,7 @@ public abstract class AbstractJsonProvider implements JsonProvider {
      * @param obj an array or an object
      * @return the keys for an object or the indexes for an array
      */
+    @SuppressWarnings("unchecked")
     public Collection<String> getPropertyKeys(Object obj) {
         if (isArray(obj)) {
             List l = (List) obj;
@@ -178,6 +180,7 @@ public abstract class AbstractJsonProvider implements JsonProvider {
      * @param obj an array or an object
      * @return the entries for an array or the values for a map
      */
+    @SuppressWarnings("unchecked")
     public Iterable<Object> toIterable(Object obj) {
         if (isArray(obj))
             return ((Iterable) obj);

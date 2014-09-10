@@ -1,7 +1,7 @@
 package com.jayway.jsonpath;
 
-import com.jayway.jsonpath.internal.spi.compiler.PathCompiler;
-import com.jayway.jsonpath.spi.compiler.Path;
+import com.jayway.jsonpath.internal.Path;
+import com.jayway.jsonpath.internal.PathCompiler;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -19,6 +19,7 @@ import static com.jayway.jsonpath.internal.Utils.notNull;
 /**
  *
  */
+@SuppressWarnings("unchecked")
 public class Criteria implements Predicate {
 
     private static final Logger logger = LoggerFactory.getLogger(Criteria.class);
@@ -173,10 +174,8 @@ public class Criteria implements Predicate {
             boolean eval(Object expected, Object actual, Configuration configuration) {
                 final Class<?> expType = (Class<?>) expected;
                 final Class<?> actType = actual == null ? null : actual.getClass();
-                if (actType != null) {
-                    return expType.isAssignableFrom(actType);
-                }
-                return false;
+
+                return actType != null && expType.isAssignableFrom(actType);
             }
         },
         REGEX {
@@ -193,9 +192,19 @@ public class Criteria implements Predicate {
         },
         MATCHES {
             @Override
-            boolean eval(Object expected, Object actual, Configuration configuration) {
+            boolean eval(Object expected, final Object actual, final Configuration configuration) {
                 Predicate exp = (Predicate) expected;
-                return exp.apply(actual, configuration);
+                return exp.apply(new PredicateContext() {
+                    @Override
+                    public Object target() {
+                        return actual;
+                    }
+
+                    @Override
+                    public Configuration configuration() {
+                        return configuration;
+                    }
+                });
             }
         },
         NOT_EMPTY {
@@ -259,29 +268,36 @@ public class Criteria implements Predicate {
 
 
     @Override
-    public boolean apply(Object model, Configuration configuration) {
+    public boolean apply(PredicateContext ctx) {
         for (Criteria criteria : criteriaChain) {
-            if (!criteria.eval(model, configuration)) {
+            if (!criteria.eval(ctx)) {
                 return false;
             }
         }
         return true;
     }
 
-    private boolean eval(Object model, Configuration configuration) {
+    private boolean eval(PredicateContext ctx) {
         if (CriteriaType.EXISTS == criteriaType) {
             boolean exists = ((Boolean) expected);
             try {
-                path.evaluate(model, configuration.options(Option.THROW_ON_MISSING_PROPERTY)).getValue();
-                return exists == true;
+                //path.evaluate(model, configuration.options(Option.THROW_ON_MISSING_PROPERTY)).getValue();
+
+                Configuration c = ctx.configuration();
+                if(c.containsOption(Option.ALWAYS_RETURN_LIST) || c.containsOption(Option.SUPPRESS_EXCEPTIONS)){
+                    c = c.options();
+                }
+
+                path.evaluate(ctx.target(), c).getValue();
+                return exists;
             } catch (PathNotFoundException e) {
-                return exists == false;
+                return !exists;
             }
         } else {
 
             try {
-                final Object actual = path.evaluate(model, configuration).getValue();
-                return criteriaType.eval(expected, actual, configuration);
+                final Object actual = path.evaluate(ctx.target(), ctx.configuration()).getValue();
+                return criteriaType.eval(expected, actual, ctx.configuration());
             } catch (CompareException e) {
                 return false;
             } catch (PathNotFoundException e) {
@@ -309,7 +325,7 @@ public class Criteria implements Predicate {
      */
 
     public static Criteria where(String key) {
-        return where(PathCompiler.tokenize(key));
+        return where(PathCompiler.compile(key));
     }
 
     /**
@@ -319,14 +335,14 @@ public class Criteria implements Predicate {
      * @return the criteria builder
      */
     public Criteria and(String key) {
-        return new Criteria(this.criteriaChain, PathCompiler.tokenize(key));
+        return new Criteria(this.criteriaChain, PathCompiler.compile(key));
     }
 
     /**
      * Creates a criterion using equality
      *
      * @param o
-     * @return
+     * @return the criteria
      */
     public Criteria is(Object o) {
         this.criteriaType = CriteriaType.EQ;
@@ -338,7 +354,7 @@ public class Criteria implements Predicate {
      * Creates a criterion using equality
      *
      * @param o
-     * @return
+     * @return the criteria
      */
     public Criteria eq(Object o) {
         return is(o);
@@ -348,7 +364,7 @@ public class Criteria implements Predicate {
      * Creates a criterion using the <b>!=</b> operator
      *
      * @param o
-     * @return
+     * @return the criteria
      */
     public Criteria ne(Object o) {
         this.criteriaType = CriteriaType.NE;
@@ -360,7 +376,7 @@ public class Criteria implements Predicate {
      * Creates a criterion using the <b>&lt;</b> operator
      *
      * @param o
-     * @return
+     * @return the criteria
      */
     public Criteria lt(Object o) {
         this.criteriaType = CriteriaType.LT;
@@ -372,7 +388,7 @@ public class Criteria implements Predicate {
      * Creates a criterion using the <b>&lt;=</b> operator
      *
      * @param o
-     * @return
+     * @return the criteria
      */
     public Criteria lte(Object o) {
         this.criteriaType = CriteriaType.LTE;
@@ -384,7 +400,7 @@ public class Criteria implements Predicate {
      * Creates a criterion using the <b>&gt;</b> operator
      *
      * @param o
-     * @return
+     * @return the criteria
      */
     public Criteria gt(Object o) {
         this.criteriaType = CriteriaType.GT;
@@ -396,7 +412,7 @@ public class Criteria implements Predicate {
      * Creates a criterion using the <b>&gt;=</b> operator
      *
      * @param o
-     * @return
+     * @return the criteria
      */
     public Criteria gte(Object o) {
         this.criteriaType = CriteriaType.GTE;
@@ -408,7 +424,7 @@ public class Criteria implements Predicate {
      * Creates a criterion using a Regex
      *
      * @param pattern
-     * @return
+     * @return the criteria
      */
     public Criteria regex(Pattern pattern) {
         notNull(pattern, "pattern can not be null");
@@ -422,7 +438,7 @@ public class Criteria implements Predicate {
      * to specify an array of possible matches.
      *
      * @param o the values to match against
-     * @return
+     * @return the criteria
      */
     public Criteria in(Object... o) {
         return in(Arrays.asList(o));
@@ -433,7 +449,7 @@ public class Criteria implements Predicate {
      * to specify an array of possible matches.
      *
      * @param c the collection containing the values to match against
-     * @return
+     * @return the criteria
      */
     public Criteria in(Collection<?> c) {
         notNull(c, "collection can not be null");
@@ -447,7 +463,7 @@ public class Criteria implements Predicate {
      * which the specified field does not have any value in the specified array.
      *
      * @param o the values to match against
-     * @return
+     * @return the criteria
      */
     public Criteria nin(Object... o) {
         return nin(Arrays.asList(o));
@@ -458,7 +474,7 @@ public class Criteria implements Predicate {
      * which the specified field does not have any value in the specified array.
      *
      * @param c the values to match against
-     * @return
+     * @return the criteria
      */
     public Criteria nin(Collection<?> c) {
         notNull(c, "collection can not be null");
@@ -472,7 +488,7 @@ public class Criteria implements Predicate {
      * in the specified array all values in the array must be matched.
      *
      * @param o
-     * @return
+     * @return the criteria
      */
     public Criteria all(Object... o) {
         return all(Arrays.asList(o));
@@ -483,7 +499,7 @@ public class Criteria implements Predicate {
      * in the specified array all values in the array must be matched.
      *
      * @param c
-     * @return
+     * @return the criteria
      */
     public Criteria all(Collection<?> c) {
         notNull(c, "collection can not be null");
@@ -501,7 +517,7 @@ public class Criteria implements Predicate {
      * </ol>
      *
      * @param size
-     * @return
+     * @return the criteria
      */
     public Criteria size(int size) {
         this.criteriaType = CriteriaType.SIZE;
@@ -514,7 +530,7 @@ public class Criteria implements Predicate {
      * Check for existence (or lack thereof) of a field.
      *
      * @param b
-     * @return
+     * @return the criteria
      */
     public Criteria exists(boolean b) {
         this.criteriaType = CriteriaType.EXISTS;
@@ -526,7 +542,7 @@ public class Criteria implements Predicate {
      * The $type operator matches values based on their Java type.
      *
      * @param t
-     * @return
+     * @return the criteria
      */
     public Criteria type(Class<?> t) {
         notNull(t, "type can not be null");
@@ -538,7 +554,7 @@ public class Criteria implements Predicate {
     /**
      * The <code>notEmpty</code> operator checks that an array or String is not empty.
      *
-     * @return
+     * @return the criteria
      */
     public Criteria notEmpty() {
         this.criteriaType = CriteriaType.NOT_EMPTY;
@@ -549,7 +565,8 @@ public class Criteria implements Predicate {
     /**
      * The <code>matches</code> operator checks that an object matches the given predicate.
      *
-     * @return
+     * @param p
+     * @return the criteria
      */
     public Criteria matches(Predicate p) {
         this.criteriaType = CriteriaType.MATCHES;
@@ -598,7 +615,7 @@ public class Criteria implements Predicate {
             expected = expected.substring(1, expected.length() - 1);
         }
 
-        Path p = PathCompiler.tokenize(path);
+        Path p = PathCompiler.compile(path);
 
         if("$".equals(path) && (operator == null || operator.isEmpty()) && (expected == null || expected.isEmpty()) ){
             return new Criteria(p, CriteriaType.NE, null);

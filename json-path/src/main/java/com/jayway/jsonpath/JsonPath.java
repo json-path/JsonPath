@@ -16,9 +16,9 @@ package com.jayway.jsonpath;
 
 
 import com.jayway.jsonpath.internal.JsonReader;
+import com.jayway.jsonpath.internal.Path;
+import com.jayway.jsonpath.internal.PathCompiler;
 import com.jayway.jsonpath.internal.Utils;
-import com.jayway.jsonpath.internal.spi.compiler.PathCompiler;
-import com.jayway.jsonpath.spi.compiler.Path;
 import com.jayway.jsonpath.spi.http.HttpProviderFactory;
 import com.jayway.jsonpath.spi.json.JsonProvider;
 import com.jayway.jsonpath.spi.json.JsonProviderFactory;
@@ -94,9 +94,9 @@ public class JsonPath {
 
     private final Path path;
 
-    private JsonPath(String jsonPath, Filter[] filters) {
+    private JsonPath(String jsonPath, Predicate[] filters) {
         notNull(jsonPath, "path can not be null");
-        this.path = PathCompiler.tokenize(jsonPath, filters);
+        this.path = PathCompiler.compile(jsonPath, filters);
     }
 
     /**
@@ -165,11 +165,12 @@ public class JsonPath {
      * @param <T>           expected return type
      * @return object(s) matched by the given path
      */
+    @SuppressWarnings("unchecked")
     public <T> T read(Object jsonObject, Configuration configuration) {
         boolean optAsPathList = configuration.containsOption(Option.AS_PATH_LIST);
         boolean optAlwaysReturnList = configuration.containsOption(Option.ALWAYS_RETURN_LIST);
         boolean optSuppressExceptions = configuration.containsOption(Option.SUPPRESS_EXCEPTIONS);
-        boolean optThrowOnMissingProperty = configuration.containsOption(Option.THROW_ON_MISSING_PROPERTY);
+        //boolean optThrowOnMissingProperty = configuration.containsOption(Option.THROW_ON_MISSING_PROPERTY);
 
         try {
             if(optAsPathList){
@@ -185,7 +186,8 @@ public class JsonPath {
                 }
             }
         } catch (RuntimeException e){
-            if(optThrowOnMissingProperty || !optSuppressExceptions){
+            //if(optThrowOnMissingProperty || !optSuppressExceptions){
+            if(!optSuppressExceptions){
                 throw e;
             }
         }
@@ -357,7 +359,7 @@ public class JsonPath {
      * @param filters  filters to be applied to the filter place holders  [?] in the path
      * @return compiled JsonPath
      */
-    public static JsonPath compile(String jsonPath, Filter... filters) {
+    public static JsonPath compile(String jsonPath, Predicate... filters) {
         notEmpty(jsonPath, "json can not be null or empty");
 
         return new JsonPath(jsonPath, filters);
@@ -380,11 +382,10 @@ public class JsonPath {
      * @return list of objects matched by the given path
      */
     @SuppressWarnings({"unchecked"})
-    public static <T> T read(Object json, String jsonPath, Filter... filters) {
+    public static <T> T read(Object json, String jsonPath, Predicate... filters) {
         //return compile(jsonPath, filters).read(json);
         return new JsonReader().parse(json).read(jsonPath, filters);
     }
-
 
     /**
      * Creates a new JsonPath and applies it to the provided Json string
@@ -396,9 +397,10 @@ public class JsonPath {
      * @return list of objects matched by the given path
      */
     @SuppressWarnings({"unchecked"})
-    public static <T> T read(String json, String jsonPath, Filter... filters) {
+    public static <T> T read(String json, String jsonPath, Predicate... filters) {
         return new JsonReader().parse(json).read(jsonPath, filters);
     }
+
 
     /**
      * Creates a new JsonPath and applies it to the provided Json object
@@ -410,7 +412,7 @@ public class JsonPath {
      * @return list of objects matched by the given path
      */
     @SuppressWarnings({"unchecked"})
-    public static <T> T read(URL jsonURL, String jsonPath, Filter... filters) throws IOException {
+    public static <T> T read(URL jsonURL, String jsonPath, Predicate... filters) throws IOException {
         return new JsonReader().parse(jsonURL).read(jsonPath, filters);
     }
 
@@ -424,7 +426,7 @@ public class JsonPath {
      * @return list of objects matched by the given path
      */
     @SuppressWarnings({"unchecked"})
-    public static <T> T read(File jsonFile, String jsonPath, Filter... filters) throws IOException {
+    public static <T> T read(File jsonFile, String jsonPath, Predicate... filters) throws IOException {
         return new JsonReader().parse(jsonFile).read(jsonPath, filters);
     }
 
@@ -438,7 +440,7 @@ public class JsonPath {
      * @return list of objects matched by the given path
      */
     @SuppressWarnings({"unchecked"})
-    public static <T> T read(InputStream jsonInputStream, String jsonPath, Filter... filters) throws IOException {
+    public static <T> T read(InputStream jsonInputStream, String jsonPath, Predicate... filters) throws IOException {
         return new JsonReader().parse(jsonInputStream).read(jsonPath, filters);
     }
 

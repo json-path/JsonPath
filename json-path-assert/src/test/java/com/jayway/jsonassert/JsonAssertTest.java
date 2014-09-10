@@ -1,6 +1,5 @@
 package com.jayway.jsonassert;
 
-import org.junit.Ignore;
 import org.junit.Test;
 
 import java.io.InputStream;
@@ -49,8 +48,11 @@ public class JsonAssertTest {
         with(JSON).assertThat("$.store.book[*].fooBar", emptyCollection());
     }
 
+
+
     @Test(expected = AssertionError.class)
     public void failed_error_message() throws Exception {
+
         with(JSON).assertThat("$.store.book[0].category", endsWith("foobar"));
     }
 
