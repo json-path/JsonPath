@@ -4,10 +4,12 @@ public class BaseTest {
 
     public static final String JSON_DOCUMENT = "{\n" +
             "   \"string-property\" : \"string-value\", \n" +
-            "   \"int-property\" : " + Integer.MAX_VALUE + ", \n" +
-            "   \"long-property\" : " + Long.MAX_VALUE + ", \n" +
+            "   \"int-max-property\" : " + Integer.MAX_VALUE + ", \n" +
+            "   \"long-max-property\" : " + Long.MAX_VALUE + ", \n" +
+            "   \"long-max-property\" : " + Long.MAX_VALUE + ", \n" +
             "   \"boolean-property\" : true, \n" +
             "   \"null-property\" : null, \n" +
+            "   \"int-small-property\" : 1, \n" +
             "   \"store\" : {\n" +
             "      \"book\" : [\n" +
             "         {\n" +

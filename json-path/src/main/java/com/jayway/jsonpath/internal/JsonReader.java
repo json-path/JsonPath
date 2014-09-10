@@ -5,6 +5,7 @@ import com.jayway.jsonpath.JsonPath;
 import com.jayway.jsonpath.ParseContext;
 import com.jayway.jsonpath.Predicate;
 import com.jayway.jsonpath.ReadContext;
+import com.jayway.jsonpath.spi.converter.ConverterFactory;
 import com.jayway.jsonpath.spi.http.HttpProviderFactory;
 
 import java.io.File;
@@ -93,9 +94,23 @@ public class JsonReader implements ParseContext, ReadContext {
     }
 
     @Override
+    public <T> T read(String path, Class<T> type, Predicate... filters) {
+        return convert(read(path, filters), type);
+    }
+
+    @Override
     public <T> T read(JsonPath path) {
         notNull(path, "path can not be null");
         return path.read(json, configuration);
+    }
+
+    @Override
+    public <T> T read(JsonPath path, Class<T> type) {
+        return convert(read(path), type);
+    }
+
+    private <T> T convert(Object obj, Class<T> type){
+        return ConverterFactory.createConverter(type).convert(obj, configuration);
     }
 
 }

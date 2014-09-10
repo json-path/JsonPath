@@ -32,13 +32,11 @@ public interface JsonProvider {
 
     Object parse(InputStream jsonStream) throws InvalidJsonException;
 
-
     String toJson(Object obj);
 
     Object createMap();
 
     Object createArray();
-
 
     Object clone(Object model);
 
