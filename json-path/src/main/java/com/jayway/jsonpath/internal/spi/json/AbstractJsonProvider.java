@@ -14,31 +14,14 @@
  */
 package com.jayway.jsonpath.internal.spi.json;
 
-import com.jayway.jsonpath.internal.Utils;
 import com.jayway.jsonpath.spi.json.JsonProvider;
 
-import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 
 public abstract class AbstractJsonProvider implements JsonProvider {
-
-    @Override
-    public Object clone(Object obj) {
-        return Utils.clone((Serializable) obj);
-    }
-
-    /**
-     * checks if object is a map or an array
-     *
-     * @param obj object to check
-     * @return true if obj is a map or an array
-     */
-    public boolean isContainer(Object obj) {
-        return (isArray(obj) || isMap(obj));
-    }
 
     /**
      * checks if object is an array
@@ -87,23 +70,6 @@ public abstract class AbstractJsonProvider implements JsonProvider {
             return JsonProvider.UNDEFINED;
         } else {
             return m.get(key);
-        }
-    }
-
-
-    /**
-     * Extracts a value from an object or array
-     *
-     * @param obj an array or an object
-     * @param key a String key or a numerical index
-     * @return the entry at the given key, i.e. obj[key]
-     */
-    public Object getProperty(Object obj, Object key) {
-        if (isMap(obj))
-            return ((Map) obj).get(key.toString());
-        else {
-            int index = key instanceof Integer ? (Integer) key : Integer.parseInt(key.toString());
-            return ((List) obj).get(index);
         }
     }
 
