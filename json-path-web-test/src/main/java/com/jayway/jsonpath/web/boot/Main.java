@@ -13,6 +13,7 @@ import org.glassfish.jersey.jackson.JacksonFeature;
 import org.glassfish.jersey.server.ResourceConfig;
 import org.glassfish.jersey.servlet.ServletContainer;
 
+import java.awt.*;
 import java.io.IOException;
 
 
@@ -20,19 +21,16 @@ import java.io.IOException;
 public class Main {
 
     public static void main(String[] args) throws Exception {
-        int port = 8080;
+        String configPort = "8080";
         if(args.length > 0){
-            try {
-                port = Integer.parseInt(args[0]);
-            } catch (NumberFormatException nfe) {
-                System.out.println("Invalid usage! Port argument must be an integer (if not supplied " + port + " is used)");
-            }
+            configPort = args[0];
         }
+        String port = System.getProperty("server.http.port", configPort);
         System.out.println("Server started on port: " + port);
 
         Server server = new Server();
 
-        server.setConnectors(new Connector[]{createConnector(server, port)});
+        server.setConnectors(new Connector[]{createConnector(server, Integer.parseInt(port))});
 
         ServletContextHandler context = new ServletContextHandler(ServletContextHandler.NO_SESSIONS);
         context.setContextPath("/api");
