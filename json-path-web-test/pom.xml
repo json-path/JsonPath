@@ -99,7 +99,7 @@
                 <configuration>
                     <archive>
                         <manifest>
-                            <mainClass>com.jayway.oauth2.example.boot.Main</mainClass>
+                            <mainClass>com.jayway.jsonpath.web.boot.Main</mainClass>
                         </manifest>
                     </archive>
                 </configuration>
