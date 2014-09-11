@@ -18,7 +18,6 @@ import com.fasterxml.jackson.core.JsonGenerator;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.ObjectReader;
 import com.jayway.jsonpath.InvalidJsonException;
-import com.jayway.jsonpath.spi.json.Mode;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -64,10 +63,6 @@ public class JacksonProvider extends AbstractJsonProvider {
     public JacksonProvider(ObjectMapper objectMapper, ObjectReader objectReader) {
       this.objectMapper = objectMapper;
       this.objectReader = objectReader;
-    }
-
-    public Mode getMode() {
-        return Mode.STRICT;
     }
 
     @Override

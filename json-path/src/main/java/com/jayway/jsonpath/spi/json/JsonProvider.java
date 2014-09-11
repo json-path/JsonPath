@@ -24,8 +24,6 @@ public interface JsonProvider {
 
     static final Object UNDEFINED = new Object();
 
-    Mode getMode();
-
     Object parse(String json) throws InvalidJsonException;
 
     Object parse(Reader jsonReader) throws InvalidJsonException;
@@ -37,16 +35,6 @@ public interface JsonProvider {
     Object createMap();
 
     Object createArray();
-
-    Object clone(Object model);
-
-    /**
-     * checks if object is a map or an array
-     *
-     * @param obj object to check
-     * @return true if obj is a map or an array
-     */
-    boolean isContainer(Object obj);
 
     /**
      * checks if object is an array
@@ -80,15 +68,6 @@ public interface JsonProvider {
      * @return the keys for an object or the indexes for an array
      */
     Collection<String> getPropertyKeys(Object obj);
-
-    /**
-     * Extracts a value from an object or array
-     *
-     * @param obj an array or an object
-     * @param key a String key or a numerical index
-     * @return the entry at the given key, i.e. obj[key]
-     */
-    Object getProperty(Object obj, Object key);
 
     /**
      * Extracts a value from an array
