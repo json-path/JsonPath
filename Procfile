@@ -1,0 +1,1 @@
+web: java $JAVA_OPTS -Dserver.http.port=$PORT -jar web/build/distributions/trumpet-server-1.0.0-shadow.jar

@@ -23,16 +23,14 @@ public class Bench {
     protected final String path;
     private final boolean optionAsValues;
     private final boolean flagWrap;
-    private final boolean flagMerge;
     private final boolean flagSuppress;
     private final boolean flagNullLeaf;
 
-    public Bench(String json, String path, boolean optionAsValues, boolean flagWrap, boolean flagMerge, boolean flagSuppress, boolean flagNullLeaf) {
+    public Bench(String json, String path, boolean optionAsValues, boolean flagWrap, boolean flagSuppress, boolean flagNullLeaf) {
         this.json = json;
         this.path = path;
         this.optionAsValues = optionAsValues;
         this.flagWrap = flagWrap;
-        this.flagMerge = flagMerge;
         this.flagSuppress = flagSuppress;
         this.flagNullLeaf = flagNullLeaf;
     }
@@ -47,9 +45,6 @@ public class Bench {
         Configuration configuration = Configuration.defaultConfiguration();
         if(flagWrap){
             configuration = configuration.addOptions(Option.ALWAYS_RETURN_LIST);
-        }
-        if(flagMerge){
-            configuration = configuration.addOptions(Option.MERGE_MULTI_PROPS);
         }
         if(flagSuppress){
             configuration = configuration.addOptions(Option.SUPPRESS_EXCEPTIONS);

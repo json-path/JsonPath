@@ -48,13 +48,12 @@ public class ApiResource {
                                 @FormParam("path") String path,
                                 @FormParam("type") String type,
                                 @FormParam("flagWrap")  boolean flagWrap,
-                                @FormParam("flagMerge")  boolean flagMerge,
                                 @FormParam("flagNullLeaf")  boolean flagNullLeaf,
                                 @FormParam("flagSuppress")  boolean flagSuppress ){
 
         boolean value = "VALUE".equalsIgnoreCase(type);
 
-        Map<String, Result> resultMap = new Bench(json, path, value, flagWrap, flagMerge, flagSuppress, flagNullLeaf).runAll();
+        Map<String, Result> resultMap = new Bench(json, path, value, flagWrap, flagSuppress, flagNullLeaf).runAll();
 
         return Response.ok(resultMap).build();
     }

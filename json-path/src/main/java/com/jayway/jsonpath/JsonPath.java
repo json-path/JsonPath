@@ -383,8 +383,7 @@ public class JsonPath {
      */
     @SuppressWarnings({"unchecked"})
     public static <T> T read(Object json, String jsonPath, Predicate... filters) {
-        //return compile(jsonPath, filters).read(json);
-        return new JsonReader().parse(json).read(jsonPath, filters);
+        return parse(json).read(jsonPath, filters);
     }
 
     /**

@@ -52,10 +52,9 @@ public abstract class PathToken {
             if (!isLeaf()) {
                 throw new InvalidPathException("Multi properties can only be used as path leafs: " + evalPath);
             }
-
-            if(ctx.configuration().containsOption(Option.MERGE_MULTI_PROPS)) {
-                Object map = ctx.jsonProvider().createMap();
-                for (String property : properties) {
+            for (String property : properties) {
+                evalPath = currentPath + "['" + property + "']";
+                if(hasProperty(property, model, ctx)) {
                     Object propertyVal = readObjectProperty(property, model, ctx);
                     if(propertyVal == JsonProvider.UNDEFINED){
                         if(ctx.options().contains(Option.DEFAULT_PATH_LEAF_TO_NULL)){
@@ -64,24 +63,7 @@ public abstract class PathToken {
                             continue;
                         }
                     }
-                    ctx.jsonProvider().setProperty(map, property, propertyVal);
-                }
-                ctx.addResult(evalPath, map);
-
-            } else {
-                for (String property : properties) {
-                    evalPath = currentPath + "['" + property + "']";
-                    if(hasProperty(property, model, ctx)) {
-                        Object propertyVal = readObjectProperty(property, model, ctx);
-                        if(propertyVal == JsonProvider.UNDEFINED){
-                            if(ctx.options().contains(Option.DEFAULT_PATH_LEAF_TO_NULL)){
-                                propertyVal = null;
-                            } else {
-                                continue;
-                            }
-                        }
-                        ctx.addResult(evalPath, propertyVal);
-                    }
+                    ctx.addResult(evalPath, propertyVal);
                 }
             }
         }

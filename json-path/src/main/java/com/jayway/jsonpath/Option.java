@@ -17,9 +17,29 @@ package com.jayway.jsonpath;
 public enum Option {
 
     /**
-     * Throw {@link PathNotFoundException} when JsonPath tries to read a property that does not exists.
+     * returns <code>null</code> for missing leaf.
+     *
+     * <pre>
+     * [
+     *      {
+     *         "foo" : "foo1",
+     *         "bar" : "bar1"
+     *      }
+     *      {
+     *         "foo" : "foo2"
+     *      }
+     * ]
+     *</pre>
+     *
+     * the path :
+     *
+     * "$[*].bar"
+     *
+     * Without flag ["bar1"] is returned
+     * With flag ["bar1", null] is returned
+     *
+     *
      */
-    //THROW_ON_MISSING_PROPERTY,
     DEFAULT_PATH_LEAF_TO_NULL,
 
     /**
@@ -33,16 +53,10 @@ public enum Option {
     AS_PATH_LIST,
 
     /**
-     * When multiple properties are queried eg @..['foo', 'bar'] these properties are extracted and put in a new Map.
-     */
-    MERGE_MULTI_PROPS,
-
-    /**
      * Suppress all exceptions when evaluating path.
      * <br/>
      * If an exception is thrown and the option {@link Option#ALWAYS_RETURN_LIST} an empty list is returned.
      * If an exception is thrown and the option {@link Option#ALWAYS_RETURN_LIST} is not present null is returned.
-     * The option {@link Option#THROW_ON_MISSING_PROPERTY} has precedence over this option.
      */
     SUPPRESS_EXCEPTIONS
 
