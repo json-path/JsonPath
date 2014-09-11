@@ -1,1 +1,1 @@
-web: java $JAVA_OPTS -Dserver.http.port=$PORT -jar json-path-web-test/target/json-path-web-test-0.9.2-SNAPSHOT.one-jar.jar
+web: java $JAVA_OPTS -Dserver.http.port=$PORT -DresourceBase=json-path-web-test/src/main/resources/webapp/ -jar json-path-web-test/target/json-path-web-test-0.9.2-SNAPSHOT.one-jar.jar
