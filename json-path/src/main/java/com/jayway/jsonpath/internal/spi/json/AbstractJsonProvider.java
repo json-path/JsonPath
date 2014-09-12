@@ -23,6 +23,10 @@ import java.util.Map;
 
 public abstract class AbstractJsonProvider implements JsonProvider {
 
+    public Object unwrap(Object obj){
+        return obj;
+    }
+
     /**
      * checks if object is an array
      *
@@ -135,7 +139,7 @@ public abstract class AbstractJsonProvider implements JsonProvider {
      * @return the entries for an array or the values for a map
      */
     @SuppressWarnings("unchecked")
-    public Iterable<Object> toIterable(Object obj) {
+    public Iterable<? extends Object> toIterable(Object obj) {
         if (isArray(obj))
             return ((Iterable) obj);
         else

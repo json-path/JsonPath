@@ -290,6 +290,7 @@ public class Criteria implements Predicate {
         } else {
             try {
                 final Object actual = path.evaluate(ctx.target(), ctx.configuration()).getValue();
+
                 return criteriaType.eval(expected, actual, ctx.configuration());
             } catch (CompareException e) {
                 return false;

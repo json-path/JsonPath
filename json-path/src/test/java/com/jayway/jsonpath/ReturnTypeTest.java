@@ -2,7 +2,6 @@ package com.jayway.jsonpath;
 
 import org.junit.Test;
 
-import java.util.List;
 import java.util.Map;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -39,7 +38,12 @@ public class ReturnTypeTest extends BaseTest {
 
     @Test
     public void assert_arrays_can_be_read() {
-        assertThat(reader.read("$.store.book", List.class)).hasSize(4);
+
+        Object result = reader.read("$.store.book");
+
+        assertThat(reader.configuration().getProvider().isArray(result)).isTrue();
+
+        assertThat(reader.configuration().getProvider().length(result)).isEqualTo(4);
     }
 
     @Test

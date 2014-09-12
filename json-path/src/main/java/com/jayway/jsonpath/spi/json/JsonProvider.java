@@ -24,6 +24,8 @@ public interface JsonProvider {
 
     static final Object UNDEFINED = new Object();
 
+    public Object unwrap(Object obj);
+
     Object parse(String json) throws InvalidJsonException;
 
     Object parse(Reader jsonReader) throws InvalidJsonException;
@@ -58,7 +60,7 @@ public interface JsonProvider {
      * @param obj an array or an object
      * @return the entries for an array or the values for a map
      */
-    Iterable<Object> toIterable(Object obj);
+    Iterable<?> toIterable(Object obj);
 
 
     /**

@@ -60,9 +60,9 @@ public class EvaluationContextImpl implements EvaluationContext {
             if(resultIndex == 0){
                 throw new PathNotFoundException("No results for path: " + path.toString());
             }
-            return (T) jsonProvider().getArrayIndex(valueResult, 0);
+            return (T) jsonProvider().unwrap(jsonProvider().getArrayIndex(valueResult, 0));
         }
-        return (T) valueResult;
+        return (T) jsonProvider().unwrap(valueResult);
     }
 
     @SuppressWarnings("unchecked")
@@ -78,7 +78,7 @@ public class EvaluationContextImpl implements EvaluationContext {
     public List<String> getPathList() {
         List<String> res = new ArrayList<String>();
         if(resultIndex > 0){
-            Iterable<Object> objects = configuration.getProvider().toIterable(pathResult);
+            Iterable<?> objects = configuration.getProvider().toIterable(pathResult);
             for (Object o : objects) {
                 res.add((String)o);
             }

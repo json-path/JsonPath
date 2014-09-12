@@ -77,6 +77,11 @@ public class JsonReader implements ParseContext, ReadContext {
         return parse(is);
     }
 
+    @Override
+    public Configuration configuration() {
+        return configuration;
+    }
+
     //------------------------------------------------
     //
     // ReadContext impl
