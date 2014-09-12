@@ -69,12 +69,12 @@ public abstract class PathToken {
         }
     }
 
-    private boolean hasProperty(String property, Object model, EvaluationContextImpl ctx) {
+    private static boolean hasProperty(String property, Object model, EvaluationContextImpl ctx) {
         return ctx.jsonProvider().getPropertyKeys(model).contains(property);
     }
 
-    private Object readObjectProperty(String property, Object model, EvaluationContextImpl ctx) {
-        return ctx.jsonProvider().getMapValue(model, property, true);
+    private static Object readObjectProperty(String property, Object model, EvaluationContextImpl ctx) {
+        return ctx.jsonProvider().getMapValue(model, property);
     }
 
     void handleArrayIndex(int index, String currentPath, Object json, EvaluationContextImpl ctx) {
