@@ -83,19 +83,9 @@ public interface JsonProvider {
      *
      * @param obj a map
      * @param key property key
-     * @return the map entry
+     * @return the map entry or {@link com.jayway.jsonpath.spi.json.JsonProvider#UNDEFINED} for missing properties
      */
     Object getMapValue(Object obj, String key);
-
-    /**
-     * Extracts a value from an map
-     *
-     * @param obj a map
-     * @param key property key
-     * @param signalUndefined if true the constant {@link com.jayway.jsonpath.spi.json.JsonProvider#UNDEFINED} is returned for missing properties
-     * @return the map entry
-     */
-    Object getMapValue(Object obj, String key, boolean signalUndefined);
 
     /**
      * Sets a value in an object or array

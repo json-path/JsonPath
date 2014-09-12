@@ -50,23 +50,11 @@ public abstract class AbstractJsonProvider implements JsonProvider {
      *
      * @param obj a map
      * @param key property key
-     * @return the map entry
+     * @return the map entry or {@link com.jayway.jsonpath.spi.json.JsonProvider#UNDEFINED} for missing properties
      */
     public Object getMapValue(Object obj, String key){
-        return ((Map) obj).get(key);
-    }
-
-    /**
-     * Extracts a value from an map
-     *
-     * @param obj a map
-     * @param key property key
-     * @param signalUndefined if true the constant {@link com.jayway.jsonpath.spi.json.JsonProvider#UNDEFINED} is returned for missing properties
-     * @return the map entry
-     */
-    public Object getMapValue(Object obj, String key, boolean signalUndefined){
         Map m = (Map) obj;
-        if(!m.containsKey(key) && signalUndefined){
+        if(!m.containsKey(key)){
             return JsonProvider.UNDEFINED;
         } else {
             return m.get(key);
