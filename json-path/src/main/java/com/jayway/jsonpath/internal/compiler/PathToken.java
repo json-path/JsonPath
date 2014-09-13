@@ -77,6 +77,7 @@ public abstract class PathToken {
         return ctx.jsonProvider().getMapValue(model, property);
     }
 
+
     void handleArrayIndex(int index, String currentPath, Object json, EvaluationContextImpl ctx) {
         String evalPath = currentPath + "[" + index + "]";
         try {

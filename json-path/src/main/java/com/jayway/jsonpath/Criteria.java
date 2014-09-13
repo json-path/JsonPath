@@ -281,13 +281,10 @@ public class Criteria implements Predicate {
         if (CriteriaType.EXISTS == criteriaType) {
             boolean exists = ((Boolean) expected);
             try {
-                //path.evaluate(model, configuration.options(Option.THROW_ON_MISSING_PROPERTY)).getValue();
-
                 Configuration c = ctx.configuration();
                 if(c.containsOption(Option.ALWAYS_RETURN_LIST) || c.containsOption(Option.SUPPRESS_EXCEPTIONS)){
                     c = c.options();
                 }
-
                 path.evaluate(ctx.target(), c).getValue();
                 return exists;
             } catch (PathNotFoundException e) {

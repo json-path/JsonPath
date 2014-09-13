@@ -11,7 +11,7 @@ import static java.util.Collections.singletonMap;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.entry;
 
-public class FilterPathTokenTest {
+public class PredicatePathTokenTest {
 
     private static final Object ARRAY = JsonProviderFactory.createProvider().parse(
             "[" +
