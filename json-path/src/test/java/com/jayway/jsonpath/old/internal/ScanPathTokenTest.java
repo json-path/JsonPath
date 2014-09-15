@@ -1,6 +1,7 @@
 package com.jayway.jsonpath.old.internal;
 
 import com.jayway.jsonpath.Configuration;
+import com.jayway.jsonpath.JsonPath;
 import com.jayway.jsonpath.internal.PathCompiler;
 import com.jayway.jsonpath.spi.json.JsonProviderFactory;
 import org.junit.Test;
@@ -86,6 +87,13 @@ public class ScanPathTokenTest {
                     "     ]\n" +
                     " }"
     );
+
+
+    @Test
+    public void a_root_scan() {
+
+        Object o = JsonPath.read(DOCUMENT, "$..");
+    }
 
     @Test
     public void a_document_can_be_scanned_for_property() {

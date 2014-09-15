@@ -59,7 +59,6 @@ public class ArraySlicingTest {
         assertThat(result, Matchers.contains(1));
     }
 
-    //@Test(expected = IndexOutOfBoundsException.class)
     @Test
     public void get_between_index_out_of_bounds(){
         List<Integer> result = JsonPath.read(JSON_ARRAY, "$[1:15]");

@@ -22,14 +22,14 @@ public class PredicatePathToken extends PathToken {
             "[?,?,?,?,?]"
     };
 
-    private final Collection<Predicate> filters;
+    private final Collection<Predicate> predicates;
 
     public PredicatePathToken(Predicate filter) {
-        this.filters = asList(filter);
+        this.predicates = asList(filter);
     }
 
-    public PredicatePathToken(Collection<Predicate> filters) {
-        this.filters = filters;
+    public PredicatePathToken(Collection<Predicate> predicates) {
+        this.predicates = predicates;
     }
 
     @Override
@@ -58,37 +58,44 @@ public class PredicatePathToken extends PathToken {
     }
 
     public boolean accept(final Object obj, final Configuration configuration) {
-        boolean accept = true;
+        Predicate.PredicateContext ctx = new PredicateContextImpl(obj, configuration);
 
-        Predicate.PredicateContext ctx = new Predicate.PredicateContext() {
-            @Override
-            public Object target() {
-                return obj;
-            }
-
-            @Override
-            public Configuration configuration() {
-                return configuration;
-            }
-        };
-
-        for (Predicate filter : filters) {
-            if (!filter.apply (ctx)) {
-                accept = false;
-                break;
+        for (Predicate predicate : predicates) {
+            if (!predicate.apply (ctx)) {
+                return false;
             }
         }
-
-        return accept;
+        return true;
     }
 
     @Override
     public String getPathFragment() {
-        return FRAGMENTS[filters.size() - 1];
+        return FRAGMENTS[predicates.size() - 1];
     }
 
     @Override
     boolean isTokenDefinite() {
         return false;
+    }
+
+
+    private static class PredicateContextImpl implements Predicate.PredicateContext {
+        private final Object obj;
+        private final Configuration configuration;
+
+        private PredicateContextImpl(Object obj, Configuration configuration) {
+            this.obj = obj;
+            this.configuration = configuration;
+        }
+
+        @Override
+        public Object target() {
+            return obj;
+        }
+
+        @Override
+        public Configuration configuration() {
+            return configuration;
+        }
     }
 }

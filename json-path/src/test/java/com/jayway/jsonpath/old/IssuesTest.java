@@ -121,7 +121,6 @@ public class IssuesTest {
             Object o = JsonPath.read(is, "$.project.field[*].@key");
             //Object o = JsonPath.read(is, "$.project.template[?(@.@key == 'foo')].field[*].@key");
 
-            System.out.println(o);
 
             is.close();
         } catch (Exception e) {
@@ -230,11 +229,10 @@ public class IssuesTest {
     @Test(expected = PathNotFoundException.class)
     public void issue_22() throws Exception {
 
-        //Configuration configuration = Configuration.builder().options(Option.THROW_ON_MISSING_PROPERTY).build();
         Configuration configuration = Configuration.defaultConfiguration();
 
         String json = "{\"a\":{\"b\":1,\"c\":2}}";
-        System.out.println(JsonPath.parse(json, configuration).read("a.d"));
+        JsonPath.parse(json, configuration).read("a.d");
     }
     @Test
     public void issue_22c() throws Exception {

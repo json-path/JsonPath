@@ -5,6 +5,7 @@ import com.jayway.jsonpath.Configuration;
 import com.jayway.jsonpath.Filter;
 import com.jayway.jsonpath.InvalidCriteriaException;
 import com.jayway.jsonpath.JsonPath;
+import com.jayway.jsonpath.Predicate;
 import com.jayway.jsonpath.spi.json.JsonProvider;
 import com.jayway.jsonpath.spi.json.JsonProviderFactory;
 import org.junit.Test;
@@ -284,12 +285,6 @@ public class FilterTest extends BaseTest {
         assertThat((String)JsonPath.read(jocksInTexas1, "[0].first-name"), is("Jock"));
         assertThat((String)JsonPath.read(jocksInTexas1, "[0].last-name"), is("Ewing"));
 
-
-        System.out.println("res1" + jocksInTexas1);
-        System.out.println("res2" + jocksInTexas2);
-
-
-        System.out.println("done");
     }
 
     //-------------------------------------------------
@@ -316,65 +311,12 @@ public class FilterTest extends BaseTest {
     }
 
 
-    /*
-    @Test
-    public void filters_can_be_extended_with_new_criteria() throws Exception {
-
-        Map<String, Object> check = new HashMap<String, Object>();
-        check.put("string", "foo");
-        check.put("string_null", null);
-        check.put("int", 10);
-        check.put("long", 1L);
-        check.put("double", 1.12D);
-
-        Filter filter = filter(where("string").is("foo").and("int").lt(11));
-
-        assertTrue(filter.apply(createPredicateContext(check)));
-
-        filter.addCriteria(where("long").ne(1L));
-
-        assertFalse(filter.apply(createPredicateContext(check)));
-
-    }
-    */
-
-    /*
-    @Test
-    public void filters_criteria_can_be_refined() throws Exception {
-
-        Map<String, Object> check = new HashMap<String, Object>();
-        check.put("string", "foo");
-        check.put("string_null", null);
-        check.put("int", 10);
-        check.put("long", 1L);
-        check.put("double", 1.12D);
-
-        Filter filter = filter(where("string").is("foo"));
-
-        assertTrue(filter.apply(createPredicateContext(check)));
-
-        Criteria criteria = where("string").is("not eq");
-
-        filter.addCriteria(criteria);
-
-        assertFalse(filter.apply(createPredicateContext(check)));
-
-
-        filter = filter(where("string").is("foo").and("string").is("not eq"));
-        assertFalse(filter.apply(createPredicateContext(check)));
-
-
-        filter = filter(where("string").is("foo").and("string").is("foo"));
-        assertTrue(filter.apply(createPredicateContext(check)));
-
-    }
-    */
 
 
     @Test
     public void arrays_of_maps_can_be_filtered() throws Exception {
 
-         /*
+
         Map<String, Object> rootGrandChild_A = new HashMap<String, Object>();
         rootGrandChild_A.put("name", "rootGrandChild_A");
 
@@ -401,10 +343,10 @@ public class FilterTest extends BaseTest {
         root.put("children", asList(rootChild_A, rootChild_B, rootChild_C));
 
 
-        Filter customFilter = new Filter.FilterAdapter<Map<String, Object>>() {
+        Predicate customFilter = new Predicate () {
             @Override
-            public boolean apply(createPredicateContext(check)Map<String, Object> map) {
-                if (map.getValue("name").equals("rootGrandChild_A")) {
+            public boolean apply(PredicateContext ctx) {
+                if (ctx.configuration().getProvider().getMapValue(ctx.target(), "name").equals("rootGrandChild_A")) {
                     return true;
                 }
                 return false;
@@ -414,55 +356,33 @@ public class FilterTest extends BaseTest {
         Filter rootChildFilter = filter(where("name").regex(Pattern.compile("rootChild_[A|B]")));
         Filter rootGrandChildFilter = filter(where("name").regex(Pattern.compile("rootGrandChild_[A|B]")));
 
-        //TODO: breaking v2 (solved by [?,?])
-        //List read = JsonPath.read(root, "children[?].children[?][?]", rootChildFilter, rootGrandChildFilter, customFilter);
         List read = JsonPath.read(root, "children[?].children[?, ?]", rootChildFilter, rootGrandChildFilter, customFilter);
 
-
-        System.out.println(read.size());
-        */
     }
 
 
     @Test
     public void arrays_of_objects_can_be_filtered() throws Exception {
-        /*
         Map<String, Object> doc = new HashMap<String, Object>();
         doc.put("items", asList(1, 2, 3));
 
-        Filter customFilter = new Filter.FilterAdapter() {
+        Predicate customFilter = new Predicate() {
             @Override
-            public boolean apply(createPredicateContext(check)Object o, Configuration configuration) {
-                return 1 == (Integer) o;
+            public boolean apply(PredicateContext ctx) {
+                return 1 == (Integer)ctx.target();
             }
         };
 
         List<Integer> res = JsonPath.read(doc, "$.items[?]", customFilter);
 
-        assertEquals(1, res.getValue(0).intValue());
-        */
+        assertEquals(1, res.get(0).intValue());
     }
 
     @Test
     public void filters_can_contain_json_path_expressions() throws Exception {
-    System.out.println(DOCUMENT);
         Object doc = JsonProviderFactory.createProvider().parse(DOCUMENT);
 
-
         assertFalse(filter(where("$.store.bicycle.color").ne("red")).apply(createPredicateContext(doc)));
-        /*
-        assertFalse(filter(where("store..price").gt(10)).apply(doc, conf));
-        assertFalse(filter(where("$.store..price").gte(100)).apply(doc, conf));
-        assertTrue(filter(where("$.store..category").ne("fiction")).apply(doc, conf));
-        assertTrue(filter(where("$.store.bicycle.color").ne("blue")).apply(doc, conf));
-        assertTrue(filter(where("$.store..color").exists(true)).apply(doc, conf));
-        assertTrue(filter(where("$.store..color").regex(Pattern.compile("^r.d$"))).apply(doc, conf));
-        assertTrue(filter(where("$.store..color").type(String.class)).apply(doc, conf));
-        assertTrue(filter(where("$.store..price").is(12.99)).apply(doc, conf));
-        assertFalse(filter(where("$.store..price").is(13.99)).apply(doc, conf));
-
-        assertFalse(filter(where("$.store..flavor").exists(true)).apply(doc, conf));
-        */
     }
 
     @Test
@@ -494,11 +414,9 @@ public class FilterTest extends BaseTest {
 
         List<Map<String, Object>> result = JsonPath.read(doc, "$.fields[?]", filter(where("errors").notEmpty()));
         assertEquals(1, result.size());
-        System.out.println(result);
 
         List<Map<String, Object>> result2 = JsonPath.read(doc, "$.fields[?]", filter(where("name").notEmpty()));
         assertEquals(2, result2.size());
-        System.out.println(result2);
     }
 
     @Test(expected = InvalidCriteriaException.class)
