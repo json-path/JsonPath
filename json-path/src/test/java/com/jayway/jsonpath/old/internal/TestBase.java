@@ -1,7 +1,7 @@
 package com.jayway.jsonpath.old.internal;
 
 import com.jayway.jsonpath.Configuration;
-import com.jayway.jsonpath.spi.json.JsonProviderFactory;
+import com.jayway.jsonpath.internal.spi.json.JsonSmartJsonProvider;
 
 /**
  *
@@ -9,7 +9,7 @@ import com.jayway.jsonpath.spi.json.JsonProviderFactory;
 public class TestBase {
 
 
-    public final static Object ARRAY = JsonProviderFactory.createProvider().parse("[" +
+    public final static Object ARRAY = new JsonSmartJsonProvider().parse("[" +
             "{\n" +
             "   \"foo\" : \"foo-val-0\"\n" +
             "}," +
@@ -33,7 +33,7 @@ public class TestBase {
             "}" +
             "]");
 
-    public final static Object DOC = JsonProviderFactory.createProvider().parse(
+    public final static Object DOC = new JsonSmartJsonProvider().parse(
             "{ \"store\": {\n" +
                     "    \"book\": [ \n" +
                     "      { \"category\": \"reference\",\n" +

@@ -7,8 +7,9 @@ import com.jayway.jsonpath.JsonPath;
 import com.jayway.jsonpath.Option;
 import com.jayway.jsonpath.PathNotFoundException;
 import com.jayway.jsonpath.internal.Utils;
+import com.jayway.jsonpath.internal.spi.json.JsonSmartJsonProvider;
 import com.jayway.jsonpath.spi.json.JsonProvider;
-import com.jayway.jsonpath.spi.json.JsonProviderFactory;
+
 import org.assertj.core.api.Assertions;
 import org.hamcrest.Matchers;
 import org.junit.Test;
@@ -27,7 +28,7 @@ import static org.junit.Assert.assertThat;
 
 public class IssuesTest {
 
-    private static final JsonProvider jp = JsonProviderFactory.createProvider();
+    private static final JsonProvider jp = new JsonSmartJsonProvider();
 
     @Test
     public void full_ones_can_be_filtered() {
