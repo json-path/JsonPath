@@ -6,8 +6,9 @@ import com.jayway.jsonpath.Filter;
 import com.jayway.jsonpath.InvalidCriteriaException;
 import com.jayway.jsonpath.JsonPath;
 import com.jayway.jsonpath.Predicate;
+import com.jayway.jsonpath.internal.spi.json.JsonSmartJsonProvider;
 import com.jayway.jsonpath.spi.json.JsonProvider;
-import com.jayway.jsonpath.spi.json.JsonProviderFactory;
+
 import org.junit.Test;
 
 import java.util.Collections;
@@ -60,7 +61,7 @@ public class FilterTest extends BaseTest {
                     "  }\n" +
                     "}";
 
-    private static final JsonProvider jp = JsonProviderFactory.createProvider();
+    private static final JsonProvider jp = new JsonSmartJsonProvider();
 
     private static final Configuration conf = Configuration.defaultConfiguration();
     //-------------------------------------------------
@@ -380,7 +381,7 @@ public class FilterTest extends BaseTest {
 
     @Test
     public void filters_can_contain_json_path_expressions() throws Exception {
-        Object doc = JsonProviderFactory.createProvider().parse(DOCUMENT);
+        Object doc = new JsonSmartJsonProvider().parse(DOCUMENT);
 
         assertFalse(filter(where("$.store.bicycle.color").ne("red")).apply(createPredicateContext(doc)));
     }
@@ -410,7 +411,7 @@ public class FilterTest extends BaseTest {
                 "}\n";
 
 
-        Object doc = JsonProviderFactory.createProvider().parse(json);
+        Object doc = new JsonSmartJsonProvider().parse(json);
 
         List<Map<String, Object>> result = JsonPath.read(doc, "$.fields[?]", filter(where("errors").notEmpty()));
         assertEquals(1, result.size());

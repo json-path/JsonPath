@@ -3,7 +3,8 @@ package com.jayway.jsonpath.old.internal;
 import com.jayway.jsonpath.Configuration;
 import com.jayway.jsonpath.JsonPath;
 import com.jayway.jsonpath.internal.PathCompiler;
-import com.jayway.jsonpath.spi.json.JsonProviderFactory;
+import com.jayway.jsonpath.internal.spi.json.JsonSmartJsonProvider;
+
 import org.junit.Test;
 
 import java.util.List;
@@ -14,7 +15,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 public class ScanPathTokenTest {
 
 
-    public final static Object DOCUMENT = JsonProviderFactory.createProvider().parse(
+    public final static Object DOCUMENT = new JsonSmartJsonProvider().parse(
             "{\n" +
                     " \"store\":{\n" +
                     "  \"book\":[\n" +
@@ -63,7 +64,7 @@ public class ScanPathTokenTest {
                     "}"
     );
 
-    public final static Object DOCUMENT2 = JsonProviderFactory.createProvider().parse(
+    public final static Object DOCUMENT2 = new JsonSmartJsonProvider().parse(
             "{\n" +
                     "     \"firstName\": \"John\",\n" +
                     "     \"lastName\" : \"doe\",\n" +

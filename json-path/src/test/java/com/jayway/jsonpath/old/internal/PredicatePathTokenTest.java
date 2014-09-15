@@ -1,7 +1,8 @@
 package com.jayway.jsonpath.old.internal;
 
 import com.jayway.jsonpath.JsonPath;
-import com.jayway.jsonpath.spi.json.JsonProviderFactory;
+import com.jayway.jsonpath.internal.spi.json.JsonSmartJsonProvider;
+
 import org.junit.Test;
 
 import java.util.List;
@@ -13,7 +14,7 @@ import static org.assertj.core.api.Assertions.entry;
 
 public class PredicatePathTokenTest {
 
-    private static final Object ARRAY = JsonProviderFactory.createProvider().parse(
+    private static final Object ARRAY = new JsonSmartJsonProvider().parse(
             "[" +
             "{\n" +
             "   \"foo\" : \"foo-val-0\"\n" +
@@ -38,7 +39,7 @@ public class PredicatePathTokenTest {
             "}" +
             "]");
 
-    private static Object  ARRAY2 = JsonProviderFactory.createProvider().parse(
+    private static Object  ARRAY2 = new JsonSmartJsonProvider().parse(
             "[" +
             "{\n" +
             "   \"foo\" : \"foo-val-0\",\n" +
