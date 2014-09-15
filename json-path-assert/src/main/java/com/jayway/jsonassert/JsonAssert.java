@@ -7,7 +7,9 @@ import com.jayway.jsonassert.impl.matcher.IsCollectionWithSize;
 import com.jayway.jsonassert.impl.matcher.IsEmptyCollection;
 import com.jayway.jsonassert.impl.matcher.IsMapContainingKey;
 import com.jayway.jsonassert.impl.matcher.IsMapContainingValue;
-import com.jayway.jsonpath.spi.json.JsonProviderFactory;
+import com.jayway.jsonpath.JsonPath;
+import com.jayway.jsonpath.internal.spi.json.JsonSmartJsonProvider;
+
 import org.hamcrest.Matcher;
 
 import java.io.IOException;
@@ -30,7 +32,7 @@ public class JsonAssert {
      * @throws ParseException when the given JSON could not be parsed
      */
     public static JsonAsserter with(String json) {
-        return new JsonAsserterImpl(JsonProviderFactory.createProvider().parse(json));
+        return new JsonAsserterImpl(JsonPath.parse(json).json());
     }
 
     /**
@@ -41,7 +43,7 @@ public class JsonAssert {
      * @throws ParseException when the given JSON could not be parsed
      */
     public static JsonAsserter with(Reader reader) throws IOException {
-        return new JsonAsserterImpl(JsonProviderFactory.createProvider().parse(convertReaderToString(reader)));
+        return new JsonAsserterImpl(JsonPath.parse(convertReaderToString(reader)).json());
 
     }
 

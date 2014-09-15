@@ -4,7 +4,6 @@ import com.jayway.jsonpath.Configuration;
 import com.jayway.jsonpath.JsonPath;
 import com.jayway.jsonpath.Option;
 import com.jayway.jsonpath.internal.spi.json.JacksonProvider;
-import com.jayway.jsonpath.spi.json.JsonProviderFactory;
 import io.gatling.jsonpath.JsonPath$;
 import org.boon.json.JsonParser;
 import org.boon.json.ObjectMapper;
@@ -71,7 +70,7 @@ public class Bench {
             } else if (res instanceof Boolean) {
                 result = res.toString();
             } else {
-                result = res != null ? JsonProviderFactory.createProvider().toJson(res) : "null";
+                result = res != null ? Configuration.defaultConfiguration().getProvider().toJson(res) : "null";
             }
             return new Result("jayway", time, result, error);
         }
