@@ -281,17 +281,13 @@ public class Criteria implements Predicate {
         if (CriteriaType.EXISTS == criteriaType) {
             boolean exists = ((Boolean) expected);
             try {
-                Configuration c = ctx.configuration();
-                if(c.containsOption(Option.ALWAYS_RETURN_LIST) || c.containsOption(Option.SUPPRESS_EXCEPTIONS)){
-                    c = c.options();
-                }
+                Configuration c = Configuration.builder().jsonProvider(ctx.configuration().getProvider()).options().build();
                 path.evaluate(ctx.target(), c).getValue();
                 return exists;
             } catch (PathNotFoundException e) {
                 return !exists;
             }
         } else {
-
             try {
                 final Object actual = path.evaluate(ctx.target(), ctx.configuration()).getValue();
                 return criteriaType.eval(expected, actual, ctx.configuration());
