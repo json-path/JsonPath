@@ -304,8 +304,7 @@ public class PathCompiler {
                         } else if (bracketCount == 0 && isLogicOperatorChar(current)) {
 
                             if (isLogicOperatorChar(chars[i + 1])) {
-                                char op1 = current;
-                                char op2 = chars[++i];
+                                ++i;
                             }
                             criteria.add(createCriteria(pathBuffer, operatorBuffer, valueBuffer));
 
@@ -335,26 +334,26 @@ public class PathCompiler {
             return new PredicatePathToken(filter2);
         }
 
-        private Criteria createCriteria(StringBuilder pathBuffer, StringBuilder operatorBuffer, StringBuilder valueBuffer) {
+        private static Criteria createCriteria(StringBuilder pathBuffer, StringBuilder operatorBuffer, StringBuilder valueBuffer) {
             return Criteria.create(pathBuffer.toString().trim(), operatorBuffer.toString().trim(), valueBuffer.toString().trim());
         }
 
-        private boolean isAnd(char c) {
+        private static boolean isAnd(char c) {
             return c == '&';
         }
 
-        private boolean isOr(char c) {
+        private static boolean isOr(char c) {
             if (c == '|') {
                 throw new UnsupportedOperationException("OR operator is not supported.");
             }
             return false;
         }
 
-        private boolean isLogicOperatorChar(char c) {
+        private static boolean isLogicOperatorChar(char c) {
             return isAnd(c) || isOr(c);
         }
 
-        private boolean isOperatorChar(char c) {
+        private static boolean isOperatorChar(char c) {
             return c == '=' || c == '!' || c == '<' || c == '>';
         }
 
