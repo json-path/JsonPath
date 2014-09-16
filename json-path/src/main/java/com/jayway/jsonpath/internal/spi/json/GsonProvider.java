@@ -1,17 +1,28 @@
 package com.jayway.jsonpath.internal.spi.json;
 
 import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import com.google.gson.InstanceCreator;
 import com.google.gson.JsonArray;
+import com.google.gson.JsonDeserializationContext;
+import com.google.gson.JsonDeserializer;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
+import com.google.gson.JsonParseException;
 import com.google.gson.JsonParser;
 import com.google.gson.JsonPrimitive;
+import com.google.gson.JsonSerializationContext;
+import com.google.gson.JsonSerializer;
 import com.google.gson.internal.LazilyParsedNumber;
 import com.jayway.jsonpath.InvalidJsonException;
+import com.jayway.jsonpath.ValueCompareException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.Reader;
+import java.lang.reflect.Type;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -20,14 +31,63 @@ import java.util.Map;
 
 public class GsonProvider extends AbstractJsonProvider {
 
-    private static final JsonParser parser = new JsonParser();
-    private static final Gson gson = new Gson();
+    private static final Logger logger = LoggerFactory.getLogger(GsonProvider.class);
 
-    public Object unwrap(Object o){
-        if(o == null){
+    private static final JsonParser parser = new JsonParser();
+    private static final Gson gson = new GsonBuilder().registerTypeAdapter(Number.class, new NumberTypeAdapter()).create();
+
+    static {
+
+        //ConverterFactory.registerConverter();
+
+    }
+
+    public int compare(Object expected, Object providerParsed) throws ValueCompareException {
+
+        JsonElement element = (JsonElement) providerParsed;
+
+        if (isNullish(expected) && !element.isJsonNull()) {
+            return -1;
+        } else if (!isNullish(expected) && element.isJsonNull()) {
+            return 1;
+        } else if (isNullish(expected) && element.isJsonNull()) {
+            return 0;
+        }
+        if(element.isJsonPrimitive()){
+            JsonPrimitive primitive = element.getAsJsonPrimitive();
+
+            if (expected instanceof String && primitive.isString()) {
+                return ((String) expected).compareTo(primitive.getAsString());
+            } else if (expected instanceof Number && primitive.isNumber()) {
+                return new BigDecimal(expected.toString()).compareTo(new BigDecimal(primitive.toString()));
+            } else if (expected instanceof String && primitive.isNumber()) {
+                return new BigDecimal(expected.toString()).compareTo(new BigDecimal(primitive.toString()));
+            } else if (expected instanceof String && primitive.isBoolean()) {
+                Boolean e = Boolean.valueOf((String)expected);
+                Boolean a = primitive.getAsBoolean();
+                return e.compareTo(a);
+            } else if (expected instanceof Boolean && primitive.isBoolean()) {
+                Boolean e = (Boolean) expected;
+                Boolean a = primitive.getAsBoolean();
+                return e.compareTo(a);
+            }
+        }
+        logger.debug("Can not compare a {} with a {}", expected.getClass().getName(), providerParsed.getClass().getName());
+        throw new ValueCompareException();
+    }
+
+    private static boolean isNullish(Object o){
+        return (o == null || ((o instanceof String) && ("null".equals(o))));
+    }
+
+
+    public Object unwrap(Object o) {
+        return o;
+        /*
+        if (o == null) {
             return null;
         }
-        if(!(o instanceof JsonElement)){
+        if (!(o instanceof JsonElement)) {
             return o;
         }
 
@@ -35,39 +95,62 @@ public class GsonProvider extends AbstractJsonProvider {
 
         JsonElement e = (JsonElement) o;
 
-        if(e.isJsonNull()) {
+        if (e.isJsonNull()) {
             unwrapped = null;
-        } else if(e.isJsonPrimitive()){
+        } else if (e.isJsonPrimitive()) {
 
             JsonPrimitive p = e.getAsJsonPrimitive();
-            if(p.isString()){
+            if (p.isString()) {
                 unwrapped = p.getAsString();
-            } else if(p.isBoolean()){
+            } else if (p.isBoolean()) {
                 unwrapped = p.getAsBoolean();
-            } else if(p.isNumber()){
-                Number n = p.getAsNumber();
-                if(n instanceof LazilyParsedNumber){
-                    LazilyParsedNumber lpn = (LazilyParsedNumber) n;
-                    BigDecimal bigDecimal = new BigDecimal(lpn.toString());
-                    if(bigDecimal.scale() <= 0){
-                        if(bigDecimal.compareTo(new BigDecimal(Integer.MAX_VALUE)) <= 0){
-                            unwrapped = bigDecimal.intValue();
-                        } else {
-                            unwrapped = bigDecimal.longValue();
-                        }
-                    } else {
-                        if(bigDecimal.compareTo(new BigDecimal(Float.MAX_VALUE)) <= 0){
-                            unwrapped = bigDecimal.floatValue();
-                        } else {
-                            unwrapped = bigDecimal.doubleValue();
-                        }
-                    }
+            } else if (p.isNumber()) {
+                unwrapped = unwrapNumber(p.getAsNumber());
+            }
+        } else {
+            //unwrapped = o;
+            if (e.isJsonArray()) {
+                JsonArray res = new JsonArray();
+                for (JsonElement jsonElement : e.getAsJsonArray()) {
+                   if(jsonElement.isJsonPrimitive()){
+                       JsonPrimitive primitive = jsonElement.getAsJsonPrimitive();
+                       if(primitive.isNumber()){
+                           res.add(new JsonPrimitive(unwrapNumber(primitive.getAsNumber())));
+                       }
+                   }
+                }
+                unwrapped = res;
+                //unwrapped = gson.fromJson(e, List.class);
+            } else {
+                unwrapped = gson.fromJson(e, Map.class);
+            }
+
+        }
+        return unwrapped;
+        */
+    }
+
+    private Number unwrapNumber(Number n){
+        Number unwrapped;
+
+        if (n instanceof LazilyParsedNumber) {
+            LazilyParsedNumber lpn = (LazilyParsedNumber) n;
+            BigDecimal bigDecimal = new BigDecimal(lpn.toString());
+            if (bigDecimal.scale() <= 0) {
+                if (bigDecimal.compareTo(new BigDecimal(Integer.MAX_VALUE)) <= 0) {
+                    unwrapped = bigDecimal.intValue();
                 } else {
-                    unwrapped = n;
+                    unwrapped = bigDecimal.longValue();
+                }
+            } else {
+                if (bigDecimal.compareTo(new BigDecimal(Float.MAX_VALUE)) <= 0) {
+                    unwrapped = bigDecimal.floatValue();
+                } else {
+                    unwrapped = bigDecimal.doubleValue();
                 }
             }
         } else {
-            unwrapped = o;
+            unwrapped = n;
         }
         return unwrapped;
     }
@@ -116,7 +199,7 @@ public class GsonProvider extends AbstractJsonProvider {
     @Override
     public Object getMapValue(Object obj, String key) {
         Object o = toJsonObject(obj).get(key);
-        if(o == null){
+        if (o == null) {
             return UNDEFINED;
         } else {
             return o;
@@ -135,7 +218,7 @@ public class GsonProvider extends AbstractJsonProvider {
             } else {
                 index = array.size();
             }
-            if(index == array.size()){
+            if (index == array.size()) {
                 array.add(toJsonElement(value));
             } else {
                 array.set(index, toJsonElement(value));
@@ -145,7 +228,7 @@ public class GsonProvider extends AbstractJsonProvider {
 
     @Override
     public boolean isMap(Object obj) {
-        return (obj instanceof JsonObject);
+        return (obj instanceof JsonObject) ;
     }
 
     @Override
@@ -180,15 +263,64 @@ public class GsonProvider extends AbstractJsonProvider {
         }
     }
 
-    private JsonElement toJsonElement(Object o){
+    private JsonElement toJsonElement(Object o) {
         return gson.toJsonTree(o);
     }
 
-    private JsonArray toJsonArray(Object o){
+    private JsonArray toJsonArray(Object o) {
         return (JsonArray) o;
     }
 
-    private JsonObject toJsonObject(Object o){
+    private JsonObject toJsonObject(Object o) {
         return (JsonObject) o;
     }
+
+
+    public static class NumberTypeAdapter
+            implements JsonSerializer<Number>, JsonDeserializer<Number>,
+            InstanceCreator<Number> {
+
+        public JsonElement serialize(Number src, Type typeOfSrc, JsonSerializationContext
+                context) {
+            return new JsonPrimitive(src);
+        }
+
+        public Number deserialize(JsonElement json, Type typeOfT,
+                                  JsonDeserializationContext context)
+                throws JsonParseException {
+
+            Number res = null;
+            JsonPrimitive jsonPrimitive = json.getAsJsonPrimitive();
+            if (jsonPrimitive.isNumber()) {
+                Number n = jsonPrimitive.getAsNumber();
+                if (n instanceof LazilyParsedNumber) {
+                    LazilyParsedNumber lpn = (LazilyParsedNumber) n;
+                    BigDecimal bigDecimal = new BigDecimal(lpn.toString());
+                    if (bigDecimal.scale() <= 0) {
+                        if (bigDecimal.compareTo(new BigDecimal(Integer.MAX_VALUE)) <= 0) {
+                            res = bigDecimal.intValue();
+                        } else {
+                            res = bigDecimal.longValue();
+                        }
+                    } else {
+                        if (bigDecimal.compareTo(new BigDecimal(Float.MAX_VALUE)) <= 0) {
+                            res = bigDecimal.floatValue();
+                        } else {
+                            res = bigDecimal.doubleValue();
+                        }
+                    }
+                }
+            } else {
+                throw new IllegalStateException("Expected a number field, but was " + json);
+            }
+            return res;
+        }
+
+
+
+        public Number createInstance(Type type) {
+            return 1L;
+        }
+    }
+
 }

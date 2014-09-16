@@ -28,7 +28,7 @@ public class OptionsTest extends BaseTest {
 
         Configuration conf = Configuration.builder().options(DEFAULT_PATH_LEAF_TO_NULL).build();
 
-        assertThat(using(conf).parse(singletonMap("foo", "bar")).read("$.baz")).isNull();
+        assertThat(using(conf).parse("{\"foo\" : \"bar\"}").read("$.baz")).isNull();
     }
 
     @Test

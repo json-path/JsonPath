@@ -2,12 +2,14 @@ package com.jayway.jsonpath;
 
 import org.junit.Test;
 
+import java.util.List;
 import java.util.Map;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
 @SuppressWarnings("ALL")
 public class ReturnTypeTest extends BaseTest {
+
 
     private static ReadContext reader = JsonPath.parse(JSON_DOCUMENT);
 
@@ -38,12 +40,14 @@ public class ReturnTypeTest extends BaseTest {
 
     @Test
     public void assert_arrays_can_be_read() {
-
+        /*
         Object result = reader.read("$.store.book");
 
-        assertThat(reader.configuration().getProvider().isArray(result)).isTrue();
+        assertThat(reader.configuration().jsonProvider().isArray(result)).isTrue();
 
-        assertThat(reader.configuration().getProvider().length(result)).isEqualTo(4);
+        assertThat(reader.configuration().jsonProvider().length(result)).isEqualTo(4);
+        */
+        assertThat(reader.read("$.store.book", List.class)).hasSize(4);
     }
 
     @Test

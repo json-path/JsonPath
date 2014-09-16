@@ -14,8 +14,12 @@
  */
 package com.jayway.jsonpath.internal.spi.json;
 
+import com.jayway.jsonpath.ValueCompareException;
 import com.jayway.jsonpath.spi.json.JsonProvider;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -23,9 +27,43 @@ import java.util.Map;
 
 public abstract class AbstractJsonProvider implements JsonProvider {
 
+    private static final Logger logger = LoggerFactory.getLogger(AbstractJsonProvider.class);
+
     public Object unwrap(Object obj){
         return obj;
     }
+
+    public int compare(Object expected, Object providerParsed) throws ValueCompareException {
+        if (isNullish(expected) && !isNullish(providerParsed)) {
+            return -1;
+        } else if (!isNullish(expected) && isNullish(providerParsed)) {
+            return 1;
+        } else if (isNullish(expected) && isNullish(providerParsed)) {
+            return 0;
+        } else if (expected instanceof String && providerParsed instanceof String) {
+            return ((String) expected).compareTo((String) providerParsed);
+        } else if (expected instanceof Number && providerParsed instanceof Number) {
+            return new BigDecimal(expected.toString()).compareTo(new BigDecimal(providerParsed.toString()));
+        } else if (expected instanceof String && providerParsed instanceof Number) {
+            return new BigDecimal(expected.toString()).compareTo(new BigDecimal(providerParsed.toString()));
+        } else if (expected instanceof String && providerParsed instanceof Boolean) {
+            Boolean e = Boolean.valueOf((String)expected);
+            Boolean a = (Boolean) providerParsed;
+            return e.compareTo(a);
+        } else if (expected instanceof Boolean && providerParsed instanceof Boolean) {
+            Boolean e = (Boolean) expected;
+            Boolean a = (Boolean) providerParsed;
+            return e.compareTo(a);
+        } else {
+            logger.debug("Can not compare a {} with a {}", expected.getClass().getName(), providerParsed.getClass().getName());
+            throw new ValueCompareException();
+        }
+    }
+
+    private static boolean isNullish(Object o){
+        return (o == null || ((o instanceof String) && ("null".equals(o))));
+    }
+
 
     /**
      * checks if object is an array
