@@ -44,7 +44,7 @@ public class PathCompiler {
 
         LinkedList<Predicate> filterList = new LinkedList<Predicate>(asList(filters));
 
-        if (!path.startsWith("$")) {
+        if (path.charAt(0) != '$') {
             path = "$." + path;
         }
 

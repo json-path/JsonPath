@@ -572,11 +572,13 @@ public class Criteria implements Predicate {
     }
 
     private static int safeCompare(Object expected, Object actual, Configuration configuration) {
-        if (isNullish(expected) && !isNullish(actual)) {
+        boolean expectedIsNullish = isNullish(expected);
+        boolean actualIsNullish = isNullish(actual);
+        if (expectedIsNullish && !actualIsNullish) {
             return -1;
-        } else if (!isNullish(expected) && isNullish(actual)) {
+        } else if (!expectedIsNullish && actualIsNullish) {
             return 1;
-        } else if (isNullish(expected) && isNullish(actual)) {
+        } else if (expectedIsNullish && actualIsNullish) {
             return 0;
         } else if (expected instanceof String && actual instanceof String) {
             return ((String) expected).compareTo((String) actual);
@@ -608,7 +610,7 @@ public class Criteria implements Predicate {
 
 
     public static Criteria create(String path, String operator, String expected) {
-        if (expected.startsWith("'") && expected.endsWith("'")) {
+        if (! expected.isEmpty() && expected.charAt(0) == '\'' && expected.charAt(expected.length()-1) == '\'') {
             expected = expected.substring(1, expected.length() - 1);
         }
 
