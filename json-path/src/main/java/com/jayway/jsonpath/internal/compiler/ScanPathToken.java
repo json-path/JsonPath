@@ -1,10 +1,10 @@
 package com.jayway.jsonpath.internal.compiler;
 
+import com.jayway.jsonpath.spi.json.JsonProvider;
+
 import java.util.Collection;
 import java.util.LinkedHashMap;
 import java.util.Map;
-
-import com.jayway.jsonpath.spi.json.JsonProvider;
 
 /**
  *
@@ -55,7 +55,7 @@ public class ScanPathToken extends PathToken {
             predicateMatches.put(currentPath, model);
         }
 
-        Iterable<Object> models = ctx.jsonProvider().toIterable(model);
+        Iterable<?> models = ctx.jsonProvider().toIterable(model);
         int idx = 0;
         for (Object evalModel : models) {
             String evalPath = currentPath + "[" + idx + "]";

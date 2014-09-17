@@ -29,18 +29,18 @@ public class EvaluationContextImpl implements EvaluationContext {
         notNull(configuration, "configuration can not be null");
         this.path = path;
         this.configuration = configuration;
-        this.valueResult = configuration.getProvider().createArray();
-        this.pathResult = configuration.getProvider().createArray();
+        this.valueResult = configuration.jsonProvider().createArray();
+        this.pathResult = configuration.jsonProvider().createArray();
     }
 
     public void addResult(String path, Object model) {
-        configuration.getProvider().setProperty(valueResult, resultIndex, model);
-        configuration.getProvider().setProperty(pathResult, resultIndex, path);
+        configuration.jsonProvider().setProperty(valueResult, resultIndex, model);
+        configuration.jsonProvider().setProperty(pathResult, resultIndex, path);
         resultIndex++;
     }
 
     public JsonProvider jsonProvider() {
-        return configuration.getProvider();
+        return configuration.jsonProvider();
     }
 
     public Set<Option> options() {
@@ -62,7 +62,7 @@ public class EvaluationContextImpl implements EvaluationContext {
             }
             return (T) jsonProvider().getArrayIndex(valueResult, 0);
         }
-        return (T) valueResult;
+        return (T)valueResult;
     }
 
     @SuppressWarnings("unchecked")
@@ -78,7 +78,7 @@ public class EvaluationContextImpl implements EvaluationContext {
     public List<String> getPathList() {
         List<String> res = new ArrayList<String>();
         if(resultIndex > 0){
-            Iterable<Object> objects = configuration.getProvider().toIterable(pathResult);
+            Iterable<?> objects = configuration.jsonProvider().toIterable(pathResult);
             for (Object o : objects) {
                 res.add((String)o);
             }

@@ -5,7 +5,6 @@ import com.jayway.jsonpath.JsonPath;
 import com.jayway.jsonpath.ParseContext;
 import com.jayway.jsonpath.Predicate;
 import com.jayway.jsonpath.ReadContext;
-import com.jayway.jsonpath.spi.converter.ConverterFactory;
 import com.jayway.jsonpath.spi.http.HttpProviderFactory;
 
 import java.io.File;
@@ -46,14 +45,14 @@ public class JsonReader implements ParseContext, ReadContext {
     @Override
     public ReadContext parse(String json) {
         notEmpty(json, "json string can not be null or empty");
-        this.json = configuration.getProvider().parse(json);
+        this.json = configuration.jsonProvider().parse(json);
         return this;
     }
 
     @Override
     public ReadContext parse(InputStream json) {
         notNull(json, "json input stream can not be null");
-        this.json = configuration.getProvider().parse(json);
+        this.json = configuration.jsonProvider().parse(json);
         return this;
     }
 
@@ -77,6 +76,11 @@ public class JsonReader implements ParseContext, ReadContext {
         return parse(is);
     }
 
+    @Override
+    public Configuration configuration() {
+        return configuration;
+    }
+
     //------------------------------------------------
     //
     // ReadContext impl
@@ -95,7 +99,7 @@ public class JsonReader implements ParseContext, ReadContext {
 
     @Override
     public <T> T read(String path, Class<T> type, Predicate... filters) {
-        return convert(read(path, filters), type);
+        return convert(read(path, filters), type, configuration);
     }
 
     @Override
@@ -106,11 +110,11 @@ public class JsonReader implements ParseContext, ReadContext {
 
     @Override
     public <T> T read(JsonPath path, Class<T> type) {
-        return convert(read(path), type);
+        return convert(read(path), type, configuration);
     }
 
-    private <T> T convert(Object obj, Class<T> type){
-        return ConverterFactory.createConverter(type).convert(obj, configuration);
+    private <T> T convert(Object obj, Class<T> targetType, Configuration configuration){
+        return configuration.conversionProvider().convert(obj, targetType, configuration);
     }
 
 }
