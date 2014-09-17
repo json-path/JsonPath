@@ -10,6 +10,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 @SuppressWarnings("ALL")
 public class ReturnTypeTest extends BaseTest {
 
+
     private static ReadContext reader = JsonPath.parse(JSON_DOCUMENT);
 
     @Test
@@ -19,7 +20,7 @@ public class ReturnTypeTest extends BaseTest {
 
     @Test
     public void assert_ints_can_be_read() {
-        assertThat(reader.read("$.int-max-property")).isEqualTo(Integer.MAX_VALUE);
+        assertThat(reader.read("$.int-max-property", Integer.class)).isEqualTo(Integer.MAX_VALUE);
     }
 
     @Test
@@ -39,6 +40,13 @@ public class ReturnTypeTest extends BaseTest {
 
     @Test
     public void assert_arrays_can_be_read() {
+        /*
+        Object result = reader.read("$.store.book");
+
+        assertThat(reader.configuration().jsonProvider().isArray(result)).isTrue();
+
+        assertThat(reader.configuration().jsonProvider().length(result)).isEqualTo(4);
+        */
         assertThat(reader.read("$.store.book", List.class)).hasSize(4);
     }
 

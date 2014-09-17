@@ -14,7 +14,9 @@
  */
 package com.jayway.jsonpath;
 
+import com.jayway.jsonpath.internal.spi.converter.DefaultConversionProvider;
 import com.jayway.jsonpath.internal.spi.json.JsonSmartJsonProvider;
+import com.jayway.jsonpath.spi.converter.ConversionProvider;
 import com.jayway.jsonpath.spi.json.JsonProvider;
 
 import java.util.Collections;
@@ -28,7 +30,7 @@ public class Configuration {
 
     private static Defaults DEFAULTS = new Defaults() {
         @Override
-        public JsonProvider provider() {
+        public JsonProvider jsonProvider() {
             return new JsonSmartJsonProvider();
         }
 
@@ -36,38 +38,54 @@ public class Configuration {
         public Set<Option> options() {
             return EnumSet.noneOf(Option.class);
         }
+
+        @Override
+        public ConversionProvider conversionProvider() {
+            return new DefaultConversionProvider();
+        }
     };
 
     public static synchronized void setDefaults(Defaults defaults){
         DEFAULTS = defaults;
     }
 
-    private final JsonProvider provider;
+    private final JsonProvider jsonProvider;
+    private final ConversionProvider conversionProvider;
     private final Set<Option> options;
 
-    private Configuration(JsonProvider provider, EnumSet<Option> options) {
-        notNull(provider, "provider can not be null");
+    private Configuration(JsonProvider jsonProvider, ConversionProvider conversionProvider, EnumSet<Option> options) {
+        notNull(jsonProvider, "jsonProvider can not be null");
+        notNull(conversionProvider, "conversionProvider can not be null");
         notNull(options, "options can not be null");
-        this.provider = provider;
+        this.jsonProvider = jsonProvider;
+        this.conversionProvider = conversionProvider;
         this.options = Collections.unmodifiableSet(options);
     }
 
-    public Configuration provider(JsonProvider provider) {
-        return Configuration.builder().jsonProvider(provider).options(options).build();
+    public Configuration jsonProvider(JsonProvider newJsonProvider) {
+        return Configuration.builder().jsonProvider(newJsonProvider).conversionProvider(conversionProvider).options(options).build();
     }
 
-    public JsonProvider getProvider() {
-        return provider;
+    public JsonProvider jsonProvider() {
+        return jsonProvider;
+    }
+
+    public ConversionProvider conversionProvider() {
+        return conversionProvider;
+    }
+
+    public Configuration conversionProvider(ConversionProvider newConversionProvider) {
+        return Configuration.builder().jsonProvider(jsonProvider).conversionProvider(newConversionProvider).options(options).build();
     }
 
     public Configuration addOptions(Option... options) {
         EnumSet<Option> opts = EnumSet.noneOf(Option.class);
         opts.addAll(this.options);
         opts.addAll(asList(options));
-        return Configuration.builder().jsonProvider(provider).options(opts).build();
+        return Configuration.builder().jsonProvider(jsonProvider).conversionProvider(conversionProvider).options(opts).build();
     }
     public Configuration options(Option... options) {
-        return Configuration.builder().jsonProvider(provider).options(options).build();
+        return Configuration.builder().jsonProvider(jsonProvider).conversionProvider(conversionProvider).options(options).build();
     }
 
     public Set<Option> getOptions() {
@@ -80,7 +98,7 @@ public class Configuration {
 
 
     public static Configuration defaultConfiguration() {
-        return Configuration.builder().jsonProvider(DEFAULTS.provider()).options(DEFAULTS.options()).build();
+        return Configuration.builder().jsonProvider(DEFAULTS.jsonProvider()).options(DEFAULTS.options()).build();
     }
 
     public static ConfigurationBuilder builder() {
@@ -89,11 +107,17 @@ public class Configuration {
 
     public static class ConfigurationBuilder {
 
-        private JsonProvider provider;
+        private JsonProvider jsonProvider;
+        private ConversionProvider conversionProvider;
         private EnumSet<Option> options = EnumSet.noneOf(Option.class);
 
         public ConfigurationBuilder jsonProvider(JsonProvider provider) {
-            this.provider = provider;
+            this.jsonProvider = provider;
+            return this;
+        }
+
+        public ConfigurationBuilder conversionProvider(ConversionProvider provider) {
+            this.conversionProvider = provider;
             return this;
         }
 
@@ -110,18 +134,23 @@ public class Configuration {
         }
 
         public Configuration build() {
-            if (provider == null) {
-                provider = DEFAULTS.provider();
+            if (jsonProvider == null) {
+                jsonProvider = DEFAULTS.jsonProvider();
             }
-            return new Configuration(provider, options);
+            if(conversionProvider == null){
+                conversionProvider = DEFAULTS.conversionProvider();
+            }
+            return new Configuration(jsonProvider, conversionProvider, options);
         }
     }
 
     public interface Defaults {
 
-        JsonProvider provider();
+        JsonProvider jsonProvider();
 
         Set<Option> options();
+
+        ConversionProvider conversionProvider();
 
     }
 }

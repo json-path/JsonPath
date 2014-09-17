@@ -70,7 +70,7 @@ public class Bench {
             } else if (res instanceof Boolean) {
                 result = res.toString();
             } else {
-                result = res != null ? Configuration.defaultConfiguration().getProvider().toJson(res) : "null";
+                result = res != null ? Configuration.defaultConfiguration().jsonProvider().toJson(res) : "null";
             }
             return new Result("jayway", time, result, error);
         }

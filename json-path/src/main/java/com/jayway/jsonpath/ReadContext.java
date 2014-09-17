@@ -17,6 +17,13 @@ package com.jayway.jsonpath;
 public interface ReadContext {
 
     /**
+     * Returns the configuration used for reading
+     *
+     * @return an immutable configuration
+     */
+    Configuration configuration();
+
+    /**
      * Returns the JSON model that this context is reading
      *
      * @return json model

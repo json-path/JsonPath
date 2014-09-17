@@ -1,5 +1,6 @@
 package com.jayway.jsonpath.old;
 
+import com.jayway.jsonpath.BaseTest;
 import com.jayway.jsonpath.Configuration;
 import com.jayway.jsonpath.JsonPath;
 import com.jayway.jsonpath.PathNotFoundException;
@@ -16,7 +17,7 @@ import static org.hamcrest.Matchers.hasItems;
 import static org.hamcrest.Matchers.hasSize;
 import static org.junit.Assert.*;
 
-public class JsonPathTest {
+public class JsonPathTest extends BaseTest {
 
 
     static {
@@ -61,7 +62,7 @@ public class JsonPathTest {
                     "  }\n" +
                     "}";
 
-    public final static Object OBJ_DOCUMENT = new JsonSmartJsonProvider().parse(DOCUMENT);
+    public final static Object OBJ_DOCUMENT = JsonPath.parse(DOCUMENT).json();
 
 
     private final static String PRODUCT_JSON = "{\n" +
