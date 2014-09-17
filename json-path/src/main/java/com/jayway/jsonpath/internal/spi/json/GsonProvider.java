@@ -164,11 +164,6 @@ public class GsonProvider extends AbstractJsonProvider {
     }
 
     @Override
-    public Object parse(Reader jsonReader) throws InvalidJsonException {
-        return parser.parse(jsonReader);
-    }
-
-    @Override
     public Object parse(InputStream jsonStream) throws InvalidJsonException {
         return parser.parse(new InputStreamReader(jsonStream));
     }
@@ -182,11 +177,6 @@ public class GsonProvider extends AbstractJsonProvider {
     @Override
     public Object createNull(){
         return JsonNull.INSTANCE;
-    }
-
-    @Override
-    public Object createMap() {
-        return new JsonObject();
     }
 
     @Override

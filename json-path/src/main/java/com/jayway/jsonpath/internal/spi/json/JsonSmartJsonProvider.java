@@ -25,7 +25,6 @@ import net.minidev.json.parser.ParseException;
 
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.io.Reader;
 import java.util.List;
 import java.util.Map;
 
@@ -43,10 +42,6 @@ public class JsonSmartJsonProvider extends AbstractJsonProvider {
         this.mode = mode;
     }
 
-    public Object createMap() {
-        return orderedMapper.createObject();
-    }
-
     public Object createArray() {
         return orderedMapper.createArray();
     }
@@ -54,15 +49,6 @@ public class JsonSmartJsonProvider extends AbstractJsonProvider {
     public Object parse(String json) {
         try {
             return createParser().parse(json, orderedMapper);
-        } catch (ParseException e) {
-            throw new InvalidJsonException(e);
-        }
-    }
-
-    @Override
-    public Object parse(Reader jsonReader) throws InvalidJsonException {
-        try {
-            return createParser().parse(jsonReader, orderedMapper);
         } catch (ParseException e) {
             throw new InvalidJsonException(e);
         }
