@@ -20,7 +20,7 @@ public class ReturnTypeTest extends BaseTest {
 
     @Test
     public void assert_ints_can_be_read() {
-        assertThat(reader.read("$.int-max-property")).isEqualTo(Integer.MAX_VALUE);
+        assertThat(reader.read("$.int-max-property", Integer.class)).isEqualTo(Integer.MAX_VALUE);
     }
 
     @Test

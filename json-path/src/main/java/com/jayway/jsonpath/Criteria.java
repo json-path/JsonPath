@@ -148,10 +148,10 @@ public class Criteria implements Predicate {
                 boolean res;
                 if (configuration.jsonProvider().isArray(actual)) {
                     int length = configuration.jsonProvider().length(actual);
-                    res = length == size;
+                    res = (length == size);
                     logger.debug("Array with size {} {} {} => {}", length, name(), size, res);
-                } else if (actual instanceof String) {
-                    int length = ((String) actual).length();
+                } else if (configuration.jsonProvider().isString(actual)) {
+                    int length = configuration.jsonProvider().length(actual);
                     res = length == size;
                     logger.debug("String with length {} {} {} => {}", length, name(), size, res);
                 } else {

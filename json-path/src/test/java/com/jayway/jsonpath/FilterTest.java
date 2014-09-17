@@ -12,26 +12,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 public class FilterTest extends BaseTest {
 
-    /*
-    static {
-        Configuration.setDefaults(new Configuration.Defaults() {
-            @Override
-            public JsonProvider jsonProvider() {
-                return new GsonProvider();
-            }
 
-            @Override
-            public Set<Option> options() {
-                return EnumSet.noneOf(Option.class);
-            }
-
-            @Override
-            public ConversionProvider conversionProvider() {
-                return new DefaultConversionProvider();
-            }
-        });
-    }
-    */
     Object json = Configuration.defaultConfiguration().jsonProvider().parse(
             "{" +
             "  \"int-key\" : 1, " +

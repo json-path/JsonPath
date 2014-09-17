@@ -34,11 +34,15 @@ public abstract class AbstractJsonProvider implements JsonProvider {
     }
 
     public int compare(Object expected, Object providerParsed) throws ValueCompareException {
-        if (isNullish(expected) && !isNullish(providerParsed)) {
+
+        boolean expNullish = isNullish(expected);
+        boolean provNullish = isNullish(providerParsed);
+
+        if (expNullish && !provNullish) {
             return -1;
-        } else if (!isNullish(expected) && isNullish(providerParsed)) {
+        } else if (!expNullish && provNullish) {
             return 1;
-        } else if (isNullish(expected) && isNullish(providerParsed)) {
+        } else if (expNullish && provNullish) {
             return 0;
         } else if (expected instanceof String && providerParsed instanceof String) {
             return ((String) expected).compareTo((String) providerParsed);
@@ -64,6 +68,10 @@ public abstract class AbstractJsonProvider implements JsonProvider {
         return (o == null || ((o instanceof String) && ("null".equals(o))));
     }
 
+    @Override
+    public Object createNull(){
+        return null;
+    }
 
     /**
      * checks if object is an array
@@ -73,6 +81,10 @@ public abstract class AbstractJsonProvider implements JsonProvider {
      */
     public boolean isArray(Object obj) {
         return (obj instanceof List);
+    }
+
+    public boolean isString(Object obj){
+        return (obj instanceof String);
     }
 
 
@@ -166,8 +178,12 @@ public abstract class AbstractJsonProvider implements JsonProvider {
     public int length(Object obj) {
         if (isArray(obj)) {
             return ((List) obj).size();
+        } else if (isMap(obj)){
+            return getPropertyKeys(obj).size();
+        } else if(obj instanceof String){
+            return ((String)obj).length();
         }
-        return getPropertyKeys(obj).size();
+        throw new RuntimeException("length operation can not applied to " + obj!=null?obj.getClass().getName():"null");
     }
 
     /**

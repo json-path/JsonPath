@@ -1,10 +1,10 @@
 package com.jayway.jsonpath.internal.compiler;
 
+import com.jayway.jsonpath.spi.json.JsonProvider;
+
 import java.util.Collection;
 import java.util.LinkedHashMap;
 import java.util.Map;
-
-import com.jayway.jsonpath.spi.json.JsonProvider;
 
 /**
  *

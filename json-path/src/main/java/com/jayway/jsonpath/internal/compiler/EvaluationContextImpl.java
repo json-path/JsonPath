@@ -60,9 +60,9 @@ public class EvaluationContextImpl implements EvaluationContext {
             if(resultIndex == 0){
                 throw new PathNotFoundException("No results for path: " + path.toString());
             }
-            return (T) jsonProvider().unwrap(jsonProvider().getArrayIndex(valueResult, 0));
+            return (T) jsonProvider().getArrayIndex(valueResult, 0);
         }
-        return (T) jsonProvider().unwrap(valueResult);
+        return (T)valueResult;
     }
 
     @SuppressWarnings("unchecked")

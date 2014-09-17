@@ -3,10 +3,14 @@ package com.jayway.jsonpath.internal.spi.converter;
 import com.jayway.jsonpath.Configuration;
 import com.jayway.jsonpath.spi.converter.ConversionProvider;
 import com.jayway.jsonpath.spi.converter.Converter;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.HashMap;
 
 public class DefaultConversionProvider implements ConversionProvider {
+
+    private static final Logger logger = LoggerFactory.getLogger(DefaultConversionProvider.class);
 
     private HashMap<Class<?>, HashMap<Class<?>, Converter>> converters = new HashMap<Class<?>, HashMap<Class<?>, Converter>>();
 
@@ -14,7 +18,17 @@ public class DefaultConversionProvider implements ConversionProvider {
         addConverters(new NumberConverter());
         addConverters(new StringConverter());
         addConverters(new DateConverter());
+
+        try {
+            Class.forName("com.google.gson.Gson");
+            addConverters(new GsonConverter());
+        } catch (ClassNotFoundException e) {
+            logger.debug("Gson not found on class path. No converters configured.");
+        }
     }
+
+
+
 
     public void addConverters(ConverterBase converter) {
         for (Converter.ConvertiblePair convertible : converter.getConvertibleTypes()) {

@@ -1,7 +1,6 @@
 package com.jayway.jsonpath.internal.spi.converter;
 
 import com.jayway.jsonpath.Configuration;
-import com.jayway.jsonpath.spi.converter.Converter;
 
 public class StringConverter extends ConverterBase {
 

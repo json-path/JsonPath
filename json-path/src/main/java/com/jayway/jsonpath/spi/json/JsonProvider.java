@@ -37,6 +37,8 @@ public interface JsonProvider {
 
     String toJson(Object obj);
 
+    Object createNull();
+
     Object createMap();
 
     Object createArray();
@@ -50,9 +52,18 @@ public interface JsonProvider {
     boolean isArray(Object obj);
 
     /**
-     * Get the length of an array or object
+     * checks if object is a string
      *
-     * @param obj an array or an object
+     * @param obj object to check
+     * @return true if obj is an array
+     */
+    boolean isString(Object obj);
+
+
+    /**
+     * Get the length of an json array, json object or a json string
+     *
+     * @param obj an array or object or a string
      * @return the number of entries in the array or object
      */
     int length(Object obj);

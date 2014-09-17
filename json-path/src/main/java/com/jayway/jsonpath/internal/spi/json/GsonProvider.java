@@ -7,6 +7,7 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonDeserializationContext;
 import com.google.gson.JsonDeserializer;
 import com.google.gson.JsonElement;
+import com.google.gson.JsonNull;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParseException;
 import com.google.gson.JsonParser;
@@ -46,11 +47,13 @@ public class GsonProvider extends AbstractJsonProvider {
 
         JsonElement element = (JsonElement) providerParsed;
 
-        if (isNullish(expected) && !element.isJsonNull()) {
+        boolean nullish = isNullish(expected);
+
+        if (nullish && !element.isJsonNull()) {
             return -1;
-        } else if (!isNullish(expected) && element.isJsonNull()) {
+        } else if (!nullish && element.isJsonNull()) {
             return 1;
-        } else if (isNullish(expected) && element.isJsonNull()) {
+        } else if (nullish && element.isJsonNull()) {
             return 0;
         }
         if(element.isJsonPrimitive()){
@@ -175,6 +178,12 @@ public class GsonProvider extends AbstractJsonProvider {
         return obj.toString();
     }
 
+
+    @Override
+    public Object createNull(){
+        return JsonNull.INSTANCE;
+    }
+
     @Override
     public Object createMap() {
         return new JsonObject();
@@ -188,6 +197,17 @@ public class GsonProvider extends AbstractJsonProvider {
     @Override
     public boolean isArray(Object obj) {
         return (obj instanceof JsonArray);
+    }
+
+    public boolean isString(Object obj){
+        if(obj == null) {
+            return false;
+        }
+        JsonElement element = toJsonElement(obj);
+        if(element.isJsonPrimitive()){
+            return element.getAsJsonPrimitive().isString();
+        }
+        return false;
     }
 
     @Override
@@ -209,7 +229,7 @@ public class GsonProvider extends AbstractJsonProvider {
     @Override
     public void setProperty(Object obj, Object key, Object value) {
         if (isMap(obj))
-            toJsonObject(obj).add(key.toString(), toJsonElement(value));
+            toJsonObject(obj).add(key.toString(), createJsonElement(value));
         else {
             JsonArray array = toJsonArray(obj);
             int index;
@@ -219,9 +239,9 @@ public class GsonProvider extends AbstractJsonProvider {
                 index = array.size();
             }
             if (index == array.size()) {
-                array.add(toJsonElement(value));
+                array.add(createJsonElement(value));
             } else {
-                array.set(index, toJsonElement(value));
+                array.set(index, createJsonElement(value));
             }
         }
     }
@@ -244,9 +264,17 @@ public class GsonProvider extends AbstractJsonProvider {
     public int length(Object obj) {
         if (isArray(obj)) {
             return toJsonArray(obj).size();
-        } else {
+        } else if(isMap(obj)){
             return toJsonObject(obj).entrySet().size();
+        } else {
+            if(obj instanceof JsonElement){
+                JsonElement element = toJsonElement(obj);
+                if(element.isJsonPrimitive()){
+                    return element.toString().length();
+                }
+            }
         }
+        throw new RuntimeException("length operation can not applied to " + obj!=null?obj.getClass().getName():"null");
     }
 
     @Override
@@ -263,7 +291,7 @@ public class GsonProvider extends AbstractJsonProvider {
         }
     }
 
-    private JsonElement toJsonElement(Object o) {
+    private JsonElement createJsonElement(Object o) {
         return gson.toJsonTree(o);
     }
 
@@ -273,6 +301,10 @@ public class GsonProvider extends AbstractJsonProvider {
 
     private JsonObject toJsonObject(Object o) {
         return (JsonObject) o;
+    }
+
+    private JsonElement toJsonElement(Object o) {
+        return (JsonElement) o;
     }
 
 
