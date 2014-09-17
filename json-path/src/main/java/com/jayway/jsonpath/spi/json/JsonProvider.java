@@ -78,10 +78,10 @@ public interface JsonProvider {
 
 
     /**
-     * Returns the keys from the given object or the indexes from an array
+     * Returns the keys from the given object
      *
-     * @param obj an array or an object
-     * @return the keys for an object or the indexes for an array
+     * @param obj an object
+     * @return the keys for an object
      */
     Collection<String> getPropertyKeys(Object obj);
 

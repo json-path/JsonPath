@@ -150,20 +150,15 @@ public abstract class AbstractJsonProvider implements JsonProvider {
     }
 
     /**
-     * Returns the keys from the given object or the indexes from an array
+     * Returns the keys from the given object
      *
-     * @param obj an array or an object
-     * @return the keys for an object or the indexes for an array
+     * @param obj an object
+     * @return the keys for an object
      */
     @SuppressWarnings("unchecked")
     public Collection<String> getPropertyKeys(Object obj) {
         if (isArray(obj)) {
-            List l = (List) obj;
-            List<String> keys = new ArrayList<String>(l.size());
-            for (int i = 0; i < l.size(); i++) {
-                keys.add(String.valueOf(i));
-            }
-            return keys;
+          throw new UnsupportedOperationException();
         } else {
             return ((Map) obj).keySet();
         }
