@@ -20,7 +20,7 @@ public class OptionsTest extends BaseTest {
 
         Configuration conf = Configuration.defaultConfiguration();
 
-        assertThat(using(conf).parse(singletonMap("foo", "bar")).read("$.baz")).isNull();
+        assertThat(using(conf).parse("{\"foo\" : \"bar\"}").read("$.baz")).isNull();
     }
 
     @Test
@@ -28,7 +28,7 @@ public class OptionsTest extends BaseTest {
 
         Configuration conf = Configuration.builder().options(DEFAULT_PATH_LEAF_TO_NULL).build();
 
-        assertThat(using(conf).parse(singletonMap("foo", "bar")).read("$.baz")).isNull();
+        assertThat(using(conf).parse("{\"foo\" : \"bar\"}").read("$.baz", Object.class)).isNull();
     }
 
     @Test
@@ -36,7 +36,7 @@ public class OptionsTest extends BaseTest {
 
         Configuration conf = Configuration.defaultConfiguration();
 
-        assertThat(using(conf).parse(singletonMap("foo", "bar")).read("$.foo")).isInstanceOf(String.class);
+        assertThat(using(conf).parse("{\"foo\" : \"bar\"}").read("$.foo")).isInstanceOf(String.class);
     }
 
     @Test
@@ -44,21 +44,21 @@ public class OptionsTest extends BaseTest {
 
         Configuration conf = Configuration.builder().options(ALWAYS_RETURN_LIST).build();
 
-        assertThat(using(conf).parse(singletonMap("foo", "bar")).read("$.foo")).isInstanceOf(List.class);
+        assertThat(using(conf).parse("{\"foo\" : \"bar\"}").read("$.foo")).isInstanceOf(List.class);
     }
 
     @Test
     public void a_path_evaluation_is_returned_as_VALUE_by_default() {
         Configuration conf = Configuration.defaultConfiguration();
 
-        assertThat(using(conf).parse(singletonMap("foo", "bar")).read("$.foo")).isEqualTo("bar");
+        assertThat(using(conf).parse("{\"foo\" : \"bar\"}").read("$.foo")).isEqualTo("bar");
     }
 
     @Test
     public void a_path_evaluation_can_be_returned_as_PATH_LIST() {
         Configuration conf = Configuration.builder().options(AS_PATH_LIST).build();
 
-        List<String> pathList = using(conf).parse(singletonMap("foo", "bar")).read("$.foo");
+        List<String> pathList = using(conf).parse("{\"foo\" : \"bar\"}").read("$.foo");
 
         assertThat(pathList).containsOnly("$['foo']");
     }
