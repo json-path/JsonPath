@@ -197,8 +197,11 @@ public class ScanPathToken extends PathToken {
 
       @Override
       public boolean matches(Object model) {
-          Collection<String> keys = ctx.jsonProvider().getPropertyKeys(model);
-          return keys.containsAll(propertyPathToken.getProperties());
+          if(ctx.jsonProvider().isMap(model)){
+            Collection<String> keys = ctx.jsonProvider().getPropertyKeys(model);
+            return keys.containsAll(propertyPathToken.getProperties());
+          }
+          return false;
       }
     }
 }
