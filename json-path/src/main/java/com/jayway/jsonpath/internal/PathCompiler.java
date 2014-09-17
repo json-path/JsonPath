@@ -305,9 +305,9 @@ public class PathCompiler {
                             }
                             criteria.add(createCriteria(pathBuffer, operatorBuffer, valueBuffer));
 
-                            pathBuffer = new StringBuilder();
-                            operatorBuffer = new StringBuilder();
-                            valueBuffer = new StringBuilder();
+                            pathBuffer.setLength(0);
+                            operatorBuffer.setLength(0);
+                            valueBuffer.setLength(0);
 
                         } else if (operatorBuffer.length() > 0) {
                             valueBuffer.append(current);
@@ -366,7 +366,7 @@ public class PathCompiler {
                     case '\'':
                         if (propertyIsOpen) {
                             properties.add(buffer.toString());
-                            buffer = new StringBuilder();
+                            buffer.setLength(0);
                             propertyIsOpen = false;
                         } else {
                             propertyIsOpen = true;
@@ -414,7 +414,7 @@ public class PathCompiler {
                     current = pathFragment.charAt(++i);
                 }
                 String function = buffer.toString();
-                buffer = new StringBuilder();
+                buffer.setLength(0);
                 if (!function.equals("size") && !function.equals("length")) {
                     throw new InvalidPathException("Invalid function: @." + function + ". Supported functions are: [(@.length - n)] and [(@.size() - n)]");
                 }
@@ -447,11 +447,11 @@ public class PathCompiler {
                                     current = pathFragment.charAt(++i);
                                 }
                                 numbers.add(Integer.parseInt(buffer.toString()));
-                                buffer = new StringBuilder();
+                                buffer.setLength(0);
                             } else {
                                 //we now this starts with [12:???
                                 numbers.add(Integer.parseInt(buffer.toString()));
-                                buffer = new StringBuilder();
+                                buffer.setLength(0);
                                 current = pathFragment.charAt(++i);
 
                                 //this is a tail slice [:12]
@@ -467,13 +467,13 @@ public class PathCompiler {
                                 } else {
                                     sliceBetween = true;
                                     numbers.add(Integer.parseInt(buffer.toString()));
-                                    buffer = new StringBuilder();
+                                    buffer.setLength(0);
                                 }
                             }
                             break;
                         case ',':
                             numbers.add(Integer.parseInt(buffer.toString()));
-                            buffer = new StringBuilder();
+                            buffer.setLength(0);
                             indexSequence = true;
                             break;
                         default:
