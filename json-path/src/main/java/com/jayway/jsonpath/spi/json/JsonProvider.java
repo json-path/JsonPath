@@ -17,7 +17,6 @@ package com.jayway.jsonpath.spi.json;
 import com.jayway.jsonpath.InvalidJsonException;
 
 import java.io.InputStream;
-import java.io.Reader;
 import java.util.Collection;
 
 public interface JsonProvider {
@@ -26,13 +25,9 @@ public interface JsonProvider {
 
     Object parse(String json) throws InvalidJsonException;
 
-    Object parse(Reader jsonReader) throws InvalidJsonException;
-
     Object parse(InputStream jsonStream) throws InvalidJsonException;
 
     String toJson(Object obj);
-
-    Object createMap();
 
     Object createArray();
 
