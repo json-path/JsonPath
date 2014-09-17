@@ -12,8 +12,8 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 public class FilterTest extends BaseTest {
 
-    Configuration conf = Configuration.defaultConfiguration();
-    Object json = conf.getProvider().parse(
+
+    Object json = Configuration.defaultConfiguration().jsonProvider().parse(
             "{" +
             "  \"int-key\" : 1, " +
             "  \"long-key\" : 3000000000, " +

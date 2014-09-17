@@ -15,6 +15,7 @@
 package com.jayway.jsonpath.spi.json;
 
 import com.jayway.jsonpath.InvalidJsonException;
+import com.jayway.jsonpath.ValueCompareException;
 
 import java.io.InputStream;
 import java.io.Reader;
@@ -24,6 +25,10 @@ public interface JsonProvider {
 
     static final Object UNDEFINED = new Object();
 
+    Object unwrap(Object obj);
+
+    int compare(Object expected, Object providerParsed) throws ValueCompareException;
+
     Object parse(String json) throws InvalidJsonException;
 
     Object parse(Reader jsonReader) throws InvalidJsonException;
@@ -31,6 +36,8 @@ public interface JsonProvider {
     Object parse(InputStream jsonStream) throws InvalidJsonException;
 
     String toJson(Object obj);
+
+    Object createNull();
 
     Object createMap();
 
@@ -45,9 +52,18 @@ public interface JsonProvider {
     boolean isArray(Object obj);
 
     /**
-     * Get the length of an array or object
+     * checks if object is a string
      *
-     * @param obj an array or an object
+     * @param obj object to check
+     * @return true if obj is an array
+     */
+    boolean isString(Object obj);
+
+
+    /**
+     * Get the length of an json array, json object or a json string
+     *
+     * @param obj an array or object or a string
      * @return the number of entries in the array or object
      */
     int length(Object obj);
@@ -58,14 +74,14 @@ public interface JsonProvider {
      * @param obj an array or an object
      * @return the entries for an array or the values for a map
      */
-    Iterable<Object> toIterable(Object obj);
+    Iterable<?> toIterable(Object obj);
 
 
     /**
-     * Returns the keys from the given object or the indexes from an array
+     * Returns the keys from the given object
      *
-     * @param obj an array or an object
-     * @return the keys for an object or the indexes for an array
+     * @param obj an object
+     * @return the keys for an object
      */
     Collection<String> getPropertyKeys(Object obj);
 

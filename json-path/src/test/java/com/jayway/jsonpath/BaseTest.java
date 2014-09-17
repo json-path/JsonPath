@@ -1,6 +1,37 @@
 package com.jayway.jsonpath;
 
+import com.jayway.jsonpath.internal.spi.converter.DefaultConversionProvider;
+import com.jayway.jsonpath.internal.spi.json.GsonProvider;
+import com.jayway.jsonpath.spi.converter.ConversionProvider;
+import com.jayway.jsonpath.spi.json.JsonProvider;
+
+import java.util.EnumSet;
+import java.util.Set;
+
 public class BaseTest {
+    /*
+    static {
+        Configuration.setDefaults(new Configuration.Defaults() {
+            @Override
+            public JsonProvider jsonProvider() {
+                return new GsonProvider();
+            }
+
+            @Override
+            public Set<Option> options() {
+                return EnumSet.noneOf(Option.class);
+            }
+
+            @Override
+            public ConversionProvider conversionProvider() {
+                return new DefaultConversionProvider();
+            }
+        });
+    }
+    */
+
+
+
 
     public static final String JSON_DOCUMENT = "{\n" +
             "   \"string-property\" : \"string-value\", \n" +

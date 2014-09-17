@@ -27,7 +27,7 @@ public abstract class PathToken {
             if(propertyVal == JsonProvider.UNDEFINED){
                 if(isLeaf()) {
                     if(ctx.options().contains(Option.DEFAULT_PATH_LEAF_TO_NULL)){
-                        propertyVal =  null;
+                        propertyVal =  ctx.jsonProvider().createNull();
                     } else {
                         if(ctx.options().contains(Option.SUPPRESS_EXCEPTIONS)){
                             return;
@@ -58,7 +58,7 @@ public abstract class PathToken {
                     Object propertyVal = readObjectProperty(property, model, ctx);
                     if(propertyVal == JsonProvider.UNDEFINED){
                         if(ctx.options().contains(Option.DEFAULT_PATH_LEAF_TO_NULL)){
-                            propertyVal = null;
+                            propertyVal = ctx.jsonProvider().createNull();;
                         } else {
                             continue;
                         }
