@@ -5,6 +5,7 @@ import com.jayway.jsonpath.JsonPath;
 import com.jayway.jsonpath.internal.PathCompiler;
 import com.jayway.jsonpath.internal.spi.json.JsonSmartJsonProvider;
 
+import org.junit.Ignore;
 import org.junit.Test;
 
 import java.util.List;
@@ -89,6 +90,14 @@ public class ScanPathTokenTest {
                     " }"
     );
 
+
+    @Test
+    @Ignore("does not work currently")
+    //FIXME handle $.. like the Goessner implementation
+    public void a_root_scan() {
+
+        Object o = JsonPath.read(DOCUMENT, "$..");
+    }
 
     @Test
     public void a_document_can_be_scanned_for_property() {
