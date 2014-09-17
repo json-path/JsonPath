@@ -347,7 +347,7 @@ public class FilterTest extends BaseTest {
         Predicate customFilter = new Predicate () {
             @Override
             public boolean apply(PredicateContext ctx) {
-                if (ctx.configuration().getProvider().getMapValue(ctx.target(), "name").equals("rootGrandChild_A")) {
+                if (ctx.configuration().jsonProvider().getMapValue(ctx.target(), "name").equals("rootGrandChild_A")) {
                     return true;
                 }
                 return false;

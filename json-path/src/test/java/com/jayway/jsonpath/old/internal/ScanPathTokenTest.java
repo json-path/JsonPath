@@ -91,12 +91,6 @@ public class ScanPathTokenTest {
 
 
     @Test
-    public void a_root_scan() {
-
-        Object o = JsonPath.read(DOCUMENT, "$..");
-    }
-
-    @Test
     public void a_document_can_be_scanned_for_property() {
 
         List<String> result = read(DOCUMENT, "$..author");

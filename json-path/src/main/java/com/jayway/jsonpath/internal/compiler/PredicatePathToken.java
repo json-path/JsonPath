@@ -44,7 +44,7 @@ public class PredicatePathToken extends PathToken {
             }
         } else if (ctx.jsonProvider().isArray(model)){
             int idx = 0;
-            Iterable<Object> objects = ctx.jsonProvider().toIterable(model);
+            Iterable<?> objects = ctx.jsonProvider().toIterable(model);
 
             for (Object idxModel : objects) {
                 if (accept(idxModel, ctx.configuration())) {
