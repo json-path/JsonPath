@@ -568,7 +568,7 @@ public class Criteria implements Predicate {
     }
 
     public static Criteria create(String path, String operator, String expected) {
-        if (expected.startsWith("'") && expected.endsWith("'")) {
+        if (! expected.isEmpty() && expected.charAt(0) == '\'' && expected.charAt(expected.length()-1) == '\'') {
             expected = expected.substring(1, expected.length() - 1);
         }
 

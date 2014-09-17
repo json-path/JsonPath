@@ -44,7 +44,7 @@ public class PathCompiler {
 
         LinkedList<Predicate> filterList = new LinkedList<Predicate>(asList(filters));
 
-        if (!path.startsWith("$")) {
+        if (path.charAt(0) != '$') {
             path = "$." + path;
         }
 
@@ -57,13 +57,12 @@ public class PathCompiler {
         RootPathToken root = null;
 
 
-        char[] chars = path.toCharArray();
         int i = 0;
         int positions;
         String fragment = "";
 
         do {
-            char current = chars[i];
+            char current = path.charAt(i);
 
             switch (current) {
                 case SPACE:
@@ -73,27 +72,27 @@ public class PathCompiler {
                     i++;
                     break;
                 case BRACKET_OPEN:
-                    positions = fastForwardUntilClosed(chars, i);
-                    fragment = new String(chars, i, positions);
+                    positions = fastForwardUntilClosed(path, i);
+                    fragment = path.substring(i, i+positions);
                     i += positions;
                     break;
                 case PERIOD:
                     i++;
-                    if (chars[i] == PERIOD) {
+                    if (path.charAt(i) == PERIOD) {
                         //This is a deep scan
                         fragment = "..";
                         i++;
                     } else {
-                        positions = fastForward(chars, i);
+                        positions = fastForward(path, i);
                         if (positions == 0) {
                             continue;
 
-                        } else if (positions == 1 && chars[i] == '*') {
+                        } else if (positions == 1 && path.charAt(i) == '*') {
                             fragment = new String("[*]");
                         } else {
-                            assertValidFieldChars(chars, i, positions);
+                            assertValidFieldChars(path, i, positions);
 
-                            fragment = PROPERTY_OPEN + new String(chars, i, positions) + PROPERTY_CLOSE;
+                            fragment = PROPERTY_OPEN + path.substring(i, i+positions) + PROPERTY_CLOSE;
                         }
                         i += positions;
                     }
@@ -103,9 +102,9 @@ public class PathCompiler {
                     i++;
                     break;
                 default:
-                    positions = fastForward(chars, i);
+                    positions = fastForward(path, i);
 
-                    fragment = PROPERTY_OPEN + new String(chars, i, positions) + PROPERTY_CLOSE;
+                    fragment = PROPERTY_OPEN + path.substring(i, i+positions) + PROPERTY_CLOSE;
                     i += positions;
                     break;
             }
@@ -115,7 +114,7 @@ public class PathCompiler {
                 root.append(PathComponentAnalyzer.analyze(fragment, filterList));
             }
 
-        } while (i < chars.length);
+        } while (i < path.length());
 
         Path pa = new CompiledPath(root);
 
@@ -124,10 +123,10 @@ public class PathCompiler {
         return pa;
     }
 
-    private static void assertValidFieldChars(char[] chars, int start, int positions) {
+    private static void assertValidFieldChars(String s, int start, int positions) {
         int i = start;
         while (i < start + positions) {
-            char c = chars[i];
+            char c = s.charAt(i);
 
             if (!Character.isLetterOrDigit(c) && c != '-' && c != '_' && c != '$' && c != '@') {
                 throw new InvalidPathException("Invalid field name! Use bracket notation if your filed names does not match pattern: ([a-zA-Z@][a-zA-Z0-9@\\$_\\-]*)$");
@@ -136,10 +135,10 @@ public class PathCompiler {
         }
     }
 
-    private static int fastForward(char[] chars, int index) {
+    private static int fastForward(String s, int index) {
         int skipCount = 0;
-        while (index < chars.length) {
-            char current = chars[index];
+        while (index < s.length()) {
+            char current = s.charAt(index);
             if (current == PERIOD || current == BRACKET_OPEN || current == SPACE) {
                 break;
             }
@@ -149,7 +148,7 @@ public class PathCompiler {
         return skipCount;
     }
 
-    private static int fastForwardUntilClosed(char[] chars, int index) {
+    private static int fastForwardUntilClosed(String s, int index) {
         int skipCount = 0;
         int nestedBrackets = 0;
 
@@ -157,8 +156,8 @@ public class PathCompiler {
         index++;
         skipCount++;
 
-        while (index < chars.length) {
-            char current = chars[index];
+        while (index < s.length()) {
+            char current = s.charAt(index);
 
             index++;
             skipCount++;
@@ -185,7 +184,6 @@ public class PathCompiler {
     static class PathComponentAnalyzer {
 
         private static final Pattern FILTER_PATTERN = Pattern.compile("^\\[\\s*\\?\\s*[,\\s*\\?]*?\\s*]$"); //[?] or [?, ?, ...]
-        private char[] chars;
         private int i;
         private char current;
 
@@ -218,10 +216,9 @@ public class PathCompiler {
                 return new PredicatePathToken(filters);
             }
 
-            this.chars = pathFragment.toCharArray();
             this.i = 0;
             do {
-                current = chars[i];
+                current = pathFragment.charAt(i);
 
                 switch (current) {
                     case '?':
@@ -237,7 +234,7 @@ public class PathCompiler {
                 }
 
 
-            } while (i < chars.length);
+            } while (i < pathFragment.length());
 
             throw new InvalidPathException("Could not analyze path component: " + pathFragment);
         }
@@ -259,7 +256,7 @@ public class PathCompiler {
             boolean functionBracketClosed = false;
             boolean propertyOpen = false;
 
-            current = chars[++i]; //skip the '?'
+            current = pathFragment.charAt(++i); //skip the '?'
 
             while (current != ']' || bracketCount != 0) {
 
@@ -303,7 +300,7 @@ public class PathCompiler {
 
                         } else if (bracketCount == 0 && isLogicOperatorChar(current)) {
 
-                            if (isLogicOperatorChar(chars[i + 1])) {
+                            if (isLogicOperatorChar(pathFragment.charAt(i + 1))) {
                                 ++i;
                             }
                             criteria.add(createCriteria(pathBuffer, operatorBuffer, valueBuffer));
@@ -320,7 +317,7 @@ public class PathCompiler {
 
                         break;
                 }
-                current = chars[++i];
+                current = pathFragment.charAt(++i);
             }
 
             if (!functionBracketOpened || !functionBracketClosed) {
@@ -381,7 +378,7 @@ public class PathCompiler {
                         }
                         break;
                 }
-                current = chars[++i];
+                current = pathFragment.charAt(++i);
             }
             return new PropertyPathToken(properties);
         }
@@ -406,15 +403,15 @@ public class PathCompiler {
 
             if (contextSize) {
 
-                current = chars[++i];
-                current = chars[++i];
+                current = pathFragment.charAt(++i);
+                current = pathFragment.charAt(++i);
                 while (current != '-') {
                     if (current == ' ' || current == '(' || current == ')') {
-                        current = chars[++i];
+                        current = pathFragment.charAt(++i);
                         continue;
                     }
                     buffer.append(current);
-                    current = chars[++i];
+                    current = pathFragment.charAt(++i);
                 }
                 String function = buffer.toString();
                 buffer.setLength(0);
@@ -423,11 +420,11 @@ public class PathCompiler {
                 }
                 while (current != ')') {
                     if (current == ' ') {
-                        current = chars[++i];
+                        current = pathFragment.charAt(++i);
                         continue;
                     }
                     buffer.append(current);
-                    current = chars[++i];
+                    current = pathFragment.charAt(++i);
                 }
 
             } else {
@@ -442,12 +439,12 @@ public class PathCompiler {
                             if (buffer.length() == 0) {
                                 //this is a tail slice [:12]
                                 sliceTo = true;
-                                current = chars[++i];
+                                current = pathFragment.charAt(++i);
                                 while (Character.isDigit(current) || current == ' ' || current == '-') {
                                     if (current != ' ') {
                                         buffer.append(current);
                                     }
-                                    current = chars[++i];
+                                    current = pathFragment.charAt(++i);
                                 }
                                 numbers.add(Integer.parseInt(buffer.toString()));
                                 buffer.setLength(0);
@@ -455,14 +452,14 @@ public class PathCompiler {
                                 //we now this starts with [12:???
                                 numbers.add(Integer.parseInt(buffer.toString()));
                                 buffer.setLength(0);
-                                current = chars[++i];
+                                current = pathFragment.charAt(++i);
 
                                 //this is a tail slice [:12]
                                 while (Character.isDigit(current) || current == ' ' || current == '-') {
                                     if (current != ' ') {
                                         buffer.append(current);
                                     }
-                                    current = chars[++i];
+                                    current = pathFragment.charAt(++i);
                                 }
 
                                 if (buffer.length() == 0) {
@@ -486,7 +483,7 @@ public class PathCompiler {
                     if (current == ']') {
                         break;
                     }
-                    current = chars[++i];
+                    current = pathFragment.charAt(++i);
                 }
             }
             if (buffer.length() > 0) {
