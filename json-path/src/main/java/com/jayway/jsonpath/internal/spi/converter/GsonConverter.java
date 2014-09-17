@@ -1,17 +1,21 @@
 package com.jayway.jsonpath.internal.spi.converter;
 
 import com.google.gson.JsonArray;
+import com.google.gson.JsonElement;
 import com.google.gson.JsonNull;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonPrimitive;
 import com.jayway.jsonpath.Configuration;
+import com.jayway.jsonpath.internal.spi.json.GsonProvider;
 import com.jayway.jsonpath.spi.converter.ConversionException;
 
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.text.DateFormat;
 import java.text.ParseException;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -31,9 +35,7 @@ public class GsonConverter extends ConverterBase {
         register(JsonPrimitive.class, Boolean.class);
 
         register(JsonArray.class, List.class);
-        register(JsonArray.class, Map.class);
-
-
+        register(JsonObject.class, Map.class);
     }
 
     @Override
@@ -67,6 +69,7 @@ public class GsonConverter extends ConverterBase {
             } else if (targetType.equals(Boolean.class)) {
                 return primitive.getAsBoolean();
             } else if (targetType.equals(Date.class)) {
+
                 if(primitive.isNumber()){
                     return new Date(primitive.getAsLong());
                 } else if(primitive.isString()){
@@ -80,9 +83,43 @@ public class GsonConverter extends ConverterBase {
 
 
         } else if (JsonObject.class.isAssignableFrom(srcType)) {
+            JsonObject srcObject = (JsonObject) src;
+            if(targetType.equals(Map.class)){
+                Map<String, Object> targetMap = new LinkedHashMap<String, Object>();
+                for (Map.Entry<String,JsonElement> entry : srcObject.entrySet()) {
+                    Object val = null;
+                    JsonElement element = entry.getValue();
+                    if(element.isJsonPrimitive()) {
+                        val = GsonProvider.unwrap(element);
+                    } else if(element.isJsonArray()){
+                        val = convert(element, element.getClass(), List.class, conf);
+                    } else if(element.isJsonObject()){
+                        val = convert(element, element.getClass(), Map.class, conf);
+                    } else if(element.isJsonNull()){
+                        val = null;
+                    }
+                    targetMap.put(entry.getKey(), val);
+                }
+                return targetMap;
+            }
 
         } else if (JsonArray.class.isAssignableFrom(srcType)) {
-
+            JsonArray srcArray = (JsonArray) src;
+            if(targetType.equals(List.class)){
+                List<Object> targetList = new ArrayList<Object>();
+                for (JsonElement element : srcArray) {
+                    if(element.isJsonPrimitive()) {
+                        targetList.add(GsonProvider.unwrap(element));
+                    } else if(element.isJsonArray()){
+                        targetList.add(convert(element, element.getClass(), List.class, conf));
+                    } else if(element.isJsonObject()){
+                        targetList.add(convert(element, element.getClass(), Map.class, conf));
+                    } else if(element.isJsonNull()){
+                        targetList.add(null);
+                    }
+                }
+                return targetList;
+            }
         }
 
         return null;
