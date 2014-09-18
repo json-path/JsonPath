@@ -22,12 +22,15 @@ public class EvaluationContextImpl implements EvaluationContext {
     private final Object valueResult;
     private final Object pathResult;
     private final Path path;
+    private final Object rootDocument;
     private int resultIndex = 0;
 
-    public EvaluationContextImpl(Path path, Configuration configuration) {
+    public EvaluationContextImpl(Path path, Object rootDocument, Configuration configuration) {
         notNull(path, "path can not be null");
+        notNull(rootDocument, "rootDocument can not be null");
         notNull(configuration, "configuration can not be null");
         this.path = path;
+        this.rootDocument = rootDocument;
         this.configuration = configuration;
         this.valueResult = configuration.jsonProvider().createArray();
         this.pathResult = configuration.jsonProvider().createArray();
@@ -50,6 +53,11 @@ public class EvaluationContextImpl implements EvaluationContext {
     @Override
     public Configuration configuration() {
         return configuration;
+    }
+
+    @Override
+    public Object rootDocument() {
+        return rootDocument;
     }
 
 

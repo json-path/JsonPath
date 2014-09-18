@@ -13,6 +13,13 @@ public interface EvaluationContext {
     Configuration configuration();
 
     /**
+     * The json document that is evaluated
+     *
+     * @return the document
+     */
+    Object rootDocument();
+
+    /**
      * This method does not adhere to configuration settings. It will return a single object (not wrapped in a List) even if the
      * configuration contains the {@link com.jayway.jsonpath.Option#ALWAYS_RETURN_LIST}
      *

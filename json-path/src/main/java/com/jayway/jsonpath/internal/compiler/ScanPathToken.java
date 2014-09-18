@@ -112,7 +112,7 @@ public class ScanPathToken extends PathToken {
     public String getPathFragment() {
         return "..";
     }
-    
+
     private static interface Predicate {
         Class<?> clazz();
 
@@ -147,7 +147,7 @@ public class ScanPathToken extends PathToken {
 
       @Override
       public boolean matches(Object model) {
-          return predicatePathToken.accept(model, ctx.configuration());
+          return predicatePathToken.accept(model, ctx.rootDocument(), ctx.configuration());
       }
     }
 

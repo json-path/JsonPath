@@ -6,25 +6,33 @@ import com.jayway.jsonpath.internal.compiler.PathToken;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public  class CompiledPath implements Path {
+public class CompiledPath implements Path {
 
     private static final Logger logger = LoggerFactory.getLogger(CompiledPath.class);
 
     private final PathToken root;
 
+    private final boolean isRootPath;
 
-    public CompiledPath(PathToken root) {
+
+    public CompiledPath(PathToken root, boolean isRootPath) {
         this.root = root;
+        this.isRootPath = isRootPath;
     }
 
     @Override
-    public EvaluationContext evaluate(Object model, Configuration configuration) {
-        if(logger.isDebugEnabled()) {
+    public boolean isRootPath() {
+        return isRootPath;
+    }
+
+    @Override
+    public EvaluationContext evaluate(Object document, Object rootDocument, Configuration configuration) {
+        if (logger.isDebugEnabled()) {
             logger.debug("Evaluating path: {}", toString());
         }
 
-        EvaluationContextImpl ctx = new EvaluationContextImpl(this, configuration);
-        root.evaluate("", model, ctx);
+        EvaluationContextImpl ctx = new EvaluationContextImpl(this, rootDocument, configuration);
+        root.evaluate("", document, ctx);
 
         return ctx;
     }

@@ -118,7 +118,7 @@ public class ScanPathTokenTest {
     @Test
     public void a_document_can_be_scanned_for_wildcard() {
 
-        List<String> result = PathCompiler.compile("$..[*]").evaluate(DOCUMENT, Configuration.defaultConfiguration()).getPathList();
+        List<String> result = PathCompiler.compile("$..[*]").evaluate(DOCUMENT, DOCUMENT, Configuration.defaultConfiguration()).getPathList();
 
         assertThat(result).containsOnly(
                 "$['store']",
@@ -169,7 +169,7 @@ public class ScanPathTokenTest {
     @Test
     public void a_document_can_be_scanned_for_wildcard2() {
 
-        List<String> result = PathCompiler.compile("$.store.book[0]..*").evaluate(DOCUMENT, Configuration.defaultConfiguration()).getPathList();
+        List<String> result = PathCompiler.compile("$.store.book[0]..*").evaluate(DOCUMENT, DOCUMENT, Configuration.defaultConfiguration()).getPathList();
 
         assertThat(result).containsOnly(
                 "$['store']['book'][0]['address']",
@@ -185,7 +185,7 @@ public class ScanPathTokenTest {
     @Test
     public void a_document_can_be_scanned_for_wildcard3() {
 
-        List<String> result = PathCompiler.compile("$.phoneNumbers[0]..*").evaluate(DOCUMENT2, Configuration.defaultConfiguration()).getPathList();
+        List<String> result = PathCompiler.compile("$.phoneNumbers[0]..*").evaluate(DOCUMENT2, DOCUMENT, Configuration.defaultConfiguration()).getPathList();
 
         assertThat(result).containsOnly(
                 "$['phoneNumbers'][0]['number']",
@@ -196,7 +196,7 @@ public class ScanPathTokenTest {
     @Test
     public void a_document_can_be_scanned_for_predicate_match() {
 
-        List<String> result = PathCompiler.compile("$..[?(@.address.city == 'Stockholm')]").evaluate(DOCUMENT, Configuration.defaultConfiguration()).getPathList();
+        List<String> result = PathCompiler.compile("$..[?(@.address.city == 'Stockholm')]").evaluate(DOCUMENT, DOCUMENT, Configuration.defaultConfiguration()).getPathList();
 
         assertThat(result).containsOnly(
                 "$['store']['bicycle']",
@@ -207,7 +207,7 @@ public class ScanPathTokenTest {
     @Test
     public void a_document_can_be_scanned_for_existence() {
 
-        List<String> result = PathCompiler.compile("$..[?(@.isbn)]").evaluate(DOCUMENT, Configuration.defaultConfiguration()).getPathList();
+        List<String> result = PathCompiler.compile("$..[?(@.isbn)]").evaluate(DOCUMENT, DOCUMENT, Configuration.defaultConfiguration()).getPathList();
 
         assertThat(result).containsOnly(
                 "$['store']['book'][2]");
@@ -216,7 +216,7 @@ public class ScanPathTokenTest {
     @Test
     public void a_document_can_be_scanned_for_array_indexes() {
 
-        List<String> result = PathCompiler.compile("$..[(@.length - 1)]").evaluate(DOCUMENT, Configuration.defaultConfiguration()).getPathList();
+        List<String> result = PathCompiler.compile("$..[(@.length - 1)]").evaluate(DOCUMENT, DOCUMENT, Configuration.defaultConfiguration()).getPathList();
 
         assertThat(result).containsOnly(
                 "$['store']['bicycle']['items'][5]",

@@ -6,7 +6,7 @@ import org.slf4j.LoggerFactory;
 /**
  *
  */
-public class RootPathToken extends PathToken /*implements Path*/ {
+public class RootPathToken extends PathToken {
 
     private static final Logger logger = LoggerFactory.getLogger(RootPathToken.class);
 

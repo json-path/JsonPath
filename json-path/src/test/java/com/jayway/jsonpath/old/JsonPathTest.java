@@ -237,7 +237,7 @@ public class JsonPathTest extends BaseTest {
         assertEquals(JsonPath.read(itemsInStore, "$.[0].[0].author"), "Nigel Rees");
         assertEquals(JsonPath.read(itemsInStore, "$.[0][0].author"), "Nigel Rees");
         */
-        List<String> result = PathCompiler.compile("$.store.*").evaluate(OBJ_DOCUMENT, Configuration.defaultConfiguration()).getPathList();
+        List<String> result = PathCompiler.compile("$.store.*").evaluate(OBJ_DOCUMENT, OBJ_DOCUMENT, Configuration.defaultConfiguration()).getPathList();
 
         Assertions.assertThat(result).containsOnly(
                 "$['store']['bicycle']",

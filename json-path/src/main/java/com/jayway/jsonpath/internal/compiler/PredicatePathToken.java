@@ -35,7 +35,7 @@ public class PredicatePathToken extends PathToken {
     @Override
     public void evaluate(String currentPath, Object model, EvaluationContextImpl ctx) {
         if (ctx.jsonProvider().isMap(model)) {
-            if (accept(model, ctx.configuration())) {
+            if (accept(model, ctx.rootDocument(), ctx.configuration())) {
                 if (isLeaf()) {
                     ctx.addResult(currentPath, model);
                 } else {
@@ -47,7 +47,7 @@ public class PredicatePathToken extends PathToken {
             Iterable<?> objects = ctx.jsonProvider().toIterable(model);
 
             for (Object idxModel : objects) {
-                if (accept(idxModel, ctx.configuration())) {
+                if (accept(idxModel, ctx.rootDocument(),  ctx.configuration())) {
                     handleArrayIndex(idx, currentPath, model, ctx);
                 }
                 idx++;
@@ -57,8 +57,8 @@ public class PredicatePathToken extends PathToken {
         }
     }
 
-    public boolean accept(final Object obj, final Configuration configuration) {
-        Predicate.PredicateContext ctx = new PredicateContextImpl(obj, configuration);
+    public boolean accept(final Object obj, final Object root, final Configuration configuration) {
+        Predicate.PredicateContext ctx = new PredicateContextImpl(obj, root, configuration);
 
         for (Predicate predicate : predicates) {
             if (!predicate.apply (ctx)) {
@@ -79,23 +79,5 @@ public class PredicatePathToken extends PathToken {
     }
 
 
-    private static class PredicateContextImpl implements Predicate.PredicateContext {
-        private final Object obj;
-        private final Configuration configuration;
 
-        private PredicateContextImpl(Object obj, Configuration configuration) {
-            this.obj = obj;
-            this.configuration = configuration;
-        }
-
-        @Override
-        public Object target() {
-            return obj;
-        }
-
-        @Override
-        public Configuration configuration() {
-            return configuration;
-        }
-    }
 }
