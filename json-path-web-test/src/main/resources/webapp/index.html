@@ -105,7 +105,7 @@
                             <hr/>
                             <div class="row">
                                 <div class="col-md-12">
-                                    <pre id="jayway-res" class="prettyprint" style="background-color: transparent; border: none;"></pre>
+                                    <pre id="jayway-res" class="prettyprint result" style="background-color: transparent; border: none;"></pre>
                                 </div>
                             </div>
                             <p id="jayway-error" class="bg-danger"></p>
@@ -118,7 +118,7 @@
                             <hr/>
                             <div class="row">
                                 <div class="col-md-12">
-                                    <pre id="boon-res" class="prettyprint" style="background-color: transparent; border: none;"></pre>
+                                    <pre id="boon-res" class="prettyprint result" style="background-color: transparent; border: none;"></pre>
                                 </div>
                             </div>
                             <p id="boon-error" class="bg-danger"></p>
@@ -131,7 +131,7 @@
                             <hr/>
                             <div class="row">
                                 <div class="col-md-12">
-                                    <pre id="nebhale-res" class="prettyprint" style="background-color: transparent; border: none;"></pre>
+                                    <pre id="nebhale-res" class="prettyprint result" style="background-color: transparent; border: none;"></pre>
                                 </div>
                             </div>
                             <p id="nebhale-error" class="bg-danger"></p>
@@ -144,7 +144,7 @@
                             <hr/>
                             <div class="row">
                                 <div class="col-md-12">
-                                    <pre id="goessner-res" class="prettyprint" style="background-color: transparent; border: none;"></pre>
+                                    <pre id="goessner-res" class="prettyprint result" style="background-color: transparent; border: none;"></pre>
                                 </div>
                             </div>
                         </div>
@@ -218,6 +218,8 @@
 
             $('#submit').on('click', function() {
 
+                $('.result').empty();
+
                 var json = $('#txtJson').val();
                 var path = $('#txtPath').val();
 
@@ -263,11 +265,18 @@
                         }
 
                         var start = new Date().getTime();
-                        var res = jsonPath(JSON.parse(json), path, {resultType: $('input[name=rbType]:checked').val() });
+                        var res;
+                        try {
+                            res = jsonPath(JSON.parse(json), path, {resultType: $('input[name=rbType]:checked').val() });
+                            res = toJsonString(res);
+                        } catch(err){
+                            res = err.message;
+                        }
+
                         var elapsed = new Date().getTime() - start;
 
                         $("#goessner-time").text(elapsed);
-                        $("#goessner-res").hide().text(toJsonString(res)).fadeIn();
+                        $("#goessner-res").hide().text(res).fadeIn();
 
                         $('.prettyprinted').removeClass('prettyprinted');
 
