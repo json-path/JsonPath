@@ -75,7 +75,7 @@ Given the
             "price": 19.95
         }
     },
-    "expensive price": 10
+    "expensive": 10
 }
 ```
 
@@ -94,7 +94,7 @@ Given the
 | `$..book[2:]`                 | Book number two from tail           |
 | `$..book[?(@.isbn)]`          | All books with an ISBN number       |
 | `$.store.book[?(@.price < 10)]` | All books in store cheaper than 10  |
-| `$.store.book[?(@.price <= $['expensive price'])]` | All books in store that are not "expensive"  |
+| `$..book[?(@.price <= $['expensive'])]` | All books in store that are not "expensive"  |
 | `$..*`                        | Give me every thing you got         |
 
 
