@@ -21,9 +21,9 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 
-public class GsonProvider extends AbstractJsonProvider {
+public class GsonJsonProvider extends AbstractJsonProvider {
 
-    private static final Logger logger = LoggerFactory.getLogger(GsonProvider.class);
+    private static final Logger logger = LoggerFactory.getLogger(GsonJsonProvider.class);
 
     private static final JsonParser parser = new JsonParser();
     private static final Gson gson = new GsonBuilder().create();

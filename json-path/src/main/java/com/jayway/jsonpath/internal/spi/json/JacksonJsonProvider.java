@@ -27,9 +27,9 @@ import java.io.StringWriter;
 import java.util.LinkedList;
 import java.util.List;
 
-public class JacksonProvider extends AbstractJsonProvider {
+public class JacksonJsonProvider extends AbstractJsonProvider {
 
-    private static final Logger logger = LoggerFactory.getLogger(JacksonProvider.class);
+    private static final Logger logger = LoggerFactory.getLogger(JacksonJsonProvider.class);
 
     private static final ObjectMapper defaultObjectMapper = new ObjectMapper();
     private static final ObjectReader defaultObjectReader = defaultObjectMapper.reader().withType(Object.class);
@@ -40,7 +40,7 @@ public class JacksonProvider extends AbstractJsonProvider {
     /**
      * Initialize the JacksonProvider with the default ObjectMapper and ObjectReader
      */
-    public JacksonProvider() {
+    public JacksonJsonProvider() {
       this(defaultObjectMapper, defaultObjectReader);
     }
 
@@ -48,7 +48,7 @@ public class JacksonProvider extends AbstractJsonProvider {
      * Initialize the JacksonProvider with a custom ObjectMapper.
      * @param objectMapper the ObjectMapper to use
      */
-    public JacksonProvider(ObjectMapper objectMapper) {
+    public JacksonJsonProvider(ObjectMapper objectMapper) {
       this(objectMapper, objectMapper.reader().withType(Object.class));
     }
 
@@ -57,7 +57,7 @@ public class JacksonProvider extends AbstractJsonProvider {
      * @param objectMapper the ObjectMapper to use
      * @param objectReader the ObjectReader to use
      */
-    public JacksonProvider(ObjectMapper objectMapper, ObjectReader objectReader) {
+    public JacksonJsonProvider(ObjectMapper objectMapper, ObjectReader objectReader) {
       this.objectMapper = objectMapper;
       this.objectReader = objectReader;
     }

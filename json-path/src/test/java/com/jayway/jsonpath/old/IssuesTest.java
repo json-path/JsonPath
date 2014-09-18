@@ -18,6 +18,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
+import static com.jayway.jsonpath.JsonPath.read;
 import static junit.framework.Assert.assertNull;
 import static junit.framework.Assert.assertTrue;
 import static org.assertj.core.api.Assertions.failBecauseExceptionWasNotThrown;
@@ -36,10 +37,12 @@ public class IssuesTest {
                 " {\"kind\" : \"empty\"}\n" +
                 "]";
 
-        List<Map<String, String>> fullOnes = JsonPath.read(json, "$[?(@.kind == full)]");
+        List<Map<String, String>> fullOnes = read(json, "$[?(@.kind == full)]");
 
         assertEquals(1, fullOnes.size());
         assertEquals("full", fullOnes.get(0).get("kind"));
+
+
     }
 
     @Test
@@ -52,8 +55,8 @@ public class IssuesTest {
                 "\n" +
                 " }";
 
-        Object o1 = JsonPath.read(json, "$.arrayOfObjectsAndArrays..k ");
-        Object o2 = JsonPath.read(json, "$.arrayOfObjects..k ");
+        Object o1 = read(json, "$.arrayOfObjectsAndArrays..k ");
+        Object o2 = read(json, "$.arrayOfObjects..k ");
 
         assertEquals("[[\"json\"],[\"path\"],[\"is\"],[\"cool\"]]", jp.toJson(o1));
         assertEquals("[\"json\",\"path\",\"is\",\"cool\"]", jp.toJson(o2));
@@ -62,14 +65,14 @@ public class IssuesTest {
     @Test
     public void issue_11() throws Exception {
         String json = "{ \"foo\" : [] }";
-        List<String> result = JsonPath.read(json, "$.foo[?(@.rel == 'item')][0].uri");
+        List<String> result = read(json, "$.foo[?(@.rel == 'item')][0].uri");
         assertTrue(result.isEmpty());
     }
 
     @Test(expected = PathNotFoundException.class)
     public void issue_11b() throws Exception {
         String json = "{ \"foo\" : [] }";
-        JsonPath.read(json, "$.foo[0].uri");
+        read(json, "$.foo[0].uri");
     }
 
     @Test
@@ -102,7 +105,7 @@ public class IssuesTest {
                 "  }\n" +
                 "}";
 
-        List<String> titles = JsonPath.read(json, "$.store.book[?(@.children==true)].title");
+        List<String> titles = read(json, "$.store.book[?(@.children==true)].title");
 
         assertThat(titles, Matchers.contains("Moby Dick"));
         assertEquals(1, titles.size());
@@ -118,7 +121,7 @@ public class IssuesTest {
 
 
             //Object o = JsonPath.read(is, "$.project[?(@.template.@key == 'foo')].field[*].@key");
-            Object o = JsonPath.read(is, "$.project.field[*].@key");
+            Object o = read(is, "$.project.field[*].@key");
             //Object o = JsonPath.read(is, "$.project.template[?(@.@key == 'foo')].field[*].@key");
 
 
@@ -134,7 +137,7 @@ public class IssuesTest {
     public void issue_28_string() {
         String json = "{\"contents\": [\"one\",\"two\",\"three\"]}";
 
-        List<String> result = JsonPath.read(json, "$.contents[?(@  == 'two')]");
+        List<String> result = read(json, "$.contents[?(@  == 'two')]");
 
         assertThat(result, Matchers.contains("two"));
         assertEquals(1, result.size());
@@ -160,7 +163,7 @@ public class IssuesTest {
                 "    }\n" +
                 "]";
 
-        List<Double> result = JsonPath.read(json, "$.[?(@.compatible == true)].sku");
+        List<Double> result = read(json, "$.[?(@.compatible == true)].sku");
 
         System.out.println(result);
 
@@ -184,7 +187,7 @@ public class IssuesTest {
                 "   ]\n" +
                 "}";
 
-        List<Double> result = JsonPath.read(json, "$.datapoints.[*].[0]");
+        List<Double> result = read(json, "$.datapoints.[*].[0]");
 
         assertThat(result.get(0), is(new Double(10.1)));
         assertThat(result.get(1), is(new Double(21.0)));
@@ -201,7 +204,7 @@ public class IssuesTest {
                 "    }\n" +
                 "}\n";
 
-        List<String> result = JsonPath.read(json, "$..arr");
+        List<String> result = read(json, "$..arr");
         assertThat(result.size(), is(2));
     }
 
@@ -209,7 +212,7 @@ public class IssuesTest {
     public void issue_28_int() {
         String json = "{\"contents\": [1,2,3]}";
 
-        List<Integer> result = JsonPath.read(json, "$.contents[?(@ == 2)]");
+        List<Integer> result = read(json, "$.contents[?(@ == 2)]");
 
         assertThat(result, Matchers.contains(2));
         assertEquals(1, result.size());
@@ -219,7 +222,7 @@ public class IssuesTest {
     public void issue_28_boolean() {
         String json = "{\"contents\": [true, true, false]}";
 
-        List<Boolean> result = JsonPath.read(json, "$.contents[?(@  == true)]");
+        List<Boolean> result = read(json, "$.contents[?(@  == true)]");
 
         assertThat(result, Matchers.contains(true, true));
         assertEquals(2, result.size());
@@ -255,19 +258,19 @@ public class IssuesTest {
     @Test(expected = PathNotFoundException.class)
     public void issue_26() throws Exception {
         String json = "[{\"a\":[{\"b\":1,\"c\":2}]}]";
-        Object o = JsonPath.read(json, "$.a");
+        Object o = read(json, "$.a");
     }
 
     @Test
     public void issue_29_a() throws Exception {
         String json = "{\"list\": [ { \"a\":\"atext\", \"b.b-a\":\"batext2\", \"b\":{ \"b-a\":\"batext\", \"b-b\":\"bbtext\" } }, { \"a\":\"atext2\", \"b\":{ \"b-a\":\"batext2\", \"b-b\":\"bbtext2\" } } ] }";
 
-        List<Map<String, Object>> result = JsonPath.read(json, "$.list[?(@['b.b-a']=='batext2')]");
+        List<Map<String, Object>> result = read(json, "$.list[?(@['b.b-a']=='batext2')]");
         assertEquals(1, result.size());
         Object a = result.get(0).get("a");
         assertEquals("atext", a);
 
-        result = JsonPath.read(json, "$.list[?(@.b.b-a=='batext2')]");
+        result = read(json, "$.list[?(@.b.b-a=='batext2')]");
         assertEquals(1, result.size());
         assertEquals("atext2", result.get(0).get("a"));
 
@@ -277,7 +280,7 @@ public class IssuesTest {
     @Test
     public void issue_29_b() throws Exception {
         String json = "{\"list\": [ { \"a\":\"atext\", \"b\":{ \"b-a\":\"batext\", \"b-b\":\"bbtext\" } }, { \"a\":\"atext2\", \"b\":{ \"b-a\":\"batext2\", \"b-b\":\"bbtext2\" } } ] }";
-        List<String> result = JsonPath.read(json, "$.list[?]", Filter.filter(Criteria.where("b.b-a").eq("batext2")));
+        List<String> result = read(json, "$.list[?]", Filter.filter(Criteria.where("b.b-a").eq("batext2")));
 
         assertTrue(result.size() == 1);
     }
@@ -285,14 +288,14 @@ public class IssuesTest {
     public void issue_30() throws Exception {
         String json = "{\"foo\" : {\"@id\" : \"123\", \"$\" : \"hello\"}}";
 
-        assertEquals("123", JsonPath.read(json, "foo.@id"));
-        assertEquals("hello", JsonPath.read(json, "foo.$"));
+        assertEquals("123", read(json, "foo.@id"));
+        assertEquals("hello", read(json, "foo.$"));
     }
 
     @Test
     public void issue_32(){
         String json = "{\"text\" : \"skill: \\\"Heuristic Evaluation\\\"\", \"country\" : \"\"}";
-        assertEquals("skill: \"Heuristic Evaluation\"", JsonPath.read(json, "$.text"));
+        assertEquals("skill: \"Heuristic Evaluation\"", read(json, "$.text"));
     }
 
     @Test
@@ -321,7 +324,7 @@ public class IssuesTest {
                 "  }\n" +
                 "}";
 
-        List<Map<String, Object>> result = JsonPath.read(json, "$.store.book[?(@.author.age == 36)]");
+        List<Map<String, Object>> result = read(json, "$.store.book[?(@.author.age == 36)]");
 
         System.out.println(result);
 
@@ -338,7 +341,7 @@ public class IssuesTest {
                 "]";
 
 
-        assertEquals(1, JsonPath.read(json, "$[0].a"));
+        assertEquals(1, read(json, "$[0].a"));
     }
 
     @Test(expected = PathNotFoundException.class)
@@ -355,7 +358,7 @@ public class IssuesTest {
                 "  \"version\": 1371160528774\n" +
                 "}";
 
-        Object read = JsonPath.read(json, "$.data.passes[0].id");
+        Object read = read(json, "$.data.passes[0].id");
     }
 
 
@@ -368,7 +371,7 @@ public class IssuesTest {
                 "        }] " +
                 "    }";
 
-        List<Map<String, String>> result = JsonPath.read(json, "$.list[?(@.name == 'My (String)')]");
+        List<Map<String, String>> result = read(json, "$.list[?(@.name == 'My (String)')]");
 
         Assertions.assertThat(result).containsExactly(Collections.singletonMap("name", "My (String)"));
     }
@@ -378,12 +381,12 @@ public class IssuesTest {
 
         String json = "{\"test\":null}";
 
-        Assertions.assertThat(JsonPath.read(json, "test")).isNull();
+        Assertions.assertThat(read(json, "test")).isNull();
 
         Assertions.assertThat(JsonPath.using(Configuration.defaultConfiguration().options(Option.SUPPRESS_EXCEPTIONS)).parse(json).read("nonExistingProperty")).isNull();
 
         try {
-            JsonPath.read(json, "nonExistingProperty");
+            read(json, "nonExistingProperty");
 
             failBecauseExceptionWasNotThrown(PathNotFoundException.class);
         } catch (PathNotFoundException e){
@@ -392,7 +395,7 @@ public class IssuesTest {
 
 
         try {
-            JsonPath.read(json, "nonExisting.property");
+            read(json, "nonExisting.property");
 
             failBecauseExceptionWasNotThrown(PathNotFoundException.class);
         } catch (PathNotFoundException e){
@@ -405,7 +408,7 @@ public class IssuesTest {
     public void issue_45() {
         String json = "{\"rootkey\":{\"sub.key\":\"value\"}}";
 
-        Assertions.assertThat(JsonPath.read(json, "rootkey['sub.key']")).isEqualTo("value");
+        Assertions.assertThat(read(json, "rootkey['sub.key']")).isEqualTo("value");
     }
 
     @Test
@@ -420,7 +423,7 @@ public class IssuesTest {
         Assertions.assertThat(JsonPath.using(configuration).parse(json).read("a.x")).isNull();
 
         try {
-            JsonPath.read(json, "a.x");
+            read(json, "a.x");
 
             failBecauseExceptionWasNotThrown(PathNotFoundException.class);
         } catch (PathNotFoundException e){

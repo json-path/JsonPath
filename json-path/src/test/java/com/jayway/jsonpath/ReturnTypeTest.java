@@ -5,13 +5,14 @@ import org.junit.Test;
 import java.util.List;
 import java.util.Map;
 
+import static com.jayway.jsonpath.JsonPath.parse;
 import static org.assertj.core.api.Assertions.assertThat;
 
 @SuppressWarnings("ALL")
 public class ReturnTypeTest extends BaseTest {
 
 
-    private static ReadContext reader = JsonPath.parse(JSON_DOCUMENT);
+    private static ReadContext reader = parse(JSON_DOCUMENT);
 
     @Test
     public void assert_strings_can_be_read() {

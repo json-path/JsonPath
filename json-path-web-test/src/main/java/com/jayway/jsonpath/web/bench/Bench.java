@@ -3,7 +3,7 @@ package com.jayway.jsonpath.web.bench;
 import com.jayway.jsonpath.Configuration;
 import com.jayway.jsonpath.JsonPath;
 import com.jayway.jsonpath.Option;
-import com.jayway.jsonpath.internal.spi.json.JacksonProvider;
+import com.jayway.jsonpath.internal.spi.json.JacksonJsonProvider;
 import io.gatling.jsonpath.JsonPath$;
 import org.boon.json.JsonParser;
 import org.boon.json.ObjectMapper;
@@ -115,7 +115,7 @@ public class Bench {
         String error = null;
         long time;
         Object res = null;
-        JacksonProvider jacksonProvider = new JacksonProvider();
+        JacksonJsonProvider jacksonProvider = new JacksonJsonProvider();
 
         long now = System.currentTimeMillis();
         try {
