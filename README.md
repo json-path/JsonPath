@@ -5,8 +5,6 @@ JSONPath
 
 [![Build Status](https://travis-ci.org/jayway/JsonPath.svg?branch=master)](https://travis-ci.org/jayway/JsonPath)
 
-[read more](http://code.google.com/p/json-path/)
-
 JSONPath expressions always refer to a JSON structure in the same way as XPath expression are used in combination 
 with an XML document. The "root member object" in JSONPath is always referred to as `$` regardless if it is an 
 object or array.
@@ -138,13 +136,14 @@ List<Map<String, Object>> expensiveBooks = JsonPath
 What is Returned When?
 ----------------------
 
+Predicates
+----------
+
 PATH vs VALUE
 -------------
 
-
-
-Advanced
---------
+Tweaking Configuration
+----------------------
 
 The default JsonProvider is `JsonSmartJsonProvider` backed by [json-smart](https://code.google.com/p/json-smart/), a small and fast JSONParser. If you
 prefer Jackson there is a `JacksonJsonProvider` available. There is also an experimental `GsonJsonProvider`. 
