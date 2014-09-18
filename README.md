@@ -4,7 +4,6 @@ JSONPath
 **A Java DSL for reading JSON documents.**
 
 [![Build Status](https://travis-ci.org/jayway/JsonPath.svg?branch=master)](https://travis-ci.org/jayway/JsonPath)
-[![Analytics](https://ga-beacon.appspot.com/UA-54945131-1/jsonpath/index)](https://github.com/igrigorik/ga-beacon)
 
 [read more](http://code.google.com/p/json-path/)
 
@@ -97,16 +96,14 @@ Given the
 | `$..*`                        | Give me every thing you got         |
 
 
-Reading a JSON document
------------------------
+Reading a document
+------------------
 The simplest most straight forward way to use JsonPath is via the static convenience API.
 
 ```java
-
 String json = "...";
 
 List<String> authors = JsonPath.read(json, "$.store.book[*].author");
-
 ```
 
 If you only want to read once this is OK. In case you need to read an other path as well this is not the way 
@@ -114,18 +111,15 @@ to go since the document will be parsed every time you call JsonPath.read(...). 
 parse the json first.
 
 ```java
-
 String json = "...";
 Object document = Configuration.defaultConfiguration().jsonProvider().parse(json);
 
 String author1 = JsonPath.read(document, "$.store.book[0].author");
 String author2 = JsonPath.read(document, "$.store.book[1].author");
-
 ```
 Personally I prefer the more flexible `ReadContext` API.
 
 ```java
-
 String json = "...";
 
 ReadContext ctx = JsonPath.parse(json);
@@ -137,10 +131,10 @@ List<Map<String, Object>> expensiveBooks = JsonPath
                             .using(configuration)
                             .parse(json)
                             .read("$.store.book[?(@.price > 10)]", List.class);
-
 ```
 
-
+What is Returned When?
+----------------------
 
 PATH vs VALUE
 -------------
@@ -197,3 +191,5 @@ Gradle users
 ```
 compile 'com.jayway.jsonpath:json-path:0.9.1'
 ``` 
+
+[![Analytics](https://ga-beacon.appspot.com/UA-54945131-1/jsonpath/index)](https://github.com/igrigorik/ga-beacon)
