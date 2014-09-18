@@ -4,7 +4,6 @@ import com.jayway.jsonpath.Configuration;
 import com.jayway.jsonpath.JsonPath;
 import com.jayway.jsonpath.internal.PathCompiler;
 import com.jayway.jsonpath.internal.spi.json.JsonSmartJsonProvider;
-
 import org.junit.Ignore;
 import org.junit.Test;
 

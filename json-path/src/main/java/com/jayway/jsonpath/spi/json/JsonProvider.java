@@ -15,7 +15,6 @@
 package com.jayway.jsonpath.spi.json;
 
 import com.jayway.jsonpath.InvalidJsonException;
-import com.jayway.jsonpath.ValueCompareException;
 
 import java.io.InputStream;
 import java.util.Collection;

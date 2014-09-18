@@ -1,18 +1,10 @@
 package com.jayway.jsonpath;
 
-import com.jayway.jsonpath.internal.spi.converter.DefaultConversionProvider;
-import com.jayway.jsonpath.internal.spi.json.GsonProvider;
-import com.jayway.jsonpath.spi.converter.ConversionProvider;
-import com.jayway.jsonpath.spi.json.JsonProvider;
 import org.junit.Test;
 
-import java.math.BigDecimal;
 import java.util.Date;
-import java.util.EnumSet;
-import java.util.Set;
 
 import static com.jayway.jsonpath.JsonPath.parse;
-import static java.util.Collections.singletonMap;
 import static org.assertj.core.api.Assertions.assertThat;
 
 public class ConverterTest extends BaseTest {

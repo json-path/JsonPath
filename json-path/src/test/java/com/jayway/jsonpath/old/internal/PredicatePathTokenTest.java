@@ -2,7 +2,6 @@ package com.jayway.jsonpath.old.internal;
 
 import com.jayway.jsonpath.JsonPath;
 import com.jayway.jsonpath.internal.spi.json.JsonSmartJsonProvider;
-
 import org.junit.Test;
 
 import java.util.List;

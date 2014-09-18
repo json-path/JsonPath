@@ -1,13 +1,6 @@
 package com.jayway.jsonpath;
 
 import com.jayway.jsonpath.internal.compiler.PredicateContextImpl;
-import com.jayway.jsonpath.internal.spi.converter.DefaultConversionProvider;
-import com.jayway.jsonpath.internal.spi.json.GsonProvider;
-import com.jayway.jsonpath.spi.converter.ConversionProvider;
-import com.jayway.jsonpath.spi.json.JsonProvider;
-
-import java.util.EnumSet;
-import java.util.Set;
 
 public class BaseTest {
     /*

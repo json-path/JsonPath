@@ -7,10 +7,7 @@ import java.util.List;
 import java.util.Map;
 
 import static com.jayway.jsonpath.JsonPath.using;
-import static com.jayway.jsonpath.Option.ALWAYS_RETURN_LIST;
-import static com.jayway.jsonpath.Option.AS_PATH_LIST;
-import static com.jayway.jsonpath.Option.DEFAULT_PATH_LEAF_TO_NULL;
-import static java.util.Collections.singletonMap;
+import static com.jayway.jsonpath.Option.*;
 import static org.assertj.core.api.Assertions.assertThat;
 
 public class OptionsTest extends BaseTest {
