@@ -114,7 +114,7 @@ public class JsonReader implements ParseContext, ReadContext {
     }
 
     private <T> T convert(Object obj, Class<T> targetType, Configuration configuration){
-        return configuration.conversionProvider().convert(obj, targetType, configuration);
+        return configuration.conversionProvider().map(obj, targetType, configuration);
     }
 
 }

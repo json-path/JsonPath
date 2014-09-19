@@ -1,10 +1,10 @@
-package com.jayway.jsonpath.internal.spi.converter;
+package com.jayway.jsonpath.internal.spi.mapper;
 
 import com.jayway.jsonpath.Configuration;
 
-public class StringConverter extends ConverterBase {
+public class StringMapper extends MapperBase {
 
-    public StringConverter() {
+    public StringMapper() {
         register(Object.class, String.class);
     }
 

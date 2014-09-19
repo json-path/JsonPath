@@ -1,15 +1,15 @@
-package com.jayway.jsonpath.internal.spi.converter;
+package com.jayway.jsonpath.internal.spi.mapper;
 
 import com.jayway.jsonpath.Configuration;
-import com.jayway.jsonpath.spi.converter.ConversionException;
+import com.jayway.jsonpath.spi.mapper.MappingException;
 
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.util.Date;
 
-public class DateConverter extends ConverterBase {
+public class DateMapper extends MapperBase {
 
-    public DateConverter() {
+    public DateMapper() {
         register(Long.class, Date.class);
         register(String.class, Date.class);
     }
@@ -29,10 +29,10 @@ public class DateConverter extends ConverterBase {
             try {
                 return DateFormat.getInstance().parse(src.toString());
             } catch (ParseException e) {
-                throw new ConversionException(e);
+                throw new MappingException(e);
             }
         }
 
-        throw new ConversionException("Can not convert: " + srcType.getName() + " to: " + targetType.getName());
+        throw new MappingException("Can not map: " + srcType.getName() + " to: " + targetType.getName());
     }
 }

@@ -7,7 +7,7 @@ import java.util.Date;
 import static com.jayway.jsonpath.JsonPath.parse;
 import static org.assertj.core.api.Assertions.assertThat;
 
-public class ConverterTest extends BaseTest {
+public class MapperTest extends BaseTest {
 
 
     @Test

@@ -1,4 +1,4 @@
-package com.jayway.jsonpath.internal.spi.converter;
+package com.jayway.jsonpath.internal.spi.mapper;
 
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
@@ -7,7 +7,7 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonPrimitive;
 import com.jayway.jsonpath.Configuration;
 import com.jayway.jsonpath.internal.spi.json.GsonJsonProvider;
-import com.jayway.jsonpath.spi.converter.ConversionException;
+import com.jayway.jsonpath.spi.mapper.MappingException;
 
 import java.math.BigDecimal;
 import java.math.BigInteger;
@@ -19,9 +19,9 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
-public class GsonConverter extends ConverterBase {
+public class GsonMapper extends MapperBase {
 
-    public GsonConverter() {
+    public GsonMapper() {
         register(JsonPrimitive.class, Integer.class);
         register(JsonPrimitive.class, Long.class);
         register(JsonPrimitive.class, Float.class);
@@ -29,11 +29,8 @@ public class GsonConverter extends ConverterBase {
         register(JsonPrimitive.class, BigDecimal.class);
         register(JsonPrimitive.class, BigInteger.class);
         register(JsonPrimitive.class, Date.class);
-
         register(JsonPrimitive.class, String.class);
-
         register(JsonPrimitive.class, Boolean.class);
-
         register(JsonArray.class, List.class);
         register(JsonObject.class, Map.class);
     }
@@ -76,7 +73,7 @@ public class GsonConverter extends ConverterBase {
                     try {
                         return DateFormat.getInstance().parse(primitive.getAsString());
                     } catch (ParseException e) {
-                        throw new ConversionException(e);
+                        throw new MappingException(e);
                     }
                 }
             }
@@ -122,6 +119,6 @@ public class GsonConverter extends ConverterBase {
             }
         }
 
-        return null;
+        throw new MappingException("Can not map: " + srcType.getName() + " to: " + targetType.getName());
     }
 }

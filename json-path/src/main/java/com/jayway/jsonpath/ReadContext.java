@@ -44,7 +44,7 @@ public interface ReadContext {
      * Reads the given path from this context
      *
      * @param path    path to read
-     * @param type    expected return type (will try to convert)
+     * @param type    expected return type (will try to map)
      * @param filters filters
      * @param <T>
      * @return result
@@ -64,7 +64,7 @@ public interface ReadContext {
      * Reads the given path from this context
      *
      * @param path path to apply
-     * @param type    expected return type (will try to convert)
+     * @param type    expected return type (will try to map)
      * @param <T>
      * @return result
      */

@@ -167,7 +167,7 @@ Configuration.setDefaults(new Configuration.Defaults() {
     }
 
     @Override
-    public ConversionProvider conversionProvider() {
+    public ConversionProvider mappingProvider() {
         return new DefaultConversionProvider();
     }
 });

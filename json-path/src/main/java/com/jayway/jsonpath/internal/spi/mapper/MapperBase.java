@@ -1,15 +1,14 @@
-package com.jayway.jsonpath.internal.spi.converter;
+package com.jayway.jsonpath.internal.spi.mapper;
 
-import com.jayway.jsonpath.spi.converter.ConversionException;
-import com.jayway.jsonpath.spi.converter.Converter;
+import com.jayway.jsonpath.spi.mapper.MappingException;
 
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
 
-public abstract class ConverterBase implements Converter{
+public abstract class MapperBase implements Mapper {
 
-    private final Set<Converter.ConvertiblePair> convertiblePairs = new HashSet<Converter.ConvertiblePair>();
+    private final Set<Mapper.ConvertiblePair> convertiblePairs = new HashSet<Mapper.ConvertiblePair>();
 
     protected void register(Class<?> srcType, Class<?> targetType){
         convertiblePairs.add(new ConvertiblePair(srcType, targetType));
@@ -27,14 +26,14 @@ public abstract class ConverterBase implements Converter{
         }
 
         if (!srcType.isAssignableFrom(src.getClass())) {
-            throw new ConversionException("Source: " + src.getClass() + " is not assignable from: " + srcType.getName());
+            throw new MappingException("Source: " + src.getClass() + " is not assignable from: " + srcType.getName());
         }
         if(!canConvert(srcType, targetType)){
-            throw new ConversionException("Can not convert: " + srcType.getName() + " to: " + targetType.getName());
+            throw new MappingException("Can not map: " + srcType.getName() + " to: " + targetType.getName());
         }
     }
 
     boolean canConvert(Class<?> srcType, Class<?> targetType){
-        return convertiblePairs.contains(new Converter.ConvertiblePair(srcType, targetType));
+        return convertiblePairs.contains(new Mapper.ConvertiblePair(srcType, targetType));
     }
 }

@@ -1,13 +1,13 @@
-package com.jayway.jsonpath.internal.spi.converter;
+package com.jayway.jsonpath.internal.spi.mapper;
 
 import com.jayway.jsonpath.Configuration;
-import com.jayway.jsonpath.spi.converter.ConversionException;
+import com.jayway.jsonpath.spi.mapper.MappingException;
 
 import java.math.BigDecimal;
 
-public class NumberConverter extends ConverterBase {
+public class NumberMapper extends MapperBase {
 
-    public NumberConverter() {
+    public NumberMapper() {
         //to long
         register(Integer.class, Long.class);
         register(Double.class, Long.class);
@@ -125,6 +125,6 @@ public class NumberConverter extends ConverterBase {
 
 
 
-        throw new ConversionException("Can not convert: " + srcType.getName() + " to: " + targetType.getName());
+        throw new MappingException("Can not map: " + srcType.getName() + " to: " + targetType.getName());
     }
 }
