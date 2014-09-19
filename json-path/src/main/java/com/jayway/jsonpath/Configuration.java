@@ -14,10 +14,10 @@
  */
 package com.jayway.jsonpath;
 
-import com.jayway.jsonpath.internal.spi.mapper.DefaultMappingProvider;
 import com.jayway.jsonpath.internal.spi.json.JsonSmartJsonProvider;
-import com.jayway.jsonpath.spi.mapper.MappingProvider;
+import com.jayway.jsonpath.internal.spi.mapper.DefaultMappingProvider;
 import com.jayway.jsonpath.spi.json.JsonProvider;
+import com.jayway.jsonpath.spi.mapper.MappingProvider;
 
 import java.util.Collections;
 import java.util.EnumSet;
@@ -47,6 +47,10 @@ public class Configuration {
         }
     };
 
+    /**
+     * Set Default configuration
+     * @param defaults default configuration settings
+     */
     public static synchronized void setDefaults(Defaults defaults){
         DEFAULTS = defaults;
     }
@@ -147,11 +151,22 @@ public class Configuration {
     }
 
     public interface Defaults {
-
+        /**
+         * Returns the default {@link com.jayway.jsonpath.spi.json.JsonProvider}
+         * @return default json provider
+         */
         JsonProvider jsonProvider();
 
+        /**
+         * Returns default options
+         * @return options
+         */
         Set<Option> options();
 
+        /**
+         *
+         * @return
+         */
         MappingProvider mappingProvider();
 
     }
