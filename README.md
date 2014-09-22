@@ -135,9 +135,87 @@ List<Map<String, Object>> expensiveBooks = JsonPath
 
 What is Returned When?
 ----------------------
+When using JsonPath in java its important to know what type you expect in your result. Json path will automatically 
+try to cast the result to the type expected by the invoker.
+
+```java
+//Will throw an java.lang.ClassCastException    
+List<String>  list = JsonPath.parse(json).read("$.store.book[0].author")
+
+//Works fine
+String author = JsonPath.parse(json).read("$.store.book[0].author")
+```
+
+When evaluating a path you need to understand the concept of when a path is `definite`. A path is not definite if it contains:
+
+* `..` - a deep scan operator
+* `?(<expression>)` - an expression
+* `[<number>, <number> (, <number>)]` - multiple array indexes
+* `['<name>', '<name>' (, '<name>')]` - multiple object properties
+
+Non `definite` paths always returns a list. 
+
+By default some simple conversions are provided by the MappingProvider. This allows to specify the return type you want and the MappingProvider will
+try to perform the mapping. If a book, in the sample json above,  had a long value 'published' you could perform object mapping between `Long` and `Date`
+as shown below. 
+
+```java
+Date date = JsonPath.parse(json).read("$.store.book[0].published", date.class)
+```
+
+If you use the `JacksonJsonProvider` you can even map your JsonPath output directly into POJO's.
+
+```java
+Book book = JsonPath.parse(json).read("$.store.book[0]", Book.class)
+```
 
 Predicates
 ----------
+There are three different ways to create filter predicates in JsonPath.
+
+###Inline predicates
+
+These are predicates baked right into to your path.
+
+```java
+List<Map<String, Object>> books =  JsonPath.parse(json).read("$.store.book[?(@.price < 10)]");
+```
+
+In the current implementation you can use `&&` to combine multiple predicates `[?(@.price < 10 && @.category == 'fiction')]`. OR operations are not supported yet.
+ 
+###The Filter API
+ 
+Predicates can be built using the Filter API as shown below:
+
+```java
+import static com.jayway.jsonpath.JsonPath.parse;
+import static com.jayway.jsonpath.Criteria.where;
+import static com.jayway.jsonpath.Filter.filter;
+...
+...
+
+Filter cheapFictionFilter = where(where("category").is("fiction").and("price").lte(10D));
+
+List<Map<String, Object>> books =  parse(json).read("$.store.book[?]", cheapFictionFilter);
+
+```
+Note the placeholder '?' for the filter in the path. When multiple filters are provided they are applied in order where the number of placeholders must match 
+the number of provided filters. You can specify multiple predicate placeholders in one filter operation `[?, ?]`, both predicates must match. 
+
+###Roll your own
+ 
+Third option is to implement your own predicates
+ 
+```java 
+Predicate booksWithISBN = new Predicate() {
+    @Override
+    public boolean apply(PredicateContext ctx) {
+        return ctx.item(Map.class).containsKey("isbn");
+    }
+};
+
+List<Map<String, Object>> books = reader.read("$.store.book[?].isbn", List.class, booksWithISBN);
+```
 
 PATH vs VALUE
 -------------
@@ -167,8 +245,8 @@ Configuration.setDefaults(new Configuration.Defaults() {
     }
 
     @Override
-    public ConversionProvider mappingProvider() {
-        return new DefaultConversionProvider();
+    public MappingProvider mappingProvider() {
+        return new DefaultMappingProvider();
     }
 });
 ```
