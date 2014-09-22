@@ -23,14 +23,34 @@ public interface JsonProvider {
 
     static final Object UNDEFINED = new Object();
 
+    /**
+     * Parse the given json string
+     * @param json json string to parse
+     * @return Object representation of json
+     * @throws InvalidJsonException
+     */
     Object parse(String json) throws InvalidJsonException;
 
+    /**
+     * Parse the given json string
+     * @param jsonStream input stream to parse
+     * @param charset charset to use
+     * @return Object representation of json
+     * @throws InvalidJsonException
+     */
     Object parse(InputStream jsonStream, String charset) throws InvalidJsonException;
 
+    /**
+     * Convert given json object to a json string
+     * @param obj object to transform
+     * @return json representation of object
+     */
     String toJson(Object obj);
 
-    Object createNull();
-
+    /**
+     * Creates a provider specific json array
+     * @return new array
+     */
     Object createArray();
 
     /**

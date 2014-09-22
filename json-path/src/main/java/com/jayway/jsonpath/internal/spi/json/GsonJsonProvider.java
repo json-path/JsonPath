@@ -98,12 +98,6 @@ public class GsonJsonProvider extends AbstractJsonProvider {
         return obj.toString();
     }
 
-
-    @Override
-    public Object createNull() {
-        return JsonNull.INSTANCE;
-    }
-
     @Override
     public Object createArray() {
         return new JsonArray();
