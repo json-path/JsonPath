@@ -173,7 +173,7 @@ as shown below.
 Date date = JsonPath.parse(json).read("$.store.book[0].published", Date.class)
 ```
 
-If you use the `JacksonJsonProvider` you can even map your JsonPath output directly into POJO's.
+If you configure JsonPath to use the `JacksonMappingProvider` you can even map your JsonPath output directly into POJO's.
 
 ```java
 Book book = JsonPath.parse(json).read("$.store.book[0]", Book.class)
@@ -185,7 +185,7 @@ There are three different ways to create filter predicates in JsonPath.
 
 ###Inline predicates
 
-These are predicates baked right into to your path.
+Inline predicates are the ones defined in the path.
 
 ```java
 List<Map<String, Object>> books =  JsonPath.parse(json).read("$.store.book[?(@.price < 10)]");
@@ -268,7 +268,7 @@ Configuration.setDefaults(new Configuration.Defaults() {
 
     @Override
     public MappingProvider mappingProvider() {
-        return new DefaultMappingProvider();
+        return new JacksonMappingProvider();
     }
     
     @Override
