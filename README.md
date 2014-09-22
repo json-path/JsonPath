@@ -77,9 +77,9 @@ Given the json
 }
 ```
 
-| JSONPath | Result |
+| JSONPath (try it by clicking link)| Result |
 | :------- | :----- |
-| `$.store.book[*].author`      | The authors of all books              |
+| <a href="http://jsonpath.herokuapp.com/?path=$.store.book[*].author" target="_blank">$.store.book[*].author</a>| The authors of all books              |
 | `$..author`                   | All authors                           |
 | `$.store.*`                   | All things, both books and bicycles   |
 | `$.store..price`              | The price of everything               |
