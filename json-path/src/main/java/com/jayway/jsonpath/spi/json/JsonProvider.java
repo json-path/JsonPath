@@ -25,7 +25,7 @@ public interface JsonProvider {
 
     Object parse(String json) throws InvalidJsonException;
 
-    Object parse(InputStream jsonStream) throws InvalidJsonException;
+    Object parse(InputStream jsonStream, String charset) throws InvalidJsonException;
 
     String toJson(Object obj);
 

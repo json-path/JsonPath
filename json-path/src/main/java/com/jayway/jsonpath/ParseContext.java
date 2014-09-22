@@ -27,6 +27,8 @@ public interface ParseContext {
 
     ReadContext parse(InputStream json);
 
+    ReadContext parse(InputStream json, String charset);
+
     ReadContext parse(File json) throws IOException;
 
     ReadContext parse(URL json) throws IOException;

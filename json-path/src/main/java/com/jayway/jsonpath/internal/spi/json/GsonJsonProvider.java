@@ -15,6 +15,7 @@ import org.slf4j.LoggerFactory;
 
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.io.UnsupportedEncodingException;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -83,8 +84,13 @@ public class GsonJsonProvider extends AbstractJsonProvider {
     }
 
     @Override
-    public Object parse(InputStream jsonStream) throws InvalidJsonException {
-        return parser.parse(new InputStreamReader(jsonStream));
+    public Object parse(InputStream jsonStream, String charset) throws InvalidJsonException {
+
+        try {
+            return parser.parse(new InputStreamReader(jsonStream, charset));
+        } catch (UnsupportedEncodingException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     @Override
