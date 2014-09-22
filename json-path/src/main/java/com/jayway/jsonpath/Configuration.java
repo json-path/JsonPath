@@ -69,29 +69,29 @@ public class Configuration {
     }
 
     public Configuration jsonProvider(JsonProvider newJsonProvider) {
-        return Configuration.builder().jsonProvider(newJsonProvider).conversionProvider(mappingProvider).options(options).build();
+        return Configuration.builder().jsonProvider(newJsonProvider).mappingProvider(mappingProvider).options(options).build();
     }
 
     public JsonProvider jsonProvider() {
         return jsonProvider;
     }
 
-    public MappingProvider conversionProvider() {
+    public MappingProvider mappingProvider() {
         return mappingProvider;
     }
 
-    public Configuration conversionProvider(MappingProvider newMappingProvider) {
-        return Configuration.builder().jsonProvider(jsonProvider).conversionProvider(newMappingProvider).options(options).build();
+    public Configuration mappingProvider(MappingProvider newMappingProvider) {
+        return Configuration.builder().jsonProvider(jsonProvider).mappingProvider(newMappingProvider).options(options).build();
     }
 
     public Configuration addOptions(Option... options) {
         EnumSet<Option> opts = EnumSet.noneOf(Option.class);
         opts.addAll(this.options);
         opts.addAll(asList(options));
-        return Configuration.builder().jsonProvider(jsonProvider).conversionProvider(mappingProvider).options(opts).build();
+        return Configuration.builder().jsonProvider(jsonProvider).mappingProvider(mappingProvider).options(opts).build();
     }
     public Configuration options(Option... options) {
-        return Configuration.builder().jsonProvider(jsonProvider).conversionProvider(mappingProvider).options(options).build();
+        return Configuration.builder().jsonProvider(jsonProvider).mappingProvider(mappingProvider).options(options).build();
     }
 
     public Set<Option> getOptions() {
@@ -122,7 +122,7 @@ public class Configuration {
             return this;
         }
 
-        public ConfigurationBuilder conversionProvider(MappingProvider provider) {
+        public ConfigurationBuilder mappingProvider(MappingProvider provider) {
             this.mappingProvider = provider;
             return this;
         }
@@ -164,8 +164,9 @@ public class Configuration {
         Set<Option> options();
 
         /**
+         * Returns the default {@link com.jayway.jsonpath.spi.mapper.MappingProvider}
          *
-         * @return
+         * @return default mapping provider
          */
         MappingProvider mappingProvider();
 

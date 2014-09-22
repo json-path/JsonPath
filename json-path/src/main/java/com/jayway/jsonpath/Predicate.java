@@ -1,5 +1,7 @@
 package com.jayway.jsonpath;
 
+import com.jayway.jsonpath.spi.mapper.MappingException;
+
 /**
  *
  */
@@ -10,16 +12,23 @@ public interface Predicate {
     public interface PredicateContext {
 
         /**
-         * Returns the current element being evaluated by this predicate
+         * Returns the current item being evaluated by this predicate
          * @return current document
          */
-        Object contextDocument();
+        Object item();
+
+        /**
+         * Returns the current item being evaluated by this predicate. It will be mapped
+         * to the provided class
+         * @return current document
+         */
+        <T> T item(Class<T> clazz) throws MappingException;
 
         /**
          * Returns the root document (the complete JSON)
          * @return root document
          */
-        Object rootDocument();
+        Object root();
 
         /**
          * Configuration to use when evaluating

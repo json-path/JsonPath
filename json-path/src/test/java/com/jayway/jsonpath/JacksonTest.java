@@ -10,7 +10,7 @@ public class JacksonTest {
 
     private static Configuration config = Configuration
             .builder()
-            .conversionProvider(new JacksonMappingProvider())
+            .mappingProvider(new JacksonMappingProvider())
             .jsonProvider(new JacksonJsonProvider())
             .build();
 

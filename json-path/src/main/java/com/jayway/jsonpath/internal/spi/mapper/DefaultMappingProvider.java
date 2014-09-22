@@ -19,10 +19,7 @@ public class DefaultMappingProvider implements MappingProvider {
         addMapper(new DateMapper());
     }
 
-
-
-
-    public void addMapper(Mapper converter) {
+    protected void addMapper(Mapper converter) {
         for (Mapper.ConvertiblePair convertible : converter.getConvertibleTypes()) {
             if(!converters.containsKey(convertible.getTargetType())){
                 converters.put(convertible.getTargetType(), new HashMap<Class<?>, Mapper>());

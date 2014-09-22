@@ -27,7 +27,7 @@ public class EvaluationContextImpl implements EvaluationContext {
 
     public EvaluationContextImpl(Path path, Object rootDocument, Configuration configuration) {
         notNull(path, "path can not be null");
-        notNull(rootDocument, "rootDocument can not be null");
+        notNull(rootDocument, "root can not be null");
         notNull(configuration, "configuration can not be null");
         this.path = path;
         this.rootDocument = rootDocument;

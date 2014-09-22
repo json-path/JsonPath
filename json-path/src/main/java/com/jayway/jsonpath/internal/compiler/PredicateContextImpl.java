@@ -2,6 +2,7 @@ package com.jayway.jsonpath.internal.compiler;
 
 import com.jayway.jsonpath.Configuration;
 import com.jayway.jsonpath.Predicate;
+import com.jayway.jsonpath.spi.mapper.MappingException;
 
 public class PredicateContextImpl implements Predicate.PredicateContext {
     private final Object contextDocument;
@@ -15,12 +16,17 @@ public class PredicateContextImpl implements Predicate.PredicateContext {
     }
 
     @Override
-    public Object contextDocument() {
+    public Object item() {
         return contextDocument;
     }
 
     @Override
-    public Object rootDocument() {
+    public <T> T item(Class<T> clazz) throws MappingException {
+        return  configuration().mappingProvider().map(contextDocument, clazz, configuration);
+    }
+
+    @Override
+    public Object root() {
         return rootDocument;
     }
 
