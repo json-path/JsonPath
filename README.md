@@ -1,4 +1,4 @@
-JSONPath
+JSONPath (1.0.0)
 ========
 
 **A Java DSL for reading JSON documents.**
@@ -194,7 +194,7 @@ import static com.jayway.jsonpath.Filter.filter;
 ...
 ...
 
-Filter cheapFictionFilter = where(where("category").is("fiction").and("price").lte(10D));
+Filter cheapFictionFilter = filter(where("category").is("fiction").and("price").lte(10D));
 
 List<Map<String, Object>> books =  parse(json).read("$.store.book[?]", cheapFictionFilter);
 
@@ -240,13 +240,13 @@ Configuration.setDefaults(new Configuration.Defaults() {
     }
 
     @Override
-    public Set<Option> options() {
-        return EnumSet.noneOf(Option.class);
-    }
-
-    @Override
     public MappingProvider mappingProvider() {
         return new DefaultMappingProvider();
+    }
+    
+    @Override
+    public Set<Option> options() {
+        return EnumSet.noneOf(Option.class);
     }
 });
 ```
