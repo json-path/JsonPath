@@ -117,7 +117,7 @@ Object document = Configuration.defaultConfiguration().jsonProvider().parse(json
 String author1 = JsonPath.read(document, "$.store.book[0].author");
 String author2 = JsonPath.read(document, "$.store.book[1].author");
 ```
-JsonPat also provides a fluent API that is also the most flexible one.
+JsonPath also provides a fluent API that is also the most flexible one.
 
 ```java
 String json = "...";
