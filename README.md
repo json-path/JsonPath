@@ -117,7 +117,7 @@ Object document = Configuration.defaultConfiguration().jsonProvider().parse(json
 String author1 = JsonPath.read(document, "$.store.book[0].author");
 String author2 = JsonPath.read(document, "$.store.book[1].author");
 ```
-Personally I prefer the more flexible `ReadContext` API.
+JsonPat also provides a fluent API that is also the most flexible one.
 
 ```java
 String json = "...";
@@ -132,6 +132,16 @@ List<Map<String, Object>> expensiveBooks = JsonPath
                             .parse(json)
                             .read("$.store.book[?(@.price > 10)]", List.class);
 ```
+
+All `read` operations are overloaded and also supports compiled JsonPath objects. This can be useful from a performance perspective if the same path is to be executed
+many times.
+   
+```
+JsonPath compiledPath = JsonPath.compile("$.store.book[1].author");
+
+String author2 = JsonPath.read(document, compiledPath);
+```   
+
 
 What is Returned When?
 ----------------------
@@ -160,7 +170,7 @@ try to perform the mapping. If a book, in the sample json above,  had a long val
 as shown below. 
 
 ```java
-Date date = JsonPath.parse(json).read("$.store.book[0].published", date.class)
+Date date = JsonPath.parse(json).read("$.store.book[0].published", Date.class)
 ```
 
 If you use the `JacksonJsonProvider` you can even map your JsonPath output directly into POJO's.
