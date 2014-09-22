@@ -1,15 +1,15 @@
-JSONPath (1.0.0)
-========
+Jayway JsonPath (1.0.0)
+===============
 
 **A Java DSL for reading JSON documents.**
 
 [![Build Status](https://travis-ci.org/jayway/JsonPath.svg?branch=master)](https://travis-ci.org/jayway/JsonPath)
 
-JSONPath expressions always refer to a JSON structure in the same way as XPath expression are used in combination 
-with an XML document. The "root member object" in JSONPath is always referred to as `$` regardless if it is an 
+Jayway JsonPath is a Java port of [Stefan Goessner implementation](http://goessner.net/articles/JsonPath/). JsonPath expressions always refer to a JSON structure in the same way as XPath expression are used in combination 
+with an XML document. The "root member object" in JsonPath is always referred to as `$` regardless if it is an 
 object or array.
 
-JSONPath expressions can use the dot–notation
+JsonPath expressions can use the dot–notation
 
 `$.store.book[0].title`
 
@@ -35,7 +35,7 @@ Operators
 Path Examples
 -------------
 
-Given the 
+Given the json
 
 ```javascript
 {
@@ -79,21 +79,21 @@ Given the
 
 | JSONPath | Result |
 | :------- | :----- |
-| `$.store.book[*].author`      | The authors of all books            |
-| `$..author`                   | All authors                         |
-| `$.store.*`                   | All things, both books and bicycles |
-| `$.store..price`              | The price of everything             |
-| `$..book[2]`                  | The third book                      |
-| `$..book[(@.length-1)]`       | The last book                       |
-| `$..book[0,1]`                | The first two books                 |
+| `$.store.book[*].author`      | The authors of all books              |
+| `$..author`                   | All authors                           |
+| `$.store.*`                   | All things, both books and bicycles   |
+| `$.store..price`              | The price of everything               |
+| `$..book[2]`                  | The third book                        |
+| `$..book[(@.length-1)]`       | The last book                         |
+| `$..book[0,1]`                | The first two books                   |
 | `$..book[:2]`                 | All books from index 0 (inclusive) until index 2 (exclusive) |
 | `$..book[1:2]`                | All books from index 1 (inclusive) until index 2 (exclusive) |
-| `$..book[-2:]`                | Last two books                      |
-| `$..book[2:]`                 | Book number two from tail           |
-| `$..book[?(@.isbn)]`          | All books with an ISBN number       |
+| `$..book[-2:]`                | Last two books                        |
+| `$..book[2:]`                 | Book number two from tail             |
+| `$..book[?(@.isbn)]`          | All books with an ISBN number         |
 | `$.store.book[?(@.price < 10)]` | All books in store cheaper than 10  |
 | `$..book[?(@.price <= $['expensive'])]` | All books in store that are not "expensive"  |
-| `$..*`                        | Give me every thing you got         |
+| `$..*`                        | Give me every thing                   |
 
 
 Reading a document
@@ -114,10 +114,10 @@ parse the json first.
 String json = "...";
 Object document = Configuration.defaultConfiguration().jsonProvider().parse(json);
 
-String author1 = JsonPath.read(document, "$.store.book[0].author");
-String author2 = JsonPath.read(document, "$.store.book[1].author");
+String author0 = JsonPath.read(document, "$.store.book[0].author");
+String author1 = JsonPath.read(document, "$.store.book[1].author");
 ```
-JsonPath also provides a fluent API that is also the most flexible one.
+JsonPath also provides a fluent API. This is also the most flexible one.
 
 ```java
 String json = "...";
@@ -150,7 +150,7 @@ try to cast the result to the type expected by the invoker.
 
 ```java
 //Will throw an java.lang.ClassCastException    
-List<String>  list = JsonPath.parse(json).read("$.store.book[0].author")
+List<String> list = JsonPath.parse(json).read("$.store.book[0].author")
 
 //Works fine
 String author = JsonPath.parse(json).read("$.store.book[0].author")
