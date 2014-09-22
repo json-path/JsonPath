@@ -232,7 +232,7 @@ PATH vs VALUE
 As specified in the Goessner implementation a JsonPath can return either `Path` or `Value`. `Value` is the default and what all the exaples above are reuturning. If you rather have the path of the elements our query is hitting this can be acheived with an option.
 
 ```java
-Configuration conf = Configuration.builder().options(AS_PATH_LIST).build();
+Configuration conf = Configuration.builder().options(Option.AS_PATH_LIST).build();
 
 List<String> pathList = using(conf).parse(JSON_DOCUMENT).read("$..author");
 
@@ -253,8 +253,7 @@ JsonPath is shipped with three different JsonProviders:
 * [JacksonJsonProvider](https://github.com/FasterXML/jackson)
 * [GsonJsonProvider](https://code.google.com/p/google-gson/) (experimental)
 
-
-Note that the JacksonJsonProvider requires `com.fasterxml.jackson.core:jackson-databind:2.4.1.3` and the GsonJsonProvider requires `com.google.code.gson:gson:2.3` on your classpath. 
+Changing the configuration defaults as demonstrated should only be done when your application is being initialized. Changes during runtime is strongly discouraged, especially in amulti threaded application.  
 
 ```java
 Configuration.setDefaults(new Configuration.Defaults() {
@@ -277,6 +276,8 @@ Configuration.setDefaults(new Configuration.Defaults() {
     }
 });
 ```
+
+Note that the JacksonJsonProvider requires `com.fasterxml.jackson.core:jackson-databind:2.4.1.3` and the GsonJsonProvider requires `com.google.code.gson:gson:2.3` on your classpath. 
 
 Binaries
 --------
