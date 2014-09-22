@@ -18,10 +18,20 @@ public class Filter implements Predicate {
         this.criteriaList = criteriaList;
     }
 
+    /**
+     * Creates a new Filter based on given criteria
+     * @param criteria criteria
+     * @return a new Filter
+     */
     public static Filter filter(Predicate criteria) {
         return new Filter(criteria);
     }
 
+    /**
+     * Create a new Filter based on given list of criteria.
+     * @param criteriaList list of criteria
+     * @return
+     */
     public static Filter filter(List<Predicate> criteriaList) {
         return new Filter(criteriaList);
     }

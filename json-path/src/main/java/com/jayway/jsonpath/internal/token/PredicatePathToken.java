@@ -1,4 +1,4 @@
-package com.jayway.jsonpath.internal.compiler;
+package com.jayway.jsonpath.internal.token;
 
 import com.jayway.jsonpath.Configuration;
 import com.jayway.jsonpath.InvalidPathException;

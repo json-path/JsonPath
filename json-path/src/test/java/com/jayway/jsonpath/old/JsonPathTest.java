@@ -82,7 +82,7 @@ public class JsonPathTest extends BaseTest {
     @Test(expected = PathNotFoundException.class)
     public void missing_prop() {
 
-        //Object read = JsonPath.using(Configuration.defaultConfiguration().options(Option.THROW_ON_MISSING_PROPERTY)).parse(DOCUMENT).read("$.store.book[*].fooBar");
+        //Object read = JsonPath.using(Configuration.defaultConfiguration().setOptions(Option.THROW_ON_MISSING_PROPERTY)).parse(DOCUMENT).read("$.store.book[*].fooBar");
         //Object read = JsonPath.using(Configuration.defaultConfiguration()).parse(DOCUMENT).read("$.store.book[*].fooBar");
         Object read2 = JsonPath.using(Configuration.defaultConfiguration()).parse(DOCUMENT).read("$.store.book[*].fooBar.not");
 

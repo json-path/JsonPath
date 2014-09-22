@@ -2,7 +2,7 @@ package com.jayway.jsonpath;
 
 import com.jayway.jsonpath.internal.Path;
 import com.jayway.jsonpath.internal.PathCompiler;
-import com.jayway.jsonpath.internal.compiler.PredicateContextImpl;
+import com.jayway.jsonpath.internal.token.PredicateContextImpl;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -566,6 +566,38 @@ public class Criteria implements Predicate {
         return this;
     }
 
+    /**
+     * Creates a new criteria
+     * @param path path to evaluate in criteria
+     * @param operator operator
+     * @param expected expected value
+     * @return a new Criteria
+     */
+    public static Criteria create(String path, String operator, String expected) {
+        if (!expected.isEmpty() && expected.charAt(0) == '\'' && expected.charAt(expected.length() - 1) == '\'') {
+            expected = expected.substring(1, expected.length() - 1);
+        }
+
+        Path p = PathCompiler.compile(path);
+
+        if (("$".equals(path) || "@".equals(path) )&& (operator == null || operator.isEmpty()) && (expected == null || expected.isEmpty())) {
+            return new Criteria(p, CriteriaType.NE, null);
+        } else if (operator.isEmpty()) {
+            return Criteria.where(path).exists(true);
+        } else {
+            if(expected.startsWith("$") || expected.startsWith("@")){
+                Path compile = PathCompiler.compile(expected);
+                if(!compile.isDefinite()){
+                    throw new InvalidPathException("the predicate path: " + expected + " is not definite");
+                }
+                return new Criteria(p, CriteriaType.parse(operator), compile);
+            } else {
+                return new Criteria(p, CriteriaType.parse(operator), expected);
+            }
+
+        }
+    }
+
     private static int safeCompare(Object expected, Object providerParsed) throws ValueCompareException {
 
         if(expected == providerParsed){
@@ -605,30 +637,7 @@ public class Criteria implements Predicate {
         return (o == null || ((o instanceof String) && ("null".equals(o))));
     }
 
-    public static Criteria create(String path, String operator, String expected) {
-        if (!expected.isEmpty() && expected.charAt(0) == '\'' && expected.charAt(expected.length() - 1) == '\'') {
-            expected = expected.substring(1, expected.length() - 1);
-        }
 
-        Path p = PathCompiler.compile(path);
-
-        if (("$".equals(path) || "@".equals(path) )&& (operator == null || operator.isEmpty()) && (expected == null || expected.isEmpty())) {
-            return new Criteria(p, CriteriaType.NE, null);
-        } else if (operator.isEmpty()) {
-            return Criteria.where(path).exists(true);
-        } else {
-            if(expected.startsWith("$") || expected.startsWith("@")){
-                Path compile = PathCompiler.compile(expected);
-                if(!compile.isDefinite()){
-                    throw new InvalidPathException("the predicate path: " + expected + " is not definite");
-                }
-                return new Criteria(p, CriteriaType.parse(operator), compile);
-            } else {
-                return new Criteria(p, CriteriaType.parse(operator), expected);
-            }
-
-        }
-    }
 
     @Override
     public String toString() {

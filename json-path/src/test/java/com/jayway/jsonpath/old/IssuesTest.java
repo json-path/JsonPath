@@ -251,7 +251,7 @@ public class IssuesTest {
     @Test
     public void issue_22b() throws Exception {
         String json = "{\"a\":[{\"b\":1,\"c\":2},{\"b\":5,\"c\":2}]}";
-        List<Object> res = JsonPath.using(Configuration.defaultConfiguration().options(Option.DEFAULT_PATH_LEAF_TO_NULL)).parse(json).read("a[?(@.b==5)].d");
+        List<Object> res = JsonPath.using(Configuration.defaultConfiguration().setOptions(Option.DEFAULT_PATH_LEAF_TO_NULL)).parse(json).read("a[?(@.b==5)].d");
         Assertions.assertThat(res).hasSize(1).containsNull();
     }
 
@@ -383,7 +383,7 @@ public class IssuesTest {
 
         Assertions.assertThat(read(json, "test")).isNull();
 
-        Assertions.assertThat(JsonPath.using(Configuration.defaultConfiguration().options(Option.SUPPRESS_EXCEPTIONS)).parse(json).read("nonExistingProperty")).isNull();
+        Assertions.assertThat(JsonPath.using(Configuration.defaultConfiguration().setOptions(Option.SUPPRESS_EXCEPTIONS)).parse(json).read("nonExistingProperty")).isNull();
 
         try {
             read(json, "nonExistingProperty");
@@ -419,7 +419,7 @@ public class IssuesTest {
 
         String json = "{\"a\": {}}";
 
-        Configuration configuration = Configuration.defaultConfiguration().options(Option.SUPPRESS_EXCEPTIONS);
+        Configuration configuration = Configuration.defaultConfiguration().setOptions(Option.SUPPRESS_EXCEPTIONS);
         Assertions.assertThat(JsonPath.using(configuration).parse(json).read("a.x")).isNull();
 
         try {

@@ -1,6 +1,6 @@
 package com.jayway.jsonpath;
 
-import com.jayway.jsonpath.internal.compiler.PredicateContextImpl;
+import com.jayway.jsonpath.internal.token.PredicateContextImpl;
 import com.jayway.jsonpath.internal.spi.json.GsonJsonProvider;
 import com.jayway.jsonpath.internal.spi.mapper.GsonMappingProvider;
 
@@ -14,7 +14,7 @@ public class BaseTest {
             }
 
             @Override
-            public Set<Option> options() {
+            public Set<Option> setOptions() {
                 return EnumSet.noneOf(Option.class);
             }
 

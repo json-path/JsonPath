@@ -63,7 +63,7 @@ public class PropertyPathTokenTest {
     @Test(expected = PathNotFoundException.class)
     public void property_not_found_option_throw() {
 
-        //String result = JsonPath.using(Configuration.defaultConfiguration().options(Option.THROW_ON_MISSING_PROPERTY)).parse(SIMPLE_MAP).read("$.not-found");
+        //String result = JsonPath.using(Configuration.defaultConfiguration().setOptions(Option.THROW_ON_MISSING_PROPERTY)).parse(SIMPLE_MAP).read("$.not-found");
         String result = JsonPath.using(Configuration.defaultConfiguration()).parse(SIMPLE_MAP).read("$.not-found");
 
         assertThat(result).isNull();

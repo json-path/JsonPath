@@ -65,7 +65,7 @@ public class NullHandlingTest {
     @Test
     public void the_age_of_all_with_age_defined() {
         //List<Integer> result = JsonPath.read(DOCUMENT, "$.children[*].age");
-        List<Integer> result = JsonPath.using(Configuration.defaultConfiguration().options(Option.SUPPRESS_EXCEPTIONS)).parse(DOCUMENT).read("$.children[*].age");
+        List<Integer> result = JsonPath.using(Configuration.defaultConfiguration().setOptions(Option.SUPPRESS_EXCEPTIONS)).parse(DOCUMENT).read("$.children[*].age");
 
         Assertions.assertThat(result).containsSequence(0, null);
 
@@ -81,7 +81,7 @@ public class NullHandlingTest {
     public void path() {
         String json = "{\"a\":[{\"b\":1,\"c\":2},{\"b\":5,\"c\":2}]}";
 
-        List<Object> result = JsonPath.using(Configuration.defaultConfiguration().options(Option.DEFAULT_PATH_LEAF_TO_NULL)).parse(json).read("a[?(@.b==5)].d");
+        List<Object> result = JsonPath.using(Configuration.defaultConfiguration().setOptions(Option.DEFAULT_PATH_LEAF_TO_NULL)).parse(json).read("a[?(@.b==5)].d");
 
 
         System.out.println(result);

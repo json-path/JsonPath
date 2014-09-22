@@ -26,6 +26,9 @@ import java.util.Set;
 import static com.jayway.jsonpath.internal.Utils.notNull;
 import static java.util.Arrays.asList;
 
+/**
+ * Immutable configuration object
+ */
 public class Configuration {
 
     private static Defaults DEFAULTS = new Defaults() {
@@ -62,55 +65,103 @@ public class Configuration {
     private Configuration(JsonProvider jsonProvider, MappingProvider mappingProvider, EnumSet<Option> options) {
         notNull(jsonProvider, "jsonProvider can not be null");
         notNull(mappingProvider, "mappingProvider can not be null");
-        notNull(options, "options can not be null");
+        notNull(options, "setOptions can not be null");
         this.jsonProvider = jsonProvider;
         this.mappingProvider = mappingProvider;
         this.options = Collections.unmodifiableSet(options);
     }
 
+    /**
+     * Creates a new Configuration based on the given {@link com.jayway.jsonpath.spi.json.JsonProvider}
+     * @param newJsonProvider json provider to use in new configuration
+     * @return a new configuration
+     */
     public Configuration jsonProvider(JsonProvider newJsonProvider) {
         return Configuration.builder().jsonProvider(newJsonProvider).mappingProvider(mappingProvider).options(options).build();
     }
 
+    /**
+     * Returns {@link com.jayway.jsonpath.spi.json.JsonProvider} used by this configuration
+     * @return jsonProvider used
+     */
     public JsonProvider jsonProvider() {
         return jsonProvider;
     }
 
-    public MappingProvider mappingProvider() {
-        return mappingProvider;
-    }
-
+    /**
+     * Creates a new Configuration based on the given {@link com.jayway.jsonpath.spi.mapper.MappingProvider}
+     * @param newMappingProvider mapping provider to use in new configuration
+     * @return a new configuration
+     */
     public Configuration mappingProvider(MappingProvider newMappingProvider) {
         return Configuration.builder().jsonProvider(jsonProvider).mappingProvider(newMappingProvider).options(options).build();
     }
 
+    /**
+     * Returns {@link com.jayway.jsonpath.spi.mapper.MappingProvider} used by this configuration
+     * @return mappingProvider used
+     */
+    public MappingProvider mappingProvider() {
+        return mappingProvider;
+    }
+
+    /**
+     * Creates a new configuration by adding the new options to the options used in this configuration.
+     * @param options options to add
+     * @return a new configuration
+     */
     public Configuration addOptions(Option... options) {
         EnumSet<Option> opts = EnumSet.noneOf(Option.class);
         opts.addAll(this.options);
         opts.addAll(asList(options));
         return Configuration.builder().jsonProvider(jsonProvider).mappingProvider(mappingProvider).options(opts).build();
     }
-    public Configuration options(Option... options) {
+
+    /**
+     * Creates a new configuration with the provided options. Options in this configuration are discarded.
+     * @param options
+     * @return
+     */
+    public Configuration setOptions(Option... options) {
         return Configuration.builder().jsonProvider(jsonProvider).mappingProvider(mappingProvider).options(options).build();
     }
 
+    /**
+     * Returns the options used by this configuration
+     * @return
+     */
     public Set<Option> getOptions() {
         return options;
     }
 
+    /**
+     * Check if this configuration contains the given option
+     * @param option option to check
+     * @return true if configurations contains option
+     */
     public boolean containsOption(Option option){
         return options.contains(option);
     }
 
-
+    /**
+     * Creates a new configuration based on default values
+     * @return a new configuration based on defaults
+     */
     public static Configuration defaultConfiguration() {
         return Configuration.builder().jsonProvider(DEFAULTS.jsonProvider()).options(DEFAULTS.options()).build();
     }
 
+    /**
+     * Returns a new ConfigurationBuilder
+     * @return a builder
+     */
     public static ConfigurationBuilder builder() {
         return new ConfigurationBuilder();
     }
 
+    /**
+     * Configuration builder
+     */
     public static class ConfigurationBuilder {
 
         private JsonProvider jsonProvider;
@@ -158,8 +209,8 @@ public class Configuration {
         JsonProvider jsonProvider();
 
         /**
-         * Returns default options
-         * @return options
+         * Returns default setOptions
+         * @return setOptions
          */
         Set<Option> options();
 

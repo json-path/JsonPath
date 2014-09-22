@@ -1,8 +1,8 @@
 package com.jayway.jsonpath.internal;
 
 import com.jayway.jsonpath.Configuration;
-import com.jayway.jsonpath.internal.compiler.EvaluationContextImpl;
-import com.jayway.jsonpath.internal.compiler.PathToken;
+import com.jayway.jsonpath.internal.token.EvaluationContextImpl;
+import com.jayway.jsonpath.internal.token.PathToken;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
