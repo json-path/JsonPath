@@ -98,7 +98,7 @@ Given the
 
 Reading a document
 ------------------
-The simplest most straight forward way to use JsonPath is via the static convenience API.
+The simplest most straight forward way to use JsonPath is via the static read API.
 
 ```java
 String json = "...";
@@ -156,14 +156,14 @@ List<String>  list = JsonPath.parse(json).read("$.store.book[0].author")
 String author = JsonPath.parse(json).read("$.store.book[0].author")
 ```
 
-When evaluating a path you need to understand the concept of when a path is `definite`. A path is not definite if it contains:
+When evaluating a path you need to understand the concept of when a path is `definite`. A path is `indefinite` if it contains:
 
 * `..` - a deep scan operator
 * `?(<expression>)` - an expression
 * `[<number>, <number> (, <number>)]` - multiple array indexes
 * `['<name>', '<name>' (, '<name>')]` - multiple object properties
 
-Non `definite` paths always returns a list. 
+`Indefinite` paths always returns a list. 
 
 By default some simple conversions are provided by the MappingProvider. This allows to specify the return type you want and the MappingProvider will
 try to perform the mapping. If a book, in the sample json above,  had a long value 'published' you could perform object mapping between `Long` and `Date`
@@ -229,20 +229,37 @@ List<Map<String, Object>> books = reader.read("$.store.book[?].isbn", List.class
 
 PATH vs VALUE
 -------------
+As specified in the Goessner implementation a JsonPath can return either `Path` or `Value`. `Value` is the default and what all the exaples above are reuturning. If you rather have the path of the elements our query is hitting this can be acheived with an option.
+
+```java
+Configuration conf = Configuration.builder().options(AS_PATH_LIST).build();
+
+List<String> pathList = using(conf).parse(JSON_DOCUMENT).read("$..author");
+
+assertThat(pathList).containsExactly(
+    "$['store']['book'][0]['author']",
+    "$['store']['book'][1]['author']",
+    "$['store']['book'][2]['author']",
+    "$['store']['book'][3]['author']");
+```
+
 
 Tweaking Configuration
 ----------------------
 
-The default JsonProvider is `JsonSmartJsonProvider` backed by [json-smart](https://code.google.com/p/json-smart/), a small and fast JSONParser. If you
-prefer Jackson there is a `JacksonJsonProvider` available. There is also an experimental `GsonJsonProvider`. 
+JsonPath is shipped with three different JsonProviders:
 
-* JacksonJsonProvider requires `com.fasterxml.jackson.core:jackson-databind:2.4.1.3` on your classpath. 
-* GsonJsonProvider requires `com.google.code.gson:gson:2.3` on your classpath. 
+* [JsonSmartJsonProvider](https://code.google.com/p/json-smart/) (default)
+* [JacksonJsonProvider](https://github.com/FasterXML/jackson)
+* [GsonJsonProvider](https://code.google.com/p/google-gson/) (experimental)
+
+
+Note that the JacksonJsonProvider requires `com.fasterxml.jackson.core:jackson-databind:2.4.1.3` and the GsonJsonProvider requires `com.google.code.gson:gson:2.3` on your classpath. 
 
 ```java
 Configuration.setDefaults(new Configuration.Defaults() {
 
-    private final JsonProvider jsonProvider = new com.jayway.jsonpath.internal.spi.json.JacksonJsonProvider();
+    private final JsonProvider jsonProvider = new JacksonJsonProvider();
       
     @Override
     public JsonProvider jsonProvider() {
