@@ -63,6 +63,10 @@ public abstract class PathToken {
                         }
                     }
                     ctx.addResult(evalPath, propertyVal);
+                } else {
+                    if(ctx.options().contains(Option.DEFAULT_PATH_LEAF_TO_NULL)){
+                        ctx.addResult(evalPath, null);
+                    }
                 }
             }
         }
