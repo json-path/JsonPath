@@ -5,7 +5,7 @@ Jayway JsonPath (1.0.0)
 
 [![Build Status](https://travis-ci.org/jayway/JsonPath.svg?branch=master)](https://travis-ci.org/jayway/JsonPath)
 
-Jayway JsonPath is a Java port of [Stefan Goessner implementation](http://goessner.net/articles/JsonPath/). JsonPath expressions always refer to a JSON structure in the same way as XPath expression are used in combination 
+Jayway JsonPath is a Java port of [Stefan Goessner JSONPath implementation](http://goessner.net/articles/JsonPath/). JsonPath expressions always refer to a JSON structure in the same way as XPath expression are used in combination 
 with an XML document. The "root member object" in JsonPath is always referred to as `$` regardless if it is an 
 object or array.
 
@@ -77,7 +77,7 @@ Given the json
 }
 ```
 
-| JSONPath (click it to try it)| Result |
+| JsonPath (click link to try)| Result |
 | :------- | :----- |
 | <a href="http://jsonpath.herokuapp.com/?path=$.store.book[*].author" target="_blank">$.store.book[*].author</a>| The authors of all books     |
 | <a href="http://jsonpath.herokuapp.com/?path=$..author" target="_blank">$..author</a>                   | All authors                         |
@@ -96,7 +96,7 @@ Given the json
 | <a href="http://jsonpath.herokuapp.com/?path=$..*" target="_blank">$..*</a>                        | Give me every thing                   |
 
 
-Reading a document
+Reading a Document
 ------------------
 The simplest most straight forward way to use JsonPath is via the static read API.
 
@@ -185,7 +185,7 @@ Predicates
 ----------
 There are three different ways to create filter predicates in JsonPath.
 
-###Inline predicates
+###Inline Predicates
 
 Inline predicates are the ones defined in the path.
 
@@ -214,7 +214,7 @@ List<Map<String, Object>> books =  parse(json).read("$.store.book[?]", cheapFict
 Notice the placeholder `?` for the filter in the path. When multiple filters are provided they are applied in order where the number of placeholders must match 
 the number of provided filters. You can specify multiple predicate placeholders in one filter operation `[?, ?]`, both predicates must match. 
 
-###Roll your own
+###Roll Your Own
  
 Third option is to implement your own predicates
  
@@ -229,9 +229,9 @@ Predicate booksWithISBN = new Predicate() {
 List<Map<String, Object>> books = reader.read("$.store.book[?].isbn", List.class, booksWithISBN);
 ```
 
-PATH vs VALUE
+Path vs Value
 -------------
-As specified in the Goessner implementation a JsonPath can return either `Path` or `Value`. `Value` is the default and what all the exaples above are reuturning. If you rather have the path of the elements our query is hitting this can be acheived with an option.
+In the Goessner implementation a JsonPath can return either `Path` or `Value`. `Value` is the default and what all the exaples above are reuturning. If you rather have the path of the elements our query is hitting this can be acheived with an option.
 
 ```java
 Configuration conf = Configuration.builder().options(Option.AS_PATH_LIST).build();
@@ -351,9 +351,7 @@ JsonPath is available at the Central Maven Repository. Maven users add this to y
     <version>0.9.1</version>
 </dependency>
 ```
-
 Gradle users
- 
  
 ```
 compile 'com.jayway.jsonpath:json-path:0.9.1'
