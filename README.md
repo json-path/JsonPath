@@ -5,7 +5,7 @@ Jayway JsonPath (1.0.0)
 
 [![Build Status](https://travis-ci.org/jayway/JsonPath.svg?branch=master)](https://travis-ci.org/jayway/JsonPath)
 
-Jayway JsonPath is a Java port of [Stefan Goessner JSONPath implementation](http://goessner.net/articles/JsonPath/). JsonPath expressions always refer to a JSON structure in the same way as XPath expression are used in combination 
+Jayway JsonPath is a Java port of [Stefan Goessner JsonPath implementation](http://goessner.net/articles/JsonPath/). JsonPath expressions always refer to a JSON structure in the same way as XPath expression are used in combination 
 with an XML document. The "root member object" in JsonPath is always referred to as `$` regardless if it is an 
 object or array.
 
@@ -145,7 +145,7 @@ String author2 = JsonPath.read(document, compiledPath);
 
 What is Returned When?
 ----------------------
-When using JsonPath in java its important to know what type you expect in your result. Json path will automatically 
+When using JsonPath in java its important to know what type you expect in your result. JsonPath will automatically 
 try to cast the result to the type expected by the invoker.
 
 ```java
@@ -165,9 +165,8 @@ When evaluating a path you need to understand the concept of when a path is `def
 
 `Indefinite` paths always returns a list. 
 
-By default some simple object mapping is provided by the MappingProvider SPI. This allows to specify the return type you want and the MappingProvider will
-try to perform the mapping. If a book, in the sample json above,  had a long value 'published' you could perform object mapping between `Long` and `Date`
-as shown below. 
+By default a simple object mapper is provided by the MappingProvider SPI. This allows you to specify the return type you want and the MappingProvider will
+try to perform the mapping. In the example below mapping between `Long` and `Date` is demonstrated. 
 
 ```java
 String json = "{\"date_as_long\" : 1411455611975}";
