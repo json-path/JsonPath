@@ -136,7 +136,7 @@ List<Map<String, Object>> expensiveBooks = JsonPath
 All `read` operations are overloaded and also supports compiled JsonPath objects. This can be useful from a performance perspective if the same path is to be executed
 many times.
    
-```
+```java
 JsonPath compiledPath = JsonPath.compile("$.store.book[1].author");
 
 String author2 = JsonPath.read(document, compiledPath);

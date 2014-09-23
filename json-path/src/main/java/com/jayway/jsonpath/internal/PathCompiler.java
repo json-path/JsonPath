@@ -134,6 +134,7 @@ public class PathCompiler {
     }
 
     private static void assertValidFieldChars(String s, int start, int positions) {
+        /*
         int i = start;
         while (i < start + positions) {
             char c = s.charAt(i);
@@ -143,6 +144,7 @@ public class PathCompiler {
             }
             i++;
         }
+        */
     }
 
     private static int fastForward(String s, int index) {
