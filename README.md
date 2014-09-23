@@ -253,7 +253,7 @@ JsonPath is shipped with three different JsonProviders:
 * [JacksonJsonProvider](https://github.com/FasterXML/jackson)
 * [GsonJsonProvider](https://code.google.com/p/google-gson/) (experimental)
 
-Changing the configuration defaults as demonstrated should only be done when your application is being initialized. Changes during runtime is strongly discouraged, especially in amulti threaded application.  
+Changing the configuration defaults as demonstrated should only be done when your application is being initialized. Changes during runtime is strongly discouraged, especially in multi threaded applications.  
 
 ```java
 Configuration.setDefaults(new Configuration.Defaults() {
