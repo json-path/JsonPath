@@ -236,7 +236,7 @@ As specified in the Goessner implementation a JsonPath can return either `Path` 
 ```java
 Configuration conf = Configuration.builder().options(Option.AS_PATH_LIST).build();
 
-List<String> pathList = using(conf).parse(JSON_DOCUMENT).read("$..author");
+List<String> pathList = using(conf).parse(json).read("$..author");
 
 assertThat(pathList).containsExactly(
     "$['store']['book'][0]['author']",
@@ -253,6 +253,7 @@ Tweaking Configuration
 When creating your Configuration there are a few option flags that can alter the default behaviour.
 
 **DEFAULT_PATH_LEAF_TO_NULL**
+<br/>
 This option makes JsonPath return null for missing leafs. Consider the following json
 
 ```javascript
@@ -284,6 +285,7 @@ String gender1 = JsonPath.using(conf2).read(json, "$[1]['gender']");
 ```
  
 **ALWAYS_RETURN_LIST**
+<br/>
 This option configures JsonPath to return a list even when the path is `definite`. 
  
 ```java
@@ -295,6 +297,7 @@ List<String> genders0 = JsonPath.using(conf).read(json, "$[0]['gender']");
 List<String> genders1 = JsonPath.using(conf).read(json, "$[1]['gender']");
 ``` 
 **SUPPRESS_EXCEPTIONS**
+<br/>
 This option makes sure no exceptions are propagated from path evaluation. It follows these simple rules:
 
 * If option `ALWAYS_RETURN_LIST` is present an empty list will be returned
