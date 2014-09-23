@@ -211,7 +211,7 @@ Filter cheapFictionFilter = filter(where("category").is("fiction").and("price").
 List<Map<String, Object>> books =  parse(json).read("$.store.book[?]", cheapFictionFilter);
 
 ```
-Note the placeholder '?' for the filter in the path. When multiple filters are provided they are applied in order where the number of placeholders must match 
+Notice the placeholder `?` for the filter in the path. When multiple filters are provided they are applied in order where the number of placeholders must match 
 the number of provided filters. You can specify multiple predicate placeholders in one filter operation `[?, ?]`, both predicates must match. 
 
 ###Roll your own
@@ -249,13 +249,68 @@ assertThat(pathList).containsExactly(
 Tweaking Configuration
 ----------------------
 
+###Options
+When creating your Configuration there are a few option flags that can alter the default behaviour.
+
+**DEFAULT_PATH_LEAF_TO_NULL**
+This option makes JsonPath return null for missing leafs. Consider the following json
+
+```javascript
+[
+   {
+      "name" : "john",
+      "gender" : "male"
+   },
+   {
+      "name" : "ben"
+   }
+]
+```
+
+```java
+Configuration conf = Configuration.defaultConfiguration();
+
+//Works fine
+String gender0 = JsonPath.using(conf).read(json, "$[0]['gender']");
+//PathNotFoundException thrown
+String gender1 = JsonPath.using(conf).read(json, "$[1]['gender']");
+
+Configuration conf2 = conf.addOptions(Option.DEFAULT_PATH_LEAF_TO_NULL);
+
+//Works fine
+String gender0 = JsonPath.using(conf2).read(json, "$[0]['gender']");
+//Works fine (null is returned)
+String gender1 = JsonPath.using(conf2).read(json, "$[1]['gender']");
+```
+ 
+**ALWAYS_RETURN_LIST**
+This option configures JsonPath to return a list even when the path is `definite`. 
+ 
+```java
+Configuration conf = Configuration.defaultConfiguration();
+
+//Works fine
+List<String> genders0 = JsonPath.using(conf).read(json, "$[0]['gender']");
+//PathNotFoundException thrown
+List<String> genders1 = JsonPath.using(conf).read(json, "$[1]['gender']");
+``` 
+**SUPPRESS_EXCEPTIONS**
+This option makes sure no exceptions are propagated from path evaluation. It follows these simple rules:
+
+* If option `ALWAYS_RETURN_LIST` is present an empty list will be returned
+* If option `ALWAYS_RETURN_LIST` is **NOT** present null returned 
+
+
+###JsonProvider
+
 JsonPath is shipped with three different JsonProviders:
 
 * [JsonSmartJsonProvider](https://code.google.com/p/json-smart/) (default)
 * [JacksonJsonProvider](https://github.com/FasterXML/jackson)
 * [GsonJsonProvider](https://code.google.com/p/google-gson/) (experimental)
 
-Changing the configuration defaults as demonstrated should only be done when your application is being initialized. Changes during runtime is strongly discouraged, especially in multi threaded applications.  
+Changing the configuration defaults as demonstrated should only be done when your application is being initialized. Changes during runtime is strongly discouraged, especially in multi threaded applications.
+  
 
 ```java
 Configuration.setDefaults(new Configuration.Defaults() {
