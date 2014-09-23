@@ -67,8 +67,7 @@ public class Filter implements Predicate {
             @Override
             public boolean apply(PredicateContext ctx) {
                 boolean a = Filter.this.apply(ctx);
-                boolean b = other.apply(ctx);
-                return a || b;
+                return a || other.apply(ctx);
             }
         };
     }
@@ -78,8 +77,7 @@ public class Filter implements Predicate {
             @Override
             public boolean apply(PredicateContext ctx) {
                 boolean a = Filter.this.apply(ctx);
-                boolean b = other.apply(ctx);
-                return a && b;
+                return a && other.apply(ctx);
             }
         };
     }
