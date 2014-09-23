@@ -193,7 +193,8 @@ Inline predicates are the ones defined in the path.
 List<Map<String, Object>> books =  JsonPath.parse(json).read("$.store.book[?(@.price < 10)]");
 ```
 
-In the current implementation you can use `&&` to combine multiple predicates `[?(@.price < 10 && @.category == 'fiction')]`. OR operations are not supported yet.
+In the current implementation you can use `&&` to combine multiple predicates `[?(@.price < 10 && @.category == 'fiction')]`. 
+OR operations are not supported in inline predicates yet.
  
 ###The Filter API
  
@@ -213,6 +214,12 @@ List<Map<String, Object>> books =  parse(json).read("$.store.book[?]", cheapFict
 ```
 Notice the placeholder `?` for the filter in the path. When multiple filters are provided they are applied in order where the number of placeholders must match 
 the number of provided filters. You can specify multiple predicate placeholders in one filter operation `[?, ?]`, both predicates must match. 
+
+Filters can also be combined with 'OR' and 'AND'
+```java
+Filter fooOrBar = filter(where("foo").exists(true)).or(where("bar").exists(true));
+Filter fooAndBar = filter(where("foo").exists(true)).and(where("bar").exists(true));
+```
 
 ###Roll Your Own
  

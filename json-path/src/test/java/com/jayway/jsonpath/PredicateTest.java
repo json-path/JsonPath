@@ -14,7 +14,6 @@ public class PredicateTest extends BaseTest {
 
     @Test
     public void predicates_filters_can_be_applied() {
-
         Predicate booksWithISBN = new Predicate() {
             @Override
             public boolean apply(PredicateContext ctx) {
@@ -23,7 +22,5 @@ public class PredicateTest extends BaseTest {
         };
 
         assertThat(reader.read("$.store.book[?].isbn", List.class, booksWithISBN)).containsOnly("0-395-19395-8", "0-553-21311-3");
-
-
     }
 }
