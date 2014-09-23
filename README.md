@@ -77,23 +77,23 @@ Given the json
 }
 ```
 
-| JSONPath (try it by clicking link)| Result |
+| JSONPath (click it to try it)| Result |
 | :------- | :----- |
-| <a href="http://jsonpath.herokuapp.com/?path=$.store.book[*].author" target="_blank">$.store.book[*].author</a>| The authors of all books              |
-| `$..author`                   | All authors                           |
-| `$.store.*`                   | All things, both books and bicycles   |
-| `$.store..price`              | The price of everything               |
-| `$..book[2]`                  | The third book                        |
-| `$..book[(@.length-1)]`       | The last book                         |
-| `$..book[0,1]`                | The first two books                   |
-| `$..book[:2]`                 | All books from index 0 (inclusive) until index 2 (exclusive) |
-| `$..book[1:2]`                | All books from index 1 (inclusive) until index 2 (exclusive) |
-| `$..book[-2:]`                | Last two books                        |
-| `$..book[2:]`                 | Book number two from tail             |
-| `$..book[?(@.isbn)]`          | All books with an ISBN number         |
-| `$.store.book[?(@.price < 10)]` | All books in store cheaper than 10  |
-| `$..book[?(@.price <= $['expensive'])]` | All books in store that are not "expensive"  |
-| `$..*`                        | Give me every thing                   |
+| <a href="http://jsonpath.herokuapp.com/?path=$.store.book[*].author" target="_blank">$.store.book[*].author</a>| The authors of all books     |
+| <a href="http://jsonpath.herokuapp.com/?path=$..author" target="_blank">$..author</a>                   | All authors                         |
+| <a href="http://jsonpath.herokuapp.com/?path=$.store.*" target="_blank">$.store.*</a>                  | All things, both books and bicycles  |
+| <a href="http://jsonpath.herokuapp.com/?path=$.store..price" target="_blank">$.store..price</a>             | The price of everything         |
+| <a href="http://jsonpath.herokuapp.com/?path=$..book[2]" target="_blank">$..book[2]</a>                 | The third book                      |
+| <a href="http://jsonpath.herokuapp.com/?path=$..book[(@.length-1)]" target="_blank">$..book[(@.length-1)]</a>      | The last book            |
+| <a href="http://jsonpath.herokuapp.com/?path=$..book[0,1]" target="_blank">$..book[0,1]</a>               | The first two books               |
+| <a href="http://jsonpath.herokuapp.com/?path=$..book[:2]" target="_blank">$..book[:2]</a>                | All books from index 0 (inclusive) until index 2 (exclusive) |
+| <a href="http://jsonpath.herokuapp.com/?path=$..book[1:2]" target="_blank">$..book[1:2]</a>                | All books from index 1 (inclusive) until index 2 (exclusive) |
+| <a href="http://jsonpath.herokuapp.com/?path=$..book[-2:]" target="_blank">$..book[-2:]</a>                | Last two books                   |
+| <a href="http://jsonpath.herokuapp.com/?path=$..book[2:]" target="_blank">$..book[2:]</a>                | Book number two from tail          |
+| <a href="http://jsonpath.herokuapp.com/?path=$..book[?(@.isbn)]" target="_blank">$..book[?(@.isbn)]</a>          | All books with an ISBN number         |
+| <a href="http://jsonpath.herokuapp.com/?path=$.store.book[?(@.price < 10)]" target="_blank">$.store.book[?(@.price < 10)]</a> | All books in store cheaper than 10  |
+| <a href="http://jsonpath.herokuapp.com/?path=$..book[?(@.price <= $['expensive'])]" target="_blank">$..book[?(@.price <= $['expensive'])]</a> | All books in store that are not "expensive"  |
+| <a href="http://jsonpath.herokuapp.com/?path=$..*" target="_blank">$..*</a>                        | Give me every thing                   |
 
 
 Reading a document
