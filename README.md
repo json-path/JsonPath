@@ -165,18 +165,20 @@ When evaluating a path you need to understand the concept of when a path is `def
 
 `Indefinite` paths always returns a list. 
 
-By default some simple conversions are provided by the MappingProvider. This allows to specify the return type you want and the MappingProvider will
+By default some simple object mapping is provided by the MappingProvider SPI. This allows to specify the return type you want and the MappingProvider will
 try to perform the mapping. If a book, in the sample json above,  had a long value 'published' you could perform object mapping between `Long` and `Date`
 as shown below. 
 
 ```java
-Date date = JsonPath.parse(json).read("$.store.book[0].published", Date.class)
+String json = "{\"date_as_long\" : 1411455611975}";
+
+Date date = JsonPath.parse(json).read("$['date_as_long']", Date.class);
 ```
 
 If you configure JsonPath to use the `JacksonMappingProvider` you can even map your JsonPath output directly into POJO's.
 
 ```java
-Book book = JsonPath.parse(json).read("$.store.book[0]", Book.class)
+Book book = JsonPath.parse(json).read("$.store.book[0]", Book.class);
 ```
 
 Predicates
