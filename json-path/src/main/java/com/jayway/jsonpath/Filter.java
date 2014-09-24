@@ -1,26 +1,27 @@
 package com.jayway.jsonpath;
 
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
-
-import static java.util.Arrays.asList;
 
 /**
  *
  */
 public class Filter implements Predicate {
 
-    protected List<Predicate> criteriaList = new ArrayList<Predicate>();
+    protected final List<Predicate> criteriaList;
 
     private Filter() {
+        criteriaList = Collections.emptyList();
     }
 
     private Filter(Predicate criteria) {
-        this.criteriaList.add(criteria);
+        criteriaList = Collections.singletonList(criteria);
     }
 
     private Filter(List<Predicate> criteriaList) {
-        this.criteriaList = criteriaList;
+        this.criteriaList = new ArrayList<Predicate>(criteriaList);
     }
 
 
@@ -63,22 +64,27 @@ public class Filter implements Predicate {
     }
 
     public Filter or(final Predicate other){
-        return new Filter(){
-            @Override
-            public boolean apply(PredicateContext ctx) {
-                boolean a = Filter.this.apply(ctx);
-                return a || other.apply(ctx);
-            }
-        };
+        return new OrFilter(this, other);
     }
 
     public Filter and(final Predicate other){
-        return new Filter(){
-            @Override
-            public boolean apply(PredicateContext ctx) {
-                boolean a = Filter.this.apply(ctx);
-                return a && other.apply(ctx);
-            }
-        };
+        return filter(Arrays.asList(this, other));
+    }
+    
+    private static final class OrFilter extends Filter {
+
+        private final Predicate left;
+        private final Predicate right;
+  
+        private OrFilter(Predicate left, Predicate right) {
+            this.left = left;
+            this.right = right;
+        }
+  
+        @Override
+        public boolean apply(PredicateContext ctx) {
+            boolean a = left.apply(ctx);
+            return a || right.apply(ctx);
+        }
     }
 }
