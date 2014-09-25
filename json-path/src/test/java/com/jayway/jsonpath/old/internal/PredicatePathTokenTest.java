@@ -1,5 +1,6 @@
 package com.jayway.jsonpath.old.internal;
 
+import com.jayway.jsonpath.Configuration;
 import com.jayway.jsonpath.JsonPath;
 import com.jayway.jsonpath.internal.spi.json.JsonSmartJsonProvider;
 import org.junit.Test;
@@ -13,32 +14,32 @@ import static org.assertj.core.api.Assertions.entry;
 
 public class PredicatePathTokenTest {
 
-    private static final Object ARRAY = new JsonSmartJsonProvider().parse(
+    private static final Object ARRAY = Configuration.defaultConfiguration().jsonProvider().parse(
             "[" +
-            "{\n" +
-            "   \"foo\" : \"foo-val-0\"\n" +
-            "}," +
-            "{\n" +
-            "   \"foo\" : \"foo-val-1\"\n" +
-            "}," +
-            "{\n" +
-            "   \"foo\" : \"foo-val-2\"\n" +
-            "}," +
-            "{\n" +
-            "   \"foo\" : \"foo-val-3\"\n" +
-            "}," +
-            "{\n" +
-            "   \"foo\" : \"foo-val-4\"\n" +
-            "}," +
-            "{\n" +
-            "   \"foo\" : \"foo-val-5\"\n" +
-            "}," +
-            "{\n" +
-            "   \"foo\" : \"foo-val-6\"\n" +
-            "}" +
-            "]");
+                    "{\n" +
+                    "   \"foo\" : \"foo-val-0\"\n" +
+                    "}," +
+                    "{\n" +
+                    "   \"foo\" : \"foo-val-1\"\n" +
+                    "}," +
+                    "{\n" +
+                    "   \"foo\" : \"foo-val-2\"\n" +
+                    "}," +
+                    "{\n" +
+                    "   \"foo\" : \"foo-val-3\"\n" +
+                    "}," +
+                    "{\n" +
+                    "   \"foo\" : \"foo-val-4\"\n" +
+                    "}," +
+                    "{\n" +
+                    "   \"foo\" : \"foo-val-5\"\n" +
+                    "}," +
+                    "{\n" +
+                    "   \"foo\" : \"foo-val-6\"\n" +
+                    "}" +
+                    "]");
 
-    private static Object  ARRAY2 = new JsonSmartJsonProvider().parse(
+    private static Object  ARRAY2 = Configuration.defaultConfiguration().jsonProvider().parse(
             "[" +
             "{\n" +
             "   \"foo\" : \"foo-val-0\",\n" +

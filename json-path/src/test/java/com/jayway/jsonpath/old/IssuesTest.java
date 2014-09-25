@@ -28,7 +28,7 @@ import static org.junit.Assert.assertThat;
 
 public class IssuesTest {
 
-    private static final JsonProvider jp = new JsonSmartJsonProvider();
+    private static final JsonProvider jp = Configuration.defaultConfiguration().jsonProvider();
 
     @Test
     public void full_ones_can_be_filtered() {

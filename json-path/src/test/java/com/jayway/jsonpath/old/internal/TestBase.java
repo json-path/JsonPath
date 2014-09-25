@@ -9,7 +9,7 @@ import com.jayway.jsonpath.internal.spi.json.JsonSmartJsonProvider;
 public class TestBase {
 
 
-    public final static Object ARRAY = new JsonSmartJsonProvider().parse("[" +
+    public final static Object ARRAY = Configuration.defaultConfiguration().jsonProvider().parse("[" +
             "{\n" +
             "   \"foo\" : \"foo-val-0\"\n" +
             "}," +
@@ -33,7 +33,7 @@ public class TestBase {
             "}" +
             "]");
 
-    public final static Object DOC = new JsonSmartJsonProvider().parse(
+    public final static Object DOC = Configuration.defaultConfiguration().jsonProvider().parse(
             "{ \"store\": {\n" +
                     "    \"book\": [ \n" +
                     "      { \"category\": \"reference\",\n" +

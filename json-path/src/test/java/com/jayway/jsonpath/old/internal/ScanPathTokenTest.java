@@ -15,7 +15,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 public class ScanPathTokenTest {
 
 
-    public final static Object DOCUMENT = new JsonSmartJsonProvider().parse(
+    public final static Object DOCUMENT = Configuration.defaultConfiguration().jsonProvider().parse(
             "{\n" +
                     " \"store\":{\n" +
                     "  \"book\":[\n" +
@@ -64,7 +64,7 @@ public class ScanPathTokenTest {
                     "}"
     );
 
-    public final static Object DOCUMENT2 = new JsonSmartJsonProvider().parse(
+    public final static Object DOCUMENT2 = Configuration.defaultConfiguration().jsonProvider().parse(
             "{\n" +
                     "     \"firstName\": \"John\",\n" +
                     "     \"lastName\" : \"doe\",\n" +

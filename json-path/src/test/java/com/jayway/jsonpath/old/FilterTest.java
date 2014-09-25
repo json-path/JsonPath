@@ -60,15 +60,10 @@ public class FilterTest extends BaseTest {
                     "  }\n" +
                     "}";
 
-    private static final JsonProvider jp = new JsonSmartJsonProvider();
-
     private static final Configuration conf = Configuration.defaultConfiguration();
-    //-------------------------------------------------
-    //
-    // Single filter tests
-    //
-    //-------------------------------------------------
-    @Test
+
+    private static final JsonProvider jp = conf.jsonProvider();
+
     public void is_filters_evaluates() throws Exception {
         final Map<String, Object> check = new HashMap<String, Object>();
         check.put("foo", "foo");
@@ -380,7 +375,7 @@ public class FilterTest extends BaseTest {
 
     @Test
     public void filters_can_contain_json_path_expressions() throws Exception {
-        Object doc = new JsonSmartJsonProvider().parse(DOCUMENT);
+        Object doc = Configuration.defaultConfiguration().jsonProvider().parse(DOCUMENT);
 
         assertFalse(filter(where("$.store.bicycle.color").ne("red")).apply(createPredicateContext(doc)));
     }
@@ -410,7 +405,7 @@ public class FilterTest extends BaseTest {
                 "}\n";
 
 
-        Object doc = new JsonSmartJsonProvider().parse(json);
+        Object doc = Configuration.defaultConfiguration().jsonProvider().parse(json);
 
         List<Map<String, Object>> result = JsonPath.read(doc, "$.fields[?]", filter(where("errors").notEmpty()));
         assertEquals(1, result.size());
