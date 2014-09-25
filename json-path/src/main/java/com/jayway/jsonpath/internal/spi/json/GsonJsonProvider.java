@@ -23,6 +23,7 @@ import com.google.gson.JsonParser;
 import com.google.gson.JsonPrimitive;
 import com.google.gson.internal.LazilyParsedNumber;
 import com.jayway.jsonpath.InvalidJsonException;
+import com.jayway.jsonpath.JsonPathException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -102,7 +103,7 @@ public class GsonJsonProvider extends AbstractJsonProvider {
         try {
             return parser.parse(new InputStreamReader(jsonStream, charset));
         } catch (UnsupportedEncodingException e) {
-            throw new RuntimeException(e);
+            throw new JsonPathException(e);
         }
     }
 
@@ -187,7 +188,7 @@ public class GsonJsonProvider extends AbstractJsonProvider {
                 }
             }
         }
-        throw new RuntimeException("length operation can not applied to " + obj != null ? obj.getClass().getName() : "null");
+        throw new JsonPathException("length operation can not applied to " + obj != null ? obj.getClass().getName() : "null");
     }
 
     @Override

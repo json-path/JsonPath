@@ -14,6 +14,8 @@
  */
 package com.jayway.jsonpath.internal;
 
+import com.jayway.jsonpath.JsonPathException;
+
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.Closeable;
@@ -306,7 +308,7 @@ public final class Utils {
             out.writeObject(obj);
 
         } catch (IOException ex) {
-            throw new RuntimeException(ex);
+            throw new JsonPathException(ex);
         } finally {
             try {
                 if (out != null) {
@@ -361,9 +363,9 @@ public final class Utils {
             return in.readObject();
 
         } catch (ClassNotFoundException ex) {
-            throw new RuntimeException(ex);
+            throw new JsonPathException(ex);
         } catch (IOException ex) {
-            throw new RuntimeException(ex);
+            throw new JsonPathException(ex);
         } finally {
             try {
                 if (in != null) {

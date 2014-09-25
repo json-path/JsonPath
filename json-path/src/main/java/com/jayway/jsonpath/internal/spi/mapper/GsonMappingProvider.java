@@ -14,6 +14,7 @@
  */
 package com.jayway.jsonpath.internal.spi.mapper;
 
+import com.jayway.jsonpath.JsonPathException;
 import com.jayway.jsonpath.spi.mapper.MappingProvider;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -29,7 +30,7 @@ public class GsonMappingProvider extends DefaultMappingProvider implements Mappi
             addMapper(new GsonMapper());
         } catch (ClassNotFoundException e) {
             logger.error("Gson not found on class path. No converters configured.");
-            throw new RuntimeException("Gson not found on path", e);
+            throw new JsonPathException("Gson not found on path", e);
         }
     }
 }

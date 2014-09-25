@@ -14,6 +14,7 @@
  */
 package com.jayway.jsonpath.internal.spi.json;
 
+import com.jayway.jsonpath.JsonPathException;
 import com.jayway.jsonpath.spi.json.JsonProvider;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -127,7 +128,7 @@ public abstract class AbstractJsonProvider implements JsonProvider {
         } else if(obj instanceof String){
             return ((String)obj).length();
         }
-        throw new RuntimeException("length operation can not applied to " + obj!=null?obj.getClass().getName():"null");
+        throw new JsonPathException("length operation can not applied to " + obj!=null?obj.getClass().getName():"null");
     }
 
     /**

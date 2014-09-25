@@ -12,17 +12,22 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.jayway.jsonpath.spi.mapper;
+package com.jayway.jsonpath;
 
-import com.jayway.jsonpath.JsonPathException;
+public class JsonPathException extends RuntimeException {
 
-public class MappingException extends JsonPathException {
-
-    public MappingException(Throwable cause) {
-        super(cause);
+    public JsonPathException() {
     }
 
-    public MappingException(String message) {
+    public JsonPathException(String message) {
         super(message);
+    }
+
+    public JsonPathException(String message, Throwable cause) {
+        super(message, cause);
+    }
+
+    public JsonPathException(Throwable cause) {
+        super(cause);
     }
 }
