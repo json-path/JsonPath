@@ -5,7 +5,9 @@ Jayway JsonPath (1.0.0)
 
 [![Build Status](https://travis-ci.org/jayway/JsonPath.svg?branch=master)](https://travis-ci.org/jayway/JsonPath)
 
-Jayway JsonPath is a Java port of [Stefan Goessner JsonPath implementation](http://goessner.net/articles/JsonPath/). JsonPath expressions always refer to a JSON structure in the same way as XPath expression are used in combination 
+Jayway JsonPath is a Java port of [Stefan Goessner JsonPath implementation](http://goessner.net/articles/JsonPath/). 
+
+JsonPath expressions always refer to a JSON structure in the same way as XPath expression are used in combination 
 with an XML document. The "root member object" in JsonPath is always referred to as `$` regardless if it is an 
 object or array.
 
@@ -195,7 +197,7 @@ List<Map<String, Object>> books =  JsonPath.parse(json).read("$.store.book[?(@.p
 In the current implementation you can use `&&` to combine multiple predicates `[?(@.price < 10 && @.category == 'fiction')]`. 
 OR operations are not supported in inline predicates yet.
  
-###The Filter API
+###Filter Predicates
  
 Predicates can be built using the Filter API as shown below:
 
