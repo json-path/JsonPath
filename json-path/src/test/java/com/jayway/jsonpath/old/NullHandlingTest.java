@@ -44,15 +44,9 @@ public class NullHandlingTest {
 
     @Test
     public void last_token_defaults_to_null() {
-
-        //FIXME
-
-
         Configuration configuration = Configuration.builder().options(Option.DEFAULT_PATH_LEAF_TO_NULL).build();
 
         assertNull(JsonPath.parse(DOCUMENT, configuration).read("$.children[2].age"));
-
-        //assertNull(JsonPath.read(DOCUMENT, "$.children[2].age"));
     }
 
 
