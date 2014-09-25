@@ -8,8 +8,6 @@ import com.jayway.jsonassert.impl.matcher.IsEmptyCollection;
 import com.jayway.jsonassert.impl.matcher.IsMapContainingKey;
 import com.jayway.jsonassert.impl.matcher.IsMapContainingValue;
 import com.jayway.jsonpath.JsonPath;
-import com.jayway.jsonpath.internal.spi.json.JsonSmartJsonProvider;
-
 import org.hamcrest.Matcher;
 
 import java.io.IOException;

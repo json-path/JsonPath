@@ -1,8 +1,8 @@
 package com.jayway.jsonpath;
 
-import com.jayway.jsonpath.internal.token.PredicateContextImpl;
 import com.jayway.jsonpath.internal.spi.json.GsonJsonProvider;
 import com.jayway.jsonpath.internal.spi.mapper.GsonMappingProvider;
+import com.jayway.jsonpath.internal.token.PredicateContextImpl;
 
 public class BaseTest {
     /*

@@ -3,7 +3,7 @@
         <meta charset="utf-8">
         <meta http-equiv="X-UA-Compatible" content="IE=edge">
         <meta name="viewport" content="width=device-width, initial-scale=1">
-        <title>JSONPath evaluator</title>
+        <title>Jayway JsonPath evaluator</title>
         <link rel="stylesheet" href="//netdna.bootstrapcdn.com/font-awesome/4.1.0/css/font-awesome.min.css">
         <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.min.css">
         <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/prettify/r298/prettify.min.css">
@@ -16,7 +16,7 @@
     </head>
     <body role="document">
         <div class="container">
-            <h3>JSONPath evaluator</h3>
+            <h3>Jayway JsonPath evaluator</h3>
             <div class="row">
                 <div class="col-md-6">
                     <div class="form-group">
@@ -223,7 +223,6 @@
                 });
             });
 
-
             $('#txtPath').keyup(function(e) {
                 clearTimeout($.data(this, 'timer'));
                 if (e.keyCode === 13) {
@@ -234,6 +233,7 @@
                 }
 
             });
+
             function checkPath() {
                 var pathString = $("#txtPath").val();
 
@@ -261,13 +261,10 @@
                     }
                 });
             }
-
             $('#submit').on('click', function() {
                 $('.result').empty();
-
                 var json = $('#txtJson').val();
                 var path = $('#txtPath').val();
-
                 var data = {
                     json: json,
                     path: path,
@@ -276,7 +273,6 @@
                     flagNullLeaf: $('#cbFlagNullLeaf').prop('checked'),
                     flagSuppress: $('#cbFlagSuppress').prop('checked')
                 }
-                console.log(data);
                 $.ajax({
                     url: "/api/eval",
                     type: 'POST',
@@ -285,14 +281,14 @@
                     success: function(data) {
 
                         $('#jayway-time').text(data.jayway.time);
-                        $('#jayway-res').hide().text(data.jayway.result).fadeIn();
+                        //$('#jayway-res').hide().text(data.jayway.result).fadeIn();
+                        $('#jayway-res').hide().empty();
                         if(data.jayway.error){
                             $('#jayway-error').text(data.jayway.error).show();
                         } else {
                             $('#jayway-error').css( "display", "none")
+                            $('#jayway-res').text(data.jayway.result).fadeIn();
                         }
-
-
                         $('#boon-time').text(data.boon.time);
                         $('#boon-res').hide().text(data.boon.result).fadeIn();
                         if(data.boon.error){
@@ -300,7 +296,6 @@
                         } else {
                             $('#boon-error').css( "display", "none")
                         }
-
                         $('#nebhale-time').text(data.nebhale.time);
                         $('#nebhale-res').hide().text(data.nebhale.result).fadeIn();
                         if(data.nebhale.error){
@@ -308,7 +303,6 @@
                         } else {
                             $('#nebhale-error').css( "display", "none")
                         }
-
                         var start = new Date().getTime();
                         var res;
                         try {
@@ -317,7 +311,6 @@
                         } catch(err){
                             res = err.message;
                         }
-
                         var elapsed = new Date().getTime() - start;
 
                         $("#goessner-time").text(elapsed);
