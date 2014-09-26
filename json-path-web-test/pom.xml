@@ -3,12 +3,12 @@
     <parent>
         <groupId>com.jayway.jsonpath</groupId>
         <artifactId>json-path-parent</artifactId>
-        <version>1.0.0</version>
+        <version>1.0.1-SNAPSHOT</version>
     </parent>
 
     <groupId>com.jayway.jsonpath</groupId>
     <artifactId>json-path-web-test</artifactId>
-    <version>1.0.0</version>
+    <version>1.0.1-SNAPSHOT</version>
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
