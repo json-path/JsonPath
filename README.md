@@ -356,13 +356,13 @@ JsonPath is available at the Central Maven Repository. Maven users add this to y
 <dependency>
     <groupId>com.jayway.jsonpath</groupId>
     <artifactId>json-path</artifactId>
-    <version>0.9.1</version>
+    <version>1.0.0</version>
 </dependency>
 ```
 Gradle users
  
 ```
-compile 'com.jayway.jsonpath:json-path:0.9.1'
+compile 'com.jayway.jsonpath:json-path:1.0.0'
 ``` 
 
 [![Analytics](https://ga-beacon.appspot.com/UA-54945131-1/jsonpath/index)](https://github.com/igrigorik/ga-beacon)
