@@ -40,7 +40,7 @@ import static com.jayway.jsonpath.internal.Utils.*;
  * <p/>
  * Given the Json document:
  * <p/>
- * <code>
+ * <pre>
  * String json =
  * "{
  * "store":
@@ -67,7 +67,7 @@ import static com.jayway.jsonpath.internal.Utils.*;
  * }
  * }
  * }";
- * </code>
+ * </pre>
  * <p/>
  * A JsonPath can be compiled and used as shown:
  * <p/>
