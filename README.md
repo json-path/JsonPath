@@ -7,6 +7,24 @@ Jayway JsonPath (1.0.0)
 
 Jayway JsonPath is a Java port of [Stefan Goessner JsonPath implementation](http://goessner.net/articles/JsonPath/). 
 
+News
+----
+
+26 Sep 2014 - JsonPath 1.0.0 was released  
+
+Getting Started
+---------------
+
+JsonPath is available at the Central Maven Repository. Maven users add this to your POM.
+
+```xml
+<dependency>
+    <groupId>com.jayway.jsonpath</groupId>
+    <artifactId>json-path</artifactId>
+    <version>1.0.0</version>
+</dependency>
+```
+
 JsonPath expressions always refer to a JSON structure in the same way as XPath expression are used in combination 
 with an XML document. The "root member object" in JsonPath is always referred to as `$` regardless if it is an 
 object or array.
@@ -347,22 +365,7 @@ Configuration.setDefaults(new Configuration.Defaults() {
 
 Note that the JacksonJsonProvider requires `com.fasterxml.jackson.core:jackson-databind:2.4.1.3` and the GsonJsonProvider requires `com.google.code.gson:gson:2.3` on your classpath. 
 
-Binaries
---------
 
-JsonPath is available at the Central Maven Repository. Maven users add this to your POM.
 
-```xml
-<dependency>
-    <groupId>com.jayway.jsonpath</groupId>
-    <artifactId>json-path</artifactId>
-    <version>1.0.0</version>
-</dependency>
-```
-Gradle users
- 
-```
-compile 'com.jayway.jsonpath:json-path:1.0.0'
-``` 
 
 [![Analytics](https://ga-beacon.appspot.com/UA-54945131-1/jsonpath/index)](https://github.com/igrigorik/ga-beacon)
