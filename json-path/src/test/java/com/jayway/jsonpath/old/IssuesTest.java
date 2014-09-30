@@ -7,7 +7,6 @@ import com.jayway.jsonpath.JsonPath;
 import com.jayway.jsonpath.Option;
 import com.jayway.jsonpath.PathNotFoundException;
 import com.jayway.jsonpath.internal.Utils;
-import com.jayway.jsonpath.internal.spi.json.JsonSmartJsonProvider;
 import com.jayway.jsonpath.spi.json.JsonProvider;
 import org.assertj.core.api.Assertions;
 import org.hamcrest.Matchers;

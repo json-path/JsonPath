@@ -6,7 +6,6 @@ import com.jayway.jsonpath.Filter;
 import com.jayway.jsonpath.InvalidCriteriaException;
 import com.jayway.jsonpath.JsonPath;
 import com.jayway.jsonpath.Predicate;
-import com.jayway.jsonpath.internal.spi.json.JsonSmartJsonProvider;
 import com.jayway.jsonpath.spi.json.JsonProvider;
 import org.junit.Test;
 
