@@ -163,12 +163,9 @@ public class IssuesTest {
                 "    }\n" +
                 "]";
 
-        List<Double> result = read(json, "$.[?(@.compatible == true)].sku");
+        List<String> result = read(json, "$.[?(@.compatible == true)].sku");
 
-        System.out.println(result);
-
-        //assertThat(result.getValue(0), is(new Double(10.1)));
-        //assertThat(result.getValue(1), is(new Double(21.0)));
+        Assertions.assertThat(result).containsExactly("SKU-005", "SKU-003");
     }
 
 
@@ -326,8 +323,8 @@ public class IssuesTest {
 
         List<Map<String, Object>> result = read(json, "$.store.book[?(@.author.age == 36)]");
 
-        System.out.println(result);
-
+        Assertions.assertThat(result).hasSize(1);
+        Assertions.assertThat(result.get(0)).containsEntry("title", "Sayings of the Century");
     }
 
     @Test
@@ -429,6 +426,21 @@ public class IssuesTest {
         } catch (PathNotFoundException e){
             Assertions.assertThat(e).hasMessage("No results for path: $['a']['x']");
         }
+    }
+
+    @Test
+    public void issue_x() {
+
+        String json = "{\n" +
+                " \"a\" : [\n" +
+                "   {},\n" +
+                "   { \"b\" : [ { \"c\" : \"foo\"} ] }\n" +
+                " ]\n" +
+                "}\n";
+
+        List<String> result =  JsonPath.read(json, "$.a.*.b.*.c");
+
+        Assertions.assertThat(result).containsExactly("foo");
 
     }
 }

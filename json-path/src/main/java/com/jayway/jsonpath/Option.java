@@ -58,7 +58,31 @@ public enum Option {
      * If an exception is thrown and the option {@link Option#ALWAYS_RETURN_LIST} an empty list is returned.
      * If an exception is thrown and the option {@link Option#ALWAYS_RETURN_LIST} is not present null is returned.
      */
-    SUPPRESS_EXCEPTIONS
+    SUPPRESS_EXCEPTIONS,
 
+    /**
+     * Configures JsonPath to require properties defined in path when an <bold>indefinite</bold> path is evaluated.
+     *
+     *
+     * Given:
+     *
+     * <pre>
+     * [
+     *     {
+     *         "a" : "a-val",
+     *         "b" : "b-val"
+     *     },
+     *     {
+     *         "a" : "a-val",
+     *     }
+     * ]
+     * </pre>
+     *
+     * evaluating the path "$[*].b"
+     *
+     * If REQUIRE_PATH_PROPERTIES option is present PathNotFoundException is thrown.
+     * If REQUIRE_PATH_PROPERTIES option is not present ["b-val"] is returned.
+     */
+    REQUIRE_PATH_PROPERTIES
 
 }

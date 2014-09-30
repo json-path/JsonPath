@@ -54,7 +54,6 @@ public class JsonProviderTest {
 
         Object o = provider.parse(DOCUMENT);
 
-        System.out.println(o);
 
     }
 
@@ -64,6 +63,5 @@ public class JsonProviderTest {
 
         Object o = provider.parse(ARRAY);
 
-        System.out.println(o);
     }
 }

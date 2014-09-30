@@ -14,6 +14,7 @@
  */
 package com.jayway.jsonpath.internal.token;
 
+import com.jayway.jsonpath.Option;
 import com.jayway.jsonpath.PathNotFoundException;
 
 import static java.util.Arrays.asList;
@@ -34,7 +35,7 @@ public class WildcardPathToken extends PathToken {
                 try {
                     handleArrayIndex(idx, currentPath, model, ctx);
                 } catch (PathNotFoundException p){
-                    if(!isLeaf() && !next().isLeaf()){
+                    if(ctx.options().contains(Option.REQUIRE_PATH_PROPERTIES)){
                         throw p;
                     }
                 }

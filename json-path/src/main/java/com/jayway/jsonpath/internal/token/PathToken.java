@@ -24,11 +24,14 @@ import java.util.List;
 
 public abstract class PathToken {
 
+    private PathToken prev;
     private PathToken next;
     private Boolean definite = null;
+    private Boolean upstreamDefinite = null;
 
     PathToken appendTailToken(PathToken next) {
         this.next = next;
+        this.next.prev = this;
         return next;
     }
 
@@ -43,7 +46,7 @@ public abstract class PathToken {
                     if(ctx.options().contains(Option.DEFAULT_PATH_LEAF_TO_NULL)){
                         propertyVal =  null;
                     } else {
-                        if(ctx.options().contains(Option.SUPPRESS_EXCEPTIONS)){
+                        if(ctx.options().contains(Option.SUPPRESS_EXCEPTIONS) && !ctx.options().contains(Option.REQUIRE_PATH_PROPERTIES)){
                             return;
                         } else {
                             throw new PathNotFoundException("No results for path: " + evalPath);
@@ -51,7 +54,13 @@ public abstract class PathToken {
 
                     }
                 } else {
-                    throw new PathNotFoundException();
+                    if(!isUpstreamDefinite() &&
+                       !ctx.options().contains(Option.REQUIRE_PATH_PROPERTIES) &&
+                       !ctx.options().contains(Option.SUPPRESS_EXCEPTIONS)){
+                        return;
+                    } else {
+                        throw new PathNotFoundException(evalPath);
+                    }
                 }
             }
             if (isLeaf()) {
@@ -109,6 +118,9 @@ public abstract class PathToken {
         }
     }
 
+    PathToken prev(){
+        return prev;
+    }
 
     PathToken next() {
         if (isLeaf()) {
@@ -121,6 +133,21 @@ public abstract class PathToken {
         return next == null;
     }
 
+    boolean isRoot() {
+        return  prev == null;
+    }
+
+    boolean isUpstreamDefinite(){
+        if(upstreamDefinite != null){
+            return upstreamDefinite.booleanValue();
+        }
+        boolean isUpstreamDefinite = isTokenDefinite();
+        if (isUpstreamDefinite && !isRoot()) {
+            isUpstreamDefinite = prev.isPathDefinite();
+        }
+        upstreamDefinite = isUpstreamDefinite;
+        return isUpstreamDefinite;
+    }
 
     public int getTokenCount() {
         int cnt = 1;
