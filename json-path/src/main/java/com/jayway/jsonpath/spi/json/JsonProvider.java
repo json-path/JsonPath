@@ -54,6 +54,12 @@ public interface JsonProvider {
     Object createArray();
 
     /**
+     * Creates a provider specific json object
+     * @return new object
+     */
+    Object createMap();
+
+    /**
      * checks if object is an array
      *
      * @param obj object to check

@@ -118,6 +118,11 @@ public class GsonJsonProvider extends AbstractJsonProvider {
     }
 
     @Override
+    public Object createMap() {
+        return new JsonObject();
+    }
+
+    @Override
     public boolean isArray(Object obj) {
         return (obj instanceof JsonArray || obj instanceof List);
     }

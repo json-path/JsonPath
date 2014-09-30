@@ -2,7 +2,6 @@ package com.jayway.jsonpath;
 
 import org.junit.Test;
 
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -65,7 +64,7 @@ public class OptionsTest extends BaseTest {
     }
 
     @Test
-    public void multi_properties_are_not_merged_by_default() {
+    public void multi_properties_are_merged_by_default() {
 
         Map<String, Object> model = new HashMap<String, Object>();
         model.put("a", "a");
@@ -74,10 +73,14 @@ public class OptionsTest extends BaseTest {
 
         Configuration conf = Configuration.defaultConfiguration();
 
-        Object result = using(conf).parse(model).read("$.['a', 'b']");
+        Map<String, Object> result = using(conf).parse(model).read("$.['a', 'b']");
 
-        assertThat(result).isInstanceOf(List.class);
-        assertThat((List)result).containsOnly("a", "b");
+        //assertThat(result).isInstanceOf(List.class);
+        //assertThat((List)result).containsOnly("a", "b");
+
+        assertThat(result)
+                .containsEntry("a", "a")
+                .containsEntry("b", "b");
     }
 
     @Test
@@ -89,7 +92,7 @@ public class OptionsTest extends BaseTest {
         assertThat(using(conf).parse(model).read("$[*].a", List.class)).containsExactly("a-val");
 
 
-        conf = conf.addOptions(Option.REQUIRE_PATH_PROPERTIES);
+        conf = conf.addOptions(Option.REQUIRE_PROPERTIES);
 
         try{
             using(conf).parse(model).read("$[*].a", List.class);

@@ -35,7 +35,7 @@ public class WildcardPathToken extends PathToken {
                 try {
                     handleArrayIndex(idx, currentPath, model, ctx);
                 } catch (PathNotFoundException p){
-                    if(ctx.options().contains(Option.REQUIRE_PATH_PROPERTIES)){
+                    if(ctx.options().contains(Option.REQUIRE_PROPERTIES)){
                         throw p;
                     }
                 }

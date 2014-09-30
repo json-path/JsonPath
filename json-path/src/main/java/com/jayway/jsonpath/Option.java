@@ -80,9 +80,9 @@ public enum Option {
      *
      * evaluating the path "$[*].b"
      *
-     * If REQUIRE_PATH_PROPERTIES option is present PathNotFoundException is thrown.
-     * If REQUIRE_PATH_PROPERTIES option is not present ["b-val"] is returned.
+     * If REQUIRE_PROPERTIES option is present PathNotFoundException is thrown.
+     * If REQUIRE_PROPERTIES option is not present ["b-val"] is returned.
      */
-    REQUIRE_PATH_PROPERTIES
+    REQUIRE_PROPERTIES
 
 }

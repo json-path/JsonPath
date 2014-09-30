@@ -121,6 +121,12 @@
                                     Return null for missing leaf
                                 </label>
                             </div>
+                            <div class="checkbox">
+                                <label>
+                                    <input type="checkbox" name="flagRequireProps" id="cbFlagRequireProps" />
+                                    Require all properties
+                                </label>
+                            </div>
                         </fieldset>
                         </div>
                     </div>
@@ -271,7 +277,8 @@
                     type: $('input[name=rbType]:checked').val(),
                     flagWrap: $('#cbFlagWrap').prop('checked'),
                     flagNullLeaf: $('#cbFlagNullLeaf').prop('checked'),
-                    flagSuppress: $('#cbFlagSuppress').prop('checked')
+                    flagSuppress: $('#cbFlagSuppress').prop('checked'),
+                    flagRequireProps: $('#cbFlagRequireProps').prop('checked')
                 }
                 $.ajax({
                     url: "/api/eval",

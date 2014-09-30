@@ -24,14 +24,16 @@ public class Bench {
     private final boolean flagWrap;
     private final boolean flagSuppress;
     private final boolean flagNullLeaf;
+    private final boolean flagRequireProps;
 
-    public Bench(String json, String path, boolean optionAsValues, boolean flagWrap, boolean flagSuppress, boolean flagNullLeaf) {
+    public Bench(String json, String path, boolean optionAsValues, boolean flagWrap, boolean flagSuppress, boolean flagNullLeaf, boolean flagRequireProps) {
         this.json = json;
         this.path = path;
         this.optionAsValues = optionAsValues;
         this.flagWrap = flagWrap;
         this.flagSuppress = flagSuppress;
         this.flagNullLeaf = flagNullLeaf;
+        this.flagRequireProps = flagRequireProps;
     }
 
     public Result runJayway() {
@@ -53,6 +55,9 @@ public class Bench {
         }
         if(flagNullLeaf){
             configuration = configuration.addOptions(Option.DEFAULT_PATH_LEAF_TO_NULL);
+        }
+        if(flagRequireProps){
+            configuration = configuration.addOptions(Option.REQUIRE_PROPERTIES);
         }
 
         long now = System.currentTimeMillis();

@@ -14,6 +14,7 @@
  */
 package com.jayway.jsonpath.internal.spi.json;
 
+import com.google.gson.internal.LinkedTreeMap;
 import com.jayway.jsonpath.InvalidJsonException;
 import com.jayway.jsonpath.JsonPathException;
 import com.jayway.jsonpath.spi.json.Mode;
@@ -46,6 +47,10 @@ public class JsonSmartJsonProvider extends AbstractJsonProvider {
 
     public Object createArray() {
         return orderedMapper.createArray();
+    }
+
+    public Object createMap() {
+        return orderedMapper.createObject();
     }
 
     public Object parse(String json) {

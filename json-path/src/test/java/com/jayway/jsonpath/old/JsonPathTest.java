@@ -85,7 +85,7 @@ public class JsonPathTest extends BaseTest {
 
         //Object read = JsonPath.using(Configuration.defaultConfiguration().setOptions(Option.THROW_ON_MISSING_PROPERTY)).parse(DOCUMENT).read("$.store.book[*].fooBar");
         //Object read = JsonPath.using(Configuration.defaultConfiguration()).parse(DOCUMENT).read("$.store.book[*].fooBar");
-        Object read2 = JsonPath.using(Configuration.defaultConfiguration().addOptions(Option.REQUIRE_PATH_PROPERTIES)).parse(DOCUMENT).read("$.store.book[*].fooBar.not");
+        Object read2 = JsonPath.using(Configuration.defaultConfiguration().addOptions(Option.REQUIRE_PROPERTIES)).parse(DOCUMENT).read("$.store.book[*].fooBar.not");
 
 
     }

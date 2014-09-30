@@ -49,11 +49,12 @@ public class ApiResource {
                                 @FormParam("type") String type,
                                 @FormParam("flagWrap")  boolean flagWrap,
                                 @FormParam("flagNullLeaf")  boolean flagNullLeaf,
-                                @FormParam("flagSuppress")  boolean flagSuppress ){
+                                @FormParam("flagSuppress")  boolean flagSuppress,
+                                @FormParam("flagRequireProps")  boolean flagRequireProps){
 
         boolean value = "VALUE".equalsIgnoreCase(type);
 
-        Map<String, Result> resultMap = new Bench(json, path, value, flagWrap, flagSuppress, flagNullLeaf).runAll();
+        Map<String, Result> resultMap = new Bench(json, path, value, flagWrap, flagSuppress, flagNullLeaf, flagRequireProps).runAll();
 
         return Response.ok(resultMap).build();
     }
