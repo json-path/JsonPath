@@ -70,6 +70,11 @@ public class PathCompiler {
             path = "$" + path.substring(1);
         }
 
+        if(path.length() > 1 &&
+           path.charAt(1) != '.' &&
+           path.charAt(1) != '['){
+            throw new InvalidPathException("Invalid path " + path);
+        }
 
         String cacheKey = path + isRootPath + filterList.toString();
         Path p = cache.get(cacheKey);

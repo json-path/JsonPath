@@ -1,5 +1,9 @@
 package com.jayway.jsonassert;
 
+import com.jayway.jsonpath.InvalidPathException;
+import com.jayway.jsonpath.JsonPath;
+import com.jayway.jsonpath.internal.Path;
+import com.jayway.jsonpath.internal.PathCompiler;
 import org.junit.Test;
 
 import java.io.InputStream;
@@ -146,15 +150,6 @@ public class JsonAssertTest {
                 .assertThat("$['store'].book[0].title", equalTo("Sayings of the Century"));
     }
 
-    /*
-    @Test
-    public void no_hit_returns_null() throws Exception {
-        with(JSON).assertThat("$.store.book[1000].title", Matchers.<Object>nullValue());
-    }
-    */
-
-
-
     @Test
     public void path_including_wildcard_path_followed_by_another_path_concatenates_results_to_list() throws Exception {
         with(getResourceAsStream("lotto.json")).assertThat("lotto.winners[*].winnerId", hasItems(23, 54));
@@ -163,12 +158,16 @@ public class JsonAssertTest {
     @Test
     public void testNotDefined() throws Exception {
         JsonAsserter asserter = JsonAssert.with("{\"foo\":\"bar\"}");
-        asserter.assertEquals("$.foo", "bar"); // pass
-        asserter.assertEquals("$foo", "bar"); // pass
-        asserter.assertNotDefined("$.xxx"); // fail but should be pass
-        asserter.assertNotDefined("$xxx"); // fail  but should be pass
+        asserter.assertNotDefined("$.xxx");
     }
 
+
+    @Test(expected = InvalidPathException.class)
+    public void assert_that_invalid_path_is_thrown() {
+
+        JsonAsserter asserter = JsonAssert.with("{\"foo\":\"bar\"}");
+        asserter.assertEquals("$foo", "bar");
+    }
 
 
     private InputStream getResourceAsStream(String resourceName) {
