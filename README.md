@@ -1,5 +1,5 @@
-Jayway JsonPath (1.0.0)
-===============
+Jayway JsonPath 1.1.0
+=====================
 
 **A Java DSL for reading JSON documents.**
 
@@ -10,7 +10,10 @@ Jayway JsonPath is a Java port of [Stefan Goessner JsonPath implementation](http
 News
 ----
 
-26 Sep 2014 - JsonPath 1.0.0 was released  
+01 Oct 2014 - Released JsonPath 1.1.0  
+26 Sep 2014 - Released JsonPath 1.0.0 
+
+For details see [change log](changelog.md).
 
 Getting Started
 ---------------
@@ -21,7 +24,7 @@ JsonPath is available at the Central Maven Repository. Maven users add this to y
 <dependency>
     <groupId>com.jayway.jsonpath</groupId>
     <artifactId>json-path</artifactId>
-    <version>1.0.0</version>
+    <version>1.1.0</version>
 </dependency>
 ```
 
@@ -181,7 +184,6 @@ When evaluating a path you need to understand the concept of when a path is `def
 * `..` - a deep scan operator
 * `?(<expression>)` - an expression
 * `[<number>, <number> (, <number>)]` - multiple array indexes
-* `['<name>', '<name>' (, '<name>')]` - multiple object properties
 
 `Indefinite` paths always returns a list. 
 
