@@ -2,38 +2,26 @@ package com.jayway.jsonpath;
 
 import com.jayway.jsonpath.internal.Path;
 import com.jayway.jsonpath.internal.spi.json.GsonJsonProvider;
+import com.jayway.jsonpath.internal.spi.json.JacksonJsonProvider;
 import com.jayway.jsonpath.internal.spi.mapper.GsonMappingProvider;
+import com.jayway.jsonpath.internal.spi.mapper.JacksonMappingProvider;
 import com.jayway.jsonpath.internal.token.EvaluationContextImpl;
 import com.jayway.jsonpath.internal.token.PredicateContextImpl;
 
 import java.util.HashMap;
 
 public class BaseTest {
-    /*
-    static {
-        Configuration.setDefaults(new Configuration.Defaults() {
-            @Override
-            public JsonProvider jsonProvider() {
-                return new GsonProvider();
-            }
-
-            @Override
-            public Set<Option> setOptions() {
-                return EnumSet.noneOf(Option.class);
-            }
-
-            @Override
-            public ConversionProvider mappingProvider() {
-                return new DefaultConversionProvider();
-            }
-        });
-    }*/
-
 
     public static final Configuration GSON_CONFIGURATION = Configuration
             .builder()
             .mappingProvider(new GsonMappingProvider())
             .jsonProvider(new GsonJsonProvider())
+            .build();
+
+    public static final Configuration JACKSON_CONFIGURATION = Configuration
+            .builder()
+            .mappingProvider(new JacksonMappingProvider())
+            .jsonProvider(new JacksonJsonProvider())
             .build();
 
     public static final String JSON_DOCUMENT = "{\n" +

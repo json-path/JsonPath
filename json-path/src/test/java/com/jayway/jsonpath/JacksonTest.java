@@ -1,19 +1,13 @@
 package com.jayway.jsonpath;
 
-import com.jayway.jsonpath.internal.spi.json.JacksonJsonProvider;
-import com.jayway.jsonpath.internal.spi.mapper.JacksonMappingProvider;
 import org.junit.Test;
 
+import java.util.Date;
+
+import static java.util.Collections.singletonMap;
 import static org.assertj.core.api.Assertions.assertThat;
 
-public class JacksonTest {
-
-    private static Configuration config = Configuration
-            .builder()
-            .mappingProvider(new JacksonMappingProvider())
-            .jsonProvider(new JacksonJsonProvider())
-            .build();
-
+public class JacksonTest extends BaseTest {
 
     @Test
     public void an_object_can_be_mapped_to_pojo() {
@@ -25,7 +19,7 @@ public class JacksonTest {
                 "}";
 
 
-        FooBarBaz fooBarBaz = JsonPath.using(config).parse(json).read("$", FooBarBaz.class);
+        FooBarBaz fooBarBaz = JsonPath.using(JACKSON_CONFIGURATION).parse(json).read("$", FooBarBaz.class);
 
         assertThat(fooBarBaz.foo).isEqualTo("foo");
         assertThat(fooBarBaz.bar).isEqualTo(10L);
@@ -37,6 +31,18 @@ public class JacksonTest {
         public String foo;
         public Long bar;
         public boolean baz;
+    }
+
+    @Test
+    public void jackson_converts_dates() {
+
+        Date now = new Date();
+
+        Object json = singletonMap("date_as_long", now.getTime());
+
+        Date date = JsonPath.using(JACKSON_CONFIGURATION).parse(json).read("$['date_as_long']", Date.class);
+
+        assertThat(date).isEqualTo(now);
     }
 
 }

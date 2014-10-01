@@ -41,4 +41,6 @@ public class MapperTest extends BaseTest {
         assertThat(parse("{\"val\": "+now.getTime()+"}").read("val", Date.class)).isEqualTo(now);
     }
 
+
+
 }
