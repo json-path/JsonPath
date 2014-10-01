@@ -74,7 +74,7 @@ public class PathCompiler {
         String cacheKey = path + isRootPath + filterList.toString();
         Path p = cache.get(cacheKey);
         if (p != null) {
-            logger.debug("Using cached path");
+            if(logger.isDebugEnabled()) logger.debug("Using cached path");
             return p;
         }
 

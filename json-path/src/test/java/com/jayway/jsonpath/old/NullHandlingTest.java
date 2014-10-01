@@ -77,8 +77,9 @@ public class NullHandlingTest {
 
         List<Object> result = JsonPath.using(Configuration.defaultConfiguration().setOptions(Option.DEFAULT_PATH_LEAF_TO_NULL)).parse(json).read("a[?(@.b==5)].d");
 
+        Assertions.assertThat(result).hasSize(1);
+        Assertions.assertThat(result.get(0)).isNull();
 
-        System.out.println(result);
     }
 
 

@@ -43,7 +43,7 @@ public class InlineFilterTest extends BaseTest {
 
         Object read = reader.read("$.store.book[?(@.display-price <= $.max-price)]");
 
-        System.out.println(read);
+        //System.out.println(read);
 
     }
 }

@@ -11,7 +11,6 @@ import java.net.URL;
 
 import static junit.framework.Assert.assertEquals;
 
-@Ignore
 public class HttpProviderTest {
 
 
@@ -21,6 +20,7 @@ public class HttpProviderTest {
             "}";
     
     @Test
+    @Ignore
     public void http_get() throws Exception {
 
         URL url = new URL("http://maps.googleapis.com/maps/api/geocode/json?sensor=false");
