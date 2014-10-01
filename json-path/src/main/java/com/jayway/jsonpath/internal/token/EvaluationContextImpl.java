@@ -22,7 +22,9 @@ import com.jayway.jsonpath.internal.Path;
 import com.jayway.jsonpath.spi.json.JsonProvider;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Objects;
 import java.util.Set;
 
 import static com.jayway.jsonpath.internal.Utils.notNull;
@@ -37,7 +39,9 @@ public class EvaluationContextImpl implements EvaluationContext {
     private final Object pathResult;
     private final Path path;
     private final Object rootDocument;
+    private final HashMap<Path, Object> documentEvalCache = new HashMap<Path, Object>();
     private int resultIndex = 0;
+
 
     public EvaluationContextImpl(Path path, Object rootDocument, Configuration configuration) {
         notNull(path, "path can not be null");
@@ -48,6 +52,10 @@ public class EvaluationContextImpl implements EvaluationContext {
         this.configuration = configuration;
         this.valueResult = configuration.jsonProvider().createArray();
         this.pathResult = configuration.jsonProvider().createArray();
+    }
+
+    public HashMap<Path, Object> documentEvalCache() {
+        return documentEvalCache;
     }
 
     public void addResult(String path, Object model) {

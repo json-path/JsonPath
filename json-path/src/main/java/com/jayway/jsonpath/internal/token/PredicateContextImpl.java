@@ -16,17 +16,47 @@ package com.jayway.jsonpath.internal.token;
 
 import com.jayway.jsonpath.Configuration;
 import com.jayway.jsonpath.Predicate;
+import com.jayway.jsonpath.internal.Path;
 import com.jayway.jsonpath.spi.mapper.MappingException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import java.util.HashMap;
 
 public class PredicateContextImpl implements Predicate.PredicateContext {
+
+    private static final Logger logger = LoggerFactory.getLogger(PredicateContextImpl.class);
+
     private final Object contextDocument;
     private final Object rootDocument;
     private final Configuration configuration;
+    private final HashMap<Path, Object> documentPathCache;
 
-    public PredicateContextImpl(Object contextDocument, Object rootDocument, Configuration configuration) {
+    public PredicateContextImpl(Object contextDocument, Object rootDocument, Configuration configuration, HashMap<Path, Object> documentPathCache) {
         this.contextDocument = contextDocument;
         this.rootDocument = rootDocument;
         this.configuration = configuration;
+        this.documentPathCache = documentPathCache;
+    }
+
+    public Object evaluate(Path path){
+        Object result;
+        if(path.isRootPath()){
+            if(documentPathCache.containsKey(path)){
+                logger.debug("Using cached result for root path: " + path.toString());
+                result = documentPathCache.get(path);
+            } else {
+                result = path.evaluate(rootDocument, rootDocument, configuration).getValue();
+                documentPathCache.put(path, result);
+            }
+        } else {
+            result = path.evaluate(contextDocument, rootDocument, configuration).getValue();
+        }
+        return result;
+    }
+
+    public HashMap<Path, Object> documentPathCache() {
+        return documentPathCache;
     }
 
     @Override

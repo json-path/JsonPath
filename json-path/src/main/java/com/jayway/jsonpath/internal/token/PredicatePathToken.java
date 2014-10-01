@@ -49,7 +49,7 @@ public class PredicatePathToken extends PathToken {
     @Override
     public void evaluate(String currentPath, Object model, EvaluationContextImpl ctx) {
         if (ctx.jsonProvider().isMap(model)) {
-            if (accept(model, ctx.rootDocument(), ctx.configuration())) {
+            if (accept(model, ctx.rootDocument(), ctx.configuration(), ctx)) {
                 if (isLeaf()) {
                     ctx.addResult(currentPath, model);
                 } else {
@@ -61,7 +61,7 @@ public class PredicatePathToken extends PathToken {
             Iterable<?> objects = ctx.jsonProvider().toIterable(model);
 
             for (Object idxModel : objects) {
-                if (accept(idxModel, ctx.rootDocument(),  ctx.configuration())) {
+                if (accept(idxModel, ctx.rootDocument(),  ctx.configuration(), ctx)) {
                     handleArrayIndex(idx, currentPath, model, ctx);
                 }
                 idx++;
@@ -71,8 +71,8 @@ public class PredicatePathToken extends PathToken {
         }
     }
 
-    public boolean accept(final Object obj, final Object root, final Configuration configuration) {
-        Predicate.PredicateContext ctx = new PredicateContextImpl(obj, root, configuration);
+    public boolean accept(final Object obj, final Object root, final Configuration configuration, EvaluationContextImpl evaluationContext) {
+        Predicate.PredicateContext ctx = new PredicateContextImpl(obj, root, configuration, evaluationContext.documentEvalCache());
 
         for (Predicate predicate : predicates) {
             if (!predicate.apply (ctx)) {

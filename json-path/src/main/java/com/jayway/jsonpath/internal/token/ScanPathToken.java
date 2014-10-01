@@ -161,7 +161,7 @@ public class ScanPathToken extends PathToken {
 
       @Override
       public boolean matches(Object model) {
-          return predicatePathToken.accept(model, ctx.rootDocument(), ctx.configuration());
+          return predicatePathToken.accept(model, ctx.rootDocument(), ctx.configuration(), ctx);
       }
     }
 

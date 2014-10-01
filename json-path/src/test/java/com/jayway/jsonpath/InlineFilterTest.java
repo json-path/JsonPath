@@ -37,4 +37,13 @@ public class InlineFilterTest extends BaseTest {
         assertThat(none2.size()).isEqualTo(0);
 
     }
+
+    @Test
+    public void document_queries_are_cached() {
+
+        Object read = reader.read("$.store.book[?(@.display-price <= $.max-price)]");
+
+        System.out.println(read);
+
+    }
 }
