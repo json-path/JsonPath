@@ -72,8 +72,12 @@ public class JsonReader implements ParseContext, ReadContext {
     public ReadContext parse(InputStream json, String charset) {
         notNull(json, "json input stream can not be null");
         notNull(json, "charset can not be null");
-        this.json = configuration.jsonProvider().parse(json, charset);
-        return this;
+        try {
+            this.json = configuration.jsonProvider().parse(json, charset);
+            return this;
+        } finally {
+            Utils.closeQuietly(json);
+        }
     }
 
     @Override

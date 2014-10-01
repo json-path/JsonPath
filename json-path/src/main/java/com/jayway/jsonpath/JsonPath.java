@@ -330,11 +330,7 @@ public class JsonPath {
         notNull(jsonInputStream, "json input stream can not be null");
         notNull(configuration, "configuration can not be null");
 
-        try {
-            return read(jsonInputStream, "UTF-8", configuration);
-        } finally {
-            Utils.closeQuietly(jsonInputStream);
-        }
+        return read(jsonInputStream, "UTF-8", configuration);
     }
 
     /**
