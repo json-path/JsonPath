@@ -70,3 +70,6 @@ subprojects {
 task wrapper(type: Wrapper) {
     gradleVersion = '2.0'
 }
+
+//Task used by Heroku for staging
+task stage(dependsOn: [':json-path-web-test:clean', 'json-path-web-test:shadowJar']) {}
