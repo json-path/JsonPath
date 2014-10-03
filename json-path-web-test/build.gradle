@@ -1,6 +1,10 @@
 apply plugin: 'shadow'
 apply plugin: 'application'
 
+displayName = "JsonPath Tets Bench"
+
+description = "Web app that compares different JsonPath implementations."
+
 mainClassName = 'com.jayway.jsonpath.web.boot.Main'
 
 jar {

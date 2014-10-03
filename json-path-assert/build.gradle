@@ -1,6 +1,6 @@
 apply from: "$rootDir/gradle/publishMaven.gradle"
 
-displayName = "Json Path Assert"
+displayName = "JsonPath Assert"
 
 description = "Assertions on Json using JsonPath"
 
@@ -18,9 +18,4 @@ dependencies {
     compile libs.slf4jApi
 
     testCompile libs.test
-
-    //testCompile libs.assertjCore
-    //testCompile libs.commonsIo
-    //testCompile libs.junit
-
 }

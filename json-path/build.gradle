@@ -18,14 +18,5 @@ dependencies {
     compile libs.slf4jApi
 
     testCompile libs.test
-    /*
-    testCompile libs.slf4jSimple
-    testCompile libs.assertjCore
-    testCompile libs.commonsIo
-    testCompile libs.hamcrestCore
-    testCompile libs.hamcrestLibrary
-    testCompile libs.junit
-    */
-
 }
 
