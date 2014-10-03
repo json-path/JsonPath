@@ -8,4 +8,7 @@ target
 .settings
 .springBeans
 .DS_Store
+.gradle
 TODO
+gradle.properties
+build

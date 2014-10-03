@@ -1,0 +1,31 @@
+apply from: "$rootDir/gradle/publishMaven.gradle"
+
+displayName = "Json Path"
+
+description = "Java port of Stefan Goessner JsonPath."
+
+jar {
+    baseName 'json-path'
+    manifest {
+        attributes 'Implementation-Title': 'json-path', 'Implementation-Version': version
+    }
+}
+
+dependencies {
+    compile libs.jsonSmart
+    compile libs.jacksonDatabind, optional
+    compile libs.gson, optional
+    compile libs.slf4jApi
+
+    testCompile libs.test
+    /*
+    testCompile libs.slf4jSimple
+    testCompile libs.assertjCore
+    testCompile libs.commonsIo
+    testCompile libs.hamcrestCore
+    testCompile libs.hamcrestLibrary
+    testCompile libs.junit
+    */
+
+}
+
