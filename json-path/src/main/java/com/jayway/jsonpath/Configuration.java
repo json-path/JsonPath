@@ -18,7 +18,12 @@ import com.jayway.jsonpath.internal.spi.json.JsonSmartJsonProvider;
 import com.jayway.jsonpath.internal.spi.mapper.DefaultMappingProvider;
 import com.jayway.jsonpath.spi.json.JsonProvider;
 import com.jayway.jsonpath.spi.mapper.MappingProvider;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.EnumSet;
 import java.util.Set;
@@ -30,6 +35,8 @@ import static java.util.Arrays.asList;
  * Immutable configuration object
  */
 public class Configuration {
+
+    private static final Logger logger = LoggerFactory.getLogger(Configuration.class);
 
     private static Defaults DEFAULTS = new Defaults() {
 
@@ -50,6 +57,8 @@ public class Configuration {
         }
     };
 
+
+
     /**
      * Set Default configuration
      * @param defaults default configuration settings
@@ -61,14 +70,34 @@ public class Configuration {
     private final JsonProvider jsonProvider;
     private final MappingProvider mappingProvider;
     private final Set<Option> options;
+    private final Collection<EvaluationListener> evaluationListeners;
 
-    private Configuration(JsonProvider jsonProvider, MappingProvider mappingProvider, EnumSet<Option> options) {
+    private Configuration(JsonProvider jsonProvider, MappingProvider mappingProvider, EnumSet<Option> options, Collection<EvaluationListener> evaluationListeners) {
         notNull(jsonProvider, "jsonProvider can not be null");
         notNull(mappingProvider, "mappingProvider can not be null");
         notNull(options, "setOptions can not be null");
+        notNull(evaluationListeners, "evaluationListener can not be null");
         this.jsonProvider = jsonProvider;
         this.mappingProvider = mappingProvider;
         this.options = Collections.unmodifiableSet(options);
+        this.evaluationListeners = Collections.unmodifiableCollection(evaluationListeners);
+    }
+
+    /**
+     * Creates a new Configuration with the provided evaluation listeners
+     * @param evaluationListener listeners
+     * @return a new configuration
+     */
+    public Configuration evaluationListener(EvaluationListener... evaluationListener){
+        return Configuration.builder().jsonProvider(jsonProvider).mappingProvider(mappingProvider).options(options).evaluationListener(evaluationListener).build();
+    }
+
+    /**
+     * Returns the evaluation listeners registered in this configuration
+     * @return the evaluation listeners
+     */
+    public Collection<EvaluationListener> evaluationListeners(){
+        return evaluationListeners;
     }
 
     /**
@@ -77,7 +106,7 @@ public class Configuration {
      * @return a new configuration
      */
     public Configuration jsonProvider(JsonProvider newJsonProvider) {
-        return Configuration.builder().jsonProvider(newJsonProvider).mappingProvider(mappingProvider).options(options).build();
+        return Configuration.builder().jsonProvider(newJsonProvider).mappingProvider(mappingProvider).options(options).evaluationListener(evaluationListeners).build();
     }
 
     /**
@@ -94,7 +123,7 @@ public class Configuration {
      * @return a new configuration
      */
     public Configuration mappingProvider(MappingProvider newMappingProvider) {
-        return Configuration.builder().jsonProvider(jsonProvider).mappingProvider(newMappingProvider).options(options).build();
+        return Configuration.builder().jsonProvider(jsonProvider).mappingProvider(newMappingProvider).options(options).evaluationListener(evaluationListeners).build();
     }
 
     /**
@@ -114,7 +143,7 @@ public class Configuration {
         EnumSet<Option> opts = EnumSet.noneOf(Option.class);
         opts.addAll(this.options);
         opts.addAll(asList(options));
-        return Configuration.builder().jsonProvider(jsonProvider).mappingProvider(mappingProvider).options(opts).build();
+        return Configuration.builder().jsonProvider(jsonProvider).mappingProvider(mappingProvider).options(opts).evaluationListener(evaluationListeners).build();
     }
 
     /**
@@ -123,7 +152,7 @@ public class Configuration {
      * @return
      */
     public Configuration setOptions(Option... options) {
-        return Configuration.builder().jsonProvider(jsonProvider).mappingProvider(mappingProvider).options(options).build();
+        return Configuration.builder().jsonProvider(jsonProvider).mappingProvider(mappingProvider).options(options).evaluationListener(evaluationListeners).build();
     }
 
     /**
@@ -167,6 +196,7 @@ public class Configuration {
         private JsonProvider jsonProvider;
         private MappingProvider mappingProvider;
         private EnumSet<Option> options = EnumSet.noneOf(Option.class);
+        private Collection<EvaluationListener> evaluationListener = new ArrayList<EvaluationListener>();
 
         public ConfigurationBuilder jsonProvider(JsonProvider provider) {
             this.jsonProvider = provider;
@@ -190,6 +220,16 @@ public class Configuration {
             return this;
         }
 
+        public ConfigurationBuilder evaluationListener(EvaluationListener... listener){
+            this.evaluationListener = Arrays.asList(listener);
+            return this;
+        }
+
+        public ConfigurationBuilder evaluationListener(Collection<EvaluationListener> listeners){
+            this.evaluationListener = listeners == null ? Collections.<EvaluationListener>emptyList() : listeners;
+            return this;
+        }
+
         public Configuration build() {
             if (jsonProvider == null) {
                 jsonProvider = DEFAULTS.jsonProvider();
@@ -197,7 +237,7 @@ public class Configuration {
             if(mappingProvider == null){
                 mappingProvider = DEFAULTS.mappingProvider();
             }
-            return new Configuration(jsonProvider, mappingProvider, options);
+            return new Configuration(jsonProvider, mappingProvider, options, evaluationListener);
         }
     }
 

@@ -1,9 +1,6 @@
 package com.jayway.jsonassert;
 
 import com.jayway.jsonpath.InvalidPathException;
-import com.jayway.jsonpath.JsonPath;
-import com.jayway.jsonpath.internal.Path;
-import com.jayway.jsonpath.internal.PathCompiler;
 import org.junit.Test;
 
 import java.io.InputStream;
