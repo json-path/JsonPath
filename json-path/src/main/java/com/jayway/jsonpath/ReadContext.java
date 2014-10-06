@@ -70,7 +70,18 @@ public interface ReadContext {
      */
     <T> T read(JsonPath path, Class<T> type);
 
+    /**
+     * Stops evaluation when maxResults limit has been reached
+     * @param maxResults
+     * @return the read context
+     */
+    ReadContext limit(int maxResults);
 
+    /**
+     * Adds listener to the evaluation of this path
+     * @param listener listeners to add
+     * @return the read context
+     */
     ReadContext withListeners(EvaluationListener... listener);
 
 }

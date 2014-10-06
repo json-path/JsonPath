@@ -76,7 +76,7 @@ public class Configuration {
         notNull(jsonProvider, "jsonProvider can not be null");
         notNull(mappingProvider, "mappingProvider can not be null");
         notNull(options, "setOptions can not be null");
-        notNull(evaluationListeners, "evaluationListener can not be null");
+        notNull(evaluationListeners, "evaluationListeners can not be null");
         this.jsonProvider = jsonProvider;
         this.mappingProvider = mappingProvider;
         this.options = Collections.unmodifiableSet(options);
@@ -84,11 +84,20 @@ public class Configuration {
     }
 
     /**
+     * Creates a new Configuration by the provided evaluation listeners to the current listeners
+     * @param evaluationListener listeners
+     * @return a new configuration
+     */
+    public Configuration addEvaluationListeners(EvaluationListener... evaluationListener){
+        return Configuration.builder().jsonProvider(jsonProvider).mappingProvider(mappingProvider).options(options).evaluationListener(evaluationListener).build();
+    }
+
+    /**
      * Creates a new Configuration with the provided evaluation listeners
      * @param evaluationListener listeners
      * @return a new configuration
      */
-    public Configuration evaluationListener(EvaluationListener... evaluationListener){
+    public Configuration setEvaluationListeners(EvaluationListener... evaluationListener){
         return Configuration.builder().jsonProvider(jsonProvider).mappingProvider(mappingProvider).options(options).evaluationListener(evaluationListener).build();
     }
 
@@ -96,7 +105,7 @@ public class Configuration {
      * Returns the evaluation listeners registered in this configuration
      * @return the evaluation listeners
      */
-    public Collection<EvaluationListener> evaluationListeners(){
+    public Collection<EvaluationListener> getEvaluationListeners(){
         return evaluationListeners;
     }
 

@@ -63,9 +63,9 @@ public class EvaluationContextImpl implements EvaluationContext {
         configuration.jsonProvider().setProperty(valueResult, resultIndex, model);
         configuration.jsonProvider().setProperty(pathResult, resultIndex, path);
         resultIndex++;
-        if(!configuration().evaluationListeners().isEmpty()){
+        if(!configuration().getEvaluationListeners().isEmpty()){
             int idx = resultIndex - 1;
-            for (EvaluationListener listener : configuration().evaluationListeners()) {
+            for (EvaluationListener listener : configuration().getEvaluationListeners()) {
                 EvaluationListener.EvaluationContinuation continuation = listener.resultFound(new FoundResultImpl(idx, path, model));
                 if(EvaluationListener.EvaluationContinuation.ABORT == continuation){
                     throw new EvaluationAbortException();
