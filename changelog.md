@@ -1,3 +1,10 @@
+In The Pipe
+===========
+* Added EvaluationListener interface that allows abortion of evaluation if criteria is fulfilled.
+  this makes it possible to limit the number of results to fetch when a document is scanned. Also 
+  added utility method to limit results `JsonPath.parse(json).limit(1).read("$..title", List.class);`
+
+
 1.1.0 (2014-10-01)
 ==================
 * Reintroduced method JsonProvider.createMap(). This should never have been removed. **NOTE: This is a breaking change if you implemented your own JsonProvider based on the 1.0.0 API**  
