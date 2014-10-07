@@ -39,6 +39,15 @@ public class Criteria implements Predicate {
 
     private static final Logger logger = LoggerFactory.getLogger(Criteria.class);
 
+    private static final String[] OPERATORS = {
+            CriteriaType.EQ.toString(),
+            CriteriaType.GTE.toString(),
+            CriteriaType.LTE.toString(),
+            CriteriaType.NE.toString(),
+            CriteriaType.LT.toString(),
+            CriteriaType.GT.toString()
+    };
+
     private final Path path;
     private CriteriaType criteriaType;
     private Object expected;
@@ -53,6 +62,11 @@ public class Criteria implements Predicate {
                 if(logger.isDebugEnabled()) logger.debug("[{}] {} [{}] => {}", actual, name(), expected, res);
                 return res;
             }
+
+            @Override
+            public String toString() {
+                return "==";
+            }
         },
         NE {
             @Override
@@ -60,6 +74,11 @@ public class Criteria implements Predicate {
                 boolean res = (0 != safeCompare(expected, actual));
                 if(logger.isDebugEnabled()) logger.debug("[{}] {} [{}] => {}", actual, name(), expected, res);
                 return res;
+            }
+
+            @Override
+            public String toString() {
+                return "!=";
             }
         },
         GT {
@@ -72,6 +91,10 @@ public class Criteria implements Predicate {
                 if(logger.isDebugEnabled()) logger.debug("[{}] {} [{}] => {}", actual, name(), expected, res);
                 return res;
             }
+            @Override
+            public String toString() {
+                return ">";
+            }
         },
         GTE {
             @Override
@@ -82,6 +105,10 @@ public class Criteria implements Predicate {
                 boolean res = (0 >= safeCompare(expected, actual));
                 if(logger.isDebugEnabled()) logger.debug("[{}] {} [{}] => {}", actual, name(), expected, res);
                 return res;
+            }
+            @Override
+            public String toString() {
+                return ">=";
             }
         },
         LT {
@@ -94,6 +121,10 @@ public class Criteria implements Predicate {
                 if(logger.isDebugEnabled()) logger.debug("[{}] {} [{}] => {}", actual, name(), expected, res);
                 return res;
             }
+            @Override
+            public String toString() {
+                return "<";
+            }
         },
         LTE {
             @Override
@@ -104,6 +135,10 @@ public class Criteria implements Predicate {
                 boolean res = (0 <= safeCompare(expected, actual));
                 if(logger.isDebugEnabled()) logger.debug("[{}] {} [{}] => {}", actual, name(), expected, res);
                 return res;
+            }
+            @Override
+            public String toString() {
+                return "<=";
             }
         },
         IN {
@@ -665,11 +700,46 @@ public class Criteria implements Predicate {
     public String toString() {
         StringBuilder sb = new StringBuilder();
         sb.append(path.toString())
-                .append("|")
-                .append(criteriaType.name())
-                .append("|")
-                .append(expected)
-                .append("|");
+                //.append("|")
+                .append(criteriaType.toString())
+                //.append("|")
+                .append(wrapString(expected));
+                //.append("|");
         return sb.toString();
+    }
+
+    private String wrapString(Object o){
+        if(o == null){
+            return "null";
+        }
+        if(o instanceof String){
+            return "'" + o.toString() + "'";
+        } else {
+            return o.toString();
+        }
+    }
+
+
+
+    public static Criteria parse(String criteria){
+
+        int operatorIndex = -1;
+        String left = "";
+        String operator = "";
+        String right = "";
+        for (int y = 0; y < OPERATORS.length; y++) {
+            operatorIndex = criteria.indexOf(OPERATORS[y]);
+            if (operatorIndex != -1) {
+                operator = OPERATORS[y];
+                break;
+            }
+        }
+        if (!operator.isEmpty()) {
+            left = criteria.substring(0, operatorIndex).trim();
+            right = criteria.substring(operatorIndex + operator.length()).trim();
+        } else {
+            left = criteria.trim();
+        }
+        return Criteria.create(left, operator, right);
     }
 }

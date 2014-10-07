@@ -46,4 +46,33 @@ public class InlineFilterTest extends BaseTest {
         //System.out.println(read);
 
     }
+
+    @Test
+    public void simple_inline_or_statement_evaluates() {
+
+
+        List a = reader.read("store.book[ ?(@.author == 'Nigel Rees' || @.author == 'Evelyn Waugh') ].author", List.class);
+        assertThat(a).containsExactly("Nigel Rees", "Evelyn Waugh");
+
+        List b = reader.read("store.book[ ?(@.author == 'Nigel Rees' || @.author == 'Evelyn Waugh' && @.category == 'fiction') ].author", List.class);
+        assertThat(b).containsExactly("Nigel Rees", "Evelyn Waugh");
+
+        List c = reader.read("store.book[ ?(@.author == 'Nigel Rees' || @.author == 'Evelyn Waugh' && @.category == 'xxx') ].author", List.class);
+        assertThat(c).containsExactly("Nigel Rees");
+
+        List d = reader.read("store.book[ ?((@.author == 'Nigel Rees') || (@.author == 'Evelyn Waugh' && @.category == 'xxx')) ].author", List.class);
+        assertThat(d).containsExactly("Nigel Rees");
+
+        List e = reader.read("$.store.book[?(@.category == 'fiction' && @.author == 'Evelyn Waugh' || @.display-price == 8.95 )].author", List.class);
+        assertThat(e).containsOnly("Evelyn Waugh", "Nigel Rees");
+
+        List f = reader.read("$.store.book[?(@.display-price == 8.95 || @.category == 'fiction' && @.author == 'Evelyn Waugh')].author", List.class);
+        assertThat(f).containsOnly("Evelyn Waugh", "Nigel Rees");
+
+        List g = reader.read("$.store.book[?(@.display-price == 8.95 || @.display-price == 8.99 || @.display-price == 22.99 )].author", List.class);
+        assertThat(g).containsOnly("Nigel Rees", "Herman Melville", "J. R. R. Tolkien");
+
+        List h = reader.read("$.store.book[?(@.display-price == 8.95 || @.display-price == 8.99 || (@.display-price == 22.99 && @.category == 'reference') )].author", List.class);
+        assertThat(h).containsOnly("Nigel Rees", "Herman Melville");
+    }
 }

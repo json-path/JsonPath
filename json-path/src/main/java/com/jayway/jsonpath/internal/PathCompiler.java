@@ -14,7 +14,6 @@
  */
 package com.jayway.jsonpath.internal;
 
-import com.jayway.jsonpath.Criteria;
 import com.jayway.jsonpath.Filter;
 import com.jayway.jsonpath.InvalidPathException;
 import com.jayway.jsonpath.Predicate;
@@ -49,14 +48,11 @@ public class PathCompiler {
     private static final char BRACKET_CLOSE = ']';
     private static final char SPACE = ' ';
     private static final Cache cache = new Cache(200);
-    private static final String[] OPERATORS = {"==", ">=", "<=", "!=", "<", ">",};
 
 
     public static Path compile(String path, Predicate... filters) {
         notEmpty(path, "Path may not be null empty");
         path = path.trim();
-
-
 
         LinkedList<Predicate> filterList = new LinkedList<Predicate>(asList(filters));
 
@@ -79,7 +75,7 @@ public class PathCompiler {
         String cacheKey = path + isRootPath + filterList.toString();
         Path p = cache.get(cacheKey);
         if (p != null) {
-            if(logger.isDebugEnabled()) logger.debug("Using cached path");
+            if(logger.isDebugEnabled()) logger.debug("Using cached path: " + cacheKey);
             return p;
         }
 
@@ -253,7 +249,7 @@ public class PathCompiler {
 
                 switch (current) {
                     case '?':
-                        return analyzeCriteriaSequence2();
+                        return analyzeCriteriaSequence4();
                     case '\'':
                         return analyzeProperty();
                     default:
@@ -270,180 +266,67 @@ public class PathCompiler {
             throw new InvalidPathException("Could not analyze path component: " + pathFragment);
         }
 
-        private int findNext(char charToFind, boolean disregardStringContent) {
-            int x = i;
-            boolean inProperty = false;
 
-            char analyzing;
-            boolean found = false;
-            while(!found){
-                analyzing = pathFragment.charAt(x);
+        public PathToken analyzeCriteriaSequence4() {
+            int[] bounds = findFilterBounds();
+            i = bounds[1];
 
-                if(analyzing == '\'' && disregardStringContent){
-                    inProperty = !inProperty;
-                }
-                if(!inProperty){
-                    found = (analyzing == charToFind);
-                }
-                x++;
-            }
-            return x-1;
+            return new PredicatePathToken(Filter.parse(pathFragment.substring(bounds[0], bounds[1])));
         }
 
-        //[?(@.foo)]
-        //[?(@['foo'])]
-        //[?(@.foo == 'bar')]
-        //[?(@['foo']['bar'] == 'bar')]
-        //[?(@ == 'bar')]
-        //[?(@.category == $.store.book[0].category)]
-        //[?(@.category == @['category'])]
-        private PathToken analyzeCriteriaSequence2() {
+        int[] findFilterBounds(){
+            int end = 0;
+            int start = i;
 
-
-            List<Predicate> predicates = new ArrayList<Predicate>();
-
-            int startPos = findNext('(', true) + 1;
-            int stopPos = findNext(')', true);
-
-            String[] split = pathFragment.substring(startPos, stopPos).split("&&");
-
-            for (String criteria : split) {
-                int operatorIndex = -1;
-                String left = "";
-                String operator = "";
-                String right = "";
-                for (int y = 0; y < OPERATORS.length; y++) {
-                    operatorIndex = criteria.indexOf(OPERATORS[y]);
-                    if (operatorIndex != -1) {
-                        operator = OPERATORS[y];
-                        break;
-                    }
-                }
-                if (!operator.isEmpty()) {
-                    left = criteria.substring(0, operatorIndex).trim();
-                    right = criteria.substring(operatorIndex + operator.length()).trim();
-                } else {
-                    left = criteria.trim();
-                }
-                predicates.add(Criteria.create(left, operator, right));
+            while(pathFragment.charAt(start) != '['){
+                start--;
             }
-            i = stopPos;
 
-            return new PredicatePathToken(Filter.filter(predicates));
-        }
-
-        /*
-        //[?(@.foo)]
-        //[?(@['foo'])]
-        //[?(@.foo == 'bar')]
-        //[?(@['foo']['bar'] == 'bar')]
-        //[?(@ == 'bar')]
-        private PathToken analyzeCriteriaSequence() {
-            StringBuilder pathBuffer = new StringBuilder();
-            StringBuilder operatorBuffer = new StringBuilder();
-            StringBuilder valueBuffer = new StringBuilder();
-            List<Predicate> criteria = new ArrayList<Predicate>();
-
-            int bracketCount = 0;
-
-            boolean functionBracketOpened = false;
-            boolean functionBracketClosed = false;
-            boolean propertyOpen = false;
-
-            current = pathFragment.charAt(++i); //skip the '?'
-
-            while (current != ']' || bracketCount != 0) {
-
-                switch (current) {
-                    case '[':
-                        bracketCount++;
-                        pathBuffer.append(current);
-                        break;
-
-                    case ']':
-                        bracketCount--;
-                        pathBuffer.append(current);
-                        break;
-
-                    case '@':
-                        pathBuffer.append('$');
-                        break;
-
+            int mem  = ' ';
+            int curr = start;
+            boolean inProp          = false;
+            int openSquareBracket = 0;
+            int openBrackets = 0;
+            while(end == 0){
+                char c = pathFragment.charAt(curr);
+                switch (c){
                     case '(':
-                        if (!propertyOpen) {
-                            functionBracketOpened = true;
-                            break;
-                        }
-
+                        if(!inProp) openBrackets++;
+                        break;
                     case ')':
-                        if (!propertyOpen) {
-                            functionBracketClosed = true;
+                        if(!inProp) openBrackets--;
+                        break;
+                    case '[':
+                        if(!inProp) openSquareBracket++;
+                        break;
+                    case ']':
+                        if(!inProp){
+                            openSquareBracket--;
+                            if(openBrackets == 0){
+                                end = curr + 1;
+                            }
+                        }
+                        break;
+                    case '\'':
+                        if(mem == '\\') {
                             break;
                         }
-
+                        inProp = !inProp;
+                        break;
                     default:
-                        if ('\'' == current) {
-                            if (propertyOpen) {
-                                propertyOpen = false;
-                            } else {
-                                propertyOpen = true;
-                            }
-                        }
-                        if (bracketCount == 0 && isOperatorChar(current)) {
-                            operatorBuffer.append(current);
-
-                        } else if (bracketCount == 0 && isLogicOperatorChar(current)) {
-
-                            if (isLogicOperatorChar(pathFragment.charAt(i + 1))) {
-                                ++i;
-                            }
-                            criteria.add(Criteria.create(pathBuffer.toString().trim(), operatorBuffer.toString().trim(), valueBuffer.toString().trim()));
-
-                            pathBuffer.setLength(0);
-                            operatorBuffer.setLength(0);
-                            valueBuffer.setLength(0);
-
-                        } else if (operatorBuffer.length() > 0) {
-                            valueBuffer.append(current);
-                        } else {
-                            pathBuffer.append(current);
-                        }
-
                         break;
                 }
-                current = pathFragment.charAt(++i);
+                mem = c;
+                curr++;
             }
-
-            if (!functionBracketOpened || !functionBracketClosed) {
-                throw new InvalidPathException("Function wrapping brackets are not matching. A filter function must match [?(<statement>)]");
+            if(openBrackets != 0 || openSquareBracket != 0){
+                throw new InvalidPathException("Filter brackets are not balanced");
             }
-
-            criteria.add(Criteria.create(pathBuffer.toString().trim(), operatorBuffer.toString().trim(), valueBuffer.toString().trim()));
-
-            Filter filter2 = Filter.filter(criteria);
-
-            return new PredicatePathToken(filter2);
-        }
-        */
-
-        private static boolean isAnd(char c) {
-            return c == '&';
+            return new int[]{start, end};
         }
 
-        private static boolean isOr(char c) {
-            if (c == '|') {
-                throw new UnsupportedOperationException("OR operator is not supported.");
-            }
-            return false;
-        }
 
-        private static boolean isLogicOperatorChar(char c) {
-            return isAnd(c) || isOr(c);
-        }
 
-        private static boolean isOperatorChar(char c) {
-            return c == '=' || c == '!' || c == '<' || c == '>';
-        }
 
         //"['foo']"
         private PathToken analyzeProperty() {
@@ -607,4 +490,6 @@ public class PathCompiler {
 
         }
     }
+
+
 }

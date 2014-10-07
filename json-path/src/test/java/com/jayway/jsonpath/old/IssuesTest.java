@@ -126,7 +126,7 @@ public class IssuesTest {
 
             is.close();
         } catch (Exception e) {
-            e.printStackTrace();
+            //e.printStackTrace();
             Utils.closeQuietly(is);
         }
 
