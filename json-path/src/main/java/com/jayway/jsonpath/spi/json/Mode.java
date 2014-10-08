@@ -14,6 +14,7 @@
  */
 package com.jayway.jsonpath.spi.json;
 
+@Deprecated
 public enum Mode {
 
     SLACK(-1),

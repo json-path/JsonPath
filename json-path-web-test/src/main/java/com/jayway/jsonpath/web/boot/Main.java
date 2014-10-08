@@ -24,6 +24,7 @@ public class Main {
         if(args.length > 0){
             configPort = args[0];
         }
+
         String port = System.getProperty("server.http.port", configPort);
         System.out.println("Server started on port: " + port);
 

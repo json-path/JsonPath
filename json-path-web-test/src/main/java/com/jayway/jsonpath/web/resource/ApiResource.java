@@ -3,6 +3,8 @@ package com.jayway.jsonpath.web.resource;
 import com.jayway.jsonpath.JsonPath;
 import com.jayway.jsonpath.web.bench.Bench;
 import com.jayway.jsonpath.web.bench.Result;
+import net.minidev.json.JSONStyle;
+import net.minidev.json.JSONValue;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -26,6 +28,10 @@ import java.util.ResourceBundle;
 public class ApiResource {
 
     private static final Logger logger = LoggerFactory.getLogger(ApiResource.class);
+
+    static {
+        JSONValue.COMPRESSION = JSONStyle.LT_COMPRESS;
+    }
 
     @GET
     @Path("/info")
