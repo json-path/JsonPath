@@ -24,6 +24,7 @@ ext {
 
 allprojects {
     ext.displayName = null
+    ext.buildTimestamp = new Date().format('yyyy-MM-dd HH:mm:ss')
 
     group = 'com.jayway.jsonpath'
     version = '1.1.1' + (snapshotVersion ? "-SNAPSHOT" : "")

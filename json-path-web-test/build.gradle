@@ -1,13 +1,22 @@
 apply plugin: 'shadow'
 apply plugin: 'application'
 
-displayName = "JsonPath Tets Bench"
+displayName = "JsonPath Test Bench"
 
 description = "Web app that compares different JsonPath implementations."
 
 mainClassName = 'com.jayway.jsonpath.web.boot.Main'
 
+task createBuildInfoFile << {
+    def buildInfoFile = new File("$buildDir/classes/main/build-info.properties")
+    Properties props = new Properties()
+    props.setProperty('version', project.version.toString())
+    props.setProperty('timestamp', project.buildTimestamp)
+    props.store(buildInfoFile.newWriter(), null)
+}
+
 jar {
+    dependsOn createBuildInfoFile
     baseName 'json-path-web-test'
     manifest {
         attributes 'Implementation-Title': 'json-path-web-test',
@@ -15,6 +24,7 @@ jar {
                    'Main-Class': mainClassName
     }
 }
+
 
 dependencies {
     compile project(':json-path')

@@ -16,7 +16,10 @@
     </head>
     <body role="document">
         <div class="container">
-            <h3>Jayway JsonPath evaluator</h3>
+            <h3>Jayway JsonPath Evaluator</h3>
+            <div style="margin-top: -12px; margin-bottom: 10px;">
+                <span id="version" style="font-size: xx-small"></span>&nbsp;-&nbsp;<span id="timestamp" style="font-size: xx-small"></span>
+            </div>
             <div class="row">
                 <div class="col-md-6">
                     <div class="form-group">
@@ -211,6 +214,11 @@
         }
 
         $( document ).ready(function() {
+            $.get('/api/info', function(data) {
+                $("#version").text(data.version);
+                $("#timestamp").text(data.timestamp);
+            });
+
             $('#path-status-tool').tooltip({
                 container: 'body',
                 delay: 0
@@ -288,7 +296,6 @@
                     success: function(data) {
 
                         $('#jayway-time').text(data.jayway.time);
-                        //$('#jayway-res').hide().text(data.jayway.result).fadeIn();
                         $('#jayway-res').hide().empty();
                         if(data.jayway.error){
                             $('#jayway-error').text(data.jayway.error).show();
