@@ -88,7 +88,7 @@ public abstract class Filter implements Predicate {
 
     private static final class AndFilter extends Filter {
 
-        Collection<Predicate> predicates;
+        private final Collection<Predicate> predicates;
 
         private AndFilter(Collection<Predicate> predicates) {
             this.predicates = predicates;
