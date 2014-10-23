@@ -14,6 +14,7 @@
  */
 package com.jayway.jsonpath;
 
+
 public interface ReadContext {
 
     /**
@@ -84,4 +85,13 @@ public interface ReadContext {
      */
     ReadContext withListeners(EvaluationListener... listener);
 
+    /**
+     * Removes the given path from this context
+     *
+     * @param path    path to read
+     * @param filters filters
+     * @param <T>
+     * @return result
+     */
+    <T> T remove(String jsonPath, Class<T> returnType, Predicate... filters);
 }
