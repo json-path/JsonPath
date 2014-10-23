@@ -15,20 +15,28 @@
 package com.jayway.jsonpath;
 
 
-import com.jayway.jsonpath.internal.JsonReader;
-import com.jayway.jsonpath.internal.Path;
-import com.jayway.jsonpath.internal.PathCompiler;
-import com.jayway.jsonpath.internal.Utils;
-import com.jayway.jsonpath.spi.http.HttpProviderFactory;
-import com.jayway.jsonpath.spi.json.JsonProvider;
+import static com.jayway.jsonpath.internal.Utils.isTrue;
+import static com.jayway.jsonpath.internal.Utils.notEmpty;
+import static com.jayway.jsonpath.internal.Utils.notNull;
 
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
-import static com.jayway.jsonpath.internal.Utils.*;
+import com.jayway.jsonpath.internal.EvaluationContext;
+import com.jayway.jsonpath.internal.JsonReader;
+import com.jayway.jsonpath.internal.Path;
+import com.jayway.jsonpath.internal.PathCompiler;
+import com.jayway.jsonpath.internal.Utils;
+import com.jayway.jsonpath.spi.http.HttpProviderFactory;
+import com.jayway.jsonpath.spi.json.JsonProvider;
 
 /**
  * <p/>
@@ -452,7 +460,58 @@ public class JsonPath {
         return new JsonReader().parse(jsonInputStream).read(jsonPath, filters);
     }
 
+    //-------------------------
 
+
+    /**
+     * Creates a new JsonPath and applies it to the provided Json object
+     *
+     * @param json     a json object
+     * @param jsonPath the json path
+     * @param filters  filters to be applied to the filter place holders  [?] in the path
+     * @return json object without elemens matched by given path
+     */
+    @SuppressWarnings("rawtypes")
+	public static Map remove(Object json, String jsonPath, Predicate... filters) {
+        return parse(json).remove(jsonPath, Map.class, filters);
+    }
+    
+    /**
+     * Creates a new JsonPath and applies it to the provided Json object
+     *
+     * @param json     a json string
+     * @param jsonPath the json path
+     * @param filters  filters to be applied to the filter place holders  [?] in the path
+     * @return list of objects matched by the given path
+     */
+    public static String remove(String json, String jsonPath, Predicate... filters) {
+        return parse(json).remove(jsonPath, String.class, filters);
+    }
+
+    /**
+     * Creates a new JsonPath and applies it to the provided Json object
+     *
+     * @param json     url pointing to json doc
+     * @param jsonPath the json path
+     * @param filters  filters to be applied to the filter place holders  [?] in the path
+     * @return list of objects matched by the given path
+     */
+    public static String remove(URL json, String jsonPath, Predicate... filters) throws IOException {
+        return parse(json).remove(jsonPath, String.class, filters);
+    }
+
+    /**
+     * Creates a new JsonPath and applies it to the provided Json object
+     *
+     * @param json     json file
+     * @param jsonPath the json path
+     * @param filters  filters to be applied to the filter place holders  [?] in the path
+     * @return list of objects matched by the given path
+     */
+    public static String remove(File json, String jsonPath, Predicate... filters) throws IOException {
+        return parse(json).remove(jsonPath, String.class, filters);
+    }
+    
     // --------------------------------------------------------
     //
     // Static Fluent API
@@ -589,4 +648,59 @@ public class JsonPath {
     public static ReadContext parse(URL json, Configuration configuration) throws IOException {
         return new JsonReader(configuration).parse(json);
     }
+
+    private List<String> splitPath(String pathSteps) {
+		List<String> result = new ArrayList<String>();
+    	for (String string : pathSteps.split("\\]"))
+			result.add(string.replaceAll("[\\[\\$\\']+", ""));
+		return result;
+	}
+
+    /**
+     * Applies this JsonPath to the provided json document.
+     * Note that the document must be identified as either a List or Map by
+     * the {@link JsonProvider}
+     *
+     * @param jsonObject    a container Object
+     * @param configuration configuration to use
+     * @param Class<T>           expected return type
+     * @return json object without elemens matched by the path
+     */
+    @SuppressWarnings("unchecked")
+	public <T> T removeTyped(Object jsonObject, Configuration configuration, Class<T> returnType) {
+        boolean optSuppressExceptions = configuration.containsOption(Option.SUPPRESS_EXCEPTIONS);
+        Object result = jsonObject;
+        try {
+            EvaluationContext evalContext = path.evaluate(jsonObject, jsonObject, configuration);
+            for (String pathSteps : evalContext.getPathList())
+            	result = remove(result, splitPath(pathSteps));
+        } catch (RuntimeException e){
+            if(!optSuppressExceptions){
+                throw e;
+            }
+        }
+        if(Map.class.isAssignableFrom(returnType))
+        	return (T) result;
+        if(String.class.isAssignableFrom(returnType))
+        	return (T) configuration.jsonProvider().toJson(result);
+        throw new RuntimeException("Unknown returnType: "+returnType.getSimpleName());
+    }
+
+	@SuppressWarnings("unchecked")
+	private <T> T remove(T jsonObject, List<String> pathList) {
+		if(jsonObject instanceof Map) {
+			Map<String, Object> map = (Map<String, Object>) jsonObject;
+			Set<String> keys = new HashSet<String>(map.keySet());
+			for (String key : keys) {
+				if(key.equals(pathList.get(0))) {
+					if(pathList.size() > 1)
+						remove(map.get(key), pathList.subList(1, pathList.size()));
+					else
+						map.remove(key);
+				}
+			}
+			return (T) map;
+		}
+		return jsonObject;
+	}
 }

@@ -14,13 +14,8 @@
  */
 package com.jayway.jsonpath.internal;
 
-import com.jayway.jsonpath.Configuration;
-import com.jayway.jsonpath.EvaluationListener;
-import com.jayway.jsonpath.JsonPath;
-import com.jayway.jsonpath.ParseContext;
-import com.jayway.jsonpath.Predicate;
-import com.jayway.jsonpath.ReadContext;
-import com.jayway.jsonpath.spi.http.HttpProviderFactory;
+import static com.jayway.jsonpath.internal.Utils.notEmpty;
+import static com.jayway.jsonpath.internal.Utils.notNull;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -28,8 +23,13 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
 
-import static com.jayway.jsonpath.internal.Utils.notEmpty;
-import static com.jayway.jsonpath.internal.Utils.notNull;
+import com.jayway.jsonpath.Configuration;
+import com.jayway.jsonpath.EvaluationListener;
+import com.jayway.jsonpath.JsonPath;
+import com.jayway.jsonpath.ParseContext;
+import com.jayway.jsonpath.Predicate;
+import com.jayway.jsonpath.ReadContext;
+import com.jayway.jsonpath.spi.http.HttpProviderFactory;
 
 public class JsonReader implements ParseContext, ReadContext {
 
@@ -158,6 +158,16 @@ public class JsonReader implements ParseContext, ReadContext {
         return configuration.mappingProvider().map(obj, targetType, configuration);
     }
 
+	@Override
+	public <T> T remove(String path, Class<T> returnType, Predicate... filters) {
+        notEmpty(path, "path can not be null or empty");
+        return remove(JsonPath.compile(path, filters), returnType);
+	}
+
+	public <T> T remove(JsonPath path, Class<T> returnType) {
+        notNull(path, "path can not be null");
+        return path.removeTyped(json, configuration, returnType);
+    }
 
     private final class LimitingEvaluationListener implements EvaluationListener {
 
