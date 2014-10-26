@@ -45,7 +45,8 @@ public class Criteria implements Predicate {
             CriteriaType.LTE.toString(),
             CriteriaType.NE.toString(),
             CriteriaType.LT.toString(),
-            CriteriaType.GT.toString()
+            CriteriaType.GT.toString(),
+            CriteriaType.REGEX.toString()
     };
 
     private Object left;
@@ -232,12 +233,26 @@ public class Criteria implements Predicate {
             @Override
             boolean eval(Object left, Object right, PredicateContext ctx) {
                 boolean res = false;
-                final Pattern pattern = (Pattern) left;
-                if (right != null && right instanceof String) {
-                    res = pattern.matcher(right.toString()).matches();
+                Pattern pattern;
+                Object  target;
+
+                if(right instanceof Pattern){
+                    pattern = (Pattern) right;
+                    target  = left;
+                } else {
+                    pattern = (Pattern) left;
+                    target = right;
                 }
-                if(logger.isDebugEnabled()) logger.debug("[{}] {} [{}] => {}", right, name(), left.toString(), res);
+
+                if(target != null){
+                    res = pattern.matcher(target.toString()).matches();
+                }
+                if(logger.isDebugEnabled()) logger.debug("[{}] {} [{}] => {}", right.toString(), name(), left.toString(), res);
                 return res;
+            }
+            @Override
+            public String toString() {
+                return "=~";
             }
         },
         MATCHES {
@@ -282,6 +297,8 @@ public class Criteria implements Predicate {
                 return LTE;
             } else if ("!=".equals(str)) {
                 return NE;
+            } else if ("=~".equals(str)) {
+                return REGEX;
             } else {
                 throw new UnsupportedOperationException("CriteriaType " + str + " can not be parsed");
             }
@@ -639,9 +656,27 @@ public class Criteria implements Predicate {
     private static boolean isPath(String string){
        return (string != null && (string.startsWith("$") || string.startsWith("@")));
     }
+
     private static boolean isString(String string){
         return (string != null && !string.isEmpty() && string.charAt(0) == '\'' && string.charAt(string.length() - 1) == '\'');
     }
+    private static boolean isPattern(String string){
+        return (string != null
+                && !string.isEmpty()
+                && string.charAt(0) == '/'
+                && (string.charAt(string.length() - 1) == '/' || (string.charAt(string.length() - 2) == '/' && string.charAt(string.length() - 1) == 'i'))
+        );
+    }
+
+    private static Pattern compilePattern(String string) {
+        int lastIndex = string.lastIndexOf('/');
+        boolean ignoreCase = string.endsWith("i");
+        String regex = string.substring(1, lastIndex);
+
+        int flags = ignoreCase ? Pattern.CASE_INSENSITIVE : 0;
+        return Pattern.compile(regex, flags);
+    }
+
 
 
     /**
@@ -691,6 +726,8 @@ public class Criteria implements Predicate {
             leftPrepared = leftPath;
         } else if(isString(left)) {
             leftPrepared = left.substring(1, left.length() - 1);
+        } else if(isPattern(left)){
+            leftPrepared = compilePattern(left);
         }
 
         if(isPath(right)){
@@ -701,6 +738,8 @@ public class Criteria implements Predicate {
             rightPrepared = rightPath;
         } else if(isString(right)) {
             rightPrepared = right.substring(1, right.length() - 1);
+        } else if(isPattern(right)){
+            rightPrepared = compilePattern(right);
         }
 
         if(leftPath != null && operator.isEmpty()){

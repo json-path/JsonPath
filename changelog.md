@@ -10,6 +10,12 @@ In The Pipe
   `parse(JSON_DOCUMENT).put("$.store.book[1]", "new-key", "new-val")`
   `parse(JSON_DOCUMENT).add("$.store.book", newBook)`
   `parse(JSON_DOCUMENT).delete("$.store.book[1].display-price")`
+* Support regex in inline filters (ruby syntax)
+  `parse(JSON_DOCUMENT).read("$.store.book[?(@.category =~ /reference/)].author")`
+  `parse(JSON_DOCUMENT).read("$.store.book[?(@.category =~ /REFERENCE/i)].author")`
+* Inline filter does not force path first  
+  `parse(JSON_DOCUMENT).read("$.store.book[?(@.category == 'reference')].author")`    
+  `parse(JSON_DOCUMENT).read("$.store.book[?('reference' == @.category)].author")`    
 
 
 1.1.0 (2014-10-01)
