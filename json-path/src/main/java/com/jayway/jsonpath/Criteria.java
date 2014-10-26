@@ -247,7 +247,7 @@ public class Criteria implements Predicate {
                 if(target != null){
                     res = pattern.matcher(target.toString()).matches();
                 }
-                if(logger.isDebugEnabled()) logger.debug("[{}] {} [{}] => {}", right.toString(), name(), left.toString(), res);
+                if(logger.isDebugEnabled()) logger.debug("[{}] {} [{}] => {}", right == null?"null":right.toString(), name(), left==null?"null":left.toString(), res);
                 return res;
             }
             @Override
