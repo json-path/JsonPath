@@ -100,7 +100,7 @@ public abstract class PathRef implements Comparable<PathRef>  {
             if(configuration.jsonProvider().isMap(parent)){
                 configuration.jsonProvider().setProperty(parent, key, newVal);
             } else {
-                throw new InvalidModificationException("Invalid add operation. $ is not an array");
+                throw new InvalidModificationException("Invalid put operation. $ is not a map");
             }
         }
     }
