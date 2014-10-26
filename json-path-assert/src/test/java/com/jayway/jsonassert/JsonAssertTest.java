@@ -1,12 +1,8 @@
 package com.jayway.jsonassert;
 
-import com.jayway.jsonpath.InvalidPathException;
-import org.hamcrest.Matchers;
 import org.junit.Test;
 
 import java.io.InputStream;
-
-import com.jayway.jsonpath.PathNotFoundException;
 
 import static com.jayway.jsonassert.JsonAssert.*;
 import static org.hamcrest.Matchers.*;
