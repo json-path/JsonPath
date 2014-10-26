@@ -275,9 +275,9 @@ public class FilterTest extends BaseTest {
 
         JsonPath.parse(json).json();
 
-        assertThat((String)JsonPath.read(jocksInTexas1, "[0].address.state"), is("Texas"));
-        assertThat((String)JsonPath.read(jocksInTexas1, "[0].first-name"), is("Jock"));
-        assertThat((String)JsonPath.read(jocksInTexas1, "[0].last-name"), is("Ewing"));
+        assertThat((String)JsonPath.read(jocksInTexas1, "$[0].address.state"), is("Texas"));
+        assertThat((String)JsonPath.read(jocksInTexas1, "$[0].first-name"), is("Jock"));
+        assertThat((String)JsonPath.read(jocksInTexas1, "$[0].last-name"), is("Ewing"));
 
     }
 
