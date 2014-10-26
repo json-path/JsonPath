@@ -1,9 +1,12 @@
 package com.jayway.jsonassert;
 
 import com.jayway.jsonpath.InvalidPathException;
+import org.hamcrest.Matchers;
 import org.junit.Test;
 
 import java.io.InputStream;
+
+import com.jayway.jsonpath.PathNotFoundException;
 
 import static com.jayway.jsonassert.JsonAssert.*;
 import static org.hamcrest.Matchers.*;
@@ -72,7 +75,6 @@ public class JsonAssertTest {
                 .assertThat("rows", collectionWithSize(equalTo(2)));
 
     }
-
 
     @Test
     public void a_document_can_be_expected_not_to_contain_a_path() throws Exception {
@@ -159,13 +161,26 @@ public class JsonAssertTest {
     }
 
 
-    @Test(expected = InvalidPathException.class)
+    @Test(expected = AssertionError.class)
     public void assert_that_invalid_path_is_thrown() {
 
         JsonAsserter asserter = JsonAssert.with("{\"foo\":\"bar\"}");
         asserter.assertEquals("$foo", "bar");
     }
+    @Test
+    public void testAssertEqualsInteger() throws Exception {
+        with(getResourceAsStream("lotto.json")).assertEquals("lotto.winners[0].winnerId", 23);
+    }
 
+    @Test(expected = AssertionError.class)
+    public void testAssertEqualsIntegerInvalidExpected() throws Exception {
+        with(getResourceAsStream("lotto.json")).assertEquals("lotto.winners[0].winnerId", 24);
+    }
+
+    @Test(expected = AssertionError.class)
+    public void testAssertEqualsIntegerInvalidField() throws Exception {
+        with(getResourceAsStream("lotto.json")).assertEquals("lotto.winners[0].winnerId1", 24);
+    }
 
     private InputStream getResourceAsStream(String resourceName) {
         return getClass().getClassLoader().getResourceAsStream(resourceName);
