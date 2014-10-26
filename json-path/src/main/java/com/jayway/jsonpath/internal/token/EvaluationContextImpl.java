@@ -21,9 +21,14 @@ import com.jayway.jsonpath.PathNotFoundException;
 import com.jayway.jsonpath.internal.EvaluationAbortException;
 import com.jayway.jsonpath.internal.EvaluationContext;
 import com.jayway.jsonpath.internal.Path;
+import com.jayway.jsonpath.internal.PathRef;
 import com.jayway.jsonpath.spi.json.JsonProvider;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Set;
@@ -35,31 +40,46 @@ import static com.jayway.jsonpath.internal.Utils.notNull;
  */
 public class EvaluationContextImpl implements EvaluationContext {
 
+    private static final Logger logger = LoggerFactory.getLogger(EvaluationContextImpl.class);
+
     private final Configuration configuration;
     private final Object valueResult;
     private final Object pathResult;
     private final Path path;
     private final Object rootDocument;
+    private final List<PathRef> updateOperations;
     private final HashMap<Path, Object> documentEvalCache = new HashMap<Path, Object>();
+    private final boolean forUpdate;
     private int resultIndex = 0;
 
 
-    public EvaluationContextImpl(Path path, Object rootDocument, Configuration configuration) {
+    public EvaluationContextImpl(Path path, Object rootDocument, Configuration configuration, boolean forUpdate) {
         notNull(path, "path can not be null");
         notNull(rootDocument, "root can not be null");
         notNull(configuration, "configuration can not be null");
+        this.forUpdate = forUpdate;
         this.path = path;
         this.rootDocument = rootDocument;
         this.configuration = configuration;
         this.valueResult = configuration.jsonProvider().createArray();
         this.pathResult = configuration.jsonProvider().createArray();
+        this.updateOperations = new ArrayList<PathRef>();
     }
 
     public HashMap<Path, Object> documentEvalCache() {
         return documentEvalCache;
     }
 
-    public void addResult(String path, Object model) {
+    public boolean forUpdate(){
+        return forUpdate;
+    }
+
+    public void addResult(String path, PathRef operation, Object model) {
+
+        if(forUpdate) {
+            updateOperations.add(operation);
+        }
+
         configuration.jsonProvider().setProperty(valueResult, resultIndex, model);
         configuration.jsonProvider().setProperty(pathResult, resultIndex, path);
         resultIndex++;
@@ -73,6 +93,7 @@ public class EvaluationContextImpl implements EvaluationContext {
             }
         }
     }
+
 
     public JsonProvider jsonProvider() {
         return configuration.jsonProvider();
@@ -90,6 +111,13 @@ public class EvaluationContextImpl implements EvaluationContext {
     @Override
     public Object rootDocument() {
         return rootDocument;
+    }
+
+    public Collection<PathRef> updateOperations(){
+
+        Collections.sort(updateOperations);
+
+        return Collections.unmodifiableCollection(updateOperations);
     }
 
 

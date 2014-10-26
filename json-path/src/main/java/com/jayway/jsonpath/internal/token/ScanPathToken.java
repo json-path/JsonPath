@@ -14,6 +14,7 @@
  */
 package com.jayway.jsonpath.internal.token;
 
+import com.jayway.jsonpath.internal.PathRef;
 import com.jayway.jsonpath.spi.json.JsonProvider;
 
 import java.util.Collection;
@@ -24,37 +25,33 @@ import java.util.Collection;
 public class ScanPathToken extends PathToken {
 
     @Override
-    public void evaluate(String currentPath, Object model, EvaluationContextImpl ctx) {
-
-        if (isLeaf()) {
-            ctx.addResult(currentPath, model);
-        }
+    public void evaluate(String currentPath, PathRef parent, Object model, EvaluationContextImpl ctx) {
 
         PathToken pt = next();
 
-        walk(pt, currentPath, model, ctx, createScanPredicate(pt, ctx));
+        walk(pt, currentPath, parent,  model, ctx, createScanPredicate(pt, ctx));
     }
 
-    public static void walk(PathToken pt, String currentPath, Object model, EvaluationContextImpl ctx, Predicate predicate) {
+    public static void walk(PathToken pt, String currentPath, PathRef parent, Object model, EvaluationContextImpl ctx, Predicate predicate) {
         if (ctx.jsonProvider().isMap(model)) {
-            walkObject(pt, currentPath, model, ctx, predicate);
+            walkObject(pt, currentPath, parent, model, ctx, predicate);
         } else if (ctx.jsonProvider().isArray(model)) {
-            walkArray(pt, currentPath, model, ctx, predicate);
+            walkArray(pt, currentPath, parent, model, ctx, predicate);
         }
     }
 
-    public static void walkArray(PathToken pt, String currentPath, Object model, EvaluationContextImpl ctx, Predicate predicate) {
+    public static void walkArray(PathToken pt, String currentPath, PathRef parent, Object model, EvaluationContextImpl ctx, Predicate predicate) {
 
         if (predicate.matches(model)) {
             if (pt.isLeaf()) {
-                pt.evaluate(currentPath, model, ctx);
+                pt.evaluate(currentPath, parent, model, ctx);
             } else {
                 PathToken next = pt.next();
                 Iterable<?> models = ctx.jsonProvider().toIterable(model);
                 int idx = 0;
                 for (Object evalModel : models) {
                     String evalPath = currentPath + "[" + idx + "]";
-                    next.evaluate(evalPath, evalModel, ctx);
+                    next.evaluate(evalPath, parent, evalModel, ctx);
                     idx++;
                 }
             }
@@ -64,28 +61,23 @@ public class ScanPathToken extends PathToken {
         int idx = 0;
         for (Object evalModel : models) {
             String evalPath = currentPath + "[" + idx + "]";
-            walk(pt, evalPath, evalModel, ctx, predicate);
+            walk(pt, evalPath, PathRef.create(model, idx), evalModel, ctx, predicate);
             idx++;
         }
     }
 
-    public static void walkObject(PathToken pt, String currentPath, Object model, EvaluationContextImpl ctx, Predicate predicate) {
+    public static void walkObject(PathToken pt, String currentPath, PathRef parent, Object model, EvaluationContextImpl ctx, Predicate predicate) {
 
         if (predicate.matches(model)) {
-            if (pt.isLeaf()) {
-                pt.evaluate(currentPath, model, ctx);
-            } else {
-                pt.evaluate(currentPath, model, ctx);
-            }
+            pt.evaluate(currentPath, parent, model, ctx);
         }
         Collection<String> properties = ctx.jsonProvider().getPropertyKeys(model);
-
 
         for (String property : properties) {
             String evalPath = currentPath + "['" + property + "']";
             Object propertyModel = ctx.jsonProvider().getMapValue(model, property);
             if (propertyModel != JsonProvider.UNDEFINED) {
-                walk(pt, evalPath, propertyModel, ctx, predicate);
+                walk(pt, evalPath, PathRef.create(model, property), propertyModel, ctx, predicate);
             }
         }
     }

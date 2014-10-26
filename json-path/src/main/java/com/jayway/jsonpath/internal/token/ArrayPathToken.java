@@ -16,6 +16,7 @@ package com.jayway.jsonpath.internal.token;
 
 import com.jayway.jsonpath.InvalidPathException;
 import com.jayway.jsonpath.PathNotFoundException;
+import com.jayway.jsonpath.internal.PathRef;
 import com.jayway.jsonpath.internal.Utils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -51,7 +52,7 @@ public class ArrayPathToken extends PathToken {
     }
 
     @Override
-    public void evaluate(String currentPath, Object model, EvaluationContextImpl ctx) {
+    public void evaluate(String currentPath, PathRef parent, Object model, EvaluationContextImpl ctx) {
         if(model == null){
             throw new PathNotFoundException("The path " + currentPath + " is null");
         }
@@ -73,7 +74,7 @@ public class ArrayPathToken extends PathToken {
 
                 case INDEX_SEQUENCE:
                     for (Integer i : criteria) {
-                        handleArrayIndex(i, currentPath, model, ctx);
+                        handleArrayIndex(i, currentPath,  model, ctx);
                     }
                     break;
 

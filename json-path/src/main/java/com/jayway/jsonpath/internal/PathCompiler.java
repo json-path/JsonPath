@@ -54,6 +54,10 @@ public class PathCompiler {
         notEmpty(path, "Path may not be null empty");
         path = path.trim();
 
+        if(path.endsWith("..")){
+            throw new InvalidPathException("A path can not end with a scan.");
+        }
+
         LinkedList<Predicate> filterList = new LinkedList<Predicate>(asList(filters));
 
         if (path.charAt(0) != '$' && path.charAt(0) != '@') {

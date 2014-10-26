@@ -17,6 +17,7 @@ package com.jayway.jsonpath.internal.token;
 import com.jayway.jsonpath.InvalidPathException;
 import com.jayway.jsonpath.Option;
 import com.jayway.jsonpath.PathNotFoundException;
+import com.jayway.jsonpath.internal.PathRef;
 import com.jayway.jsonpath.internal.Utils;
 import com.jayway.jsonpath.spi.json.JsonProvider;
 
@@ -63,10 +64,11 @@ public abstract class PathToken {
                     }
                 }
             }
+            PathRef pathRef = ctx.forUpdate() ? PathRef.create(model, property) : PathRef.NO_OP;
             if (isLeaf()) {
-                ctx.addResult(evalPath, propertyVal);
+                ctx.addResult(evalPath, pathRef, propertyVal);
             } else {
-                next().evaluate(evalPath, propertyVal, ctx);
+                next().evaluate(evalPath, pathRef, propertyVal, ctx);
             }
         } else {
             String evalPath = currentPath + "[" + Utils.join(", ", "'", properties) + "]";
@@ -77,7 +79,7 @@ public abstract class PathToken {
 
             Object merged = ctx.jsonProvider().createMap();
             for (String property : properties) {
-                Object propertyVal = null;
+                Object propertyVal;
                 if(hasProperty(property, model, ctx)) {
                     propertyVal = readObjectProperty(property, model, ctx);
                     if(propertyVal == JsonProvider.UNDEFINED){
@@ -98,7 +100,8 @@ public abstract class PathToken {
                 }
                 ctx.jsonProvider().setProperty(merged, property, propertyVal);
             }
-            ctx.addResult(evalPath, merged);
+            PathRef pathRef = ctx.forUpdate() ? PathRef.create(model, properties) : PathRef.NO_OP;
+            ctx.addResult(evalPath, pathRef, merged);
         }
     }
 
@@ -111,14 +114,15 @@ public abstract class PathToken {
     }
 
 
-    void handleArrayIndex(int index, String currentPath, Object json, EvaluationContextImpl ctx) {
+    void handleArrayIndex(int index, String currentPath, Object model, EvaluationContextImpl ctx) {
         String evalPath = currentPath + "[" + index + "]";
+        PathRef pathRef = ctx.forUpdate() ? PathRef.create(model, index) : PathRef.NO_OP;
         try {
-            Object evalHit = ctx.jsonProvider().getArrayIndex(json, index);
+            Object evalHit = ctx.jsonProvider().getArrayIndex(model, index);
             if (isLeaf()) {
-                ctx.addResult(evalPath, evalHit);
+                ctx.addResult(evalPath, pathRef, evalHit);
             } else {
-                next().evaluate(evalPath, evalHit, ctx);
+                next().evaluate(evalPath, pathRef, evalHit, ctx);
             }
         } catch (IndexOutOfBoundsException e) {
             throw new PathNotFoundException("Index out of bounds when evaluating path " + evalPath);
@@ -198,7 +202,7 @@ public abstract class PathToken {
         return super.equals(obj);
     }
 
-    public abstract void evaluate(String currentPath, Object model, EvaluationContextImpl ctx);
+    public abstract void evaluate(String currentPath, PathRef parent,  Object model, EvaluationContextImpl ctx);
 
     abstract boolean isTokenDefinite();
 

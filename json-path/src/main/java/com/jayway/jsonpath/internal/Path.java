@@ -21,6 +21,7 @@ import com.jayway.jsonpath.Configuration;
  */
 public interface Path {
 
+
     /**
      * Evaluates this path
      *
@@ -30,6 +31,17 @@ public interface Path {
      * @return EvaluationContext containing results of evaluation
      */
     EvaluationContext evaluate(Object document, Object rootDocument, Configuration configuration);
+
+    /**
+     * Evaluates this path
+     *
+     * @param document the json document to apply the path on
+     * @param rootDocument the root json document that started this evaluation
+     * @param configuration configuration to use
+     * @param forUpdate is this a read or a write operation
+     * @return EvaluationContext containing results of evaluation
+     */
+    EvaluationContext evaluate(Object document, Object rootDocument, Configuration configuration, boolean forUpdate);
 
     /**
      *

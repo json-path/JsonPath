@@ -1,0 +1,73 @@
+/*
+ * Copyright 2011 the original author or authors.
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *       http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+package com.jayway.jsonpath;
+
+public interface WriteContext {
+
+    /**
+     * Returns the configuration used for reading
+     *
+     * @return an immutable configuration
+     */
+    Configuration configuration();
+
+    /**
+     * Returns the JSON model that this context is operating on
+     *
+     * @return json model
+     */
+    <T> T json();
+
+    /**
+     * Set the value a the given path
+     *
+     * @param path    path to set
+     * @param newValue new value
+     * @param filters filters
+     * @return a document context
+     */
+    DocumentContext set(String path, Object newValue, Predicate... filters);
+
+    /**
+     * Deletes the given path
+     *
+     * @param path    path to delete
+     * @param filters filters
+     * @return a document context
+     */
+    DocumentContext delete(String path, Predicate... filters);
+
+    /**
+     * Add value to array at the given path
+     *
+     * @param path    path to array
+     * @param value   value to add
+     * @param filters filters
+     * @return a document context
+     */
+    DocumentContext add(String path, Object value, Predicate... filters);
+
+    /**
+     * Add or update the key with a the given value at the given path
+     *
+     * @param path    path to array
+     * @param key     key to add
+     * @param value   value of key
+     * @param filters filters
+     * @return a document context
+     */
+    DocumentContext put(String path, String key, Object value, Predicate... filters);
+
+}

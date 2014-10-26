@@ -132,6 +132,14 @@ public class GsonJsonProvider extends AbstractJsonProvider {
         return unwrap(toJsonArray(obj).get(idx));
     }
 
+    @Override
+    public void setArrayIndex(Object array, int index, Object newValue) {
+        if (!isArray(array)) {
+            throw new UnsupportedOperationException();
+        } else {
+            toJsonArray(array).set (index, createJsonElement(newValue));
+        }
+    }
 
     @Override
     public Object getMapValue(Object obj, String key) {
@@ -161,6 +169,19 @@ public class GsonJsonProvider extends AbstractJsonProvider {
             } else {
                 array.set(index, createJsonElement(value));
             }
+        }
+    }
+
+
+
+    @SuppressWarnings("unchecked")
+    public void removeProperty(Object obj, Object key) {
+        if (isMap(obj))
+            toJsonObject(obj).remove(key.toString());
+        else {
+            JsonArray array = toJsonArray(obj);
+            int index = key instanceof Integer ? (Integer) key : Integer.parseInt(key.toString());
+            array.remove(index);
         }
     }
 

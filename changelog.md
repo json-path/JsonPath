@@ -3,8 +3,13 @@ In The Pipe
 * Added EvaluationListener interface that allows abortion of evaluation if criteria is fulfilled.
   this makes it possible to limit the number of results to fetch when a document is scanned. Also 
   added utility method to limit results `JsonPath.parse(json).limit(1).read("$..title", List.class);`
-* Added support for OR in inline filters [?(@.foo == 'bar' || @.foo == 'baz')] 
+* Added support for OR in inline filters `[?(@.foo == 'bar' || @.foo == 'baz')]` 
 * Upgrade json-smart to 2.1.0
+* Support for Update and Delete by path. **breaks JsonProvider SPI**
+  `parse(JSON_DOCUMENT).set("$.store.book[*].display-price", 1)`
+  `parse(JSON_DOCUMENT).put("$.store.book[1]", "new-key", "new-val")`
+  `parse(JSON_DOCUMENT).add("$.store.book", newBook)`
+  `parse(JSON_DOCUMENT).delete("$.store.book[1].display-price")`
 
 
 1.1.0 (2014-10-01)

@@ -16,6 +16,7 @@ package com.jayway.jsonpath.internal;
 
 import com.jayway.jsonpath.Configuration;
 
+import java.util.Collection;
 import java.util.List;
 
 public interface EvaluationContext {
@@ -52,5 +53,7 @@ public interface EvaluationContext {
      * @return list of path representations
      */
     List<String> getPathList();
+
+    Collection<PathRef> updateOperations();
 
 }

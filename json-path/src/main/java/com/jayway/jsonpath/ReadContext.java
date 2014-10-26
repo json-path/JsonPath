@@ -24,11 +24,11 @@ public interface ReadContext {
     Configuration configuration();
 
     /**
-     * Returns the JSON model that this context is reading
+     * Returns the JSON model that this context is operating on
      *
      * @return json model
      */
-    Object json();
+    <T> T json();
 
     /**
      * Reads the given path from this context

@@ -15,9 +15,11 @@
 package com.jayway.jsonpath;
 
 
+import com.jayway.jsonpath.internal.EvaluationContext;
 import com.jayway.jsonpath.internal.JsonReader;
 import com.jayway.jsonpath.internal.Path;
 import com.jayway.jsonpath.internal.PathCompiler;
+import com.jayway.jsonpath.internal.PathRef;
 import com.jayway.jsonpath.internal.Utils;
 import com.jayway.jsonpath.spi.http.HttpProviderFactory;
 import com.jayway.jsonpath.spi.json.JsonProvider;
@@ -197,9 +199,74 @@ public class JsonPath {
                 return (T)(path.isDefinite() ? null : configuration.jsonProvider().createArray());
             }
         }
-
     }
 
+    /**
+     * Set the value this path points to in the provided jsonObject
+     *
+     * @param jsonObject    a json object
+     * @param configuration configuration to use
+     * @param <T>           expected return type
+     * @return the updated jsonObject
+     */
+    public <T> T set(Object jsonObject, Object newVal, Configuration configuration) {
+        EvaluationContext evaluationContext = path.evaluate(jsonObject, jsonObject, configuration, true);
+        for (PathRef updateOperation : evaluationContext.updateOperations()) {
+            updateOperation.set(newVal, configuration);
+        }
+        return (T)jsonObject;
+    }
+
+    /**
+     * Deletes the object this path points to in the provided jsonObject
+     *
+     * @param jsonObject    a json object
+     * @param configuration configuration to use
+     * @param <T>           expected return type
+     * @return the updated jsonObject
+     */
+    public <T> T delete(Object jsonObject, Configuration configuration) {
+        EvaluationContext evaluationContext = path.evaluate(jsonObject, jsonObject, configuration, true);
+        for (PathRef updateOperation : evaluationContext.updateOperations()) {
+            updateOperation.delete(configuration);
+        }
+        return (T)jsonObject;
+    }
+
+    /**
+     * Adds a new value to the Array this path points to in the provided jsonObject
+     *
+     * @param jsonObject    a json object
+     * @param value         the value to add
+     * @param configuration configuration to use
+     * @param <T>           expected return type
+     * @return the updated jsonObject
+     */
+    public <T> T add(Object jsonObject, Object value, Configuration configuration) {
+        EvaluationContext evaluationContext = path.evaluate(jsonObject, jsonObject, configuration, true);
+        for (PathRef updateOperation : evaluationContext.updateOperations()) {
+            updateOperation.add(value, configuration);
+        }
+        return (T)jsonObject;
+    }
+
+    /**
+     * Adds or updates the Object this path points to in the provided jsonObject with a key with a value
+     *
+     * @param jsonObject    a json object
+     * @param value         the key to add or update
+     * @param value         the new value
+     * @param configuration configuration to use
+     * @param <T>           expected return type
+     * @return the updated jsonObject
+     */
+    public <T> T put(Object jsonObject, String key, Object value, Configuration configuration) {
+        EvaluationContext evaluationContext = path.evaluate(jsonObject, jsonObject, configuration, true);
+        for (PathRef updateOperation : evaluationContext.updateOperations()) {
+            updateOperation.put(key, value, configuration);
+        }
+        return (T)jsonObject;
+    }
 
     /**
      * Applies this JsonPath to the provided json string
@@ -482,111 +549,111 @@ public class JsonPath {
 
     /**
      * Parses the given JSON input using the default {@link Configuration} and
-     * returns a {@link ReadContext} for path evaluation
+     * returns a {@link DocumentContext} for path evaluation
      *
      * @param json input
      * @return a read context
      */
-    public static ReadContext parse(Object json) {
+    public static DocumentContext parse(Object json) {
         return new JsonReader().parse(json);
     }
 
     /**
      * Parses the given JSON input using the default {@link Configuration} and
-     * returns a {@link ReadContext} for path evaluation
+     * returns a {@link DocumentContext} for path evaluation
      *
      * @param json string
      * @return a read context
      */
-    public static ReadContext parse(String json) {
+    public static DocumentContext parse(String json) {
         return new JsonReader().parse(json);
     }
 
     /**
      * Parses the given JSON input using the default {@link Configuration} and
-     * returns a {@link ReadContext} for path evaluation
+     * returns a {@link DocumentContext} for path evaluation
      *
      * @param json stream
      * @return a read context
      */
-    public static ReadContext parse(InputStream json) {
+    public static DocumentContext parse(InputStream json) {
         return new JsonReader().parse(json);
     }
 
     /**
      * Parses the given JSON input using the default {@link Configuration} and
-     * returns a {@link ReadContext} for path evaluation
+     * returns a {@link DocumentContext} for path evaluation
      *
      * @param json file
      * @return a read context
      */
-    public static ReadContext parse(File json) throws IOException {
+    public static DocumentContext parse(File json) throws IOException {
         return new JsonReader().parse(json);
     }
 
     /**
      * Parses the given JSON input using the default {@link Configuration} and
-     * returns a {@link ReadContext} for path evaluation
+     * returns a {@link DocumentContext} for path evaluation
      *
      * @param json url
      * @return a read context
      */
-    public static ReadContext parse(URL json) throws IOException {
+    public static DocumentContext parse(URL json) throws IOException {
         return new JsonReader().parse(json);
     }
 
     /**
      * Parses the given JSON input using the provided {@link Configuration} and
-     * returns a {@link ReadContext} for path evaluation
+     * returns a {@link DocumentContext} for path evaluation
      *
      * @param json input
      * @return a read context
      */
-    public static ReadContext parse(Object json, Configuration configuration) {
+    public static DocumentContext parse(Object json, Configuration configuration) {
         return new JsonReader(configuration).parse(json);
     }
 
     /**
      * Parses the given JSON input using the provided {@link Configuration} and
-     * returns a {@link ReadContext} for path evaluation
+     * returns a {@link DocumentContext} for path evaluation
      *
      * @param json input
      * @return a read context
      */
-    public static ReadContext parse(String json, Configuration configuration) {
+    public static DocumentContext parse(String json, Configuration configuration) {
         return new JsonReader(configuration).parse(json);
     }
 
     /**
      * Parses the given JSON input using the provided {@link Configuration} and
-     * returns a {@link ReadContext} for path evaluation
+     * returns a {@link DocumentContext} for path evaluation
      *
      * @param json input
      * @return a read context
      */
-    public static ReadContext parse(InputStream json, Configuration configuration) {
+    public static DocumentContext parse(InputStream json, Configuration configuration) {
         return new JsonReader(configuration).parse(json);
     }
 
     /**
      * Parses the given JSON input using the provided {@link Configuration} and
-     * returns a {@link ReadContext} for path evaluation
+     * returns a {@link DocumentContext} for path evaluation
      *
      * @param json input
      * @return a read context
      */
-    public static ReadContext parse(File json, Configuration configuration) throws IOException {
+    public static DocumentContext parse(File json, Configuration configuration) throws IOException {
         return new JsonReader(configuration).parse(json);
     }
 
     /**
      * Parses the given JSON input using the provided {@link Configuration} and
-     * returns a {@link ReadContext} for path evaluation
+     * returns a {@link DocumentContext} for path evaluation
      *
      * @param json input
      * @return a read context
      */
-    public static ReadContext parse(URL json, Configuration configuration) throws IOException {
+    public static DocumentContext parse(URL json, Configuration configuration) throws IOException {
         return new JsonReader(configuration).parse(json);
     }
 }
