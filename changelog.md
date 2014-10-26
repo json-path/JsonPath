@@ -16,6 +16,8 @@ In The Pipe
 * Inline filter does not force path first  
   `parse(JSON_DOCUMENT).read("$.store.book[?(@.category == 'reference')].author")`    
   `parse(JSON_DOCUMENT).read("$.store.book[?('reference' == @.category)].author")`    
+* Negate exist checks in inline filters (not defined or null) 
+  `parse(JSON_DOCUMENT).read("$.store.book[?(!@.isbn)]")`    
 
 
 1.1.0 (2014-10-01)

@@ -2,6 +2,7 @@ package com.jayway.jsonpath;
 
 import org.junit.Test;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import static java.util.Arrays.asList;
@@ -128,5 +129,32 @@ public class InlineFilterTest extends BaseTest {
 
         resLeft = JsonPath.parse(JSON_DOCUMENT).read("$.store.book[?(@.category =~ /REFERENCE/i)].author");
         assertThat(resLeft).containsExactly("Nigel Rees");
+    }
+
+    @Test
+    public void negate_exists_check() {
+        List<String> hasIsbn = JsonPath.parse(JSON_DOCUMENT).read("$.store.book[?(@.isbn)].author");
+        assertThat(hasIsbn).containsExactly("Herman Melville", "J. R. R. Tolkien");
+
+        List<String> noIsbn = JsonPath.parse(JSON_DOCUMENT).read("$.store.book[?(!@.isbn)].author");
+
+        assertThat(noIsbn).containsExactly("Nigel Rees", "Evelyn Waugh");
+    }
+
+    @Test
+    public void negate_exists_check_primitive() {
+        List<Integer> ints = new ArrayList<Integer>();
+        ints.add(0);
+        ints.add(1);
+        ints.add(null);
+        ints.add(2);
+        ints.add(3);
+
+
+        List<Integer> notNull = JsonPath.parse(ints).read("$[?(@)]");
+        assertThat(notNull).containsExactly(0,1,2,3);
+
+        List<Integer> isNull = JsonPath.parse(ints).read("$[?(!@)]");
+        assertThat(isNull).containsExactly(new Integer[]{null});
     }
 }

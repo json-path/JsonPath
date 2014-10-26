@@ -360,8 +360,13 @@ public class Criteria implements Predicate {
             boolean exists = ((Boolean) right);
             try {
                 Configuration c = Configuration.builder().jsonProvider(ctx.configuration().jsonProvider()).options(Option.REQUIRE_PROPERTIES).build();
-                ((Path)left).evaluate(ctx.item(), ctx.root(), c).getValue();
-                return exists;
+                Object value = ((Path) left).evaluate(ctx.item(), ctx.root(), c).getValue();
+                if(exists){
+                    return  (value != null);
+                } else {
+                    return (value == null);
+                }
+
             } catch (PathNotFoundException e) {
                 return !exists;
             }
@@ -654,7 +659,8 @@ public class Criteria implements Predicate {
     }
 
     private static boolean isPath(String string){
-       return (string != null && (string.startsWith("$") || string.startsWith("@")));
+       return (string != null
+               && (string.startsWith("$") || string.startsWith("@") || string.startsWith("!@")));
     }
 
     private static boolean isString(String string){
@@ -717,8 +723,13 @@ public class Criteria implements Predicate {
         Object rightPrepared = right;
         Path leftPath = null;
         Path rightPath = null;
+        boolean existsCheck = true;
 
         if(isPath(left)){
+            if(left.charAt(0) == '!'){
+                existsCheck = false;
+                left = left.substring(1);
+            }
             leftPath = PathCompiler.compile(left);
             if(!leftPath.isDefinite()){
                 throw new InvalidPathException("the predicate path: " + left + " is not definite");
@@ -731,6 +742,9 @@ public class Criteria implements Predicate {
         }
 
         if(isPath(right)){
+            if(right.charAt(0) == '!'){
+                throw new InvalidPathException("Invalid negation! Can only be used for existence check e.g [?(!@.foo)]");
+            }
             rightPath = PathCompiler.compile(right);
             if(!rightPath.isDefinite()){
                 throw new InvalidPathException("the predicate path: " + right + " is not definite");
@@ -743,7 +757,7 @@ public class Criteria implements Predicate {
         }
 
         if(leftPath != null && operator.isEmpty()){
-            return Criteria.where(leftPath).exists(true);
+            return Criteria.where(leftPath).exists(existsCheck);
         } else {
             return new Criteria(leftPrepared, CriteriaType.parse(operator), rightPrepared);
         }
