@@ -29,6 +29,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
 
+import static com.jayway.jsonpath.JsonPath.compile;
 import static com.jayway.jsonpath.internal.Utils.notEmpty;
 import static com.jayway.jsonpath.internal.Utils.notNull;
 
@@ -127,7 +128,7 @@ public class JsonReader implements ParseContext, DocumentContext {
     @Override
     public <T> T read(String path, Predicate... filters) {
         notEmpty(path, "path can not be null or empty");
-        return read(JsonPath.compile(path, filters));
+        return read(compile(path, filters));
     }
 
     @Override
@@ -161,25 +162,45 @@ public class JsonReader implements ParseContext, DocumentContext {
 
     @Override
     public DocumentContext set(String path, Object newValue, Predicate... filters) {
-        Object modifiedJson = JsonPath.compile(path, filters).set(json, newValue, configuration);
+        return set(compile(path, filters), newValue);
+    }
+
+    @Override
+    public DocumentContext set(JsonPath path, Object newValue){
+        Object modifiedJson = path.set(json, newValue, configuration);
         return new JsonReader(modifiedJson, configuration);
     }
 
     @Override
     public DocumentContext delete(String path, Predicate... filters) {
-        Object modifiedJson = JsonPath.compile(path, filters).delete(json, configuration);
+        return delete(compile(path, filters));
+    }
+
+    @Override
+    public DocumentContext delete(JsonPath path) {
+        Object modifiedJson = path.delete(json, configuration);
         return new JsonReader(modifiedJson, configuration);
     }
 
     @Override
     public DocumentContext add(String path, Object value, Predicate... filters){
-        Object modifiedJson = JsonPath.compile(path, filters).add(json, value, configuration);
+        return add(compile(path, filters), value);
+    }
+
+    @Override
+    public DocumentContext add(JsonPath path, Object value){
+        Object modifiedJson = path.add(json, value, configuration);
         return new JsonReader(modifiedJson, configuration);
     }
 
     @Override
     public DocumentContext put(String path, String key, Object value, Predicate... filters){
-        Object modifiedJson = JsonPath.compile(path, filters).put(json, key, value, configuration);
+        return put(compile(path, filters), key, value);
+    }
+
+    @Override
+    public DocumentContext put(JsonPath path, String key, Object value){
+        Object modifiedJson = path.put(json, key, value, configuration);
         return new JsonReader(modifiedJson, configuration);
     }
 

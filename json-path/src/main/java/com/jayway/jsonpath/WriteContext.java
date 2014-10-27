@@ -41,6 +41,15 @@ public interface WriteContext {
     DocumentContext set(String path, Object newValue, Predicate... filters);
 
     /**
+     * Set the value a the given path
+     *
+     * @param path    path to set
+     * @param newValue new value
+     * @return a document context
+     */
+    DocumentContext set(JsonPath path, Object newValue);
+
+    /**
      * Deletes the given path
      *
      * @param path    path to delete
@@ -48,6 +57,14 @@ public interface WriteContext {
      * @return a document context
      */
     DocumentContext delete(String path, Predicate... filters);
+
+    /**
+     * Deletes the given path
+     *
+     * @param path    path to delete
+     * @return a document context
+     */
+    DocumentContext delete(JsonPath path);
 
     /**
      * Add value to array at the given path
@@ -60,6 +77,15 @@ public interface WriteContext {
     DocumentContext add(String path, Object value, Predicate... filters);
 
     /**
+     * Add value to array at the given path
+     *
+     * @param path    path to array
+     * @param value   value to add
+     * @return a document context
+     */
+    DocumentContext add(JsonPath path, Object value);
+
+    /**
      * Add or update the key with a the given value at the given path
      *
      * @param path    path to array
@@ -69,5 +95,15 @@ public interface WriteContext {
      * @return a document context
      */
     DocumentContext put(String path, String key, Object value, Predicate... filters);
+
+    /**
+     * Add or update the key with a the given value at the given path
+     *
+     * @param path    path to array
+     * @param key     key to add
+     * @param value   value of key
+     * @return a document context
+     */
+    DocumentContext put(JsonPath path, String key, Object value);
 
 }
