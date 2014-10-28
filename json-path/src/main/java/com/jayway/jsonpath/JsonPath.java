@@ -210,6 +210,8 @@ public class JsonPath {
      * @return the updated jsonObject
      */
     public <T> T set(Object jsonObject, Object newVal, Configuration configuration) {
+        notNull(jsonObject, "json can not be null");
+        notNull(configuration, "configuration can not be null");
         EvaluationContext evaluationContext = path.evaluate(jsonObject, jsonObject, configuration, true);
         for (PathRef updateOperation : evaluationContext.updateOperations()) {
             updateOperation.set(newVal, configuration);
@@ -226,6 +228,8 @@ public class JsonPath {
      * @return the updated jsonObject
      */
     public <T> T delete(Object jsonObject, Configuration configuration) {
+        notNull(jsonObject, "json can not be null");
+        notNull(configuration, "configuration can not be null");
         EvaluationContext evaluationContext = path.evaluate(jsonObject, jsonObject, configuration, true);
         for (PathRef updateOperation : evaluationContext.updateOperations()) {
             updateOperation.delete(configuration);
@@ -243,6 +247,8 @@ public class JsonPath {
      * @return the updated jsonObject
      */
     public <T> T add(Object jsonObject, Object value, Configuration configuration) {
+        notNull(jsonObject, "json can not be null");
+        notNull(configuration, "configuration can not be null");
         EvaluationContext evaluationContext = path.evaluate(jsonObject, jsonObject, configuration, true);
         for (PathRef updateOperation : evaluationContext.updateOperations()) {
             updateOperation.add(value, configuration);
@@ -261,6 +267,9 @@ public class JsonPath {
      * @return the updated jsonObject
      */
     public <T> T put(Object jsonObject, String key, Object value, Configuration configuration) {
+        notNull(jsonObject, "json can not be null");
+        notEmpty(key, "key can not be null or empty");
+        notNull(configuration, "configuration can not be null");
         EvaluationContext evaluationContext = path.evaluate(jsonObject, jsonObject, configuration, true);
         for (PathRef updateOperation : evaluationContext.updateOperations()) {
             updateOperation.put(key, value, configuration);
