@@ -42,5 +42,4 @@ public class MapperTest extends BaseTest {
     }
 
 
-
 }

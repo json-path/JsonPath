@@ -124,11 +124,17 @@ public class EvaluationContextImpl implements EvaluationContext {
     @SuppressWarnings("unchecked")
     @Override
     public <T> T getValue() {
+        return getValue(true);
+    }
+
+    @SuppressWarnings("unchecked")
+    @Override
+    public <T> T getValue(boolean unwrap) {
         if (path.isDefinite()) {
             if(resultIndex == 0){
                 throw new PathNotFoundException("No results for path: " + path.toString());
             }
-            return (T) jsonProvider().getArrayIndex(valueResult, 0);
+            return (T) jsonProvider().getArrayIndex(valueResult, 0, unwrap);
         }
         return (T)valueResult;
     }

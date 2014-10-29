@@ -43,7 +43,21 @@ public interface EvaluationContext {
      */
     <T> T getValue();
 
+    /**
+     * See {@link com.jayway.jsonpath.internal.EvaluationContext#getValue()}
+     *
+     * @param unwrap tells th underlying json provider if primitives should be unwrapped
+     * @param <T> expected return type
+     * @return evaluation result
+     */
+    <T> T getValue(boolean unwrap);
 
+
+    /**
+     * Returns the list of formalized paths that represent the result of the evaluation
+     * @param <T>
+     * @return list of paths
+     */
     <T> T getPath();
 
 
