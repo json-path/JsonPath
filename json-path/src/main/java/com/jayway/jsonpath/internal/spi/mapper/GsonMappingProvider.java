@@ -16,8 +16,12 @@ package com.jayway.jsonpath.internal.spi.mapper;
 
 import com.google.gson.Gson;
 import com.google.gson.JsonElement;
+import com.google.gson.JsonSyntaxException;
+import com.google.gson.reflect.TypeToken;
 import com.jayway.jsonpath.Configuration;
 import com.jayway.jsonpath.JsonPathException;
+import com.jayway.jsonpath.TypeRef;
+import com.jayway.jsonpath.spi.mapper.MappingException;
 import com.jayway.jsonpath.spi.mapper.MappingProvider;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -59,6 +63,19 @@ public class GsonMappingProvider implements MappingProvider {
 
     @Override
     public <T> T map(Object source, Class<T> targetType, Configuration configuration) {
-        return factory.createInstance().getAdapter(targetType).fromJsonTree((JsonElement) source);
+        try {
+            return factory.createInstance().getAdapter(targetType).fromJsonTree((JsonElement) source);
+        } catch (Exception e){
+            throw new MappingException(e);
+        }
+    }
+
+    @Override
+    public <T> T map(Object source, TypeRef<T> targetType, Configuration configuration) {
+        try {
+            return (T) factory.createInstance().getAdapter(TypeToken.get(targetType.getType())).fromJsonTree((JsonElement) source);
+        } catch (Exception e){
+            throw new MappingException(e);
+        }
     }
 }

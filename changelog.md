@@ -13,12 +13,14 @@ In The Pipe
 * Support regex in inline filters (ruby syntax)
   `parse(JSON_DOCUMENT).read("$.store.book[?(@.category =~ /reference/)].author")`
   `parse(JSON_DOCUMENT).read("$.store.book[?(@.category =~ /REFERENCE/i)].author")`
-* Inline filter does not force path first  
+* Inline filter does not require path statement on left side of operator  
   `parse(JSON_DOCUMENT).read("$.store.book[?(@.category == 'reference')].author")`    
   `parse(JSON_DOCUMENT).read("$.store.book[?('reference' == @.category)].author")`    
 * Negate exist checks in inline filters (not defined or null) 
   `parse(JSON_DOCUMENT).read("$.store.book[?(!@.isbn)]")`    
-
+* Improved object mapping with Jackson and Gson (now handles generic types)
+* Exceptions thrown by JsonPath.compile are now wrapped in an InvalidPathException
+* Fixed Deep scanning issue (#60) 
 
 1.1.0 (2014-10-01)
 ==================

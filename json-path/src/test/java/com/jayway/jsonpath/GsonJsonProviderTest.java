@@ -3,12 +3,39 @@ package com.jayway.jsonpath;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
+import com.google.gson.JsonSyntaxException;
+import com.jayway.jsonpath.spi.mapper.MappingException;
 import org.junit.Test;
+
+import java.io.IOException;
+import java.util.List;
 
 import static com.jayway.jsonpath.JsonPath.using;
 import static org.assertj.core.api.Assertions.assertThat;
 
 public class GsonJsonProviderTest extends BaseTest {
+
+    private static final String JSON =
+            "[" +
+            "{\n" +
+            "   \"foo\" : \"foo0\",\n" +
+            "   \"bar\" : 0,\n" +
+            "   \"baz\" : true,\n" +
+            "   \"gen\" : {\"eric\" : \"yepp\"}" +
+            "}," +
+            "{\n" +
+            "   \"foo\" : \"foo1\",\n" +
+            "   \"bar\" : 1,\n" +
+            "   \"baz\" : true,\n" +
+            "   \"gen\" : {\"eric\" : \"yepp\"}" +
+            "}," +
+            "{\n" +
+            "   \"foo\" : \"foo2\",\n" +
+            "   \"bar\" : 2,\n" +
+            "   \"baz\" : true,\n" +
+            "   \"gen\" : {\"eric\" : \"yepp\"}" +
+            "}" +
+            "]";
 
     @Test
     public void json_can_be_parsed() {
@@ -28,7 +55,7 @@ public class GsonJsonProviderTest extends BaseTest {
     @Test
     public void ints_are_unwrapped() {
         JsonElement node =  using(GSON_CONFIGURATION).parse(JSON_DOCUMENT).read("$.int-max-property");
-        int unwrapped =  using(GSON_CONFIGURATION).parse(JSON_DOCUMENT).read("$.int-max-property", Integer.class);
+        int unwrapped =  using(GSON_CONFIGURATION).parse(JSON_DOCUMENT).read("$.int-max-property", int.class);
 
         assertThat(unwrapped).isEqualTo(Integer.MAX_VALUE);
         assertThat(unwrapped).isEqualTo(node.getAsInt());
@@ -71,19 +98,49 @@ public class GsonJsonProviderTest extends BaseTest {
                 "}";
 
 
-        FooBarBaz fooBarBaz = JsonPath.using(GSON_CONFIGURATION).parse(json).read("$", FooBarBaz.class);
+        TestClazz testClazz = JsonPath.using(GSON_CONFIGURATION).parse(json).read("$", TestClazz.class);
 
-        assertThat(fooBarBaz.foo).isEqualTo("foo");
-        assertThat(fooBarBaz.bar).isEqualTo(10L);
-        assertThat(fooBarBaz.baz).isEqualTo(true);
+        assertThat(testClazz.foo).isEqualTo("foo");
+        assertThat(testClazz.bar).isEqualTo(10L);
+        assertThat(testClazz.baz).isEqualTo(true);
 
     }
 
-    public static class FooBarBaz {
+    @Test
+    public void test_type_ref() throws IOException {
+        TypeRef<List<FooBarBaz<Gen>>> typeRef = new TypeRef<List<FooBarBaz<Gen>>>() {};
+
+        List<FooBarBaz<Gen>> list = JsonPath.using(GSON_CONFIGURATION).parse(JSON).read("$", typeRef);
+
+        assertThat(list.get(0).gen.eric).isEqualTo("yepp");
+    }
+
+    @Test(expected = MappingException.class)
+    public void test_type_ref_fail() throws IOException {
+        TypeRef<List<FooBarBaz<Integer>>> typeRef = new TypeRef<List<FooBarBaz<Integer>>>() {};
+
+        using(GSON_CONFIGURATION).parse(JSON).read("$", typeRef);
+    }
+
+    public static class FooBarBaz<T> {
+        public T gen;
         public String foo;
         public Long bar;
         public boolean baz;
     }
+
+
+    public static class Gen {
+        public String eric;
+    }
+
+    public static class TestClazz {
+        public String foo;
+        public Long bar;
+        public boolean baz;
+    }
+
+
 
 
 }

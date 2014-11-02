@@ -51,105 +51,111 @@ public class PathCompiler {
 
 
     public static Path compile(String path, Predicate... filters) {
+
         notEmpty(path, "Path may not be null empty");
-        path = path.trim();
+        try {
+            path = path.trim();
 
-        if(path.endsWith("..")){
-            throw new InvalidPathException("A path can not end with a scan.");
-        }
+            if (path.endsWith("..")) {
+                throw new InvalidPathException("A path can not end with a scan.");
+            }
 
-        LinkedList<Predicate> filterList = new LinkedList<Predicate>(asList(filters));
+            LinkedList<Predicate> filterList = new LinkedList<Predicate>(asList(filters));
 
-        if (path.charAt(0) != '$' && path.charAt(0) != '@') {
-            path = "$." + path;
-        }
+            if (path.charAt(0) != '$' && path.charAt(0) != '@') {
+                path = "$." + path;
+            }
 
-        boolean isRootPath = (path.charAt(0) == '$');
+            boolean isRootPath = (path.charAt(0) == '$');
 
-        if(path.charAt(0) == '@'){
-            path = "$" + path.substring(1);
-        }
+            if (path.charAt(0) == '@') {
+                path = "$" + path.substring(1);
+            }
 
-        if(path.length() > 1 &&
-           path.charAt(1) != '.' &&
-           path.charAt(1) != '['){
-            throw new InvalidPathException("Invalid path " + path);
-        }
+            if (path.length() > 1 &&
+                    path.charAt(1) != '.' &&
+                    path.charAt(1) != '[') {
+                throw new InvalidPathException("Invalid path " + path);
+            }
 
-        String cacheKey = path + isRootPath + filterList.toString();
-        Path p = cache.get(cacheKey);
-        if (p != null) {
-            if(logger.isDebugEnabled()) logger.debug("Using cached path: " + cacheKey);
-            return p;
-        }
+            String cacheKey = path + isRootPath + filterList.toString();
+            Path p = cache.get(cacheKey);
+            if (p != null) {
+                if (logger.isDebugEnabled()) logger.debug("Using cached path: " + cacheKey);
+                return p;
+            }
 
-        RootPathToken root = null;
+            RootPathToken root = null;
 
 
-        int i = 0;
-        int positions;
-        String fragment = "";
+            int i = 0;
+            int positions;
+            String fragment = "";
 
-        do {
-            char current = path.charAt(i);
+            do {
+                char current = path.charAt(i);
 
-            switch (current) {
-                case SPACE:
-                    throw new InvalidPathException("Space not allowed in path");
-                case DOCUMENT:
-                    fragment = "$";
-                    i++;
-                    break;
-                case BRACKET_OPEN:
-                    positions = fastForwardUntilClosed(path, i);
-                    fragment = path.substring(i, i + positions);
-                    i += positions;
-                    break;
-                case PERIOD:
-                    i++;
-                    if (path.charAt(i) == PERIOD) {
-                        //This is a deep scan
-                        fragment = "..";
+                switch (current) {
+                    case SPACE:
+                        throw new InvalidPathException("Space not allowed in path");
+                    case DOCUMENT:
+                        fragment = "$";
                         i++;
-                    } else {
-                        positions = fastForward(path, i);
-                        if (positions == 0) {
-                            continue;
-
-                        } else if (positions == 1 && path.charAt(i) == '*') {
-                            fragment = new String("[*]");
-                        } else {
-                            assertValidFieldChars(path, i, positions);
-
-                            fragment = PROPERTY_OPEN + path.substring(i, i + positions) + PROPERTY_CLOSE;
-                        }
+                        break;
+                    case BRACKET_OPEN:
+                        positions = fastForwardUntilClosed(path, i);
+                        fragment = path.substring(i, i + positions);
                         i += positions;
-                    }
-                    break;
-                case ANY:
-                    fragment = new String("[*]");
-                    i++;
-                    break;
-                default:
-                    positions = fastForward(path, i);
+                        break;
+                    case PERIOD:
+                        i++;
+                        if (path.charAt(i) == PERIOD) {
+                            //This is a deep scan
+                            fragment = "..";
+                            i++;
+                        } else {
+                            positions = fastForward(path, i);
+                            if (positions == 0) {
+                                continue;
 
-                    fragment = PROPERTY_OPEN + path.substring(i, i + positions) + PROPERTY_CLOSE;
-                    i += positions;
-                    break;
-            }
-            if (root == null) {
-                root = (RootPathToken) PathComponentAnalyzer.analyze(fragment, filterList);
-            } else {
-                root.append(PathComponentAnalyzer.analyze(fragment, filterList));
-            }
+                            } else if (positions == 1 && path.charAt(i) == '*') {
+                                fragment = new String("[*]");
+                            } else {
+                                assertValidFieldChars(path, i, positions);
 
-        } while (i < path.length());
+                                fragment = PROPERTY_OPEN + path.substring(i, i + positions) + PROPERTY_CLOSE;
+                            }
+                            i += positions;
+                        }
+                        break;
+                    case ANY:
+                        fragment = new String("[*]");
+                        i++;
+                        break;
+                    default:
+                        positions = fastForward(path, i);
 
-        Path pa = new CompiledPath(root, isRootPath);
+                        fragment = PROPERTY_OPEN + path.substring(i, i + positions) + PROPERTY_CLOSE;
+                        i += positions;
+                        break;
+                }
+                if (root == null) {
+                    root = (RootPathToken) PathComponentAnalyzer.analyze(fragment, filterList);
+                } else {
+                    root.append(PathComponentAnalyzer.analyze(fragment, filterList));
+                }
 
-        cache.put(cacheKey, pa);
+            } while (i < path.length());
 
-        return pa;
+            Path pa = new CompiledPath(root, isRootPath);
+
+            cache.put(cacheKey, pa);
+
+            return pa;
+
+        } catch (Exception ex){
+            throw new InvalidPathException(ex);
+        }
     }
 
     private static void assertValidFieldChars(String s, int start, int positions) {

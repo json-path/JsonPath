@@ -15,17 +15,24 @@
 package com.jayway.jsonpath.internal.spi.mapper;
 
 import com.jayway.jsonpath.Configuration;
+import com.jayway.jsonpath.TypeRef;
 import com.jayway.jsonpath.spi.mapper.MappingException;
 import com.jayway.jsonpath.spi.mapper.MappingProvider;
+import net.minidev.json.JSONUtil;
+import net.minidev.json.JSONValue;
 import net.minidev.json.writer.JsonReader;
 import net.minidev.json.writer.JsonReaderI;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.lang.reflect.ParameterizedType;
+import java.lang.reflect.Type;
 import java.math.BigDecimal;
 import java.text.DateFormat;
 import java.text.ParseException;
+import java.util.Collection;
 import java.util.Date;
+import java.util.Map;
 
 public class JsonSmartMappingProvider implements MappingProvider {
 
@@ -73,7 +80,21 @@ public class JsonSmartMappingProvider implements MappingProvider {
         if (targetType.isAssignableFrom(source.getClass())) {
             return (T) source;
         }
-        return factory.createInstance().getMapper(targetType).convert(source);
+        try {
+            if(!configuration.jsonProvider().isMap(source) && !configuration.jsonProvider().isArray(source)){
+                return factory.createInstance().getMapper(targetType).convert(source);
+            }
+            String s = configuration.jsonProvider().toJson(source);
+            return (T) JSONValue.parse(s, targetType);
+        } catch (Exception e) {
+            throw new MappingException(e);
+        }
+
+    }
+
+    @Override
+    public <T> T map(Object source, TypeRef<T> targetType, Configuration configuration) {
+        throw new UnsupportedOperationException("Not supported! Use Jackson or Gson provider");
     }
 
     private static class StringReader extends JsonReaderI<String> {

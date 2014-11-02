@@ -71,6 +71,36 @@ public interface ReadContext {
     <T> T read(JsonPath path, Class<T> type);
 
     /**
+     * Reads the given path from this context
+     *
+     * Sample code to create a TypeRef
+     * <code>
+     *       TypeRef ref = new TypeRef<List<Integer>>() {};
+     * </code>
+     *
+     * @param path path to apply
+     * @param typeRef  expected return type (will try to map)
+     * @param <T>
+     * @return result
+     */
+    <T> T read(JsonPath path, TypeRef<T> typeRef);
+
+    /**
+     * Reads the given path from this context
+     *
+     * Sample code to create a TypeRef
+     * <code>
+     *       TypeRef ref = new TypeRef<List<Integer>>() {};
+     * </code>
+     *
+     * @param path path to apply
+     * @param typeRef  expected return type (will try to map)
+     * @param <T>
+     * @return result
+     */
+    <T> T read(String path, TypeRef<T> typeRef);
+
+    /**
      * Stops evaluation when maxResults limit has been reached
      * @param maxResults
      * @return the read context
