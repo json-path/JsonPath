@@ -1,0 +1,3 @@
+com.jayway.jsonpath.internal.spi.mapper.JacksonMappingProvider
+com.jayway.jsonpath.internal.spi.mapper.JsonSmartMappingProvider
+com.jayway.jsonpath.internal.spi.mapper.GsonMappingProvider
