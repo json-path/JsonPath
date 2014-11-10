@@ -19,6 +19,7 @@ In The Pipe
 * Negate exist checks in inline filters (not defined or null) 
   `parse(JSON_DOCUMENT).read("$.store.book[?(!@.isbn)]")`    
 * Improved object mapping with Jackson and Gson (now handles generic types)
+* JacksonTreeJsonProvider supporting path operations on `com.fasterxml.jackson.databind.JsonNode`
 * Exceptions thrown by JsonPath.compile are now wrapped in an InvalidPathException
 * Fixed Deep scanning issue (#60) 
 

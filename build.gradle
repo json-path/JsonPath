@@ -5,6 +5,7 @@ buildscript {
     dependencies {
         classpath 'me.champeau.gradle:gradle-javadoc-hotfix-plugin:0.1'
         classpath 'com.github.jengelman.gradle.plugins:shadow:0.8'
+        classpath 'me.champeau.gradle:japicmp-gradle-plugin:0.1.0'
     }
 }
 
@@ -74,3 +75,4 @@ task wrapper(type: Wrapper) {
 
 //Task used by Heroku for staging
 task stage(dependsOn: [':json-path-web-test:clean', 'json-path-web-test:shadowJar']) {}
+apply from: "$rootDir/gradle/binaryCompatibility.gradle"
