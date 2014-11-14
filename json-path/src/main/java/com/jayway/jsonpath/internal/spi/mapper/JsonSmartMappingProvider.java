@@ -42,9 +42,13 @@ public class JsonSmartMappingProvider implements MappingProvider {
 
     static {
         DEFAULT.registerReader(Long.class, new LongReader());
+        DEFAULT.registerReader(long.class, new LongReader());
         DEFAULT.registerReader(Integer.class, new IntegerReader());
+        DEFAULT.registerReader(int.class, new IntegerReader());
         DEFAULT.registerReader(Double.class, new DoubleReader());
+        DEFAULT.registerReader(double.class, new DoubleReader());
         DEFAULT.registerReader(Float.class, new FloatReader());
+        DEFAULT.registerReader(float.class, new FloatReader());
         DEFAULT.registerReader(BigDecimal.class, new BigDecimalReader());
         DEFAULT.registerReader(String.class, new StringReader());
         DEFAULT.registerReader(Date.class, new DateReader());
@@ -94,7 +98,7 @@ public class JsonSmartMappingProvider implements MappingProvider {
 
     @Override
     public <T> T map(Object source, TypeRef<T> targetType, Configuration configuration) {
-        throw new UnsupportedOperationException("Not supported! Use Jackson or Gson provider");
+        throw new UnsupportedOperationException("Json-smart provider does not support TypeRef! Use a Jackson or Gson based provider");
     }
 
     private static class StringReader extends JsonReaderI<String> {
@@ -116,7 +120,9 @@ public class JsonSmartMappingProvider implements MappingProvider {
             if(src == null){
                 return null;
             }
-            if (Long.class.isAssignableFrom(src.getClass())) {
+            if(Integer.class.isAssignableFrom(src.getClass())){
+               return (Integer) src;
+            } else if (Long.class.isAssignableFrom(src.getClass())) {
                 return ((Integer) src).intValue();
             } else if (Double.class.isAssignableFrom(src.getClass())) {
                 return ((Double) src).intValue();
@@ -138,7 +144,9 @@ public class JsonSmartMappingProvider implements MappingProvider {
             if(src == null){
                 return null;
             }
-            if (Integer.class.isAssignableFrom(src.getClass())) {
+            if(Long.class.isAssignableFrom(src.getClass())){
+                return (Long) src;
+            } else if (Integer.class.isAssignableFrom(src.getClass())) {
                 return ((Integer) src).longValue();
             } else if (Double.class.isAssignableFrom(src.getClass())) {
                 return ((Double) src).longValue();
@@ -160,7 +168,9 @@ public class JsonSmartMappingProvider implements MappingProvider {
             if(src == null){
                 return null;
             }
-            if (Integer.class.isAssignableFrom(src.getClass())) {
+            if(Double.class.isAssignableFrom(src.getClass())){
+                return (Double) src;
+            } else if (Integer.class.isAssignableFrom(src.getClass())) {
                 return ((Integer) src).doubleValue();
             } else if (Long.class.isAssignableFrom(src.getClass())) {
                 return ((Long) src).doubleValue();
@@ -182,7 +192,9 @@ public class JsonSmartMappingProvider implements MappingProvider {
             if(src == null){
                 return null;
             }
-            if (Integer.class.isAssignableFrom(src.getClass())) {
+            if(Float.class.isAssignableFrom(src.getClass())){
+                return (Float) src;
+            } else if (Integer.class.isAssignableFrom(src.getClass())) {
                 return ((Integer) src).floatValue();
             } else if (Long.class.isAssignableFrom(src.getClass())) {
                 return ((Long) src).floatValue();
@@ -215,10 +227,11 @@ public class JsonSmartMappingProvider implements MappingProvider {
             if(src == null){
                 return null;
             }
-            if(Long.class.isAssignableFrom(src.getClass())){
+            if(Date.class.isAssignableFrom(src.getClass())){
+                return (Date) src;
+            } else if(Long.class.isAssignableFrom(src.getClass())){
                 return new Date((Long) src);
-            }
-            else if(String.class.isAssignableFrom(src.getClass())){
+            } else if(String.class.isAssignableFrom(src.getClass())){
                 try {
                     return DateFormat.getInstance().parse(src.toString());
                 } catch (ParseException e) {

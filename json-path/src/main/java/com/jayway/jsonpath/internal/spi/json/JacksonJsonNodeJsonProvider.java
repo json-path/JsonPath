@@ -19,7 +19,7 @@ import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
 
-public class JacksonTreeJsonProvider extends AbstractJsonProvider {
+public class JacksonJsonNodeJsonProvider extends AbstractJsonProvider {
 
     private static final Logger logger = LoggerFactory.getLogger(JacksonJsonProvider.class);
 
@@ -34,7 +34,7 @@ public class JacksonTreeJsonProvider extends AbstractJsonProvider {
     /**
      * Initialize the JacksonTreeJsonProvider with the default ObjectMapper and ObjectReader
      */
-    public JacksonTreeJsonProvider() {
+    public JacksonJsonNodeJsonProvider() {
         this(defaultObjectMapper);
     }
 
@@ -43,7 +43,7 @@ public class JacksonTreeJsonProvider extends AbstractJsonProvider {
      *
      * @param objectMapper the ObjectMapper to use
      */
-    public JacksonTreeJsonProvider(ObjectMapper objectMapper) {
+    public JacksonJsonNodeJsonProvider(ObjectMapper objectMapper) {
         this.objectMapper = objectMapper;
     }
 

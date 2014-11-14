@@ -1,0 +1,138 @@
+/*
+ * Copyright 2003-2014 the original author or authors.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+import groovy.text.markup.MarkupTemplateEngine
+import groovy.text.markup.TemplateConfiguration
+
+
+buildscript {
+    // this block should not be necessary, but for some reason it fails without!
+    repositories {
+        jcenter()
+    }
+
+    dependencies {
+        classpath 'me.champeau.gradle:japicmp-gradle-plugin:0.1.0'
+    }
+}
+
+
+task checkBinaryCompatibility {
+    description = 'Generates binary compatibility reports'
+}
+
+
+if (JavaVersion.current().isJava7Compatible()) {
+    apply plugin: 'me.champeau.gradle.japicmp'
+
+    def referenceMinorVersion = '1.1.0'
+
+    def reportGenerator = { model ->
+        outputProcessor {
+
+            def skipClass = { c -> c.fullyQualifiedName.startsWith('com.jayway.jsonpath.internal') || c.fullyQualifiedName.contains('$')}
+            def skipMethod = { c, m -> skipClass(c) || m.name =~ /access\$[0-9]+/ }
+            def violations = [:].withDefault {
+                // key = class name
+                // value = map of violations
+                [:].withDefault { [] }
+            }
+            removedMethod { c, m ->
+                if (!skipMethod(c, m)) {
+                    def level = m.name.startsWith('super$') ? 'warning' : 'error'
+                    violations[c.fullyQualifiedName][level] << "Method ${m.name} has been removed"
+                }
+            }
+            removedClass { c ->
+                if (!skipClass(c)) {
+                    violations[c.fullyQualifiedName].error << "Class has been removed"
+                }
+            }
+
+            modifiedMethod { c, m ->
+                if (!skipMethod(c, m)) {
+                    violations[c.fullyQualifiedName].warning << """<p>Method ${m.name} has been modified</p>
+<p>From <pre>${m.oldMethod.get()?.longName}</pre> to <pre>${m.newMethod.get()?.longName}</pre></p>"""
+                }
+            }
+
+            newClass { c ->
+                if (!skipClass(c)) {
+                    violations[c.fullyQualifiedName].info << "Class has been added"
+                }
+            }
+            newMethod { c, m ->
+                if (!skipMethod(c, m)) {
+                    violations[c.fullyQualifiedName].info << """<p>Method ${m.name} has been added</p>
+<p>Signature: <pre>${m.newMethod.get()?.longName}</pre></p>"""
+                }
+            }
+            after {
+                model.violations = violations
+            }
+        }
+    }
+
+// using a global engine for all tasks in order to increase performance
+    def configDir = file("$rootDir/gradle")
+    def templateFile = 'binarycompat-report.groovy'
+    def templateConfiguration = new TemplateConfiguration()
+    templateConfiguration.with {
+        autoIndent = true
+        autoNewLine = true
+    }
+    def engine = new MarkupTemplateEngine(this.class.classLoader, configDir, templateConfiguration)
+
+
+    subprojects {
+
+        task japicmp(type: me.champeau.gradle.ArtifactJapicmpTask) {
+            dependsOn jar
+            //baseline = "com.jayway.jsonpath:${project.name}:${referenceMinorVersion}@jar"
+            baseline = "com.jayway.jsonpath:${project.name}:+@jar"
+            to = jar.archivePath
+            accessModifier = 'protected'
+            onlyModified = true
+            failOnModification = false
+            txtOutputFile = file("$buildDir/reports/japi.txt")
+
+            def htmlReportFile = file("${buildDir}/reports/binary-compat-${project.name}.html")
+            inputs.file file("$configDir/$templateFile")
+            inputs.file templateFile
+            outputs.file htmlReportFile
+
+            def model = [title   : "Binary compatibility report for ${project.name}",
+                         project : project,
+                         baseline: baseline,
+                         archive : to.name]
+            outputProcessor(reportGenerator.curry(model))
+
+            doLast {
+                htmlReportFile.withWriter('utf-8') { wrt ->
+                    engine.createTemplateByPath(templateFile).make(model).writeTo(wrt)
+                }
+            }
+
+        }
+    }
+
+    subprojects {
+        check.dependsOn(checkBinaryCompatibility)
+        tasks.withType(me.champeau.gradle.ArtifactJapicmpTask) { task ->
+            checkBinaryCompatibility.dependsOn(task)
+        }
+    }
+}

@@ -10,6 +10,7 @@ Jayway JsonPath is a Java port of [Stefan Goessner JsonPath implementation](http
 News
 ----
 
+11 Nov 2014 - Released JsonPath 1.2.0  
 01 Oct 2014 - Released JsonPath 1.1.0  
 26 Sep 2014 - Released JsonPath 1.0.0 
 
@@ -24,7 +25,7 @@ JsonPath is available at the Central Maven Repository. Maven users add this to y
 <dependency>
     <groupId>com.jayway.jsonpath</groupId>
     <artifactId>json-path</artifactId>
-    <version>1.1.0</version>
+    <version>1.2.0</version>
 </dependency>
 ```
 
@@ -185,7 +186,7 @@ When evaluating a path you need to understand the concept of when a path is `def
 * `?(<expression>)` - an expression
 * `[<number>, <number> (, <number>)]` - multiple array indexes
 
-`Indefinite` paths always returns a list. 
+`Indefinite` paths always returns a list (as represented by current JsonProvider). 
 
 By default a simple object mapper is provided by the MappingProvider SPI. This allows you to specify the return type you want and the MappingProvider will
 try to perform the mapping. In the example below mapping between `Long` and `Date` is demonstrated. 
@@ -338,6 +339,7 @@ JsonPath is shipped with three different JsonProviders:
 
 * [JsonSmartJsonProvider](https://code.google.com/p/json-smart/) (default)
 * [JacksonJsonProvider](https://github.com/FasterXML/jackson)
+* [JacksonJsonNodeJsonProvider](https://github.com/FasterXML/jackson)
 * [GsonJsonProvider](https://code.google.com/p/google-gson/) (experimental)
 
 Changing the configuration defaults as demonstrated should only be done when your application is being initialized. Changes during runtime is strongly discouraged, especially in multi threaded applications.
