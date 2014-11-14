@@ -1,4 +1,4 @@
-com.jayway.jsonpath.internal.spi.json.JacksonTreeJsonProvider
+com.jayway.jsonpath.internal.spi.json.JacksonJsonNodeJsonProvider
 com.jayway.jsonpath.internal.spi.json.JacksonJsonProvider
 com.jayway.jsonpath.internal.spi.json.GsonJsonProvider
 com.jayway.jsonpath.internal.spi.json.JsonSmartJsonProvider

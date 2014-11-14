@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <scr:component xmlns:scr="http://www.osgi.org/xmlns/scr/v1.1.0" name="Jackson (tree) JsonProvider implementation">
-   <implementation class="com.jayway.jsonpath.internal.spi.json.JacksonTreeJsonProvider"/>
+   <implementation class="com.jayway.jsonpath.internal.spi.json.JacksonJsonNodeJsonProvider"/>
    <service>
       <provide interface="com.jayway.jsonpath.spi.json.JsonProvider"/>
    </service>
