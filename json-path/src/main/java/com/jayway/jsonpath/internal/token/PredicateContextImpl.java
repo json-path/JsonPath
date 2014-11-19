@@ -16,6 +16,7 @@ package com.jayway.jsonpath.internal.token;
 
 import com.jayway.jsonpath.Configuration;
 import com.jayway.jsonpath.Predicate;
+import com.jayway.jsonpath.TypeRef;
 import com.jayway.jsonpath.internal.Path;
 import com.jayway.jsonpath.spi.mapper.MappingException;
 import org.slf4j.Logger;
@@ -67,6 +68,11 @@ public class PredicateContextImpl implements Predicate.PredicateContext {
     @Override
     public <T> T item(Class<T> clazz) throws MappingException {
         return  configuration().mappingProvider().map(contextDocument, clazz, configuration);
+    }
+
+    @Override
+    public <T> T item(TypeRef<T> typeRef) throws MappingException {
+        return configuration().mappingProvider().map(contextDocument, typeRef, configuration);
     }
 
     @Override
