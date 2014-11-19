@@ -39,6 +39,13 @@ public interface Predicate {
         <T> T item(Class<T> clazz) throws MappingException;
 
         /**
+         * Returns the current item being evaluated by this predicate. It will be mapped
+         * to the type of the provided TypeRef
+         * @return current document
+         */
+        <T> T item(TypeRef<T> typeRef) throws MappingException;
+
+        /**
          * Returns the root document (the complete JSON)
          * @return root document
          */
