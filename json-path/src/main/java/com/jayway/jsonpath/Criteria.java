@@ -352,7 +352,7 @@ public class Criteria implements Predicate {
                 res = leftPath.evaluate(doc, ctx.root(), ctx.configuration()).getValue();
             }
         }
-        return res;
+        return res == null ? null : ctx.configuration().jsonProvider().unwrap(res);
     }
 
     private boolean eval(PredicateContext ctx) {
