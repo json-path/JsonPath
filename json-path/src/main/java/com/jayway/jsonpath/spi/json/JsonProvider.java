@@ -109,6 +109,7 @@ public interface JsonProvider {
      * @param unwrap should provider specific data type be unwrapped
      * @return the entry at the given index
      */
+    @Deprecated
     Object getArrayIndex(Object obj, int idx, boolean unwrap);
 
     /**
@@ -153,6 +154,15 @@ public interface JsonProvider {
      * @return true if the object is a map
      */
     boolean isMap(Object obj);
+
+    /**
+     * Extracts a value from a wrapper object. For JSON providers that to not wrap
+     * values, this will usually be the object itself.
+     *
+     * @param obj a value holder object
+     * @return the unwrapped value.
+     */
+    Object unwrap(Object obj);
 
 
 }

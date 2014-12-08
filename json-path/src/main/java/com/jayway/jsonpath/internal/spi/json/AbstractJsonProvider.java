@@ -16,6 +16,7 @@ package com.jayway.jsonpath.internal.spi.json;
 
 import com.jayway.jsonpath.JsonPathException;
 import com.jayway.jsonpath.spi.json.JsonProvider;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -46,11 +47,11 @@ public abstract class AbstractJsonProvider implements JsonProvider {
      * @return the entry at the given index
      */
     public Object getArrayIndex(Object obj, int idx) {
-        return getArrayIndex(obj, idx, true);
+        return ((List) obj).get(idx);
     }
 
-    public Object getArrayIndex(Object obj, int idx, boolean unwrap){
-        return ((List) obj).get(idx);
+    public final Object getArrayIndex(Object obj, int idx, boolean unwrap){
+        return getArrayIndex(obj, idx);
     }
 
     public void setArrayIndex(Object array, int index, Object newValue) {
@@ -175,6 +176,11 @@ public abstract class AbstractJsonProvider implements JsonProvider {
             return ((Iterable) obj);
         else
             return ((Map) obj).values();
+    }
+
+    @Override
+    public Object unwrap(Object obj) {
+        return obj;
     }
 
 }
