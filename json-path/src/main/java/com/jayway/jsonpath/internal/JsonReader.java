@@ -192,7 +192,7 @@ public class JsonReader implements ParseContext, DocumentContext {
         List<String> modified = path.set(json, newValue, configuration.addOptions(Option.AS_PATH_LIST));
         if(logger.isDebugEnabled()){
             for (String p : modified) {
-                logger.debug("Set path {} new value {}", p, configuration.jsonProvider().toJson(newValue));
+                logger.debug("Set path {} new value {}", p, newValue);
             }
         }
         return this;
@@ -224,7 +224,7 @@ public class JsonReader implements ParseContext, DocumentContext {
         List<String> modified =  path.add(json, value, configuration.addOptions(Option.AS_PATH_LIST));
         if(logger.isDebugEnabled()){
             for (String p : modified) {
-                logger.debug("Add path {} new value {}", p, configuration.jsonProvider().toJson(value));
+                logger.debug("Add path {} new value {}", p, value);
             }
         }
         return this;
@@ -240,7 +240,7 @@ public class JsonReader implements ParseContext, DocumentContext {
         List<String> modified = path.put(json, key, value, configuration.addOptions(Option.AS_PATH_LIST));
         if(logger.isDebugEnabled()){
             for (String p : modified) {
-                logger.debug("Put path {} key {} value {}", p, key, configuration.jsonProvider().toJson(value));
+                logger.debug("Put path {} key {} value {}", p, key, value);
             }
         }
         return this;
