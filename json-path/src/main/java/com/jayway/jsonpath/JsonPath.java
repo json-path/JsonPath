@@ -207,7 +207,7 @@ public class JsonPath {
      * @param jsonObject    a json object
      * @param configuration configuration to use
      * @param <T>           expected return type
-     * @return the updated jsonObject
+     * @return the updated jsonObject or the path list to updated objects if option AS_PATH_LIST is set.
      */
     public <T> T set(Object jsonObject, Object newVal, Configuration configuration) {
         notNull(jsonObject, "json can not be null");
@@ -216,7 +216,7 @@ public class JsonPath {
         for (PathRef updateOperation : evaluationContext.updateOperations()) {
             updateOperation.set(newVal, configuration);
         }
-        return (T)jsonObject;
+        return resultByConfiguration(jsonObject, configuration, evaluationContext);
     }
 
     /**
@@ -225,7 +225,7 @@ public class JsonPath {
      * @param jsonObject    a json object
      * @param configuration configuration to use
      * @param <T>           expected return type
-     * @return the updated jsonObject
+     * @return the updated jsonObject or the path list to deleted objects if option AS_PATH_LIST is set.
      */
     public <T> T delete(Object jsonObject, Configuration configuration) {
         notNull(jsonObject, "json can not be null");
@@ -234,7 +234,7 @@ public class JsonPath {
         for (PathRef updateOperation : evaluationContext.updateOperations()) {
             updateOperation.delete(configuration);
         }
-        return (T)jsonObject;
+        return resultByConfiguration(jsonObject, configuration, evaluationContext);
     }
 
     /**
@@ -244,7 +244,7 @@ public class JsonPath {
      * @param value         the value to add
      * @param configuration configuration to use
      * @param <T>           expected return type
-     * @return the updated jsonObject
+     * @return the updated jsonObject or the path list to updated object if option AS_PATH_LIST is set.
      */
     public <T> T add(Object jsonObject, Object value, Configuration configuration) {
         notNull(jsonObject, "json can not be null");
@@ -253,7 +253,7 @@ public class JsonPath {
         for (PathRef updateOperation : evaluationContext.updateOperations()) {
             updateOperation.add(value, configuration);
         }
-        return (T)jsonObject;
+        return resultByConfiguration(jsonObject, configuration, evaluationContext);
     }
 
     /**
@@ -264,7 +264,7 @@ public class JsonPath {
      * @param value         the new value
      * @param configuration configuration to use
      * @param <T>           expected return type
-     * @return the updated jsonObject
+     * @return the updated jsonObject or the path list to updated objects if option AS_PATH_LIST is set.
      */
     public <T> T put(Object jsonObject, String key, Object value, Configuration configuration) {
         notNull(jsonObject, "json can not be null");
@@ -274,7 +274,7 @@ public class JsonPath {
         for (PathRef updateOperation : evaluationContext.updateOperations()) {
             updateOperation.put(key, value, configuration);
         }
-        return (T)jsonObject;
+        return resultByConfiguration(jsonObject, configuration, evaluationContext);
     }
 
     /**
@@ -664,5 +664,13 @@ public class JsonPath {
      */
     public static DocumentContext parse(URL json, Configuration configuration) throws IOException {
         return new JsonReader(configuration).parse(json);
+    }
+
+    private <T> T resultByConfiguration(Object jsonObject, Configuration configuration, EvaluationContext evaluationContext) {
+        if(configuration.containsOption(Option.AS_PATH_LIST)){
+            return (T)evaluationContext.getPathList();
+        } else {
+            return (T) jsonObject;
+        }
     }
 }

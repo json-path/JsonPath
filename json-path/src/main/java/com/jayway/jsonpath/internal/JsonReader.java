@@ -18,17 +18,21 @@ import com.jayway.jsonpath.Configuration;
 import com.jayway.jsonpath.DocumentContext;
 import com.jayway.jsonpath.EvaluationListener;
 import com.jayway.jsonpath.JsonPath;
+import com.jayway.jsonpath.Option;
 import com.jayway.jsonpath.ParseContext;
 import com.jayway.jsonpath.Predicate;
 import com.jayway.jsonpath.ReadContext;
 import com.jayway.jsonpath.TypeRef;
 import com.jayway.jsonpath.spi.http.HttpProviderFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
+import java.util.List;
 
 import static com.jayway.jsonpath.JsonPath.compile;
 import static com.jayway.jsonpath.internal.Utils.notEmpty;
@@ -36,8 +40,11 @@ import static com.jayway.jsonpath.internal.Utils.notNull;
 
 public class JsonReader implements ParseContext, DocumentContext {
 
+    private static final Logger logger = LoggerFactory.getLogger(JsonReader.class);
+
     private final Configuration configuration;
     private Object json;
+    private Object patch;
 
     public JsonReader() {
         this(Configuration.defaultConfiguration());
@@ -182,8 +189,13 @@ public class JsonReader implements ParseContext, DocumentContext {
 
     @Override
     public DocumentContext set(JsonPath path, Object newValue){
-        Object modifiedJson = path.set(json, newValue, configuration);
-        return new JsonReader(modifiedJson, configuration);
+        List<String> modified = path.set(json, newValue, configuration.addOptions(Option.AS_PATH_LIST));
+        if(logger.isDebugEnabled()){
+            for (String p : modified) {
+                logger.debug("Set path {} new value {}", p, configuration.jsonProvider().toJson(newValue));
+            }
+        }
+        return this;
     }
 
     @Override
@@ -193,8 +205,13 @@ public class JsonReader implements ParseContext, DocumentContext {
 
     @Override
     public DocumentContext delete(JsonPath path) {
-        Object modifiedJson = path.delete(json, configuration);
-        return new JsonReader(modifiedJson, configuration);
+        List<String> modified = path.delete(json, configuration.addOptions(Option.AS_PATH_LIST));
+        if(logger.isDebugEnabled()){
+            for (String p : modified) {
+                logger.debug("Delete path {}");
+            }
+        }
+        return this;
     }
 
     @Override
@@ -204,8 +221,13 @@ public class JsonReader implements ParseContext, DocumentContext {
 
     @Override
     public DocumentContext add(JsonPath path, Object value){
-        Object modifiedJson = path.add(json, value, configuration);
-        return new JsonReader(modifiedJson, configuration);
+        List<String> modified =  path.add(json, value, configuration.addOptions(Option.AS_PATH_LIST));
+        if(logger.isDebugEnabled()){
+            for (String p : modified) {
+                logger.debug("Add path {} new value {}", p, configuration.jsonProvider().toJson(value));
+            }
+        }
+        return this;
     }
 
     @Override
@@ -215,8 +237,13 @@ public class JsonReader implements ParseContext, DocumentContext {
 
     @Override
     public DocumentContext put(JsonPath path, String key, Object value){
-        Object modifiedJson = path.put(json, key, value, configuration);
-        return new JsonReader(modifiedJson, configuration);
+        List<String> modified = path.put(json, key, value, configuration.addOptions(Option.AS_PATH_LIST));
+        if(logger.isDebugEnabled()){
+            for (String p : modified) {
+                logger.debug("Put path {} key {} value {}", p, key, configuration.jsonProvider().toJson(value));
+            }
+        }
+        return this;
     }
 
     private final class LimitingEvaluationListener implements EvaluationListener {

@@ -67,7 +67,20 @@ public interface WriteContext {
     DocumentContext delete(JsonPath path);
 
     /**
-     * Add value to array at the given path
+     * Add value to array
+     *
+     * <pre>
+     * <code>
+     * List<Integer> array = new ArrayList<Integer>(){{
+     *      add(0);
+     *      add(1);
+     * }};
+     *
+     * JsonPath.parse(array).add("$", 2);
+     *
+     * assertThat(array).containsExactly(0,1,2);
+     * </code>
+     * </pre>
      *
      * @param path    path to array
      * @param value   value to add
@@ -88,7 +101,7 @@ public interface WriteContext {
     /**
      * Add or update the key with a the given value at the given path
      *
-     * @param path    path to array
+     * @param path    path to object
      * @param key     key to add
      * @param value   value of key
      * @param filters filters
