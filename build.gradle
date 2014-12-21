@@ -12,7 +12,7 @@ buildscript {
 ext {
     libs = [
             slf4jApi: 'org.slf4j:slf4j-api:1.7.7',
-            jsonSmart: 'net.minidev:json-smart:2.1.0',
+            jsonSmart: 'net.minidev:json-smart:2.1.1',
             jacksonDatabind: 'com.fasterxml.jackson.core:jackson-databind:2.3.4',
             gson: 'com.google.code.gson:gson:2.3',
             hamcrestCore: 'org.hamcrest:hamcrest-core:1.3',
