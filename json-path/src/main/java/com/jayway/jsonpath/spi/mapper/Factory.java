@@ -1,4 +1,4 @@
-package com.jayway.jsonpath.internal.spi.mapper;
+package com.jayway.jsonpath.spi.mapper;
 
 public interface Factory<T> {
 

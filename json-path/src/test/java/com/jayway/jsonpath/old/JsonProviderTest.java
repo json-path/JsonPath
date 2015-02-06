@@ -1,6 +1,6 @@
 package com.jayway.jsonpath.old;
 
-import com.jayway.jsonpath.internal.spi.json.JacksonJsonProvider;
+import com.jayway.jsonpath.spi.json.JacksonJsonProvider;
 import org.junit.Test;
 
 public class JsonProviderTest {
