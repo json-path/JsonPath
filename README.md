@@ -215,8 +215,8 @@ Inline predicates are the ones defined in the path.
 List<Map<String, Object>> books =  JsonPath.parse(json).read("$.store.book[?(@.price < 10)]");
 ```
 
-In the current implementation you can use `&&` to combine multiple predicates `[?(@.price < 10 && @.category == 'fiction')]`. 
-OR operations are not supported in inline predicates yet.
+You can use `&&` and `||` to combine multiple predicates `[?(@.price < 10 && @.category == 'fiction')]` , 
+`[?(@.category == 'reference' || @.price > 10)]`.
  
 ###Filter Predicates
  
