@@ -2,10 +2,12 @@ package com.jayway.jsonpath.old;
 
 import com.jayway.jsonpath.BaseTest;
 import com.jayway.jsonpath.Configuration;
+import com.jayway.jsonpath.InvalidPathException;
 import com.jayway.jsonpath.JsonPath;
 import com.jayway.jsonpath.Option;
 import com.jayway.jsonpath.PathNotFoundException;
 import com.jayway.jsonpath.internal.PathCompiler;
+
 import org.assertj.core.api.Assertions;
 import org.junit.Test;
 
@@ -307,5 +309,20 @@ public class JsonPathTest extends BaseTest {
         assertThat(JsonPath.<List<String>>read(DOCUMENT, "$..[?(@.bicycle.numberOfGears)]"), hasSize(0));
 
     }
+
+    @Test
+    // see https://code.google.com/p/json-path/issues/detail?id=58
+    public void invalid_paths_throw_invalid_path_exception() throws Exception {
+        for (String path : new String[]{"$.", "$.results[?"}){
+          try{
+              JsonPath.compile(path);
+          } catch (InvalidPathException e){
+              // that's expected
+          } catch (Exception e){
+              fail("Expected an InvalidPathException trying to compile '"+path+"', but got a "+e.getClass().getName());
+          }
+        }
+    }
+
 
 }
