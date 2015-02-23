@@ -19,6 +19,7 @@ import java.io.InputStream;
 import java.net.URL;
 import java.net.URLConnection;
 
+@Deprecated
 public abstract class HttpProviderFactory {
 
     public static HttpProviderFactory factory = new HttpProviderFactory() {

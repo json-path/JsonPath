@@ -23,7 +23,6 @@ import com.jayway.jsonpath.internal.EvaluationContext;
 import com.jayway.jsonpath.internal.Path;
 import com.jayway.jsonpath.internal.PathRef;
 import com.jayway.jsonpath.spi.json.JsonProvider;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

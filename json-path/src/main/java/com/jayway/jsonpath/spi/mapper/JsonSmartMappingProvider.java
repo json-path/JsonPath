@@ -12,27 +12,20 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.jayway.jsonpath.internal.spi.mapper;
+package com.jayway.jsonpath.spi.mapper;
 
 import com.jayway.jsonpath.Configuration;
 import com.jayway.jsonpath.TypeRef;
-import com.jayway.jsonpath.spi.mapper.MappingException;
-import com.jayway.jsonpath.spi.mapper.MappingProvider;
-import net.minidev.json.JSONUtil;
 import net.minidev.json.JSONValue;
 import net.minidev.json.writer.JsonReader;
 import net.minidev.json.writer.JsonReaderI;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.lang.reflect.ParameterizedType;
-import java.lang.reflect.Type;
 import java.math.BigDecimal;
 import java.text.DateFormat;
 import java.text.ParseException;
-import java.util.Collection;
 import java.util.Date;
-import java.util.Map;
 
 public class JsonSmartMappingProvider implements MappingProvider {
 

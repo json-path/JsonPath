@@ -1,5 +1,7 @@
 In The Pipe
 ===========
+* Moved provider implementations to spi package (no longer internal) 
+* Deprecated HTTP provider and methods
 
 1.2.0 (2014-11-11)
 ==================
