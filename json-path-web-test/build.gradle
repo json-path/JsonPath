@@ -1,4 +1,4 @@
-apply plugin: 'shadow'
+apply plugin: 'com.github.johnrengelman.shadow'
 apply plugin: 'application'
 
 displayName = "JsonPath Test Bench"
@@ -30,13 +30,13 @@ dependencies {
     compile project(':json-path')
     compile 'commons-io:commons-io:2.4'
     compile libs.jacksonDatabind
-    compile 'io.fastjson:boon:0.25'
+    compile 'io.fastjson:boon:0.32'
     compile 'com.nebhale.jsonpath:jsonpath:1.2'
-    compile 'io.gatling:jsonpath_2.10:0.4.0'
-    compile 'org.eclipse.jetty:jetty-server:9.2.2.v20140723'
-    compile 'org.eclipse.jetty:jetty-webapp:9.2.2.v20140723'
-    compile 'org.glassfish.jersey.containers:jersey-container-servlet:2.9.1'
-    compile('org.glassfish.jersey.media:jersey-media-json-jackson:2.9.1'){
+    compile 'io.gatling:jsonpath_2.10:0.6.2'
+    compile 'org.eclipse.jetty:jetty-server:9.3.0.M1'
+    compile 'org.eclipse.jetty:jetty-webapp:9.3.0.M1'
+    compile 'org.glassfish.jersey.containers:jersey-container-servlet:2.16'
+    compile('org.glassfish.jersey.media:jersey-media-json-jackson:2.16'){
         exclude module: 'jackson-annotations:com.fasterxml.jackson.core'
         exclude module: 'jackson-core:com.fasterxml.jackson.core'
     }
