@@ -1,7 +1,10 @@
 In The Pipe
 ===========
+* Upgraded dependency versions
+* Moved JsonProvider and MappingProvider implementations out of the interal package
 * Moved provider implementations to spi package (no longer internal) 
 * Deprecated HTTP provider and methods
+* Add an unwrap(Object) method to JsonProvider, use it when extracting values for Criteria evaluation
 
 1.2.0 (2014-11-11)
 ==================
