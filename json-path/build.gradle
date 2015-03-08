@@ -8,7 +8,9 @@ description = "Java port of Stefan Goessner JsonPath."
 jar {
     baseName 'json-path'
     manifest {
-        attributes 'Implementation-Title': 'json-path', 'Implementation-Version': version
+        attributes 'Implementation-Title': 'json-path', 'Implementation-Version': version,
+        'Bundle-RequiredExecutionEnvironment': 'JavaSE-1.7',
+        'Service-Component': 'OSGI-INF/JacksonJsonProviderComponent.xml, OSGI-INF/JacksonMapperComponent.xml, OSGI-INF/GsonJsonProviderComponent.xml, OSGI-INF/GsonMapperComponent.xml'
     }
 }
 

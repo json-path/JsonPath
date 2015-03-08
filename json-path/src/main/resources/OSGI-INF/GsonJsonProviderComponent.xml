@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<scr:component xmlns:scr="http://www.osgi.org/xmlns/scr/v1.1.0" name="Gson JsonProvider implementation">
+   <implementation class="com.jayway.jsonpath.internal.spi.json.GsonJsonProvider"/>
+   <service>
+      <provide interface="com.jayway.jsonpath.spi.json.JsonProvider"/>
+   </service>
+   <property name="implementation" type="String" value="Gson"/>
+</scr:component>

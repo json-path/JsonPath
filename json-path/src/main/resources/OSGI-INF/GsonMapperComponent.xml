@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<scr:component xmlns:scr="http://www.osgi.org/xmlns/scr/v1.1.0" name="Gson Json-path Mapper Component Definition">
+   <implementation class="com.jayway.jsonpath.internal.spi.mapper.GsonMappingProvider"/>
+   <service>
+      <provide interface="com.jayway.jsonpath.spi.mapper.MappingProvider"/>
+   </service>
+   <property name="implementation" type="String" value="Gson"/>
+</scr:component>
