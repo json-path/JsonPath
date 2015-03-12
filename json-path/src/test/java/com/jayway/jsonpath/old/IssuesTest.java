@@ -497,4 +497,20 @@ public class IssuesTest {
 
         Assertions.assertThat(problems).containsExactly("Chain does not have a discovery event. Possible it was cut by the date that was picked", "No start transcoding events found");
     }
+
+	  @Test
+	  public void issue_71() {
+		   String json = "{\n"
+			    + "    \"logs\": [\n"
+			    + "        {\n"
+			    + "            \"message\": \"it's here\",\n"
+			    + "            \"id\": 2\n"
+			    + "        }\n"
+			    + "    ]\n"
+			    + "}";
+
+		   List<String> result = JsonPath.read(json, "$.logs[?(@.message == 'it\\'s here')].message");
+
+		   Assertions.assertThat(result).containsExactly("it's here");
+	}
 }

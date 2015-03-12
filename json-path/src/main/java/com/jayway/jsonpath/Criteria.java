@@ -779,7 +779,11 @@ public class Criteria implements Predicate {
         } else if (leftNullish && rightNullish) {
             return 0;
         } else if (left instanceof String && right instanceof String) {
-            return ((String) left).compareTo((String) right);
+					  String exp = (String)left;
+					  if(exp.contains("\'")){
+							exp = exp.replace("\\'", "'");
+						}
+            return exp.compareTo((String) right);
         } else if (left instanceof Number && right instanceof Number) {
             return new BigDecimal(left.toString()).compareTo(new BigDecimal(right.toString()));
         } else if (left instanceof String && right instanceof Number) {
