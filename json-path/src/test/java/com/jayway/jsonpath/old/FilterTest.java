@@ -2,11 +2,13 @@ package com.jayway.jsonpath.old;
 
 import com.jayway.jsonpath.BaseTest;
 import com.jayway.jsonpath.Configuration;
+import com.jayway.jsonpath.Criteria;
 import com.jayway.jsonpath.Filter;
 import com.jayway.jsonpath.InvalidCriteriaException;
 import com.jayway.jsonpath.JsonPath;
 import com.jayway.jsonpath.Predicate;
 import com.jayway.jsonpath.spi.json.JsonProvider;
+import org.assertj.core.api.Assertions;
 import org.junit.Test;
 
 import java.util.Collections;
@@ -412,10 +414,78 @@ public class FilterTest extends BaseTest {
         assertEquals(2, result2.size());
     }
 
-    @Test(expected = InvalidCriteriaException.class)
-    public void filter_path_must_be_absolute() {
+    @Test
+    public void contains_filter_evaluates_on_array() {
 
-        where("$.store.*").size(4);
+
+        String json = "{\n" +
+                "\"store\": {\n" +
+                "    \"book\": [\n" +
+                "        {\n" +
+                "            \"category\": \"reference\",\n" +
+                "            \"authors\" : [\n" +
+                "                 {\n" +
+                "                     \"firstName\" : \"Nigel\",\n" +
+                "                     \"lastName\" :  \"Rees\"\n" +
+                "                  }\n" +
+                "            ],\n" +
+                "            \"title\": \"Sayings of the Century\",\n" +
+                "            \"price\": 8.95\n" +
+                "        },\n" +
+                "        {\n" +
+                "            \"category\": \"fiction\",\n" +
+                "            \"authors\": [\n" +
+                "                 {\n" +
+                "                     \"firstName\" : \"Evelyn\",\n" +
+                "                     \"lastName\" :  \"Waugh\"\n" +
+                "                  },\n" +
+                "                 {\n" +
+                "                     \"firstName\" : \"Another\",\n" +
+                "                     \"lastName\" :  \"Author\"\n" +
+                "                  }\n" +
+                "            ],\n" +
+                "            \"title\": \"Sword of Honour\",\n" +
+                "            \"price\": 12.99\n" +
+                "        }\n" +
+                "    ]\n" +
+                "  }\n" +
+                "}";
+
+
+        Filter filter = filter(where("authors[*].lastName").contains("Waugh"));
+
+        List<String> result = JsonPath.parse(json).read("$.store.book[?].title", filter);
+
+        Assertions.assertThat(result).containsExactly("Sword of Honour");
     }
 
+
+    @Test
+    public void contains_filter_evaluates_on_string() {
+
+
+        String json = "{\n" +
+                "\"store\": {\n" +
+                "    \"book\": [\n" +
+                "        {\n" +
+                "            \"category\": \"reference\",\n" +
+                "            \"title\": \"Sayings of the Century\",\n" +
+                "            \"price\": 8.95\n" +
+                "        },\n" +
+                "        {\n" +
+                "            \"category\": \"fiction\",\n" +
+                "            \"title\": \"Sword of Honour\",\n" +
+                "            \"price\": 12.99\n" +
+                "        }\n" +
+                "    ]\n" +
+                "  }\n" +
+                "}";
+
+
+        Filter filter = filter(where("category").contains("fic"));
+
+        List<String> result = JsonPath.parse(json).read("$.store.book[?].title", filter);
+
+        Assertions.assertThat(result).containsExactly("Sword of Honour");
+    }
 }

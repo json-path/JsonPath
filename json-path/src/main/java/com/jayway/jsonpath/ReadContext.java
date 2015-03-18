@@ -31,6 +31,13 @@ public interface ReadContext {
     <T> T json();
 
     /**
+     * Returns the JSON model that this context is operating on as a JSON string
+     *
+     * @return json model as string
+     */
+    String jsonString();
+
+    /**
      * Reads the given path from this context
      *
      * @param path    path to read

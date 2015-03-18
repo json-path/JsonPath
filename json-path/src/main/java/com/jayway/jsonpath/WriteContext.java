@@ -31,6 +31,13 @@ public interface WriteContext {
     <T> T json();
 
     /**
+     * Returns the JSON model that this context is operating on as a JSON string
+     *
+     * @return json model as string
+     */
+    String jsonString();
+
+    /**
      * Set the value a the given path
      *
      * @param path    path to set

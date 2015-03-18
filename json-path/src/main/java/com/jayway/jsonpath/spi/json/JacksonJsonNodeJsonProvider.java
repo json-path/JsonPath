@@ -71,7 +71,7 @@ public class JacksonJsonNodeJsonProvider extends AbstractJsonProvider {
         if (!(obj instanceof JsonNode)) {
             throw new JsonPathException("Not a JSON Node");
         }
-        return toString();
+        return obj.toString();
     }
 
     @Override

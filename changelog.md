@@ -1,11 +1,16 @@
-In The Pipe
+In the Pipe
 ===========
+
+2.0.0 (2015-03-)
+================
 * Upgraded dependency versions
 * Moved JsonProvider and MappingProvider implementations out of the interal package **OSGi**
-* Deprecated HTTP provider and methods
+* Removed HTTP provider and methods
 * Add an unwrap(Object) method to JsonProvider, use it when extracting values for Criteria evaluation **breaks JsonProvider SPI**
 * Fixed issue #71 - esacpe character in inline predicates 
   `JsonPath.read(json, "$.logs[?(@.message == 'it\\'s here')].message");`
+* New method `jsonString()` added to `ReadContext` and `WriteContext` to extract json model as a string  
+* Path does not have to be definite in filter API `filter(where("authors[*].lastName").contains("Waugh"))`
 
 1.2.0 (2014-11-11)
 ==================

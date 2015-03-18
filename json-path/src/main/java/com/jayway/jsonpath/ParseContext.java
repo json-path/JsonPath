@@ -30,7 +30,4 @@ public interface ParseContext {
     DocumentContext parse(InputStream json, String charset);
 
     DocumentContext parse(File json) throws IOException;
-
-    @Deprecated
-    DocumentContext parse(URL json) throws IOException;
 }

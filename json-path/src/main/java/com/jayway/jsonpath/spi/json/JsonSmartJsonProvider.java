@@ -49,11 +49,6 @@ public class JsonSmartJsonProvider extends AbstractJsonProvider {
         this.mapper = mapper;
     }
 
-    @Deprecated
-    public JsonSmartJsonProvider(Mode mode) {
-        this(mode.intValue(), JSONValue.defaultReader.DEFAULT_ORDERED);
-    }
-
     public Object createArray() {
         return mapper.createArray();
     }

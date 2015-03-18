@@ -6,6 +6,7 @@ import com.jayway.jsonpath.Filter;
 import com.jayway.jsonpath.JsonPath;
 import com.jayway.jsonpath.Option;
 import com.jayway.jsonpath.PathNotFoundException;
+import com.jayway.jsonpath.Predicate;
 import com.jayway.jsonpath.internal.Utils;
 import com.jayway.jsonpath.spi.json.JsonProvider;
 import org.assertj.core.api.Assertions;
@@ -21,6 +22,7 @@ import static com.jayway.jsonpath.JsonPath.read;
 import static junit.framework.Assert.assertNull;
 import static junit.framework.Assert.assertTrue;
 import static org.assertj.core.api.Assertions.failBecauseExceptionWasNotThrown;
+import static org.assertj.core.api.Assertions.filter;
 import static org.hamcrest.Matchers.is;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertThat;
@@ -233,6 +235,7 @@ public class IssuesTest {
         String json = "{\"a\":{\"b\":1,\"c\":2}}";
         JsonPath.parse(json, configuration).read("a.d");
     }
+
     @Test
     public void issue_22c() throws Exception {
         //Configuration configuration = Configuration.builder().build();
@@ -241,7 +244,6 @@ public class IssuesTest {
         String json = "{\"a\":{\"b\":1,\"c\":2}}";
         assertNull(JsonPath.parse(json, configuration).read("a.d"));
     }
-
 
 
     @Test
@@ -270,9 +272,9 @@ public class IssuesTest {
         assertEquals(1, result.size());
         assertEquals("atext2", result.get(0).get("a"));
 
-        
+
     }
-    
+
     @Test
     public void issue_29_b() throws Exception {
         String json = "{\"list\": [ { \"a\":\"atext\", \"b\":{ \"b-a\":\"batext\", \"b-b\":\"bbtext\" } }, { \"a\":\"atext2\", \"b\":{ \"b-a\":\"batext2\", \"b-b\":\"bbtext2\" } } ] }";
@@ -280,6 +282,7 @@ public class IssuesTest {
 
         assertTrue(result.size() == 1);
     }
+
     @Test
     public void issue_30() throws Exception {
         String json = "{\"foo\" : {\"@id\" : \"123\", \"$\" : \"hello\"}}";
@@ -289,13 +292,13 @@ public class IssuesTest {
     }
 
     @Test
-    public void issue_32(){
+    public void issue_32() {
         String json = "{\"text\" : \"skill: \\\"Heuristic Evaluation\\\"\", \"country\" : \"\"}";
         assertEquals("skill: \"Heuristic Evaluation\"", read(json, "$.text"));
     }
 
     @Test
-    public void issue_33(){
+    public void issue_33() {
         String json = "{ \"store\": {\n" +
                 "    \"book\": [ \n" +
                 "      { \"category\": \"reference\",\n" +
@@ -343,7 +346,7 @@ public class IssuesTest {
     @Test(expected = PathNotFoundException.class)
     public void a_test() {
 
-        String json ="{\n" +
+        String json = "{\n" +
                 "  \"success\": true,\n" +
                 "  \"data\": {\n" +
                 "    \"user\": 3,\n" +
@@ -385,7 +388,7 @@ public class IssuesTest {
             read(json, "nonExistingProperty");
 
             failBecauseExceptionWasNotThrown(PathNotFoundException.class);
-        } catch (PathNotFoundException e){
+        } catch (PathNotFoundException e) {
 
         }
 
@@ -394,7 +397,7 @@ public class IssuesTest {
             read(json, "nonExisting.property");
 
             failBecauseExceptionWasNotThrown(PathNotFoundException.class);
-        } catch (PathNotFoundException e){
+        } catch (PathNotFoundException e) {
         }
 
     }
@@ -411,8 +414,6 @@ public class IssuesTest {
     public void issue_46() {
 
 
-
-
         String json = "{\"a\": {}}";
 
         Configuration configuration = Configuration.defaultConfiguration().setOptions(Option.SUPPRESS_EXCEPTIONS);
@@ -422,7 +423,7 @@ public class IssuesTest {
             read(json, "a.x");
 
             failBecauseExceptionWasNotThrown(PathNotFoundException.class);
-        } catch (PathNotFoundException e){
+        } catch (PathNotFoundException e) {
             Assertions.assertThat(e).hasMessage("No results for path: $['a']['x']");
         }
     }
@@ -437,7 +438,7 @@ public class IssuesTest {
                 " ]\n" +
                 "}\n";
 
-        List<String> result =  JsonPath.read(json, "$.a.*.b.*.c");
+        List<String> result = JsonPath.read(json, "$.a.*.b.*.c");
 
         Assertions.assertThat(result).containsExactly("foo");
 
@@ -447,7 +448,7 @@ public class IssuesTest {
     public void issue_60() {
 
 
-        String json ="[\n" +
+        String json = "[\n" +
                 "{\n" +
                 "  \"mpTransactionId\": \"542986eae4b001fd500fdc5b-coreDisc_50-title\",\n" +
                 "  \"resultType\": \"FAIL\",\n" +
@@ -498,19 +499,65 @@ public class IssuesTest {
         Assertions.assertThat(problems).containsExactly("Chain does not have a discovery event. Possible it was cut by the date that was picked", "No start transcoding events found");
     }
 
-	  @Test
-	  public void issue_71() {
-		   String json = "{\n"
-			    + "    \"logs\": [\n"
-			    + "        {\n"
-			    + "            \"message\": \"it's here\",\n"
-			    + "            \"id\": 2\n"
-			    + "        }\n"
-			    + "    ]\n"
-			    + "}";
+    //http://stackoverflow.com/questions/28596324/jsonpath-filtering-api
+    @Test
+    public void stack_overflow_question_1() {
 
-		   List<String> result = JsonPath.read(json, "$.logs[?(@.message == 'it\\'s here')].message");
 
-		   Assertions.assertThat(result).containsExactly("it's here");
-	}
+        String json = "{\n" +
+                "\"store\": {\n" +
+                "    \"book\": [\n" +
+                "        {\n" +
+                "            \"category\": \"reference\",\n" +
+                "            \"authors\" : [\n" +
+                "                 {\n" +
+                "                     \"firstName\" : \"Nigel\",\n" +
+                "                     \"lastName\" :  \"Rees\"\n" +
+                "                  }\n" +
+                "            ],\n" +
+                "            \"title\": \"Sayings of the Century\",\n" +
+                "            \"price\": 8.95\n" +
+                "        },\n" +
+                "        {\n" +
+                "            \"category\": \"fiction\",\n" +
+                "            \"authors\": [\n" +
+                "                 {\n" +
+                "                     \"firstName\" : \"Evelyn\",\n" +
+                "                     \"lastName\" :  \"Waugh\"\n" +
+                "                  },\n" +
+                "                 {\n" +
+                "                     \"firstName\" : \"Another\",\n" +
+                "                     \"lastName\" :  \"Author\"\n" +
+                "                  }\n" +
+                "            ],\n" +
+                "            \"title\": \"Sword of Honour\",\n" +
+                "            \"price\": 12.99\n" +
+                "        }\n" +
+                "    ]\n" +
+                "  }\n" +
+                "}";
+
+
+        Filter filter = Filter.filter(Criteria.where("authors[*].lastName").contains("Waugh"));
+
+        Object read = JsonPath.parse(json).read("$.store.book[?]", filter);
+
+        System.out.println(read);
+    }
+
+    @Test
+    public void issue_71() {
+        String json = "{\n"
+                + "    \"logs\": [\n"
+                + "        {\n"
+                + "            \"message\": \"it's here\",\n"
+                + "            \"id\": 2\n"
+                + "        }\n"
+                + "    ]\n"
+                + "}";
+
+        List<String> result = JsonPath.read(json, "$.logs[?(@.message == 'it\\'s here')].message");
+
+        Assertions.assertThat(result).containsExactly("it's here");
+    }
 }

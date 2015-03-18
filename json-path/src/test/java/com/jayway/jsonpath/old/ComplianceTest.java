@@ -107,10 +107,10 @@ public class ComplianceTest {
                 "               }\n" +
                 "             }";
 
-        //assertThat(JsonPath.<List<String>>read(json, "$.menu.items[?(@)]"), Matchers.is(notNullValue()));
+        assertThat(JsonPath.<List<String>>read(json, "$.menu.items[?(@)]"), Matchers.is(notNullValue()));
         assertThat(JsonPath.<List<String>>read(json, "$.menu.items[?(@ && @.id == 'ViewSVG')].id"), hasItems("ViewSVG"));
 
-        //assertThat(JsonPath.<List<String>>read(json, "$.menu.items[?(@ && @.id && !@.label)].id"), hasItems("?")); //low
+        assertThat(JsonPath.<List<String>>read(json, "$.menu.items[?(@ && @.id && !@.label)].id"), hasItems("Open", "Quality", "Pause", "Mute", "Copy", "Help")); //low
         //assertThat(JsonPath.<List<String>>read(json, "$.menu.items[?(@ && @.label && /SVG/.test(@.label))].id"), hasItems("?")); //low
         //assertThat(JsonPath.<List<String>>read(json, "$.menu.items[?(!@)]"), hasItems("?")); //low
         //assertThat(JsonPath.<List<String>>read(json, "$..[0]"), hasItems("?")); //low

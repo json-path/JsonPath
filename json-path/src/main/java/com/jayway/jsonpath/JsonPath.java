@@ -21,7 +21,6 @@ import com.jayway.jsonpath.internal.Path;
 import com.jayway.jsonpath.internal.PathCompiler;
 import com.jayway.jsonpath.internal.PathRef;
 import com.jayway.jsonpath.internal.Utils;
-import com.jayway.jsonpath.spi.http.HttpProviderFactory;
 import com.jayway.jsonpath.spi.json.JsonProvider;
 
 import java.io.File;
@@ -316,29 +315,6 @@ public class JsonPath {
     @SuppressWarnings({"unchecked"})
     public <T> T read(URL jsonURL) throws IOException {
         return read(jsonURL, Configuration.defaultConfiguration());
-    }
-
-    /**
-     * Applies this JsonPath to the provided json URL
-     *
-     * @param jsonURL       url to read from
-     * @param configuration configuration to use
-     * @param <T>           expected return type
-     * @return list of objects matched by the given path
-     * @throws IOException
-     */
-    @SuppressWarnings({"unchecked"})
-    public <T> T read(URL jsonURL, Configuration configuration) throws IOException {
-        notNull(jsonURL, "json URL can not be null");
-        notNull(configuration, "jsonProvider can not be null");
-
-        InputStream in = null;
-        try {
-            in = HttpProviderFactory.getProvider().get(jsonURL);
-            return read(in, "UTF-8", configuration);
-        } finally {
-            Utils.closeQuietly(in);
-        }
     }
 
     /**
