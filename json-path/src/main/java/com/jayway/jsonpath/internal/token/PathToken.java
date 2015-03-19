@@ -29,6 +29,11 @@ public abstract class PathToken {
     private PathToken next;
     private Boolean definite = null;
     private Boolean upstreamDefinite = null;
+    private static ThreadLocal<StringBuilder> BUFFERS = new ThreadLocal<StringBuilder>() {
+    	protected StringBuilder initialValue() {
+    		return new StringBuilder() ;
+    	}
+    };
 
     PathToken appendTailToken(PathToken next) {
         this.next = next;
@@ -40,7 +45,13 @@ public abstract class PathToken {
 
         if(properties.size() == 1) {
             String property = properties.get(0);
-            String evalPath = currentPath + "['" + property + "']";
+        	StringBuilder buf = BUFFERS.get() ;
+        	buf.setLength(0);
+        	buf.append(currentPath) ;
+        	buf.append('[') ;
+        	buf.append(property) ;
+        	buf.append(']') ;
+            String evalPath = buf.toString();
             Object propertyVal = readObjectProperty(property, model, ctx);
             if(propertyVal == JsonProvider.UNDEFINED){
                 if(isLeaf()) {
