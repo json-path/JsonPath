@@ -1,1 +1,1 @@
-web: java $JAVA_OPTS -Dserver.http.port=$PORT -DresourceBase=json-path-web-test/build/resources/main/webapp/  -jar json-path-web-test/build/distributions/json-path-web-test-*-shadow.jar
+web: java $JAVA_OPTS -Dserver.http.port=$PORT -DresourceBase=json-path-web-test/build/resources/main/webapp/  -jar json-path-web-test/build/distributions/json-path-web-test-*.jar
