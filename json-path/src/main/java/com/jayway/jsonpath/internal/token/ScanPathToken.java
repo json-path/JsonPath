@@ -93,11 +93,10 @@ public class ScanPathToken extends PathToken {
         for (String property : properties) {
         	buf.setLength(0);
         	buf.append(currentPath) ;
-        	buf.append('[') ;
+        	buf.append("['") ;
         	buf.append(property) ;
-        	buf.append(']') ;
+        	buf.append("']") ;
             String evalPath = buf.toString();
-            //String evalPath = currentPath + "['" + property + "']";
             Object propertyModel = ctx.jsonProvider().getMapValue(model, property);
             if (propertyModel != JsonProvider.UNDEFINED) {
                 walk(pt, evalPath, PathRef.create(model, property), propertyModel, ctx, predicate);

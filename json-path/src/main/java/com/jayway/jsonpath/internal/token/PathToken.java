@@ -48,9 +48,9 @@ public abstract class PathToken {
         	StringBuilder buf = BUFFERS.get() ;
         	buf.setLength(0);
         	buf.append(currentPath) ;
-        	buf.append('[') ;
+        	buf.append("['") ;
         	buf.append(property) ;
-        	buf.append(']') ;
+        	buf.append("']") ;
             String evalPath = buf.toString();
             Object propertyVal = readObjectProperty(property, model, ctx);
             if(propertyVal == JsonProvider.UNDEFINED){
