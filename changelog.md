@@ -1,8 +1,8 @@
 In the Pipe
 ===========
 
-2.0.0 (2015-03-)
-================
+2.0.0 (2015-03-19)
+=================
 * Upgraded dependency versions
 * Moved JsonProvider and MappingProvider implementations out of the interal package **OSGi**
 * Removed HTTP provider and methods
