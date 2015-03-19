@@ -29,11 +29,18 @@ public abstract class PathToken {
     private PathToken next;
     private Boolean definite = null;
     private Boolean upstreamDefinite = null;
-    private static ThreadLocal<StringBuilder> BUFFERS = new ThreadLocal<StringBuilder>() {
-    	protected StringBuilder initialValue() {
-    		return new StringBuilder() ;
+   private static ThreadLocal<StringBuilder> BUFFERS = new ThreadLocal<StringBuilder>() ;
+    
+    private static StringBuilder getCleanBuffer() {
+    	StringBuilder buf = BUFFERS.get() ;
+    	if (buf != null) {
+    		buf.setLength(0);
     	}
-    };
+    	else {
+    		buf = new StringBuilder() ;
+    	}
+    	return buf ;
+    }
 
     PathToken appendTailToken(PathToken next) {
         this.next = next;
@@ -44,9 +51,9 @@ public abstract class PathToken {
     void handleObjectProperty(String currentPath, Object model, EvaluationContextImpl ctx, List<String> properties) {
 
         if(properties.size() == 1) {
+        	
             String property = properties.get(0);
-        	StringBuilder buf = BUFFERS.get() ;
-        	buf.setLength(0);
+            StringBuilder buf = getCleanBuffer() ;
         	buf.append(currentPath) ;
         	buf.append("['") ;
         	buf.append(property) ;

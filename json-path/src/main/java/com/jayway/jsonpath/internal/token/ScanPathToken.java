@@ -40,14 +40,21 @@ public class ScanPathToken extends PathToken {
         }
     }
 
-    private static ThreadLocal<StringBuilder> BUFFERS = new ThreadLocal<StringBuilder>() {
-    	protected StringBuilder initialValue() {
-    		return new StringBuilder() ;
+    private static ThreadLocal<StringBuilder> BUFFERS = new ThreadLocal<StringBuilder>() ;
+    
+    private static StringBuilder getCleanBuffer() {
+    	StringBuilder buf = BUFFERS.get() ;
+    	if (buf != null) {
+    		buf.setLength(0);
     	}
-    };
+    	else {
+    		buf = new StringBuilder() ;
+    	}
+    	return buf ;
+    }
 
     public static void walkArray(PathToken pt, String currentPath, PathRef parent, Object model, EvaluationContextImpl ctx, Predicate predicate) {
-    	StringBuilder buf = BUFFERS.get() ;
+    	StringBuilder buf = getCleanBuffer() ;
 
         if (predicate.matches(model)) {
             if (pt.isLeaf()) {
@@ -89,7 +96,7 @@ public class ScanPathToken extends PathToken {
             pt.evaluate(currentPath, parent, model, ctx);
         }
         Collection<String> properties = ctx.jsonProvider().getPropertyKeys(model);
-    	StringBuilder buf = BUFFERS.get() ;
+    	StringBuilder buf = getCleanBuffer() ;
         for (String property : properties) {
         	buf.setLength(0);
         	buf.append(currentPath) ;
