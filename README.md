@@ -353,6 +353,7 @@ Changing the configuration defaults as demonstrated should only be done when you
 Configuration.setDefaults(new Configuration.Defaults() {
 
     private final JsonProvider jsonProvider = new JacksonJsonProvider();
+    private final MappingProvider mappingProvider = new JacksonMappingProvider();
       
     @Override
     public JsonProvider jsonProvider() {
@@ -361,7 +362,7 @@ Configuration.setDefaults(new Configuration.Defaults() {
 
     @Override
     public MappingProvider mappingProvider() {
-        return new JacksonMappingProvider();
+        return mappingProvider;
     }
     
     @Override
