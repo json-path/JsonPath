@@ -74,5 +74,5 @@ task wrapper(type: Wrapper) {
 }
 
 //Task used by Heroku for staging
-task stage(dependsOn: [':json-path-web-test:clean', 'json-path-web-test:shadowJar']) {}
+task stage(dependsOn: [':json-path-web-test:clean', 'json-path-web-test:jar', 'json-path-web-test:shadowJar']) {}
 apply from: "$rootDir/gradle/binaryCompatibility.gradle"
