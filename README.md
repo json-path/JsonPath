@@ -1,4 +1,4 @@
-Jayway JsonPath 1.2.0
+Jayway JsonPath 2.0.0
 =====================
 
 **A Java DSL for reading JSON documents.**
