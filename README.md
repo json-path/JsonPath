@@ -161,16 +161,6 @@ List<Map<String, Object>> expensiveBooks = JsonPath
                             .read("$.store.book[?(@.price > 10)]", List.class);
 ```
 
-All `read` operations are overloaded and also supports compiled JsonPath objects. This can be useful from a performance perspective if the same path is to be executed
-many times.
-   
-```java
-JsonPath compiledPath = JsonPath.compile("$.store.book[1].author");
-
-String author2 = JsonPath.read(document, compiledPath);
-```   
-
-
 What is Returned When?
 ----------------------
 When using JsonPath in java its important to know what type you expect in your result. JsonPath will automatically 
