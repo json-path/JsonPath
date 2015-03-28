@@ -226,9 +226,10 @@ import static com.jayway.jsonpath.Filter.filter;
 
 Filter cheapFictionFilter = filter(
    where("category").is("fiction").and("price").lte(10D)
-   );
+);
 
-List<Map<String, Object>> books =  parse(json).read("$.store.book[?]", cheapFictionFilter);
+List<Map<String, Object>> books =  
+   parse(json).read("$.store.book[?]", cheapFictionFilter);
 
 ```
 Notice the placeholder `?` for the filter in the path. When multiple filters are provided they are applied in order where the number of placeholders must match 
