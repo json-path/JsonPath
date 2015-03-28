@@ -1,22 +1,33 @@
 package com.jayway.jsonpath.old;
 
+import com.jayway.jsonpath.BaseTest;
 import com.jayway.jsonpath.Configuration;
 import com.jayway.jsonpath.Criteria;
+import com.jayway.jsonpath.DocumentContext;
 import com.jayway.jsonpath.Filter;
 import com.jayway.jsonpath.JsonPath;
 import com.jayway.jsonpath.Option;
 import com.jayway.jsonpath.PathNotFoundException;
 import com.jayway.jsonpath.Predicate;
 import com.jayway.jsonpath.internal.Utils;
+import com.jayway.jsonpath.spi.json.JacksonJsonProvider;
 import com.jayway.jsonpath.spi.json.JsonProvider;
+import com.jayway.jsonpath.spi.mapper.JacksonMappingProvider;
+import com.jayway.jsonpath.spi.mapper.MappingProvider;
+import net.minidev.json.JSONAware;
+import net.minidev.json.parser.JSONParser;
 import org.assertj.core.api.Assertions;
 import org.hamcrest.Matchers;
+import org.junit.Assert;
 import org.junit.Test;
 
+import java.io.IOException;
 import java.io.InputStream;
 import java.util.Collections;
+import java.util.EnumSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import static com.jayway.jsonpath.JsonPath.read;
 import static junit.framework.Assert.assertNull;
@@ -27,7 +38,7 @@ import static org.hamcrest.Matchers.is;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertThat;
 
-public class IssuesTest {
+public class IssuesTest extends BaseTest {
 
     private static final JsonProvider jp = Configuration.defaultConfiguration().jsonProvider();
 
@@ -559,5 +570,38 @@ public class IssuesTest {
         List<String> result = JsonPath.read(json, "$.logs[?(@.message == 'it\\'s here')].message");
 
         Assertions.assertThat(result).containsExactly("it's here");
+    }
+
+    @Test
+    public void issue_76() throws Exception {
+        /*
+        String json = "{\n" +
+                "    \"cpus\": -8.88178419700125e-16,\n" +
+                "    \"disk\": 0,\n" +
+                "    \"mem\": 0\n" +
+                "}";
+
+        JSONParser parser = new JSONParser(JSONParser.MODE_PERMISSIVE);
+        JSONAware jsonModel = (JSONAware)parser.parse(json);
+
+        jsonModel.toJSONString(); //java.lang.RuntimeException: no Getter for field scale in class java.math.BigDecimal
+        */
+
+
+        DocumentContext doc = JsonPath.parse(this.getClass().getResourceAsStream("/issue_76.json"));
+
+        Object o;
+        o = doc.read("$.frameworks");
+
+        //Bug filed  in json-smart
+        // https://code.google.com/p/json-smart/issues/detail?id=55&thanks=55&ts=1427547500
+        try {
+            System.out.println(JSON_SMART_CONFIGURATION.jsonProvider().toJson(o));
+            Assert.assertTrue(false);
+        } catch (RuntimeException e){
+        }
+
+
+
     }
 }
