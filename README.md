@@ -206,7 +206,8 @@ There are three different ways to create filter predicates in JsonPath.
 Inline predicates are the ones defined in the path.
 
 ```java
-List<Map<String, Object>> books =  JsonPath.parse(json).read("$.store.book[?(@.price < 10)]");
+List<Map<String, Object>> books =  JsonPath.parse(json)
+                                     .read("$.store.book[?(@.price < 10)]");
 ```
 
 You can use `&&` and `||` to combine multiple predicates `[?(@.price < 10 && @.category == 'fiction')]` , 
@@ -223,7 +224,9 @@ import static com.jayway.jsonpath.Filter.filter;
 ...
 ...
 
-Filter cheapFictionFilter = filter(where("category").is("fiction").and("price").lte(10D));
+Filter cheapFictionFilter = filter(
+   where("category").is("fiction").and("price").lte(10D)
+   );
 
 List<Map<String, Object>> books =  parse(json).read("$.store.book[?]", cheapFictionFilter);
 
@@ -233,8 +236,13 @@ the number of provided filters. You can specify multiple predicate placeholders 
 
 Filters can also be combined with 'OR' and 'AND'
 ```java
-Filter fooOrBar = filter(where("foo").exists(true)).or(where("bar").exists(true));
-Filter fooAndBar = filter(where("foo").exists(true)).and(where("bar").exists(true));
+Filter fooOrBar = filter(
+   where("foo").exists(true)).or(where("bar").exists(true)
+);
+   
+Filter fooAndBar = filter(
+   where("foo").exists(true)).and(where("bar").exists(true)
+);
 ```
 
 ###Roll Your Own
@@ -249,7 +257,8 @@ Predicate booksWithISBN = new Predicate() {
     }
 };
 
-List<Map<String, Object>> books = reader.read("$.store.book[?].isbn", List.class, booksWithISBN);
+List<Map<String, Object>> books = 
+   reader.read("$.store.book[?].isbn", List.class, booksWithISBN);
 ```
 
 Path vs Value
@@ -257,7 +266,8 @@ Path vs Value
 In the Goessner implementation a JsonPath can return either `Path` or `Value`. `Value` is the default and what all the exaples above are reuturning. If you rather have the path of the elements our query is hitting this can be acheived with an option.
 
 ```java
-Configuration conf = Configuration.builder().options(Option.AS_PATH_LIST).build();
+Configuration conf = Configuration.builder()
+   .options(Option.AS_PATH_LIST).build();
 
 List<String> pathList = using(conf).parse(json).read("$..author");
 
