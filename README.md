@@ -32,6 +32,8 @@ JsonPath is available at the Central Maven Repository. Maven users add this to y
 </dependency>
 ```
 
+If you need help ask questions at the [google group](https://groups.google.com/forum/#!forum/jsonpath). 
+
 JsonPath expressions always refer to a JSON structure in the same way as XPath expression are used in combination 
 with an XML document. The "root member object" in JsonPath is always referred to as `$` regardless if it is an 
 object or array.
