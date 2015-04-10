@@ -2,10 +2,7 @@ package com.jayway.jsonpath;
 
 import org.junit.Test;
 
-import java.util.HashMap;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 import static com.jayway.jsonpath.JsonPath.parse;
 import static java.util.Collections.emptyMap;
@@ -214,6 +211,38 @@ public class WriteTest extends BaseTest {
         parse(model).set("$[?(@.a == 'a-val')]", 1);
     }
 
+    @Test
+    public void a_path_can_be_renamed(){
+        Object o = parse(JSON_DOCUMENT).renameKey("$.store", "book", "updated-book").json();
+        List<Object> result = parse(o).read("$.store.updated-book");
 
+        assertThat(result).isNotEmpty();
+    }
 
+    @Test
+    public void keys_in_root_containing_map_can_be_renamed(){
+        Object o = parse(JSON_DOCUMENT).renameKey("$", "store", "new-store").json();
+        List<Object> result = parse(o).read("$.new-store[*]");
+        assertThat(result).isNotEmpty();
+    }
+
+    @Test
+    public void map_array_items_can_be_renamed(){
+        Object o = parse(JSON_DOCUMENT).renameKey("$.store.book[*]", "category", "renamed-category").json();
+        List<Object> result = parse(o).read("$.store.book[*].renamed-category");
+        assertThat(result).isNotEmpty();
+    }
+
+    @Test(expected = InvalidModificationException.class)
+    public void non_map_array_items_cannot_be_renamed(){
+        List<Integer> model = new LinkedList<Integer>();
+        model.add(1);
+        model.add(2);
+        parse(model).renameKey("$[*]", "oldKey", "newKey");
+    }
+
+    @Test(expected = InvalidModificationException.class)
+    public void multiple_properties_cannot_be_renamed(){
+        parse(JSON_DOCUMENT).renameKey("$.store.book[*]['author', 'category']", "old-key", "new-key");
+    }
 }

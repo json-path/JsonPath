@@ -232,6 +232,23 @@ public class JsonReader implements ParseContext, DocumentContext {
     }
 
     @Override
+    public DocumentContext renameKey(String path, String oldKeyName, String newKeyName, Predicate... filters) {
+        return renameKey(compile(path, filters), oldKeyName, newKeyName);
+    }
+
+    @Override
+    public DocumentContext renameKey(JsonPath path, String oldKeyName, String newKeyName) {
+        List<String> modified =  path.renameKey(json, oldKeyName, newKeyName, configuration.addOptions(Option.AS_PATH_LIST));
+        if(logger.isDebugEnabled()){
+            for (String p : modified) {
+                logger.debug("Rename path {} new value {}", p, newKeyName);
+            }
+        }
+        return this;
+    }
+
+
+    @Override
     public DocumentContext put(JsonPath path, String key, Object value){
         List<String> modified = path.put(json, key, value, configuration.addOptions(Option.AS_PATH_LIST));
         if(logger.isDebugEnabled()){

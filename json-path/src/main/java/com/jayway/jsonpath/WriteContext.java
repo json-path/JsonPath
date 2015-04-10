@@ -116,6 +116,7 @@ public interface WriteContext {
      */
     DocumentContext put(String path, String key, Object value, Predicate... filters);
 
+
     /**
      * Add or update the key with a the given value at the given path
      *
@@ -125,5 +126,29 @@ public interface WriteContext {
      * @return a document context
      */
     DocumentContext put(JsonPath path, String key, Object value);
+
+    /**
+     * Renames the last key element of a given path.
+     * @param path          The path to the old key. Should be resolved to a map
+     *                      or an array including map items.
+     * @param oldKeyName    The old key name.
+     * @param newKeyName    The new key name.
+     * @param filters       filters.
+     * @return a document content.
+     */
+    DocumentContext renameKey(String path, String oldKeyName, String newKeyName, Predicate... filters);
+
+    /**
+     * Renames the last key element of a given path.
+     * @param path          The path to the old key. Should be resolved to a map
+     *                      or an array including map items.
+     * @param oldKeyName    The old key name.
+     * @param newKeyName    The new key name.
+     * @return a document content.
+     */
+    DocumentContext renameKey(JsonPath path, String oldKeyName, String newKeyName);
+
+//    DocumentContext replace(String path, String newKey, Predicate... filters);
+//    DocumentContext replace(JsonPath path, String newKey);
 
 }

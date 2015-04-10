@@ -276,6 +276,17 @@ public class JsonPath {
         return resultByConfiguration(jsonObject, configuration, evaluationContext);
     }
 
+    public <T> T renameKey(Object jsonObject, String oldKeyName, String newKeyName, Configuration configuration){
+        notNull(jsonObject, "json can not be null");
+        notEmpty(newKeyName, "newKeyName can not be null or empty");
+        notNull(configuration, "configuration can not be null");
+        EvaluationContext evaluationContext = path.evaluate(jsonObject, jsonObject, configuration, true);
+        for (PathRef updateOperation : evaluationContext.updateOperations()) {
+            updateOperation.renameKey(oldKeyName, newKeyName, configuration);
+        }
+        return resultByConfiguration(jsonObject, configuration, evaluationContext);
+    }
+
     /**
      * Applies this JsonPath to the provided json string
      *

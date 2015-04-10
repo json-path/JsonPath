@@ -2,6 +2,7 @@ package com.jayway.jsonpath.internal;
 
 import com.jayway.jsonpath.Configuration;
 import com.jayway.jsonpath.InvalidModificationException;
+import com.jayway.jsonpath.JsonPath;
 import com.jayway.jsonpath.spi.json.JsonProvider;
 
 import java.util.Collection;
@@ -25,6 +26,10 @@ public abstract class PathRef implements Comparable<PathRef>  {
 
         @Override
         public void put(String key, Object newVal, Configuration configuration) {}
+
+        @Override
+        public void renameKey(String oldKeyName, String newKeyName, Configuration configuration) {}
+
     };
 
     protected Object parent;
@@ -43,6 +48,21 @@ public abstract class PathRef implements Comparable<PathRef>  {
     public abstract void add(Object newVal, Configuration configuration);
 
     public abstract void put(String key, Object newVal, Configuration configuration);
+
+    public abstract void renameKey(String oldKey,String newKeyName, Configuration configuration);
+
+    protected void renameInMap(Object targetMap, String oldKeyName, String newKeyName, Configuration configuration){
+        if(configuration.jsonProvider().isMap(targetMap)){
+            configuration.jsonProvider().setProperty(targetMap, newKeyName, configuration.jsonProvider().getMapValue(targetMap, oldKeyName));
+            configuration.jsonProvider().removeProperty(targetMap, oldKeyName);
+        } else {
+            throw new InvalidModificationException("Can only rename properties in a map");
+        }
+    }
+
+    protected boolean targetInvalid(Object target){
+        return target == JsonProvider.UNDEFINED || target == null;
+    }
 
     @Override
     public int compareTo(PathRef o) {
@@ -103,6 +123,16 @@ public abstract class PathRef implements Comparable<PathRef>  {
                 throw new InvalidModificationException("Invalid put operation. $ is not a map");
             }
         }
+
+        @Override
+        public void renameKey(String oldKeyName, String newKeyName, Configuration configuration) {
+            Object target = parent;
+            if(targetInvalid(target)){
+                return;
+            }
+            renameInMap(target, oldKeyName, newKeyName, configuration);
+        }
+
     }
     private static class ArrayIndexPathRef extends PathRef {
 
@@ -123,7 +153,7 @@ public abstract class PathRef implements Comparable<PathRef>  {
 
         public void add(Object value, Configuration configuration){
             Object target = configuration.jsonProvider().getArrayIndex(parent, index);
-            if(target == JsonProvider.UNDEFINED || target == null){
+            if(targetInvalid(target)){
                 return;
             }
             if(configuration.jsonProvider().isArray(target)){
@@ -135,7 +165,7 @@ public abstract class PathRef implements Comparable<PathRef>  {
 
         public void put(String key, Object value, Configuration configuration){
             Object target = configuration.jsonProvider().getArrayIndex(parent, index);
-            if(target == JsonProvider.UNDEFINED || target == null){
+            if(targetInvalid(target)){
                 return;
             }
             if(configuration.jsonProvider().isMap(target)){
@@ -143,6 +173,15 @@ public abstract class PathRef implements Comparable<PathRef>  {
             } else {
                 throw new InvalidModificationException("Can only add properties to a map");
             }
+        }
+
+        @Override
+        public void renameKey(String oldKeyName, String newKeyName, Configuration configuration) {
+            Object target = configuration.jsonProvider().getArrayIndex(parent, index);
+            if(targetInvalid(target)){
+                return;
+            }
+            renameInMap(target, oldKeyName, newKeyName, configuration);
         }
 
         @Override
@@ -172,7 +211,7 @@ public abstract class PathRef implements Comparable<PathRef>  {
 
         public void add(Object value, Configuration configuration){
             Object target = configuration.jsonProvider().getMapValue(parent, property);
-            if(target == JsonProvider.UNDEFINED || target == null){
+            if(targetInvalid(target)){
                 return;
             }
             if(configuration.jsonProvider().isArray(target)){
@@ -184,7 +223,7 @@ public abstract class PathRef implements Comparable<PathRef>  {
 
         public void put(String key, Object value, Configuration configuration){
             Object target = configuration.jsonProvider().getMapValue(parent, property);
-            if(target == JsonProvider.UNDEFINED || target == null){
+            if(targetInvalid(target)){
                 return;
             }
             if(configuration.jsonProvider().isMap(target)){
@@ -192,6 +231,15 @@ public abstract class PathRef implements Comparable<PathRef>  {
             } else {
                 throw new InvalidModificationException("Can only add properties to a map");
             }
+        }
+
+        @Override
+        public void renameKey(String oldKeyName, String newKeyName, Configuration configuration) {
+            Object target = configuration.jsonProvider().getMapValue(parent, property);
+            if(targetInvalid(target)){
+                return;
+            }
+            renameInMap(target, oldKeyName, newKeyName, configuration);
         }
 
         @Override
@@ -228,7 +276,12 @@ public abstract class PathRef implements Comparable<PathRef>  {
 
         @Override
         public void put(String key, Object newVal, Configuration configuration) {
-            throw new InvalidModificationException("Add can not be performed to multiple properties");
+            throw new InvalidModificationException("Put can not be performed to multiple properties");
+        }
+
+        @Override
+        public void renameKey(String oldKeyName, String newKeyName, Configuration configuration) {
+            throw new InvalidModificationException("Rename can not be performed to multiple properties");
         }
 
         @Override
