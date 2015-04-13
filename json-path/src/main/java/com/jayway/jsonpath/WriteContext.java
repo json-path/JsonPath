@@ -148,7 +148,4 @@ public interface WriteContext {
      */
     DocumentContext renameKey(JsonPath path, String oldKeyName, String newKeyName);
 
-//    DocumentContext replace(String path, String newKey, Predicate... filters);
-//    DocumentContext replace(JsonPath path, String newKey);
-
 }
