@@ -246,7 +246,7 @@ public class WriteTest extends BaseTest {
         parse(JSON_DOCUMENT).renameKey("$.store.book[*]['author', 'category']", "old-key", "new-key");
     }
 
-    @Test(expected = InvalidPathException.class)
+    @Test(expected = PathNotFoundException.class)
     public void non_existent_key_rename_not_allowed(){
         Object o = parse(JSON_DOCUMENT).renameKey("$", "fake", "new-fake").json();
     }
