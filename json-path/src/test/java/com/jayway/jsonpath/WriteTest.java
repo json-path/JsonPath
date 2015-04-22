@@ -123,6 +123,15 @@ public class WriteTest extends BaseTest {
         assertThat(res).containsExactly("reference");
     }
 
+    @Test
+    public void an_array_criteria_with_multiple_results_can_be_deleted(){
+        String deletePath = "$._embedded.mandates[?(@.count=~/0/)]";
+        DocumentContext documentContext = JsonPath.parse(getClass().getResourceAsStream("/json_array_multiple_delete.json"));
+        documentContext.delete(deletePath);
+        List<Object> result = documentContext.read(deletePath);
+        assertThat(result.size()).isEqualTo(0);
+    }
+
 
     @Test
     public void multi_prop_delete() {

@@ -4,6 +4,7 @@ import com.jayway.jsonpath.*;
 import com.jayway.jsonpath.spi.json.JsonProvider;
 
 import java.util.Collection;
+import java.util.List;
 
 public abstract class PathRef implements Comparable<PathRef>  {
 
@@ -138,10 +139,12 @@ public abstract class PathRef implements Comparable<PathRef>  {
     private static class ArrayIndexPathRef extends PathRef {
 
         private int index;
+        private Object value;
 
         private ArrayIndexPathRef(Object parent, int index) {
             super(parent);
             this.index = index;
+            this.value = ((List<Object>) parent).get(index);
         }
 
         public void set(Object newVal, Configuration configuration){
@@ -149,7 +152,7 @@ public abstract class PathRef implements Comparable<PathRef>  {
         }
 
         public void delete(Configuration configuration){
-            configuration.jsonProvider().removeProperty(parent, index);
+            configuration.jsonProvider().removeProperty(parent, value);
         }
 
         public void add(Object value, Configuration configuration){
