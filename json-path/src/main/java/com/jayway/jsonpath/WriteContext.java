@@ -14,6 +14,8 @@
  */
 package com.jayway.jsonpath;
 
+import com.jayway.jsonpath.internal.ValueConverter;
+
 public interface WriteContext {
 
     /**
@@ -55,6 +57,25 @@ public interface WriteContext {
      * @return a document context
      */
     DocumentContext set(JsonPath path, Object newValue);
+
+    /**
+     * Converts the value on the given path.
+     *
+     * @param path              path to be converted set
+     * @param valueConverter    Converter object to be invoked (or lambda:))
+     * @param filters           filters
+     * @return a document context
+     */
+    DocumentContext convert(String path, ValueConverter valueConverter, Predicate... filters);
+
+    /**
+     * Converts the value on the given path.
+     *
+     * @param path              path to be converted set
+     * @param valueConverter    Converter object to be invoked (or lambda:))
+     * @return a document context
+     */
+    DocumentContext convert(JsonPath path, ValueConverter valueConverter);
 
     /**
      * Deletes the given path

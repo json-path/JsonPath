@@ -18,6 +18,9 @@ public abstract class PathRef implements Comparable<PathRef>  {
         public void set(Object newVal, Configuration configuration) {}
 
         @Override
+        public void convert(ValueConverter valueConverter, Configuration configuration) {}
+
+        @Override
         public void delete(Configuration configuration) {}
 
         @Override
@@ -41,6 +44,8 @@ public abstract class PathRef implements Comparable<PathRef>  {
     abstract Object getAccessor();
 
     public abstract void set(Object newVal, Configuration configuration);
+
+    public abstract void convert(ValueConverter valueConverter, Configuration configuration);
 
     public abstract void delete(Configuration configuration);
 
@@ -103,6 +108,10 @@ public abstract class PathRef implements Comparable<PathRef>  {
             throw new InvalidModificationException("Invalid delete operation");
         }
 
+        public void convert(ValueConverter valueConverter, Configuration configuration){
+            throw new InvalidModificationException("Invalid convert operation");
+        }
+
         @Override
         public void delete(Configuration configuration) {
             throw new InvalidModificationException("Invalid delete operation");
@@ -136,6 +145,7 @@ public abstract class PathRef implements Comparable<PathRef>  {
         }
 
     }
+
     private static class ArrayIndexPathRef extends PathRef {
 
         private int index;
@@ -149,6 +159,11 @@ public abstract class PathRef implements Comparable<PathRef>  {
 
         public void set(Object newVal, Configuration configuration){
             configuration.jsonProvider().setArrayIndex(parent, index, newVal);
+        }
+
+        public void convert(ValueConverter valueConverter, Configuration configuration){
+            Object currentValue = configuration.jsonProvider().getArrayIndex(parent, index);
+            configuration.jsonProvider().setArrayIndex(parent, index, valueConverter.convert(currentValue));
         }
 
         public void delete(Configuration configuration){
@@ -209,6 +224,13 @@ public abstract class PathRef implements Comparable<PathRef>  {
             configuration.jsonProvider().setProperty(parent, property, newVal);
         }
 
+        @Override
+        public void convert(ValueConverter valueConverter, Configuration configuration) {
+            Object currentValue = configuration.jsonProvider().getMapValue(parent, property);
+            configuration.jsonProvider().setProperty(parent, property, valueConverter.convert(currentValue));
+        }
+
+
         public void delete(Configuration configuration){
             configuration.jsonProvider().removeProperty(parent, property);
         }
@@ -264,6 +286,12 @@ public abstract class PathRef implements Comparable<PathRef>  {
         public void set(Object newVal, Configuration configuration){
             for (String property : properties) {
                 configuration.jsonProvider().setProperty(parent, property, newVal);
+            }
+        }
+        public void convert(ValueConverter valueConverter, Configuration configuration) {
+            for (String property : properties) {
+                Object currentValue = configuration.jsonProvider().getMapValue(parent, property);
+                configuration.jsonProvider().setProperty(parent, property, valueConverter.convert(currentValue));
             }
         }
 

@@ -1,5 +1,6 @@
 package com.jayway.jsonpath;
 
+import com.jayway.jsonpath.internal.ValueConverter;
 import org.junit.Test;
 
 import java.util.*;
@@ -259,4 +260,57 @@ public class WriteTest extends BaseTest {
     public void non_existent_key_rename_not_allowed(){
         Object o = parse(JSON_DOCUMENT).renameKey("$", "fake", "new-fake").json();
     }
+
+    @Test(expected = InvalidModificationException.class)
+    public void rootCannotBeConverted(){
+        ValueConverter valueConverter = new ValueConverter() {
+            @Override
+            public Object convert(Object currentValue) {
+                return currentValue.toString()+"converted";
+            }
+        };
+        Object o = parse(JSON_DOCUMENT).convert("$", valueConverter).json();
+    }
+
+    @Test
+    public void single_match_value_can_be_converted(){
+        ValueConverter valueConverter = new ToStringValueConverterImpl();
+        String stringResult = parse(JSON_DOCUMENT).convert("$.string-property", valueConverter).read("$.string-property");
+        assertThat(stringResult.endsWith("converted")).isTrue();
+    }
+
+    @Test
+    public void object_can_be_converted(){
+        ValueConverter valueConverter = new ToStringValueConverterImpl();
+        DocumentContext documentContext = parse(JSON_DOCUMENT);
+        Object list = documentContext.read("$..book");
+        assertThat(list).isInstanceOf(List.class);
+        String result = ((List<String>)documentContext.convert("$..book", valueConverter).read("$..book")).get(0);
+        assertThat(result).isInstanceOf(String.class);
+        assertThat(((String)result).endsWith("converted")).isTrue();
+    }
+
+    @Test
+    public void multi_match_path_can_be_converted(){
+        ValueConverter valueConverter = new ToStringValueConverterImpl();
+        List<Double> doubleResult = parse(JSON_DOCUMENT).read("$..display-price");
+        for(Double dRes : doubleResult){
+            assertThat(dRes).isInstanceOf(Double.class);
+        }
+        List<String> stringResult = parse(JSON_DOCUMENT).convert("$..display-price", valueConverter).read("$..display-price");
+        for(String sRes : stringResult){
+            assertThat(sRes).isInstanceOf(String.class);
+            assertThat(sRes.endsWith("converted")).isTrue();
+        }
+    }
+
+    // Helper converter implementation for test cases.
+    private class ToStringValueConverterImpl implements ValueConverter{
+
+        @Override
+        public Object convert(Object currentValue) {
+            return currentValue.toString()+"converted";
+        }
+    }
+
 }

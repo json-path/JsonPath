@@ -33,6 +33,7 @@ import java.io.InputStream;
 import java.util.List;
 
 import static com.jayway.jsonpath.JsonPath.compile;
+import static com.jayway.jsonpath.JsonPath.parse;
 import static com.jayway.jsonpath.internal.Utils.notEmpty;
 import static com.jayway.jsonpath.internal.Utils.notNull;
 
@@ -191,6 +192,18 @@ public class JsonReader implements ParseContext, DocumentContext {
                 logger.debug("Set path {} new value {}", p, newValue);
             }
         }
+        return this;
+    }
+
+    @Override
+    public DocumentContext convert(String path, ValueConverter valueConverter, Predicate... filters) {
+        convert(compile(path, filters), valueConverter);
+        return this;
+    }
+
+    @Override
+    public DocumentContext convert(JsonPath path, ValueConverter valueConverter) {
+        path.convert(json, valueConverter, configuration);
         return this;
     }
 
