@@ -8,6 +8,7 @@ import com.jayway.jsonpath.InvalidCriteriaException;
 import com.jayway.jsonpath.JsonPath;
 import com.jayway.jsonpath.Predicate;
 import com.jayway.jsonpath.spi.json.JsonProvider;
+import com.jayway.jsonpath.internal.token.TokenStack;
 import org.assertj.core.api.Assertions;
 import org.junit.Test;
 
@@ -346,6 +347,10 @@ public class FilterTest extends BaseTest {
                 }
                 return false;
             }
+            @Override
+            public boolean check(TokenStack stack, int idx) {
+                return false;
+            }
         };
 
         Filter rootChildFilter = filter(where("name").regex(Pattern.compile("rootChild_[A|B]")));
@@ -365,6 +370,10 @@ public class FilterTest extends BaseTest {
             @Override
             public boolean apply(PredicateContext ctx) {
                 return 1 == (Integer)ctx.item();
+            }
+            @Override
+            public boolean check(TokenStack stack, int idx) {
+                return false;
             }
         };
 

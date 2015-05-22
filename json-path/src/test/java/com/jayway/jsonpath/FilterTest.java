@@ -8,6 +8,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.regex.Pattern;
 
+import com.jayway.jsonpath.internal.token.TokenStack;
 import static com.jayway.jsonpath.Criteria.where;
 import static com.jayway.jsonpath.Filter.filter;
 import static org.assertj.core.api.Assertions.assertThat;
@@ -383,6 +384,11 @@ public class FilterTest extends BaseTest {
                 Integer i = (Integer) o;
 
                 return i == 1;
+            }
+
+            @Override
+            public boolean check(TokenStack stack, int idx) {
+                return false;
             }
         };
         assertThat(filter(where("string-key").eq("string").and("$").matches(p)).apply(createPredicateContext(json))).isEqualTo(true);

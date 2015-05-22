@@ -5,6 +5,7 @@ import org.junit.Test;
 import java.util.List;
 import java.util.Map;
 
+import com.jayway.jsonpath.internal.token.TokenStack;
 import static com.jayway.jsonpath.JsonPath.using;
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -18,6 +19,11 @@ public class PredicateTest extends BaseTest {
             @Override
             public boolean apply(PredicateContext ctx) {
                 return ctx.item(Map.class).containsKey("isbn");
+            }
+
+            @Override
+            public boolean check(TokenStack stack, int idx) {
+                return false;
             }
         };
 
