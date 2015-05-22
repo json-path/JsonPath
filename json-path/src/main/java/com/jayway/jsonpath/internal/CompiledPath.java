@@ -17,6 +17,7 @@ package com.jayway.jsonpath.internal;
 import com.jayway.jsonpath.Configuration;
 import com.jayway.jsonpath.internal.token.EvaluationContextImpl;
 import com.jayway.jsonpath.internal.token.PathToken;
+import com.jayway.jsonpath.internal.token.TokenStack;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -59,6 +60,11 @@ public class CompiledPath implements Path {
     @Override
     public EvaluationContext evaluate(Object document, Object rootDocument, Configuration configuration){
         return evaluate(document, rootDocument, configuration, false);
+    }
+
+    @Override
+    public boolean checkForMatch(TokenStack stack) {
+        return root.checkForMatch(stack, 0);
     }
 
     @Override
