@@ -66,7 +66,7 @@ public class PredicateContextImpl implements Predicate.PredicateContext {
 
     @Override
     public <T> T item(Class<T> clazz) throws MappingException {
-        return  configuration().mappingProvider().map(contextDocument, clazz, configuration);
+        return configuration().mappingProvider().map(contextDocument, clazz, configuration);
     }
 
     @Override

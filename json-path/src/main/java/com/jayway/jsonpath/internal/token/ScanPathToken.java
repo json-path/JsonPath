@@ -96,6 +96,28 @@ public class ScanPathToken extends PathToken {
         }
     }
 
+    @Override
+    public boolean checkForMatch(TokenStack stack, int idx)
+    {
+        assert(stack.getStack().size() > idx);
+        TokenStackElement curr = stack.getStack().get(idx);
+
+        if (curr.getType() == TokenType.ARRAY_TOKEN
+            || curr.getType() == TokenType.OBJECT_TOKEN)
+        {
+            //if ((idx - 1) == stack.getStack().size() && isLeaf())
+            if (isLeaf()) {
+                return true;
+            }
+            for (int i = idx; i < stack.getStack().size(); ++i) {
+                if (next().checkForMatch(stack, i)) {
+                    return true;
+                }
+            }
+        }
+
+        return false;
+    }
 
     @Override
     boolean isTokenDefinite() {

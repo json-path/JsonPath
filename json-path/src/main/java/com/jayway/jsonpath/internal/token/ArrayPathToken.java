@@ -179,6 +179,85 @@ public class ArrayPathToken extends PathToken {
     }
 
     @Override
+    public boolean checkForMatch(TokenStack stack, int idx)
+    {
+        assert(stack.getStack().size() > idx);
+        TokenStackElement curr = stack.getStack().get(idx);
+
+        if (curr.getType() == TokenType.ARRAY_TOKEN) {
+            ArrayToken token = (ArrayToken)curr;
+            int tokenIdx = token.getIndex();
+            switch (operation) {
+            case CONTEXT_SIZE:
+            {
+                if (isLeaf()) {
+                    return stack.getStack().size() - 1 == idx;
+                }
+                return next().checkForMatch(stack, idx + 1);
+            }
+            case SLICE_TO:
+            {
+                int to = criteria.get(0).intValue();
+                if (tokenIdx < to) {
+                    if (isLeaf()) {
+                        return stack.getStack().size() - 1 == idx;
+                    }
+                    return next().checkForMatch(stack, idx + 1);
+                }
+                break;
+            }
+            case SLICE_FROM:
+            {
+                int from = criteria.get(0).intValue();
+                if (from <= tokenIdx) {
+                    if (isLeaf()) {
+                        return stack.getStack().size() - 1 == idx;
+                    }
+                    return next().checkForMatch(stack, idx + 1);
+                }
+                break;
+            }
+            case SLICE_BETWEEN:
+            {
+                int from = criteria.get(0).intValue();
+                int to = criteria.get(1).intValue();
+                if (from <= tokenIdx && tokenIdx < to) {
+                    if (isLeaf()) {
+                        return stack.getStack().size() - 1 == idx;
+                    }
+                    return next().checkForMatch(stack, idx + 1);
+                }
+                break;
+            }
+            case INDEX_SEQUENCE:
+            {
+                for (Integer i : criteria) {
+                    if (i.intValue() == tokenIdx) {
+                        if (isLeaf()) {
+                            return stack.getStack().size() - 1 == idx;
+                        }
+                        return next().checkForMatch(stack, idx + 1);
+                    }
+                }
+                break;
+            }
+            case SINGLE_INDEX:
+            {
+                if (criteria.get(0).intValue() == tokenIdx) {
+                    if (isLeaf()) {
+                        return stack.getStack().size() - 1 == idx;
+                    }
+                    return next().checkForMatch(stack, idx + 1);
+                }
+                break;
+            }
+            }
+        }
+
+        return false;
+    }
+
+    @Override
     boolean isTokenDefinite() {
         return isDefinite;
     }

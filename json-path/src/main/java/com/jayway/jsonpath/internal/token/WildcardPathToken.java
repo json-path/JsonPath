@@ -44,6 +44,14 @@ public class WildcardPathToken extends PathToken {
         }
     }
 
+    @Override
+    public boolean checkForMatch(TokenStack stack, int idx)
+    {
+        if (idx + 1 < stack.getStack().size()) {
+            return !isLeaf() && next().checkForMatch(stack, idx + 1);
+        }
+        return isLeaf();
+    }
 
     @Override
     boolean isTokenDefinite() {

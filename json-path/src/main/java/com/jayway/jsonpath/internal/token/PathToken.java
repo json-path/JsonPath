@@ -204,6 +204,9 @@ public abstract class PathToken {
 
     public abstract void evaluate(String currentPath, PathRef parent,  Object model, EvaluationContextImpl ctx);
 
+    /** streaming API */
+    public abstract boolean checkForMatch(TokenStack stack, int idx);
+
     abstract boolean isTokenDefinite();
 
     abstract String getPathFragment();

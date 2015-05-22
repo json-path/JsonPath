@@ -14,6 +14,7 @@
  */
 package com.jayway.jsonpath;
 
+import com.jayway.jsonpath.internal.token.TokenStack;
 import com.jayway.jsonpath.spi.mapper.MappingException;
 
 /**
@@ -22,6 +23,8 @@ import com.jayway.jsonpath.spi.mapper.MappingException;
 public interface Predicate {
 
     boolean apply(PredicateContext ctx);
+
+    boolean check(TokenStack stack, int idx);
 
     public interface PredicateContext {
 

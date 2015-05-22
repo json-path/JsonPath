@@ -16,7 +16,7 @@ package com.jayway.jsonpath;
 
 import com.jayway.jsonpath.internal.Path;
 import com.jayway.jsonpath.internal.PathCompiler;
-import com.jayway.jsonpath.internal.token.PredicateContextImpl;
+import com.jayway.jsonpath.internal.token.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -65,6 +65,37 @@ public class Criteria implements Predicate {
             }
 
             @Override
+            public boolean check(TokenStackElement left, TokenStackElement right) {
+                if (left.getType() == right.getType()) {
+                    switch (left.getType()) {
+                    case ARRAY_TOKEN:
+                    {
+                        ArrayToken leftT = (ArrayToken)left;
+                        ArrayToken rightT = (ArrayToken)right;
+                        break;
+                    }
+                    case OBJECT_TOKEN:
+                    {
+                        break;
+                    }
+                    case STRING_TOKEN:
+                    {
+                        break;
+                    }
+                    case FLOAT_TOKEN:
+                    {
+                        break;
+                    }
+                    case INTEGER_TOKEN:
+                    {
+                        break;
+                    }
+                    }
+                }
+                return false;
+            }
+
+            @Override
             public String toString() {
                 return "==";
             }
@@ -75,6 +106,11 @@ public class Criteria implements Predicate {
                 boolean res = (0 != safeCompare(expected, model));
                 if (logger.isDebugEnabled()) logger.debug("[{}] {} [{}] => {}", model, name(), expected, res);
                 return res;
+            }
+
+            @Override
+            public boolean check(TokenStackElement left, TokenStackElement right) {
+                return false;
             }
 
             @Override
@@ -94,6 +130,11 @@ public class Criteria implements Predicate {
             }
 
             @Override
+            public boolean check(TokenStackElement left, TokenStackElement right) {
+                return false;
+            }
+
+            @Override
             public String toString() {
                 return ">";
             }
@@ -107,6 +148,11 @@ public class Criteria implements Predicate {
                 boolean res = (0 >= safeCompare(expected, model));
                 if (logger.isDebugEnabled()) logger.debug("[{}] {} [{}] => {}", model, name(), expected, res);
                 return res;
+            }
+
+            @Override
+            public boolean check(TokenStackElement left, TokenStackElement right) {
+                return false;
             }
 
             @Override
@@ -126,6 +172,11 @@ public class Criteria implements Predicate {
             }
 
             @Override
+            public boolean check(TokenStackElement left, TokenStackElement right) {
+                return false;
+            }
+
+            @Override
             public String toString() {
                 return "<";
             }
@@ -139,6 +190,11 @@ public class Criteria implements Predicate {
                 boolean res = (0 <= safeCompare(expected, model));
                 if (logger.isDebugEnabled()) logger.debug("[{}] {} [{}] => {}", model, name(), expected, res);
                 return res;
+            }
+
+            @Override
+            public boolean check(TokenStackElement left, TokenStackElement right) {
+                return false;
             }
 
             @Override
@@ -160,6 +216,11 @@ public class Criteria implements Predicate {
                 if (logger.isDebugEnabled()) logger.debug("[{}] {} [{}] => {}", model, name(), join(", ", exps), res);
                 return res;
             }
+
+            @Override
+            public boolean check(TokenStackElement left, TokenStackElement right) {
+                return false;
+            }
         },
         NIN {
             @Override
@@ -168,6 +229,11 @@ public class Criteria implements Predicate {
                 boolean res = !nexps.contains(model);
                 if (logger.isDebugEnabled()) logger.debug("[{}] {} [{}] => {}", model, name(), join(", ", nexps), res);
                 return res;
+            }
+
+            @Override
+            public boolean check(TokenStackElement left, TokenStackElement right) {
+                return false;
             }
         },
         CONTAINS {
@@ -190,6 +256,11 @@ public class Criteria implements Predicate {
                 }
                 if (logger.isDebugEnabled()) logger.debug("[{}] {} [{}] => {}", model, name(), expected, res);
                 return res;
+            }
+
+            @Override
+            public boolean check(TokenStackElement left, TokenStackElement right) {
+                return false;
             }
         },
         ALL {
@@ -219,6 +290,11 @@ public class Criteria implements Predicate {
                 }
                 return res;
             }
+
+            @Override
+            public boolean check(TokenStackElement left, TokenStackElement right) {
+                return false;
+            }
         },
         SIZE {
             @Override
@@ -240,12 +316,22 @@ public class Criteria implements Predicate {
                 }
                 return res;
             }
+
+            @Override
+            public boolean check(TokenStackElement left, TokenStackElement right) {
+                return false;
+            }
         },
         EXISTS {
             @Override
             boolean eval(Object expected, Object model, PredicateContext ctx) {
                 //This must be handled outside
                 throw new UnsupportedOperationException();
+            }
+
+            @Override
+            public boolean check(TokenStackElement left, TokenStackElement right) {
+                return false;
             }
         },
         TYPE {
@@ -255,6 +341,11 @@ public class Criteria implements Predicate {
                 final Class<?> actType = model == null ? null : model.getClass();
 
                 return actType != null && expType.isAssignableFrom(actType);
+            }
+
+            @Override
+            public boolean check(TokenStackElement left, TokenStackElement right) {
+                return false;
             }
         },
         REGEX {
@@ -281,6 +372,11 @@ public class Criteria implements Predicate {
             }
 
             @Override
+            public boolean check(TokenStackElement left, TokenStackElement right) {
+                return false;
+            }
+
+            @Override
             public String toString() {
                 return "=~";
             }
@@ -291,6 +387,11 @@ public class Criteria implements Predicate {
                 PredicateContextImpl pci = (PredicateContextImpl) ctx;
                 Predicate exp = (Predicate) expected;
                 return exp.apply(new PredicateContextImpl(model, ctx.root(), ctx.configuration(), pci.documentPathCache()));
+            }
+
+            @Override
+            public boolean check(TokenStackElement left, TokenStackElement right) {
+                return false;
             }
         },
         NOT_EMPTY {
@@ -310,9 +411,17 @@ public class Criteria implements Predicate {
                 }
                 return res;
             }
+
+            @Override
+            public boolean check(TokenStackElement left, TokenStackElement right) {
+                return false;
+            }
         };
 
-        abstract boolean eval(Object expected, Object model, PredicateContext ctx);
+        abstract boolean eval(Object expected, Object model,
+                              PredicateContext ctx);
+
+        abstract boolean check(TokenStackElement left, TokenStackElement right);
 
         public static CriteriaType parse(String str) {
             if ("==".equals(str)) {
@@ -414,6 +523,43 @@ public class Criteria implements Predicate {
         }
     }
 
+    @Override
+    public boolean check(TokenStack stack, int idx) {
+        for (Criteria criteria : criteriaChain) {
+            if (!criteria.check2(stack, idx)) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    private boolean check2(TokenStack stack, int idx) {
+        if (CriteriaType.EXISTS == criteriaType) {
+            boolean exists = ((Boolean) right);
+            try {
+                //Configuration c = Configuration.builder().jsonProvider(ctx.configuration().jsonProvider()).options(Option.REQUIRE_PROPERTIES).build();
+                //Object value = ((Path) left).evaluate(ctx.item(), ctx.root(), c).getValue();
+                Object value = null;
+
+                if (exists) {
+                    return (value != null);
+                } else {
+                    return (value == null);
+                }
+            } catch (PathNotFoundException e) {
+                return !exists;
+            }
+        }
+        try {
+            //Object leftVal = evaluateIfPath(left, ctx);
+            //Object rightVal = evaluateIfPath(right, ctx);
+
+            //return criteriaType.check(rightVal, leftVal);
+        } catch (ValueCompareException e) {
+        } catch (PathNotFoundException e) {
+        }
+        return false;
+    }
 
     /**
      * Static factory method to create a Criteria using the provided key
