@@ -1066,7 +1066,6 @@ public class JacksonTest extends BaseTest implements EvaluationCallback {
         {
             IntToken token = (IntToken)elem;
             assert(expected instanceof Integer);
-            System.err.println("comparing " + token.value + " expected " + expected);
             assert(token.value == ((Integer)expected).intValue());
             break;
         }
