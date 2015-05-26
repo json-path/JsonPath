@@ -76,332 +76,333 @@ public class JacksonTest extends BaseTest implements EvaluationCallback {
             getClass().getClassLoader().getResourceAsStream(res);
         assert(stream != null);
 
+        int count = 0;
         JsonFactory factory = new JsonFactory();
         stack.registerPath(path);
         stack.registerPath(idPath);
         stack.read(factory.createJsonParser(stream), this);
         Thread.sleep(1000);
 
-        assert(recorder.getResults().get(0).
+        assert(recorder.getResults().get(count++).
                equals(new CallbackRecorder.CallbackEvent(path, false)));
-        assert(recorder.getResults().get(1).
+        assert(recorder.getResults().get(count++).
                equals(new CallbackRecorder.CallbackEvent(idPath, false)));
-        assert(recorder.getResults().get(2).
+        assert(recorder.getResults().get(count++).
                equals(new CallbackRecorder.CallbackEvent(path, true)));
-        assert(recorder.getResults().get(3).
+        assert(recorder.getResults().get(count++).
                equals(new CallbackRecorder.CallbackEvent(path, false)));
-        assert(recorder.getResults().get(4).
+        assert(recorder.getResults().get(count++).
                equals(new CallbackRecorder.CallbackEvent(idPath, false)));
-        assert(recorder.getResults().get(5).
+        assert(recorder.getResults().get(count++).
                equals(new CallbackRecorder.CallbackEvent(path, true)));
-        assert(recorder.getResults().get(6).
+        assert(recorder.getResults().get(count++).
                equals(new CallbackRecorder.CallbackEvent(path, false)));
-        assert(recorder.getResults().get(7).
+        assert(recorder.getResults().get(count++).
                equals(new CallbackRecorder.CallbackEvent(idPath, false)));
-        assert(recorder.getResults().get(8).
+        assert(recorder.getResults().get(count++).
                equals(new CallbackRecorder.CallbackEvent(path, true)));
-        assert(recorder.getResults().get(9).
+        assert(recorder.getResults().get(count++).
                equals(new CallbackRecorder.CallbackEvent(path, false)));
-        assert(recorder.getResults().get(10).
+        assert(recorder.getResults().get(count++).
                equals(new CallbackRecorder.CallbackEvent(idPath, false)));
-        assert(recorder.getResults().get(11).
-               equals(new CallbackRecorder.CallbackEvent(path, true)));
-
-        assert(recorder.getResults().get(12).
-               equals(new CallbackRecorder.CallbackEvent(path, false)));
-        assert(recorder.getResults().get(13).
-               equals(new CallbackRecorder.CallbackEvent(idPath, false)));
-        assert(recorder.getResults().get(14).
-               equals(new CallbackRecorder.CallbackEvent(path, true)));
-        assert(recorder.getResults().get(15).
-               equals(new CallbackRecorder.CallbackEvent(path, false)));
-        assert(recorder.getResults().get(16).
-               equals(new CallbackRecorder.CallbackEvent(idPath, false)));
-        assert(recorder.getResults().get(17).
-               equals(new CallbackRecorder.CallbackEvent(path, true)));
-        assert(recorder.getResults().get(18).
-               equals(new CallbackRecorder.CallbackEvent(path, false)));
-        assert(recorder.getResults().get(19).
-               equals(new CallbackRecorder.CallbackEvent(idPath, false)));
-        assert(recorder.getResults().get(20).
-               equals(new CallbackRecorder.CallbackEvent(path, true)));
-        assert(recorder.getResults().get(21).
-               equals(new CallbackRecorder.CallbackEvent(path, false)));
-        assert(recorder.getResults().get(22).
-               equals(new CallbackRecorder.CallbackEvent(idPath, false)));
-        assert(recorder.getResults().get(23).
+        assert(recorder.getResults().get(count++).
                equals(new CallbackRecorder.CallbackEvent(path, true)));
 
-
-        assert(recorder.getResults().get(24).
+        assert(recorder.getResults().get(count++).
                equals(new CallbackRecorder.CallbackEvent(path, false)));
-        assert(recorder.getResults().get(25).
+        assert(recorder.getResults().get(count++).
+               equals(new CallbackRecorder.CallbackEvent(idPath, false)));
+        assert(recorder.getResults().get(count++).
+               equals(new CallbackRecorder.CallbackEvent(path, true)));
+        assert(recorder.getResults().get(count++).
+               equals(new CallbackRecorder.CallbackEvent(path, false)));
+        assert(recorder.getResults().get(count++).
+               equals(new CallbackRecorder.CallbackEvent(idPath, false)));
+        assert(recorder.getResults().get(count++).
+               equals(new CallbackRecorder.CallbackEvent(path, true)));
+        assert(recorder.getResults().get(count++).
+               equals(new CallbackRecorder.CallbackEvent(path, false)));
+        assert(recorder.getResults().get(count++).
+               equals(new CallbackRecorder.CallbackEvent(idPath, false)));
+        assert(recorder.getResults().get(count++).
+               equals(new CallbackRecorder.CallbackEvent(path, true)));
+        assert(recorder.getResults().get(count++).
+               equals(new CallbackRecorder.CallbackEvent(path, false)));
+        assert(recorder.getResults().get(count++).
+               equals(new CallbackRecorder.CallbackEvent(idPath, false)));
+        assert(recorder.getResults().get(count++).
                equals(new CallbackRecorder.CallbackEvent(path, true)));
 
-        assert(recorder.getResults().get(26).
+
+        assert(recorder.getResults().get(count++).
                equals(new CallbackRecorder.CallbackEvent(path, false)));
-        assert(recorder.getResults().get(27).
-               equals(new CallbackRecorder.CallbackEvent(idPath, false)));
-        assert(recorder.getResults().get(28).
+        assert(recorder.getResults().get(count++).
                equals(new CallbackRecorder.CallbackEvent(path, true)));
 
-        assert(recorder.getResults().get(29).
+        assert(recorder.getResults().get(count++).
                equals(new CallbackRecorder.CallbackEvent(path, false)));
-        assert(recorder.getResults().get(30).
+        assert(recorder.getResults().get(count++).
                equals(new CallbackRecorder.CallbackEvent(idPath, false)));
-        assert(recorder.getResults().get(31).
+        assert(recorder.getResults().get(count++).
                equals(new CallbackRecorder.CallbackEvent(path, true)));
 
-        assert(recorder.getResults().get(32).
+        assert(recorder.getResults().get(count++).
                equals(new CallbackRecorder.CallbackEvent(path, false)));
-        assert(recorder.getResults().get(33).
+        assert(recorder.getResults().get(count++).
                equals(new CallbackRecorder.CallbackEvent(idPath, false)));
-        assert(recorder.getResults().get(34).
+        assert(recorder.getResults().get(count++).
                equals(new CallbackRecorder.CallbackEvent(path, true)));
 
-        assert(recorder.getResults().get(35).
+        assert(recorder.getResults().get(count++).
                equals(new CallbackRecorder.CallbackEvent(path, false)));
-        assert(recorder.getResults().get(36).
+        assert(recorder.getResults().get(count++).
                equals(new CallbackRecorder.CallbackEvent(idPath, false)));
-        assert(recorder.getResults().get(37).
+        assert(recorder.getResults().get(count++).
                equals(new CallbackRecorder.CallbackEvent(path, true)));
 
-        assert(recorder.getResults().get(38).
+        assert(recorder.getResults().get(count++).
                equals(new CallbackRecorder.CallbackEvent(path, false)));
-        assert(recorder.getResults().get(39).
+        assert(recorder.getResults().get(count++).
                equals(new CallbackRecorder.CallbackEvent(idPath, false)));
-        assert(recorder.getResults().get(40).
+        assert(recorder.getResults().get(count++).
                equals(new CallbackRecorder.CallbackEvent(path, true)));
 
-        assert(recorder.getResults().get(41).
+        assert(recorder.getResults().get(count++).
                equals(new CallbackRecorder.CallbackEvent(path, false)));
-        assert(recorder.getResults().get(42).
+        assert(recorder.getResults().get(count++).
                equals(new CallbackRecorder.CallbackEvent(idPath, false)));
-        assert(recorder.getResults().get(43).
+        assert(recorder.getResults().get(count++).
                equals(new CallbackRecorder.CallbackEvent(path, true)));
 
-        assert(recorder.getResults().get(44).
+        assert(recorder.getResults().get(count++).
                equals(new CallbackRecorder.CallbackEvent(path, false)));
-        assert(recorder.getResults().get(45).
+        assert(recorder.getResults().get(count++).
                equals(new CallbackRecorder.CallbackEvent(idPath, false)));
-        assert(recorder.getResults().get(46).
+        assert(recorder.getResults().get(count++).
                equals(new CallbackRecorder.CallbackEvent(path, true)));
 
-        assert(recorder.getResults().get(47).
+        assert(recorder.getResults().get(count++).
                equals(new CallbackRecorder.CallbackEvent(path, false)));
-        assert(recorder.getResults().get(48).
+        assert(recorder.getResults().get(count++).
                equals(new CallbackRecorder.CallbackEvent(idPath, false)));
-        assert(recorder.getResults().get(49).
+        assert(recorder.getResults().get(count++).
                equals(new CallbackRecorder.CallbackEvent(path, true)));
 
-        assert(recorder.getResults().get(50).
+        assert(recorder.getResults().get(count++).
                equals(new CallbackRecorder.CallbackEvent(path, false)));
-        assert(recorder.getResults().get(51).
+        assert(recorder.getResults().get(count++).
                equals(new CallbackRecorder.CallbackEvent(idPath, false)));
-        assert(recorder.getResults().get(52).
+        assert(recorder.getResults().get(count++).
                equals(new CallbackRecorder.CallbackEvent(path, true)));
 
-        assert(recorder.getResults().get(53).
+        assert(recorder.getResults().get(count++).
                equals(new CallbackRecorder.CallbackEvent(path, false)));
-        assert(recorder.getResults().get(54).
+        assert(recorder.getResults().get(count++).
                equals(new CallbackRecorder.CallbackEvent(idPath, false)));
-        assert(recorder.getResults().get(55).
+        assert(recorder.getResults().get(count++).
                equals(new CallbackRecorder.CallbackEvent(path, true)));
 
-        assert(recorder.getResults().get(56).
+        assert(recorder.getResults().get(count++).
                equals(new CallbackRecorder.CallbackEvent(path, false)));
-        assert(recorder.getResults().get(57).
+        assert(recorder.getResults().get(count++).
                equals(new CallbackRecorder.CallbackEvent(idPath, false)));
-        assert(recorder.getResults().get(58).
+        assert(recorder.getResults().get(count++).
                equals(new CallbackRecorder.CallbackEvent(path, true)));
 
-        assert(recorder.getResults().get(59).
+        assert(recorder.getResults().get(count++).
                equals(new CallbackRecorder.CallbackEvent(path, false)));
-        assert(recorder.getResults().get(60).
+        assert(recorder.getResults().get(count++).
                equals(new CallbackRecorder.CallbackEvent(idPath, false)));
-        assert(recorder.getResults().get(61).
+        assert(recorder.getResults().get(count++).
                equals(new CallbackRecorder.CallbackEvent(path, true)));
 
-        assert(recorder.getResults().get(62).
+        assert(recorder.getResults().get(count++).
                equals(new CallbackRecorder.CallbackEvent(path, false)));
-        assert(recorder.getResults().get(63).
+        assert(recorder.getResults().get(count++).
                equals(new CallbackRecorder.CallbackEvent(idPath, false)));
-        assert(recorder.getResults().get(64).
+        assert(recorder.getResults().get(count++).
                equals(new CallbackRecorder.CallbackEvent(path, true)));
 
-        assert(recorder.getResults().get(65).
+        assert(recorder.getResults().get(count++).
                equals(new CallbackRecorder.CallbackEvent(path, false)));
-        assert(recorder.getResults().get(66).
+        assert(recorder.getResults().get(count++).
                equals(new CallbackRecorder.CallbackEvent(idPath, false)));
-        assert(recorder.getResults().get(67).
+        assert(recorder.getResults().get(count++).
                equals(new CallbackRecorder.CallbackEvent(path, true)));
 
-        assert(recorder.getResults().get(68).
+        assert(recorder.getResults().get(count++).
                equals(new CallbackRecorder.CallbackEvent(path, false)));
-        assert(recorder.getResults().get(69).
+        assert(recorder.getResults().get(count++).
                equals(new CallbackRecorder.CallbackEvent(idPath, false)));
-        assert(recorder.getResults().get(70).
+        assert(recorder.getResults().get(count++).
                equals(new CallbackRecorder.CallbackEvent(path, true)));
 
-        assert(recorder.getResults().get(71).
+        assert(recorder.getResults().get(count++).
                equals(new CallbackRecorder.CallbackEvent(path, false)));
-        assert(recorder.getResults().get(72).
+        assert(recorder.getResults().get(count++).
                equals(new CallbackRecorder.CallbackEvent(idPath, false)));
-        assert(recorder.getResults().get(73).
+        assert(recorder.getResults().get(count++).
                equals(new CallbackRecorder.CallbackEvent(path, true)));
 
-        assert(recorder.getResults().get(74).
+        assert(recorder.getResults().get(count++).
                equals(new CallbackRecorder.CallbackEvent(path, false)));
-        assert(recorder.getResults().get(75).
+        assert(recorder.getResults().get(count++).
                equals(new CallbackRecorder.CallbackEvent(idPath, false)));
-        assert(recorder.getResults().get(76).
+        assert(recorder.getResults().get(count++).
                equals(new CallbackRecorder.CallbackEvent(path, true)));
 
-        assert(recorder.getResults().get(77).
+        assert(recorder.getResults().get(count++).
                equals(new CallbackRecorder.CallbackEvent(path, false)));
-        assert(recorder.getResults().get(78).
+        assert(recorder.getResults().get(count++).
                equals(new CallbackRecorder.CallbackEvent(idPath, false)));
-        assert(recorder.getResults().get(79).
+        assert(recorder.getResults().get(count++).
                equals(new CallbackRecorder.CallbackEvent(path, true)));
 
-        assert(recorder.getResults().get(80).
+        assert(recorder.getResults().get(count++).
                equals(new CallbackRecorder.CallbackEvent(path, false)));
-        assert(recorder.getResults().get(81).
+        assert(recorder.getResults().get(count++).
                equals(new CallbackRecorder.CallbackEvent(idPath, false)));
-        assert(recorder.getResults().get(82).
+        assert(recorder.getResults().get(count++).
                equals(new CallbackRecorder.CallbackEvent(path, true)));
 
-        assert(recorder.getResults().get(83).
+        assert(recorder.getResults().get(count++).
                equals(new CallbackRecorder.CallbackEvent(path, false)));
-        assert(recorder.getResults().get(84).
+        assert(recorder.getResults().get(count++).
                equals(new CallbackRecorder.CallbackEvent(idPath, false)));
-        assert(recorder.getResults().get(85).
+        assert(recorder.getResults().get(count++).
                equals(new CallbackRecorder.CallbackEvent(path, true)));
 
-        assert(recorder.getResults().get(86).
+        assert(recorder.getResults().get(count++).
                equals(new CallbackRecorder.CallbackEvent(path, false)));
-        assert(recorder.getResults().get(87).
+        assert(recorder.getResults().get(count++).
                equals(new CallbackRecorder.CallbackEvent(idPath, false)));
-        assert(recorder.getResults().get(88).
+        assert(recorder.getResults().get(count++).
                equals(new CallbackRecorder.CallbackEvent(path, true)));
 
-        assert(recorder.getResults().get(89).
+        assert(recorder.getResults().get(count++).
                equals(new CallbackRecorder.CallbackEvent(path, false)));
-        assert(recorder.getResults().get(90).
+        assert(recorder.getResults().get(count++).
                equals(new CallbackRecorder.CallbackEvent(idPath, false)));
-        assert(recorder.getResults().get(91).
+        assert(recorder.getResults().get(count++).
                equals(new CallbackRecorder.CallbackEvent(path, true)));
 
-        assert(recorder.getResults().get(92).
+        assert(recorder.getResults().get(count++).
                equals(new CallbackRecorder.CallbackEvent(path, false)));
-        assert(recorder.getResults().get(93).
+        assert(recorder.getResults().get(count++).
                equals(new CallbackRecorder.CallbackEvent(idPath, false)));
-        assert(recorder.getResults().get(94).
+        assert(recorder.getResults().get(count++).
                equals(new CallbackRecorder.CallbackEvent(path, true)));
 
-        assert(recorder.getResults().get(95).
+        assert(recorder.getResults().get(count++).
                equals(new CallbackRecorder.CallbackEvent(path, false)));
-        assert(recorder.getResults().get(96).
+        assert(recorder.getResults().get(count++).
                equals(new CallbackRecorder.CallbackEvent(idPath, false)));
-        assert(recorder.getResults().get(97).
+        assert(recorder.getResults().get(count++).
                equals(new CallbackRecorder.CallbackEvent(path, true)));
 
-        assert(recorder.getResults().get(98).
+        assert(recorder.getResults().get(count++).
                equals(new CallbackRecorder.CallbackEvent(path, false)));
-        assert(recorder.getResults().get(99).
+        assert(recorder.getResults().get(count++).
                equals(new CallbackRecorder.CallbackEvent(idPath, false)));
-        assert(recorder.getResults().get(100).
+        assert(recorder.getResults().get(count++).
                equals(new CallbackRecorder.CallbackEvent(path, true)));
 
-        assert(recorder.getResults().get(101).
+        assert(recorder.getResults().get(count++).
                equals(new CallbackRecorder.CallbackEvent(path, false)));
-        assert(recorder.getResults().get(102).
+        assert(recorder.getResults().get(count++).
                equals(new CallbackRecorder.CallbackEvent(idPath, false)));
-        assert(recorder.getResults().get(103).
+        assert(recorder.getResults().get(count++).
                equals(new CallbackRecorder.CallbackEvent(path, true)));
 
-        assert(recorder.getResults().get(104).
+        assert(recorder.getResults().get(count++).
                equals(new CallbackRecorder.CallbackEvent(path, false)));
-        assert(recorder.getResults().get(105).
+        assert(recorder.getResults().get(count++).
                equals(new CallbackRecorder.CallbackEvent(idPath, false)));
-        assert(recorder.getResults().get(106).
+        assert(recorder.getResults().get(count++).
                equals(new CallbackRecorder.CallbackEvent(path, true)));
 
-        assert(recorder.getResults().get(107).
+        assert(recorder.getResults().get(count++).
                equals(new CallbackRecorder.CallbackEvent(path, false)));
-        assert(recorder.getResults().get(108).
+        assert(recorder.getResults().get(count++).
                equals(new CallbackRecorder.CallbackEvent(idPath, false)));
-        assert(recorder.getResults().get(109).
+        assert(recorder.getResults().get(count++).
                equals(new CallbackRecorder.CallbackEvent(path, true)));
 
-        assert(recorder.getResults().get(110).
+        assert(recorder.getResults().get(count++).
                equals(new CallbackRecorder.CallbackEvent(path, false)));
-        assert(recorder.getResults().get(111).
+        assert(recorder.getResults().get(count++).
                equals(new CallbackRecorder.CallbackEvent(idPath, false)));
-        assert(recorder.getResults().get(112).
+        assert(recorder.getResults().get(count++).
                equals(new CallbackRecorder.CallbackEvent(path, true)));
 
-        assert(recorder.getResults().get(113).
+        assert(recorder.getResults().get(count++).
                equals(new CallbackRecorder.CallbackEvent(path, false)));
-        assert(recorder.getResults().get(114).
+        assert(recorder.getResults().get(count++).
                equals(new CallbackRecorder.CallbackEvent(idPath, false)));
-        assert(recorder.getResults().get(115).
+        assert(recorder.getResults().get(count++).
                equals(new CallbackRecorder.CallbackEvent(path, true)));
 
-        assert(recorder.getResults().get(116).
+        assert(recorder.getResults().get(count++).
                equals(new CallbackRecorder.CallbackEvent(path, false)));
-        assert(recorder.getResults().get(117).
+        assert(recorder.getResults().get(count++).
                equals(new CallbackRecorder.CallbackEvent(idPath, false)));
-        assert(recorder.getResults().get(118).
+        assert(recorder.getResults().get(count++).
                equals(new CallbackRecorder.CallbackEvent(path, true)));
 
-        assert(recorder.getResults().get(119).
+        assert(recorder.getResults().get(count++).
                equals(new CallbackRecorder.CallbackEvent(path, false)));
-        assert(recorder.getResults().get(120).
+        assert(recorder.getResults().get(count++).
                equals(new CallbackRecorder.CallbackEvent(idPath, false)));
-        assert(recorder.getResults().get(121).
+        assert(recorder.getResults().get(count++).
                equals(new CallbackRecorder.CallbackEvent(path, true)));
 
-        assert(recorder.getResults().get(122).
+        assert(recorder.getResults().get(count++).
                equals(new CallbackRecorder.CallbackEvent(path, false)));
-        assert(recorder.getResults().get(123).
+        assert(recorder.getResults().get(count++).
                equals(new CallbackRecorder.CallbackEvent(idPath, false)));
-        assert(recorder.getResults().get(124).
+        assert(recorder.getResults().get(count++).
                equals(new CallbackRecorder.CallbackEvent(path, true)));
 
-        assert(recorder.getResults().get(125).
+        assert(recorder.getResults().get(count++).
                equals(new CallbackRecorder.CallbackEvent(path, false)));
-        assert(recorder.getResults().get(126).
+        assert(recorder.getResults().get(count++).
                equals(new CallbackRecorder.CallbackEvent(idPath, false)));
-        assert(recorder.getResults().get(127).
+        assert(recorder.getResults().get(count++).
                equals(new CallbackRecorder.CallbackEvent(path, true)));
 
-        assert(recorder.getResults().get(128).
+        assert(recorder.getResults().get(count++).
                equals(new CallbackRecorder.CallbackEvent(path, false)));
-        assert(recorder.getResults().get(129).
+        assert(recorder.getResults().get(count++).
                equals(new CallbackRecorder.CallbackEvent(idPath, false)));
-        assert(recorder.getResults().get(130).
+        assert(recorder.getResults().get(count++).
                equals(new CallbackRecorder.CallbackEvent(path, true)));
 
-        assert(recorder.getResults().get(131).
+        assert(recorder.getResults().get(count++).
                equals(new CallbackRecorder.CallbackEvent(path, false)));
-        assert(recorder.getResults().get(132).
+        assert(recorder.getResults().get(count++).
                equals(new CallbackRecorder.CallbackEvent(idPath, false)));
-        assert(recorder.getResults().get(133).
+        assert(recorder.getResults().get(count++).
                equals(new CallbackRecorder.CallbackEvent(path, true)));
 
-        assert(recorder.getResults().get(134).
+        assert(recorder.getResults().get(count++).
                equals(new CallbackRecorder.CallbackEvent(path, false)));
-        assert(recorder.getResults().get(135).
+        assert(recorder.getResults().get(count++).
                equals(new CallbackRecorder.CallbackEvent(idPath, false)));
-        assert(recorder.getResults().get(136).
+        assert(recorder.getResults().get(count++).
                equals(new CallbackRecorder.CallbackEvent(path, true)));
 
-        assert(recorder.getResults().get(137).
+        assert(recorder.getResults().get(count++).
                equals(new CallbackRecorder.CallbackEvent(path, false)));
-        assert(recorder.getResults().get(138).
+        assert(recorder.getResults().get(count++).
                equals(new CallbackRecorder.CallbackEvent(idPath, false)));
-        assert(recorder.getResults().get(139).
+        assert(recorder.getResults().get(count++).
+               equals(new CallbackRecorder.CallbackEvent(path, true)));
+
+        assert(recorder.getResults().get(count++).
+               equals(new CallbackRecorder.CallbackEvent(path, false)));
+        assert(recorder.getResults().get(count++).
+               equals(new CallbackRecorder.CallbackEvent(idPath, false)));
+        assert(recorder.getResults().get(count++).
                equals(new CallbackRecorder.CallbackEvent(path, true)));
     }
 
