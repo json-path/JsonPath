@@ -99,7 +99,7 @@ public class ScanPathToken extends PathToken {
     @Override
     public boolean checkForMatch(TokenStack stack, int idx)
     {
-        assert(stack.getStack().size() > idx);
+        if (stack.getStack().size() <= idx) return false;
         TokenStackElement curr = stack.getStack().get(idx);
 
         if (curr.getType() == TokenType.ARRAY_TOKEN

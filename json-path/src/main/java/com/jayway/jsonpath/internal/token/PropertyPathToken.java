@@ -26,8 +26,6 @@ import com.jayway.jsonpath.internal.Utils;
  */
 public class PropertyPathToken extends PathToken {
 
-    protected static Logger log = Logger.getLogger("com.jayway.jsonpath");
-
     private final List<String> properties;
 
     public PropertyPathToken(List<String> properties) {
@@ -50,14 +48,13 @@ public class PropertyPathToken extends PathToken {
     @Override
     public boolean checkForMatch(TokenStack stack, int idx)
     {
-        assert(stack.getStack().size() > idx);
+        if (stack.getStack().size() <= idx) return false;
         TokenStackElement curr = stack.getStack().get(idx);
 
         if (curr.getType() == TokenType.OBJECT_TOKEN) {
             ObjectToken token = (ObjectToken)curr;
             if (token.getKey() != null) {
                 for (String checkKey : properties) {
-                    log.info("checking key " + checkKey + " against " + token.getKey());
                     if (token.getKey().equals(checkKey)) {
                         if (isLeaf()) {
                             return stack.getStack().size() - 1 == idx;

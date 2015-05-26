@@ -47,150 +47,147 @@ public class TokenStack
         paths.add(path);
     }
 
-    // reads tokens and goes to first leaf
+    /**
+     * reads from stream and notifies the callback of matched registered paths
+     */
     public void read(JsonParser parser, EvaluationCallback callback)
+        throws Exception
     {
         assert(callback != null);
-        try {
-            //boolean lookingForRow = true;
-            //TokenStackElement rowToken = null;
-            boolean needsPathCheck = false;
-            while (parser.nextToken() != null) {
-                boolean saveMatch = false;
-                switch (parser.getCurrentToken()) {
-                case START_ARRAY:
-                {
-                    if (curr != null) {
-                        TokenStackElement newElem = new ArrayToken();
-                        curr.setValue(newElem);
-                        curr = newElem;
-                    } else {
-                        curr = new ArrayToken();
-                    }
-                    saveMatch = true;
-                    needsPathCheck = true;
-                    elements.push(curr);
-                    break;
-                }
-                case END_ARRAY:
-                {
-                    Path match = matchedPaths.remove(curr);
-                    if (match != null) {
-                        callback.resultFoundExit(match);
-                    }
-                    elements.pop();
-                    if (elements.empty()) curr = null;
-                    else curr = elements.peek();
-                    saveMatch = true;
-                    needsPathCheck = true;
 
-                    break;
+        boolean needsPathCheck = false;
+        while (parser.nextToken() != null) {
+            boolean saveMatch = false;
+            switch (parser.getCurrentToken()) {
+            case START_ARRAY:
+            {
+                if (curr != null) {
+                    TokenStackElement newElem = new ArrayToken();
+                    curr.setValue(newElem);
+                    curr = newElem;
+                } else {
+                    curr = new ArrayToken();
                 }
-                case VALUE_EMBEDDED_OBJECT:
-                case START_OBJECT:
-                {
-                    if (curr != null) {
-                        TokenStackElement newElem = new ObjectToken();
-                        curr.setValue(newElem);
-                        curr = newElem;
-                    } else {
-                        curr = new ObjectToken();
-                    }
-                    //if (!elements.empty())
-                    saveMatch = true;
-                    needsPathCheck = true;
-                    elements.push(curr);
-                    break;
+                saveMatch = true;
+                needsPathCheck = true;
+                elements.push(curr);
+                break;
+            }
+            case END_ARRAY:
+            {
+                Path match = matchedPaths.remove(curr);
+                if (match != null) {
+                    callback.resultFoundExit(match);
                 }
-                case END_OBJECT:
-                {
-                    Path match = matchedPaths.remove(curr);
-                    if (match != null) {
+                elements.pop();
+                if (elements.empty()) curr = null;
+                else curr = elements.peek();
+                break;
+            }
+            case VALUE_EMBEDDED_OBJECT:
+            case START_OBJECT:
+            {
+                if (curr != null && curr.getType() == TokenType.ARRAY_TOKEN) {
+
+                    if (((ArrayToken)curr).getValue() != null &&
+                        matchedPaths.containsKey(curr)) {
+
+                        Path match = matchedPaths.remove(curr);
                         callback.resultFoundExit(match);
-                    }
-                    elements.pop();
-                    if (elements.empty()) curr = null;
-                    else curr = elements.peek();
-                    saveMatch = true;
-                    needsPathCheck = true;
-                    break;
-                }
-                case FIELD_NAME:
-                {
-                    assert(curr instanceof ObjectToken);
-                    ((ObjectToken)curr).key = parser.getText();
-                    break;
-                }
-                case VALUE_FALSE:
-                {
-                    StringToken newToken = new StringToken("FALSE");
-                    curr.setValue(newToken);
-                    needsPathCheck = true;
-                    break;
-                }
-                case VALUE_TRUE:
-                {
-                    StringToken newToken = new StringToken("TRUE");
-                    curr.setValue(newToken);
-                    needsPathCheck = true;
-                    break;
-                }
-                case VALUE_NUMBER_FLOAT:
-                {
-                    FloatToken newToken =
-                        new FloatToken((float)parser.getValueAsDouble());
-                    curr.setValue(newToken);
-                    needsPathCheck = true;
-                    break;
-                }
-                case VALUE_NUMBER_INT:
-                {
-                    IntToken newToken =
-                        new IntToken(parser.getValueAsInt());
-                    curr.setValue(newToken);
-                    needsPathCheck = true;
-                    break;
-                }
-                case VALUE_STRING:
-                {
-                    StringToken newToken =
-                        new StringToken(parser.getText());
-                    curr.setValue(newToken);
-                    needsPathCheck = true;
-                    break;
-                }
-                case VALUE_NULL:
-                {
-                    curr.setValue(null);
-                    needsPathCheck = true;
-                    break;
-                }
-                default:
-                    assert false;
-                }
-                // now check the paths for matches
-                if (needsPathCheck) {
-                    for (Path path : paths) {
-                        if (path.checkForMatch(this)) {
-                            if (saveMatch) {
-                                Path oldMatch = matchedPaths.get(curr);
-                                if (oldMatch != null) {
-                                    callback.resultFoundExit(oldMatch);
-                                }
-                                matchedPaths.put(curr, path);
-                                break;
-                            }
-                            callback.resultFound(path);
+
+                        if (match.checkForMatch(this)) {
+
+                            matchedPaths.put(curr, match);
+                            callback.resultFound(match);
                         }
                     }
-                    needsPathCheck = false;
                 }
+
+                if (curr != null) {
+                    TokenStackElement newElem = new ObjectToken();
+                    curr.setValue(newElem);
+                    curr = newElem;
+                } else {
+                    curr = new ObjectToken();
+                }
+                saveMatch = true;
+                needsPathCheck = true;
+                elements.push(curr);
+                break;
             }
-        } catch (Exception e) {
-            //e.printStackTrace();
-            log.log(Level.INFO, e.getMessage(), e);
+            case END_OBJECT:
+            {
+                Path match = matchedPaths.remove(curr);
+                if (match != null) {
+                    callback.resultFoundExit(match);
+                }
+                elements.pop();
+                if (elements.empty()) curr = null;
+                else curr = elements.peek();
+                break;
+            }
+            case FIELD_NAME:
+            {
+                assert(curr instanceof ObjectToken);
+                ((ObjectToken)curr).key = parser.getText();
+                break;
+            }
+            case VALUE_FALSE:
+            {
+                StringToken newToken = new StringToken("FALSE");
+                curr.setValue(newToken);
+                needsPathCheck = true;
+                break;
+            }
+            case VALUE_TRUE:
+            {
+                StringToken newToken = new StringToken("TRUE");
+                curr.setValue(newToken);
+                needsPathCheck = true;
+                break;
+            }
+            case VALUE_NUMBER_FLOAT:
+            {
+                FloatToken newToken =
+                    new FloatToken((float)parser.getValueAsDouble());
+                curr.setValue(newToken);
+                needsPathCheck = true;
+                break;
+            }
+            case VALUE_NUMBER_INT:
+            {
+                IntToken newToken = new IntToken(parser.getValueAsInt());
+                curr.setValue(newToken);
+                needsPathCheck = true;
+                break;
+            }
+            case VALUE_STRING:
+            {
+                StringToken newToken = new StringToken(parser.getText());
+                curr.setValue(newToken);
+                needsPathCheck = true;
+                break;
+            }
+            case VALUE_NULL:
+            {
+                curr.setValue(null);
+                needsPathCheck = true;
+                break;
+            }
+            default:
+                assert false;
+            }
+            // now check the paths for matches
+            if (needsPathCheck) {
+                for (Path path : paths) {
+                    if (path.checkForMatch(this)) {
+                        if (saveMatch) matchedPaths.put(curr, path);
+                        callback.resultFound(path);
+                    }
+                }
+                needsPathCheck = false;
+            }
         }
-        log.fine("finished read");
     }
 
     public String toString()
