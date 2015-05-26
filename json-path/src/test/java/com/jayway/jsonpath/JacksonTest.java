@@ -60,6 +60,10 @@ public class JacksonTest extends BaseTest implements EvaluationCallback {
     protected CallbackRecorder recorder = null;
     protected Path idPath = null;
     protected int match = 0;
+    protected Path floatPath = null;
+    protected int floatMatch = 0;
+    protected Path intPath = null;
+    protected int intMatch = 0;
 
     @Test
     public void streamingTest() throws Exception {
@@ -68,6 +72,10 @@ public class JacksonTest extends BaseTest implements EvaluationCallback {
             PathCompiler.compile("$..completed_tasks[0:]");
         idPath =
             PathCompiler.compile("$..completed_tasks[0:].id");
+        floatPath =
+            PathCompiler.compile("$..completed_tasks[0:].resources.cpus");
+        intPath =
+            PathCompiler.compile("$..completed_tasks[0:].resources.mem");
         stack = new TokenStack(JACKSON_CONFIGURATION);
 
         recorder = new CallbackRecorder();
@@ -80,6 +88,8 @@ public class JacksonTest extends BaseTest implements EvaluationCallback {
         JsonFactory factory = new JsonFactory();
         stack.registerPath(path);
         stack.registerPath(idPath);
+        stack.registerPath(floatPath);
+        stack.registerPath(intPath);
         stack.read(factory.createJsonParser(stream), this);
         Thread.sleep(1000);
 
@@ -88,11 +98,9 @@ public class JacksonTest extends BaseTest implements EvaluationCallback {
         assert(recorder.getResults().get(count++).
                equals(new CallbackRecorder.CallbackEvent(idPath, false)));
         assert(recorder.getResults().get(count++).
-               equals(new CallbackRecorder.CallbackEvent(path, true)));
+               equals(new CallbackRecorder.CallbackEvent(floatPath, false)));
         assert(recorder.getResults().get(count++).
-               equals(new CallbackRecorder.CallbackEvent(path, false)));
-        assert(recorder.getResults().get(count++).
-               equals(new CallbackRecorder.CallbackEvent(idPath, false)));
+               equals(new CallbackRecorder.CallbackEvent(intPath, false)));
         assert(recorder.getResults().get(count++).
                equals(new CallbackRecorder.CallbackEvent(path, true)));
         assert(recorder.getResults().get(count++).
@@ -100,11 +108,29 @@ public class JacksonTest extends BaseTest implements EvaluationCallback {
         assert(recorder.getResults().get(count++).
                equals(new CallbackRecorder.CallbackEvent(idPath, false)));
         assert(recorder.getResults().get(count++).
+               equals(new CallbackRecorder.CallbackEvent(floatPath, false)));
+        assert(recorder.getResults().get(count++).
+               equals(new CallbackRecorder.CallbackEvent(intPath, false)));
+        assert(recorder.getResults().get(count++).
                equals(new CallbackRecorder.CallbackEvent(path, true)));
         assert(recorder.getResults().get(count++).
                equals(new CallbackRecorder.CallbackEvent(path, false)));
         assert(recorder.getResults().get(count++).
                equals(new CallbackRecorder.CallbackEvent(idPath, false)));
+        assert(recorder.getResults().get(count++).
+               equals(new CallbackRecorder.CallbackEvent(floatPath, false)));
+        assert(recorder.getResults().get(count++).
+               equals(new CallbackRecorder.CallbackEvent(intPath, false)));
+        assert(recorder.getResults().get(count++).
+               equals(new CallbackRecorder.CallbackEvent(path, true)));
+        assert(recorder.getResults().get(count++).
+               equals(new CallbackRecorder.CallbackEvent(path, false)));
+        assert(recorder.getResults().get(count++).
+               equals(new CallbackRecorder.CallbackEvent(idPath, false)));
+        assert(recorder.getResults().get(count++).
+               equals(new CallbackRecorder.CallbackEvent(floatPath, false)));
+        assert(recorder.getResults().get(count++).
+               equals(new CallbackRecorder.CallbackEvent(intPath, false)));
         assert(recorder.getResults().get(count++).
                equals(new CallbackRecorder.CallbackEvent(path, true)));
 
@@ -113,11 +139,9 @@ public class JacksonTest extends BaseTest implements EvaluationCallback {
         assert(recorder.getResults().get(count++).
                equals(new CallbackRecorder.CallbackEvent(idPath, false)));
         assert(recorder.getResults().get(count++).
-               equals(new CallbackRecorder.CallbackEvent(path, true)));
+               equals(new CallbackRecorder.CallbackEvent(floatPath, false)));
         assert(recorder.getResults().get(count++).
-               equals(new CallbackRecorder.CallbackEvent(path, false)));
-        assert(recorder.getResults().get(count++).
-               equals(new CallbackRecorder.CallbackEvent(idPath, false)));
+               equals(new CallbackRecorder.CallbackEvent(intPath, false)));
         assert(recorder.getResults().get(count++).
                equals(new CallbackRecorder.CallbackEvent(path, true)));
         assert(recorder.getResults().get(count++).
@@ -125,11 +149,29 @@ public class JacksonTest extends BaseTest implements EvaluationCallback {
         assert(recorder.getResults().get(count++).
                equals(new CallbackRecorder.CallbackEvent(idPath, false)));
         assert(recorder.getResults().get(count++).
+               equals(new CallbackRecorder.CallbackEvent(floatPath, false)));
+        assert(recorder.getResults().get(count++).
+               equals(new CallbackRecorder.CallbackEvent(intPath, false)));
+        assert(recorder.getResults().get(count++).
                equals(new CallbackRecorder.CallbackEvent(path, true)));
         assert(recorder.getResults().get(count++).
                equals(new CallbackRecorder.CallbackEvent(path, false)));
         assert(recorder.getResults().get(count++).
                equals(new CallbackRecorder.CallbackEvent(idPath, false)));
+        assert(recorder.getResults().get(count++).
+               equals(new CallbackRecorder.CallbackEvent(floatPath, false)));
+        assert(recorder.getResults().get(count++).
+               equals(new CallbackRecorder.CallbackEvent(intPath, false)));
+        assert(recorder.getResults().get(count++).
+               equals(new CallbackRecorder.CallbackEvent(path, true)));
+        assert(recorder.getResults().get(count++).
+               equals(new CallbackRecorder.CallbackEvent(path, false)));
+        assert(recorder.getResults().get(count++).
+               equals(new CallbackRecorder.CallbackEvent(idPath, false)));
+        assert(recorder.getResults().get(count++).
+               equals(new CallbackRecorder.CallbackEvent(floatPath, false)));
+        assert(recorder.getResults().get(count++).
+               equals(new CallbackRecorder.CallbackEvent(intPath, false)));
         assert(recorder.getResults().get(count++).
                equals(new CallbackRecorder.CallbackEvent(path, true)));
 
@@ -144,12 +186,9 @@ public class JacksonTest extends BaseTest implements EvaluationCallback {
         assert(recorder.getResults().get(count++).
                equals(new CallbackRecorder.CallbackEvent(idPath, false)));
         assert(recorder.getResults().get(count++).
-               equals(new CallbackRecorder.CallbackEvent(path, true)));
-
+               equals(new CallbackRecorder.CallbackEvent(floatPath, false)));
         assert(recorder.getResults().get(count++).
-               equals(new CallbackRecorder.CallbackEvent(path, false)));
-        assert(recorder.getResults().get(count++).
-               equals(new CallbackRecorder.CallbackEvent(idPath, false)));
+               equals(new CallbackRecorder.CallbackEvent(intPath, false)));
         assert(recorder.getResults().get(count++).
                equals(new CallbackRecorder.CallbackEvent(path, true)));
 
@@ -158,12 +197,9 @@ public class JacksonTest extends BaseTest implements EvaluationCallback {
         assert(recorder.getResults().get(count++).
                equals(new CallbackRecorder.CallbackEvent(idPath, false)));
         assert(recorder.getResults().get(count++).
-               equals(new CallbackRecorder.CallbackEvent(path, true)));
-
+               equals(new CallbackRecorder.CallbackEvent(floatPath, false)));
         assert(recorder.getResults().get(count++).
-               equals(new CallbackRecorder.CallbackEvent(path, false)));
-        assert(recorder.getResults().get(count++).
-               equals(new CallbackRecorder.CallbackEvent(idPath, false)));
+               equals(new CallbackRecorder.CallbackEvent(intPath, false)));
         assert(recorder.getResults().get(count++).
                equals(new CallbackRecorder.CallbackEvent(path, true)));
 
@@ -172,12 +208,9 @@ public class JacksonTest extends BaseTest implements EvaluationCallback {
         assert(recorder.getResults().get(count++).
                equals(new CallbackRecorder.CallbackEvent(idPath, false)));
         assert(recorder.getResults().get(count++).
-               equals(new CallbackRecorder.CallbackEvent(path, true)));
-
+               equals(new CallbackRecorder.CallbackEvent(floatPath, false)));
         assert(recorder.getResults().get(count++).
-               equals(new CallbackRecorder.CallbackEvent(path, false)));
-        assert(recorder.getResults().get(count++).
-               equals(new CallbackRecorder.CallbackEvent(idPath, false)));
+               equals(new CallbackRecorder.CallbackEvent(intPath, false)));
         assert(recorder.getResults().get(count++).
                equals(new CallbackRecorder.CallbackEvent(path, true)));
 
@@ -186,12 +219,9 @@ public class JacksonTest extends BaseTest implements EvaluationCallback {
         assert(recorder.getResults().get(count++).
                equals(new CallbackRecorder.CallbackEvent(idPath, false)));
         assert(recorder.getResults().get(count++).
-               equals(new CallbackRecorder.CallbackEvent(path, true)));
-
+               equals(new CallbackRecorder.CallbackEvent(floatPath, false)));
         assert(recorder.getResults().get(count++).
-               equals(new CallbackRecorder.CallbackEvent(path, false)));
-        assert(recorder.getResults().get(count++).
-               equals(new CallbackRecorder.CallbackEvent(idPath, false)));
+               equals(new CallbackRecorder.CallbackEvent(intPath, false)));
         assert(recorder.getResults().get(count++).
                equals(new CallbackRecorder.CallbackEvent(path, true)));
 
@@ -200,12 +230,9 @@ public class JacksonTest extends BaseTest implements EvaluationCallback {
         assert(recorder.getResults().get(count++).
                equals(new CallbackRecorder.CallbackEvent(idPath, false)));
         assert(recorder.getResults().get(count++).
-               equals(new CallbackRecorder.CallbackEvent(path, true)));
-
+               equals(new CallbackRecorder.CallbackEvent(floatPath, false)));
         assert(recorder.getResults().get(count++).
-               equals(new CallbackRecorder.CallbackEvent(path, false)));
-        assert(recorder.getResults().get(count++).
-               equals(new CallbackRecorder.CallbackEvent(idPath, false)));
+               equals(new CallbackRecorder.CallbackEvent(intPath, false)));
         assert(recorder.getResults().get(count++).
                equals(new CallbackRecorder.CallbackEvent(path, true)));
 
@@ -214,12 +241,9 @@ public class JacksonTest extends BaseTest implements EvaluationCallback {
         assert(recorder.getResults().get(count++).
                equals(new CallbackRecorder.CallbackEvent(idPath, false)));
         assert(recorder.getResults().get(count++).
-               equals(new CallbackRecorder.CallbackEvent(path, true)));
-
+               equals(new CallbackRecorder.CallbackEvent(floatPath, false)));
         assert(recorder.getResults().get(count++).
-               equals(new CallbackRecorder.CallbackEvent(path, false)));
-        assert(recorder.getResults().get(count++).
-               equals(new CallbackRecorder.CallbackEvent(idPath, false)));
+               equals(new CallbackRecorder.CallbackEvent(intPath, false)));
         assert(recorder.getResults().get(count++).
                equals(new CallbackRecorder.CallbackEvent(path, true)));
 
@@ -228,12 +252,9 @@ public class JacksonTest extends BaseTest implements EvaluationCallback {
         assert(recorder.getResults().get(count++).
                equals(new CallbackRecorder.CallbackEvent(idPath, false)));
         assert(recorder.getResults().get(count++).
-               equals(new CallbackRecorder.CallbackEvent(path, true)));
-
+               equals(new CallbackRecorder.CallbackEvent(floatPath, false)));
         assert(recorder.getResults().get(count++).
-               equals(new CallbackRecorder.CallbackEvent(path, false)));
-        assert(recorder.getResults().get(count++).
-               equals(new CallbackRecorder.CallbackEvent(idPath, false)));
+               equals(new CallbackRecorder.CallbackEvent(intPath, false)));
         assert(recorder.getResults().get(count++).
                equals(new CallbackRecorder.CallbackEvent(path, true)));
 
@@ -242,12 +263,9 @@ public class JacksonTest extends BaseTest implements EvaluationCallback {
         assert(recorder.getResults().get(count++).
                equals(new CallbackRecorder.CallbackEvent(idPath, false)));
         assert(recorder.getResults().get(count++).
-               equals(new CallbackRecorder.CallbackEvent(path, true)));
-
+               equals(new CallbackRecorder.CallbackEvent(floatPath, false)));
         assert(recorder.getResults().get(count++).
-               equals(new CallbackRecorder.CallbackEvent(path, false)));
-        assert(recorder.getResults().get(count++).
-               equals(new CallbackRecorder.CallbackEvent(idPath, false)));
+               equals(new CallbackRecorder.CallbackEvent(intPath, false)));
         assert(recorder.getResults().get(count++).
                equals(new CallbackRecorder.CallbackEvent(path, true)));
 
@@ -256,12 +274,9 @@ public class JacksonTest extends BaseTest implements EvaluationCallback {
         assert(recorder.getResults().get(count++).
                equals(new CallbackRecorder.CallbackEvent(idPath, false)));
         assert(recorder.getResults().get(count++).
-               equals(new CallbackRecorder.CallbackEvent(path, true)));
-
+               equals(new CallbackRecorder.CallbackEvent(floatPath, false)));
         assert(recorder.getResults().get(count++).
-               equals(new CallbackRecorder.CallbackEvent(path, false)));
-        assert(recorder.getResults().get(count++).
-               equals(new CallbackRecorder.CallbackEvent(idPath, false)));
+               equals(new CallbackRecorder.CallbackEvent(intPath, false)));
         assert(recorder.getResults().get(count++).
                equals(new CallbackRecorder.CallbackEvent(path, true)));
 
@@ -270,12 +285,9 @@ public class JacksonTest extends BaseTest implements EvaluationCallback {
         assert(recorder.getResults().get(count++).
                equals(new CallbackRecorder.CallbackEvent(idPath, false)));
         assert(recorder.getResults().get(count++).
-               equals(new CallbackRecorder.CallbackEvent(path, true)));
-
+               equals(new CallbackRecorder.CallbackEvent(floatPath, false)));
         assert(recorder.getResults().get(count++).
-               equals(new CallbackRecorder.CallbackEvent(path, false)));
-        assert(recorder.getResults().get(count++).
-               equals(new CallbackRecorder.CallbackEvent(idPath, false)));
+               equals(new CallbackRecorder.CallbackEvent(intPath, false)));
         assert(recorder.getResults().get(count++).
                equals(new CallbackRecorder.CallbackEvent(path, true)));
 
@@ -284,12 +296,9 @@ public class JacksonTest extends BaseTest implements EvaluationCallback {
         assert(recorder.getResults().get(count++).
                equals(new CallbackRecorder.CallbackEvent(idPath, false)));
         assert(recorder.getResults().get(count++).
-               equals(new CallbackRecorder.CallbackEvent(path, true)));
-
+               equals(new CallbackRecorder.CallbackEvent(floatPath, false)));
         assert(recorder.getResults().get(count++).
-               equals(new CallbackRecorder.CallbackEvent(path, false)));
-        assert(recorder.getResults().get(count++).
-               equals(new CallbackRecorder.CallbackEvent(idPath, false)));
+               equals(new CallbackRecorder.CallbackEvent(intPath, false)));
         assert(recorder.getResults().get(count++).
                equals(new CallbackRecorder.CallbackEvent(path, true)));
 
@@ -298,12 +307,9 @@ public class JacksonTest extends BaseTest implements EvaluationCallback {
         assert(recorder.getResults().get(count++).
                equals(new CallbackRecorder.CallbackEvent(idPath, false)));
         assert(recorder.getResults().get(count++).
-               equals(new CallbackRecorder.CallbackEvent(path, true)));
-
+               equals(new CallbackRecorder.CallbackEvent(floatPath, false)));
         assert(recorder.getResults().get(count++).
-               equals(new CallbackRecorder.CallbackEvent(path, false)));
-        assert(recorder.getResults().get(count++).
-               equals(new CallbackRecorder.CallbackEvent(idPath, false)));
+               equals(new CallbackRecorder.CallbackEvent(intPath, false)));
         assert(recorder.getResults().get(count++).
                equals(new CallbackRecorder.CallbackEvent(path, true)));
 
@@ -312,12 +318,9 @@ public class JacksonTest extends BaseTest implements EvaluationCallback {
         assert(recorder.getResults().get(count++).
                equals(new CallbackRecorder.CallbackEvent(idPath, false)));
         assert(recorder.getResults().get(count++).
-               equals(new CallbackRecorder.CallbackEvent(path, true)));
-
+               equals(new CallbackRecorder.CallbackEvent(floatPath, false)));
         assert(recorder.getResults().get(count++).
-               equals(new CallbackRecorder.CallbackEvent(path, false)));
-        assert(recorder.getResults().get(count++).
-               equals(new CallbackRecorder.CallbackEvent(idPath, false)));
+               equals(new CallbackRecorder.CallbackEvent(intPath, false)));
         assert(recorder.getResults().get(count++).
                equals(new CallbackRecorder.CallbackEvent(path, true)));
 
@@ -326,12 +329,9 @@ public class JacksonTest extends BaseTest implements EvaluationCallback {
         assert(recorder.getResults().get(count++).
                equals(new CallbackRecorder.CallbackEvent(idPath, false)));
         assert(recorder.getResults().get(count++).
-               equals(new CallbackRecorder.CallbackEvent(path, true)));
-
+               equals(new CallbackRecorder.CallbackEvent(floatPath, false)));
         assert(recorder.getResults().get(count++).
-               equals(new CallbackRecorder.CallbackEvent(path, false)));
-        assert(recorder.getResults().get(count++).
-               equals(new CallbackRecorder.CallbackEvent(idPath, false)));
+               equals(new CallbackRecorder.CallbackEvent(intPath, false)));
         assert(recorder.getResults().get(count++).
                equals(new CallbackRecorder.CallbackEvent(path, true)));
 
@@ -340,12 +340,9 @@ public class JacksonTest extends BaseTest implements EvaluationCallback {
         assert(recorder.getResults().get(count++).
                equals(new CallbackRecorder.CallbackEvent(idPath, false)));
         assert(recorder.getResults().get(count++).
-               equals(new CallbackRecorder.CallbackEvent(path, true)));
-
+               equals(new CallbackRecorder.CallbackEvent(floatPath, false)));
         assert(recorder.getResults().get(count++).
-               equals(new CallbackRecorder.CallbackEvent(path, false)));
-        assert(recorder.getResults().get(count++).
-               equals(new CallbackRecorder.CallbackEvent(idPath, false)));
+               equals(new CallbackRecorder.CallbackEvent(intPath, false)));
         assert(recorder.getResults().get(count++).
                equals(new CallbackRecorder.CallbackEvent(path, true)));
 
@@ -354,12 +351,9 @@ public class JacksonTest extends BaseTest implements EvaluationCallback {
         assert(recorder.getResults().get(count++).
                equals(new CallbackRecorder.CallbackEvent(idPath, false)));
         assert(recorder.getResults().get(count++).
-               equals(new CallbackRecorder.CallbackEvent(path, true)));
-
+               equals(new CallbackRecorder.CallbackEvent(floatPath, false)));
         assert(recorder.getResults().get(count++).
-               equals(new CallbackRecorder.CallbackEvent(path, false)));
-        assert(recorder.getResults().get(count++).
-               equals(new CallbackRecorder.CallbackEvent(idPath, false)));
+               equals(new CallbackRecorder.CallbackEvent(intPath, false)));
         assert(recorder.getResults().get(count++).
                equals(new CallbackRecorder.CallbackEvent(path, true)));
 
@@ -368,12 +362,9 @@ public class JacksonTest extends BaseTest implements EvaluationCallback {
         assert(recorder.getResults().get(count++).
                equals(new CallbackRecorder.CallbackEvent(idPath, false)));
         assert(recorder.getResults().get(count++).
-               equals(new CallbackRecorder.CallbackEvent(path, true)));
-
+               equals(new CallbackRecorder.CallbackEvent(floatPath, false)));
         assert(recorder.getResults().get(count++).
-               equals(new CallbackRecorder.CallbackEvent(path, false)));
-        assert(recorder.getResults().get(count++).
-               equals(new CallbackRecorder.CallbackEvent(idPath, false)));
+               equals(new CallbackRecorder.CallbackEvent(intPath, false)));
         assert(recorder.getResults().get(count++).
                equals(new CallbackRecorder.CallbackEvent(path, true)));
 
@@ -382,12 +373,9 @@ public class JacksonTest extends BaseTest implements EvaluationCallback {
         assert(recorder.getResults().get(count++).
                equals(new CallbackRecorder.CallbackEvent(idPath, false)));
         assert(recorder.getResults().get(count++).
-               equals(new CallbackRecorder.CallbackEvent(path, true)));
-
+               equals(new CallbackRecorder.CallbackEvent(floatPath, false)));
         assert(recorder.getResults().get(count++).
-               equals(new CallbackRecorder.CallbackEvent(path, false)));
-        assert(recorder.getResults().get(count++).
-               equals(new CallbackRecorder.CallbackEvent(idPath, false)));
+               equals(new CallbackRecorder.CallbackEvent(intPath, false)));
         assert(recorder.getResults().get(count++).
                equals(new CallbackRecorder.CallbackEvent(path, true)));
 
@@ -396,12 +384,218 @@ public class JacksonTest extends BaseTest implements EvaluationCallback {
         assert(recorder.getResults().get(count++).
                equals(new CallbackRecorder.CallbackEvent(idPath, false)));
         assert(recorder.getResults().get(count++).
+               equals(new CallbackRecorder.CallbackEvent(floatPath, false)));
+        assert(recorder.getResults().get(count++).
+               equals(new CallbackRecorder.CallbackEvent(intPath, false)));
+        assert(recorder.getResults().get(count++).
                equals(new CallbackRecorder.CallbackEvent(path, true)));
 
         assert(recorder.getResults().get(count++).
                equals(new CallbackRecorder.CallbackEvent(path, false)));
         assert(recorder.getResults().get(count++).
                equals(new CallbackRecorder.CallbackEvent(idPath, false)));
+        assert(recorder.getResults().get(count++).
+               equals(new CallbackRecorder.CallbackEvent(floatPath, false)));
+        assert(recorder.getResults().get(count++).
+               equals(new CallbackRecorder.CallbackEvent(intPath, false)));
+        assert(recorder.getResults().get(count++).
+               equals(new CallbackRecorder.CallbackEvent(path, true)));
+
+        assert(recorder.getResults().get(count++).
+               equals(new CallbackRecorder.CallbackEvent(path, false)));
+        assert(recorder.getResults().get(count++).
+               equals(new CallbackRecorder.CallbackEvent(idPath, false)));
+        assert(recorder.getResults().get(count++).
+               equals(new CallbackRecorder.CallbackEvent(floatPath, false)));
+        assert(recorder.getResults().get(count++).
+               equals(new CallbackRecorder.CallbackEvent(intPath, false)));
+        assert(recorder.getResults().get(count++).
+               equals(new CallbackRecorder.CallbackEvent(path, true)));
+
+        assert(recorder.getResults().get(count++).
+               equals(new CallbackRecorder.CallbackEvent(path, false)));
+        assert(recorder.getResults().get(count++).
+               equals(new CallbackRecorder.CallbackEvent(idPath, false)));
+        assert(recorder.getResults().get(count++).
+               equals(new CallbackRecorder.CallbackEvent(floatPath, false)));
+        assert(recorder.getResults().get(count++).
+               equals(new CallbackRecorder.CallbackEvent(intPath, false)));
+        assert(recorder.getResults().get(count++).
+               equals(new CallbackRecorder.CallbackEvent(path, true)));
+
+        assert(recorder.getResults().get(count++).
+               equals(new CallbackRecorder.CallbackEvent(path, false)));
+        assert(recorder.getResults().get(count++).
+               equals(new CallbackRecorder.CallbackEvent(idPath, false)));
+        assert(recorder.getResults().get(count++).
+               equals(new CallbackRecorder.CallbackEvent(floatPath, false)));
+        assert(recorder.getResults().get(count++).
+               equals(new CallbackRecorder.CallbackEvent(intPath, false)));
+        assert(recorder.getResults().get(count++).
+               equals(new CallbackRecorder.CallbackEvent(path, true)));
+
+        assert(recorder.getResults().get(count++).
+               equals(new CallbackRecorder.CallbackEvent(path, false)));
+        assert(recorder.getResults().get(count++).
+               equals(new CallbackRecorder.CallbackEvent(idPath, false)));
+        assert(recorder.getResults().get(count++).
+               equals(new CallbackRecorder.CallbackEvent(floatPath, false)));
+        assert(recorder.getResults().get(count++).
+               equals(new CallbackRecorder.CallbackEvent(intPath, false)));
+        assert(recorder.getResults().get(count++).
+               equals(new CallbackRecorder.CallbackEvent(path, true)));
+
+        assert(recorder.getResults().get(count++).
+               equals(new CallbackRecorder.CallbackEvent(path, false)));
+        assert(recorder.getResults().get(count++).
+               equals(new CallbackRecorder.CallbackEvent(idPath, false)));
+        assert(recorder.getResults().get(count++).
+               equals(new CallbackRecorder.CallbackEvent(floatPath, false)));
+        assert(recorder.getResults().get(count++).
+               equals(new CallbackRecorder.CallbackEvent(intPath, false)));
+        assert(recorder.getResults().get(count++).
+               equals(new CallbackRecorder.CallbackEvent(path, true)));
+
+        assert(recorder.getResults().get(count++).
+               equals(new CallbackRecorder.CallbackEvent(path, false)));
+        assert(recorder.getResults().get(count++).
+               equals(new CallbackRecorder.CallbackEvent(idPath, false)));
+        assert(recorder.getResults().get(count++).
+               equals(new CallbackRecorder.CallbackEvent(floatPath, false)));
+        assert(recorder.getResults().get(count++).
+               equals(new CallbackRecorder.CallbackEvent(intPath, false)));
+        assert(recorder.getResults().get(count++).
+               equals(new CallbackRecorder.CallbackEvent(path, true)));
+
+        assert(recorder.getResults().get(count++).
+               equals(new CallbackRecorder.CallbackEvent(path, false)));
+        assert(recorder.getResults().get(count++).
+               equals(new CallbackRecorder.CallbackEvent(idPath, false)));
+        assert(recorder.getResults().get(count++).
+               equals(new CallbackRecorder.CallbackEvent(floatPath, false)));
+        assert(recorder.getResults().get(count++).
+               equals(new CallbackRecorder.CallbackEvent(intPath, false)));
+        assert(recorder.getResults().get(count++).
+               equals(new CallbackRecorder.CallbackEvent(path, true)));
+
+        assert(recorder.getResults().get(count++).
+               equals(new CallbackRecorder.CallbackEvent(path, false)));
+        assert(recorder.getResults().get(count++).
+               equals(new CallbackRecorder.CallbackEvent(idPath, false)));
+        assert(recorder.getResults().get(count++).
+               equals(new CallbackRecorder.CallbackEvent(floatPath, false)));
+        assert(recorder.getResults().get(count++).
+               equals(new CallbackRecorder.CallbackEvent(intPath, false)));
+        assert(recorder.getResults().get(count++).
+               equals(new CallbackRecorder.CallbackEvent(path, true)));
+
+        assert(recorder.getResults().get(count++).
+               equals(new CallbackRecorder.CallbackEvent(path, false)));
+        assert(recorder.getResults().get(count++).
+               equals(new CallbackRecorder.CallbackEvent(idPath, false)));
+        assert(recorder.getResults().get(count++).
+               equals(new CallbackRecorder.CallbackEvent(floatPath, false)));
+        assert(recorder.getResults().get(count++).
+               equals(new CallbackRecorder.CallbackEvent(intPath, false)));
+        assert(recorder.getResults().get(count++).
+               equals(new CallbackRecorder.CallbackEvent(path, true)));
+
+        assert(recorder.getResults().get(count++).
+               equals(new CallbackRecorder.CallbackEvent(path, false)));
+        assert(recorder.getResults().get(count++).
+               equals(new CallbackRecorder.CallbackEvent(idPath, false)));
+        assert(recorder.getResults().get(count++).
+               equals(new CallbackRecorder.CallbackEvent(floatPath, false)));
+        assert(recorder.getResults().get(count++).
+               equals(new CallbackRecorder.CallbackEvent(intPath, false)));
+        assert(recorder.getResults().get(count++).
+               equals(new CallbackRecorder.CallbackEvent(path, true)));
+
+        assert(recorder.getResults().get(count++).
+               equals(new CallbackRecorder.CallbackEvent(path, false)));
+        assert(recorder.getResults().get(count++).
+               equals(new CallbackRecorder.CallbackEvent(idPath, false)));
+        assert(recorder.getResults().get(count++).
+               equals(new CallbackRecorder.CallbackEvent(floatPath, false)));
+        assert(recorder.getResults().get(count++).
+               equals(new CallbackRecorder.CallbackEvent(intPath, false)));
+        assert(recorder.getResults().get(count++).
+               equals(new CallbackRecorder.CallbackEvent(path, true)));
+
+        assert(recorder.getResults().get(count++).
+               equals(new CallbackRecorder.CallbackEvent(path, false)));
+        assert(recorder.getResults().get(count++).
+               equals(new CallbackRecorder.CallbackEvent(idPath, false)));
+        assert(recorder.getResults().get(count++).
+               equals(new CallbackRecorder.CallbackEvent(floatPath, false)));
+        assert(recorder.getResults().get(count++).
+               equals(new CallbackRecorder.CallbackEvent(intPath, false)));
+        assert(recorder.getResults().get(count++).
+               equals(new CallbackRecorder.CallbackEvent(path, true)));
+
+        assert(recorder.getResults().get(count++).
+               equals(new CallbackRecorder.CallbackEvent(path, false)));
+        assert(recorder.getResults().get(count++).
+               equals(new CallbackRecorder.CallbackEvent(idPath, false)));
+        assert(recorder.getResults().get(count++).
+               equals(new CallbackRecorder.CallbackEvent(floatPath, false)));
+        assert(recorder.getResults().get(count++).
+               equals(new CallbackRecorder.CallbackEvent(intPath, false)));
+        assert(recorder.getResults().get(count++).
+               equals(new CallbackRecorder.CallbackEvent(path, true)));
+
+        assert(recorder.getResults().get(count++).
+               equals(new CallbackRecorder.CallbackEvent(path, false)));
+        assert(recorder.getResults().get(count++).
+               equals(new CallbackRecorder.CallbackEvent(idPath, false)));
+        assert(recorder.getResults().get(count++).
+               equals(new CallbackRecorder.CallbackEvent(floatPath, false)));
+        assert(recorder.getResults().get(count++).
+               equals(new CallbackRecorder.CallbackEvent(intPath, false)));
+        assert(recorder.getResults().get(count++).
+               equals(new CallbackRecorder.CallbackEvent(path, true)));
+
+        assert(recorder.getResults().get(count++).
+               equals(new CallbackRecorder.CallbackEvent(path, false)));
+        assert(recorder.getResults().get(count++).
+               equals(new CallbackRecorder.CallbackEvent(idPath, false)));
+        assert(recorder.getResults().get(count++).
+               equals(new CallbackRecorder.CallbackEvent(floatPath, false)));
+        assert(recorder.getResults().get(count++).
+               equals(new CallbackRecorder.CallbackEvent(intPath, false)));
+        assert(recorder.getResults().get(count++).
+               equals(new CallbackRecorder.CallbackEvent(path, true)));
+
+        assert(recorder.getResults().get(count++).
+               equals(new CallbackRecorder.CallbackEvent(path, false)));
+        assert(recorder.getResults().get(count++).
+               equals(new CallbackRecorder.CallbackEvent(idPath, false)));
+        assert(recorder.getResults().get(count++).
+               equals(new CallbackRecorder.CallbackEvent(floatPath, false)));
+        assert(recorder.getResults().get(count++).
+               equals(new CallbackRecorder.CallbackEvent(intPath, false)));
+        assert(recorder.getResults().get(count++).
+               equals(new CallbackRecorder.CallbackEvent(path, true)));
+
+        assert(recorder.getResults().get(count++).
+               equals(new CallbackRecorder.CallbackEvent(path, false)));
+        assert(recorder.getResults().get(count++).
+               equals(new CallbackRecorder.CallbackEvent(idPath, false)));
+        assert(recorder.getResults().get(count++).
+               equals(new CallbackRecorder.CallbackEvent(floatPath, false)));
+        assert(recorder.getResults().get(count++).
+               equals(new CallbackRecorder.CallbackEvent(intPath, false)));
+        assert(recorder.getResults().get(count++).
+               equals(new CallbackRecorder.CallbackEvent(path, true)));
+
+        assert(recorder.getResults().get(count++).
+               equals(new CallbackRecorder.CallbackEvent(path, false)));
+        assert(recorder.getResults().get(count++).
+               equals(new CallbackRecorder.CallbackEvent(idPath, false)));
+        assert(recorder.getResults().get(count++).
+               equals(new CallbackRecorder.CallbackEvent(floatPath, false)));
+        assert(recorder.getResults().get(count++).
+               equals(new CallbackRecorder.CallbackEvent(intPath, false)));
         assert(recorder.getResults().get(count++).
                equals(new CallbackRecorder.CallbackEvent(path, true)));
     }
@@ -548,13 +742,304 @@ public class JacksonTest extends BaseTest implements EvaluationCallback {
                 checkResult(stack, "test_dev_frontend.a0f3f185-d2e6-11e4-bc5e-56847afe9799");
                 break;
             }
-            //} else {
+        } else if (path == floatPath) {
+
+            switch (floatMatch++) {
+            case 0:
+                checkResult(stack, new Float(0.2));
+                break;
+            case 1:
+                checkResult(stack, new Float(0.2));
+                break;
+            case 2:
+                checkResult(stack, new Float(0.2));
+                break;
+            case 3:
+                checkResult(stack, new Float(0.2));
+                break;
+            case 4:
+                checkResult(stack, new Float(0.2));
+                break;
+            case 5:
+                checkResult(stack, new Float(0.2));
+                break;
+            case 6:
+                checkResult(stack, new Float(0.2));
+                break;
+            case 7:
+                checkResult(stack, new Float(0.2));
+                break;
+            case 8:
+                checkResult(stack, new Float(0.1));
+                break;
+            case 9:
+                checkResult(stack, new Float(0.1));
+                break;
+            case 10:
+                checkResult(stack, new Float(0.1));
+                break;
+            case 11:
+                checkResult(stack, new Float(0.1));
+                break;
+            case 12:
+                checkResult(stack, new Float(0.3));
+                break;
+            case 13:
+                checkResult(stack, new Float(0.3));
+                break;
+            case 14:
+                checkResult(stack, new Float(0.3));
+                break;
+            case 15:
+                checkResult(stack, new Float(0.3));
+                break;
+            case 16:
+                checkResult(stack, new Float(0.3));
+                break;
+            case 17:
+                checkResult(stack, new Float(0.3));
+                break;
+            case 18:
+                checkResult(stack, new Float(0.3));
+                break;
+            case 19:
+                checkResult(stack, new Float(0.1));
+                break;
+            case 20:
+                checkResult(stack, new Float(0.3));
+                break;
+            case 21:
+                checkResult(stack, new Float(0.1));
+                break;
+            case 22:
+                checkResult(stack, new Float(0.3));
+                break;
+            case 23:
+                checkResult(stack, new Float(0.3));
+                break;
+            case 24:
+                checkResult(stack, new Float(0.3));
+                break;
+            case 25:
+                checkResult(stack, new Float(0.3));
+                break;
+            case 26:
+                checkResult(stack, new Float(0.3));
+                break;
+            case 27:
+                checkResult(stack, new Float(0.3));
+                break;
+            case 28:
+                checkResult(stack, new Float(0.3));
+                break;
+            case 29:
+                checkResult(stack, new Float(0.3));
+                break;
+            case 30:
+                checkResult(stack, new Float(0.3));
+                break;
+            case 31:
+                checkResult(stack, new Float(0.3));
+                break;
+            case 32:
+                checkResult(stack, new Float(0.3));
+                break;
+            case 33:
+                checkResult(stack, new Float(0.3));
+                break;
+            case 34:
+                checkResult(stack, new Float(0.3));
+                break;
+            case 35:
+                checkResult(stack, new Float(0.3));
+                break;
+            case 36:
+                checkResult(stack, new Float(0.3));
+                break;
+            case 37:
+                checkResult(stack, new Float(0.3));
+                break;
+            case 38:
+                checkResult(stack, new Float(0.3));
+                break;
+            case 39:
+                checkResult(stack, new Float(0.3));
+                break;
+            case 40:
+                checkResult(stack, new Float(0.3));
+                break;
+            case 41:
+                checkResult(stack, new Float(0.3));
+                break;
+            case 42:
+                checkResult(stack, new Float(0.2));
+                break;
+            case 43:
+                checkResult(stack, new Float(0.1));
+                break;
+            case 44:
+                checkResult(stack, new Float(0.1));
+                break;
+            case 45:
+                checkResult(stack, new Float(0.2));
+                break;
+            default:
+                assert(false);
+                break;
+            }
+        } else if (path == intPath) {
+
+            switch (intMatch++) {
+            case 0:
+                checkResult(stack, new Integer(704));
+                break;
+            case 1:
+                checkResult(stack, new Integer(704));
+                break;
+            case 2:
+                checkResult(stack, new Integer(704));
+                break;
+            case 3:
+                checkResult(stack, new Integer(704));
+                break;
+            case 4:
+                checkResult(stack, new Integer(704));
+                break;
+            case 5:
+                checkResult(stack, new Integer(704));
+                break;
+            case 6:
+                checkResult(stack, new Integer(704));
+                break;
+            case 7:
+                checkResult(stack, new Integer(704));
+                break;
+            case 8:
+                checkResult(stack, new Integer(32));
+                break;
+            case 9:
+                checkResult(stack, new Integer(32));
+                break;
+            case 10:
+                checkResult(stack, new Integer(32));
+                break;
+            case 11:
+                checkResult(stack, new Integer(32));
+                break;
+            case 12:
+                checkResult(stack, new Integer(768));
+                break;
+            case 13:
+                checkResult(stack, new Integer(768));
+                break;
+            case 14:
+                checkResult(stack, new Integer(768));
+                break;
+            case 15:
+                checkResult(stack, new Integer(768));
+                break;
+            case 16:
+                checkResult(stack, new Integer(768));
+                break;
+            case 17:
+                checkResult(stack, new Integer(768));
+                break;
+            case 18:
+                checkResult(stack, new Integer(768));
+                break;
+            case 19:
+                checkResult(stack, new Integer(32));
+                break;
+            case 20:
+                checkResult(stack, new Integer(768));
+                break;
+            case 21:
+                checkResult(stack, new Integer(32));
+                break;
+            case 22:
+                checkResult(stack, new Integer(768));
+                break;
+            case 23:
+                checkResult(stack, new Integer(768));
+                break;
+            case 24:
+                checkResult(stack, new Integer(768));
+                break;
+            case 25:
+                checkResult(stack, new Integer(768));
+                break;
+            case 26:
+                checkResult(stack, new Integer(768));
+                break;
+            case 27:
+                checkResult(stack, new Integer(768));
+                break;
+            case 28:
+                checkResult(stack, new Integer(768));
+                break;
+            case 29:
+                checkResult(stack, new Integer(768));
+                break;
+            case 30:
+                checkResult(stack, new Integer(768));
+                break;
+            case 31:
+                checkResult(stack, new Integer(768));
+                break;
+            case 32:
+                checkResult(stack, new Integer(768));
+                break;
+            case 33:
+                checkResult(stack, new Integer(768));
+                break;
+            case 34:
+                checkResult(stack, new Integer(768));
+                break;
+            case 35:
+                checkResult(stack, new Integer(768));
+                break;
+            case 36:
+                checkResult(stack, new Integer(768));
+                break;
+            case 37:
+                checkResult(stack, new Integer(768));
+                break;
+            case 38:
+                checkResult(stack, new Integer(768));
+                break;
+            case 39:
+                checkResult(stack, new Integer(768));
+                break;
+            case 40:
+                checkResult(stack, new Integer(768));
+                break;
+            case 41:
+                checkResult(stack, new Integer(768));
+                break;
+            case 42:
+                checkResult(stack, new Integer(1024));
+                break;
+            case 43:
+                checkResult(stack, new Integer(32));
+                break;
+            case 44:
+                checkResult(stack, new Integer(32));
+                break;
+            case 45:
+                checkResult(stack, new Integer(1024));
+                break;
+            default:
+                assert(false);
+                break;
+            }
         }
         recorder.resultFound(path);
     }
 
     public void resultFoundExit(Path path) {
         assert(path != idPath);
+        assert(path != floatPath);
+        assert(path != intPath);
         recorder.resultFoundExit(path);
     }
 
@@ -581,6 +1066,7 @@ public class JacksonTest extends BaseTest implements EvaluationCallback {
         {
             IntToken token = (IntToken)elem;
             assert(expected instanceof Integer);
+            System.err.println("comparing " + token.value + " expected " + expected);
             assert(token.value == ((Integer)expected).intValue());
             break;
         }
