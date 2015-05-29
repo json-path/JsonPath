@@ -38,6 +38,8 @@ public class JsonAssertTest {
                     "    \"bicycle\": {\n" +
                     "      \"color\": \"red\",\n" +
                     "      \"price\": 19.95\n," +
+                    "      \"gears\": [23, 50]\n," +
+                    "      \"extra\": {\"x\": 0}\n," +
                     "      \"nullValue\": null\n" +
                     "    }\n" +
                     "  }\n" +
@@ -53,6 +55,13 @@ public class JsonAssertTest {
     public void has_path() throws Exception {
 
         with(JSON).assertNotDefined("$.store.bicycle[?(@.color == 'red' )]");
+    }
+
+    @Test
+    public void assert_gears() throws Exception {
+        with(JSON).assertThat("$.store.bicycle[?(@.gears == [23, 50])]", is(collectionWithSize(equalTo(1))));
+        with(JSON).assertThat("$.store.bicycle[?(@.gears == [23, 77])]", is(collectionWithSize(equalTo(0))));
+        with(JSON).assertThat("$.store.bicycle[?(@.extra == {\"x\":0})]", is(collectionWithSize(equalTo(1))));
     }
 
     @Test(expected = AssertionError.class)

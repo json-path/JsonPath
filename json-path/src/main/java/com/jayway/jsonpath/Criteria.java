@@ -17,6 +17,7 @@ package com.jayway.jsonpath;
 import com.jayway.jsonpath.internal.Path;
 import com.jayway.jsonpath.internal.PathCompiler;
 import com.jayway.jsonpath.internal.token.PredicateContextImpl;
+import com.jayway.jsonpath.spi.json.JsonProvider;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -59,7 +60,7 @@ public class Criteria implements Predicate {
         EQ {
             @Override
             boolean eval(Object expected, Object model, PredicateContext ctx) {
-                boolean res = (0 == safeCompare(expected, model));
+                boolean res = (0 == safeCompare(expected, model, ctx));
                 if (logger.isDebugEnabled()) logger.debug("[{}] {} [{}] => {}", model, name(), expected, res);
                 return res;
             }
@@ -72,7 +73,7 @@ public class Criteria implements Predicate {
         NE {
             @Override
             boolean eval(Object expected, Object model, PredicateContext ctx) {
-                boolean res = (0 != safeCompare(expected, model));
+                boolean res = (0 != safeCompare(expected, model, ctx));
                 if (logger.isDebugEnabled()) logger.debug("[{}] {} [{}] => {}", model, name(), expected, res);
                 return res;
             }
@@ -710,6 +711,14 @@ public class Criteria implements Predicate {
         return (string != null && !string.isEmpty() && string.charAt(0) == '\'' && string.charAt(string.length() - 1) == '\'');
     }
 
+    private static boolean isJson(String string) {
+        if (string == null || string.length() <= 1)
+            return false;
+        char c0 = string.charAt(0);
+        char c1 = string.charAt(string.length() - 1);
+        return (c0 == '[' && c1 == ']') || (c0 == '{' && c1 == '}');
+    }
+
     private static boolean isPattern(String string) {
         return (string != null
                 && !string.isEmpty()
@@ -726,7 +735,6 @@ public class Criteria implements Predicate {
         int flags = ignoreCase ? Pattern.CASE_INSENSITIVE : 0;
         return Pattern.compile(regex, flags);
     }
-
 
     /**
      * Parse the provided criteria
@@ -753,6 +761,28 @@ public class Criteria implements Predicate {
             left = criteria.trim();
         }
         return Criteria.create(left, operator, right);
+    }
+
+    /**
+     * Wrapper for JSON to be parsed as a String.
+     */
+    private static class JsonValue {
+        final String value;
+        volatile Object jsonValue;
+        JsonValue(String value) { this.value = value; }
+
+        Object parsed(PredicateContext ctx) {
+            if (jsonValue == null) {
+                JsonProvider provider = ctx.configuration().jsonProvider();
+                jsonValue = provider.parse(value);
+            }
+            return jsonValue;
+        }
+
+        @Override
+        public String toString() {
+            return getClass().getSimpleName() + " " + value;
+        }
     }
 
     /**
@@ -797,6 +827,8 @@ public class Criteria implements Predicate {
             rightPrepared = rightPath;
         } else if (isString(right)) {
             rightPrepared = right.substring(1, right.length() - 1);
+        } else if (isJson(right)) {
+            rightPrepared = new JsonValue(right);
         } else if (isPattern(right)) {
             rightPrepared = compilePattern(right);
         }
@@ -809,6 +841,10 @@ public class Criteria implements Predicate {
     }
 
     private static int safeCompare(Object left, Object right) throws ValueCompareException {
+        return safeCompare(left, right, null);
+    }
+
+    private static int safeCompare(Object left, Object right, PredicateContext ctx) throws ValueCompareException {
 
         if (left == right) {
             return 0;
@@ -841,6 +877,10 @@ public class Criteria implements Predicate {
             Boolean e = (Boolean) left;
             Boolean a = (Boolean) right;
             return e.compareTo(a);
+        } else if (left instanceof JsonValue) {
+            notNull(ctx, "ctx");
+            JsonValue json = (JsonValue) left;
+            return right.equals(json.parsed(ctx)) ? 0 : -1;
         } else {
             logger.debug("Can not compare a {} with a {}", left.getClass().getName(), right.getClass().getName());
             throw new ValueCompareException();
