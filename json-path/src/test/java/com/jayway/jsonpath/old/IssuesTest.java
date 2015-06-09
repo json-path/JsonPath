@@ -602,11 +602,25 @@ public class IssuesTest extends BaseTest {
             Assert.assertTrue(false);
         } catch (RuntimeException e){
         }
-
-
-
     }
 
+    @Test
+    public void issue_79() throws Exception {
+         String json = "{ \n" +
+                 "  \"c\": {\n" +
+                 "    \"d1\": {\n" +
+                 "      \"url\": [ \"url1\", \"url2\" ]\n" +
+                 "    },\n" +
+                 "    \"d2\": {\n" +
+                 "      \"url\": [ \"url3\", \"url4\",\"url5\" ]\n" +
+                 "    }\n" +
+                 "  }\n" +
+                 "}";
+
+        List<String> res = JsonPath.read(json, "$.c.*.url[2]");
+
+        Assertions.assertThat(res).containsExactly("url5");
+    }
     @Test
     public void issue_97() throws Exception {
         String json = "{ \"books\": [ " +
@@ -629,5 +643,9 @@ public class IssuesTest extends BaseTest {
 
         DocumentContext context = JsonPath.using(conf).parse(json);
         context.delete("$.books[?(@.category == 'reference')]");
+
+        List<String> categories = context.read("$..category", List.class);
+
+        Assertions.assertThat(categories).containsOnly("fiction");
     }
 }

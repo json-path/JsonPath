@@ -125,7 +125,6 @@ public abstract class PathToken {
                 next().evaluate(evalPath, pathRef, evalHit, ctx);
             }
         } catch (IndexOutOfBoundsException e) {
-            throw new PathNotFoundException("Index out of bounds when evaluating path " + evalPath);
         }
     }
 
