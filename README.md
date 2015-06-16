@@ -308,16 +308,16 @@ This option makes JsonPath return null for missing leafs. Consider the following
 Configuration conf = Configuration.defaultConfiguration();
 
 //Works fine
-String gender0 = JsonPath.using(conf).read(json, "$[0]['gender']");
+String gender0 = JsonPath.using(conf).parse(json).read("$[0]['gender']");
 //PathNotFoundException thrown
-String gender1 = JsonPath.using(conf).read(json, "$[1]['gender']");
+String gender1 = JsonPath.using(conf).parse(json).read("$[1]['gender']");
 
 Configuration conf2 = conf.addOptions(Option.DEFAULT_PATH_LEAF_TO_NULL);
 
 //Works fine
-String gender0 = JsonPath.using(conf2).read(json, "$[0]['gender']");
+String gender0 = JsonPath.using(conf2).parse(json).read("$[0]['gender']");
 //Works fine (null is returned)
-String gender1 = JsonPath.using(conf2).read(json, "$[1]['gender']");
+String gender1 = JsonPath.using(conf2).parse(json).read("$[1]['gender']");
 ```
  
 **ALWAYS_RETURN_LIST**
@@ -328,9 +328,9 @@ This option configures JsonPath to return a list even when the path is `definite
 Configuration conf = Configuration.defaultConfiguration();
 
 //Works fine
-List<String> genders0 = JsonPath.using(conf).read(json, "$[0]['gender']");
+List<String> genders0 = JsonPath.using(conf).parse(json).read("$[0]['gender']");
 //PathNotFoundException thrown
-List<String> genders1 = JsonPath.using(conf).read(json, "$[1]['gender']");
+List<String> genders1 = JsonPath.using(conf).parse(json).read("$[1]['gender']");
 ``` 
 **SUPPRESS_EXCEPTIONS**
 <br/>
