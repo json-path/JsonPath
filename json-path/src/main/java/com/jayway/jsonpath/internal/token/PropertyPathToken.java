@@ -38,6 +38,11 @@ public class PropertyPathToken extends PathToken {
     @Override
     public void evaluate(String currentPath, PathRef parent, Object model, EvaluationContextImpl ctx) {
         if (!ctx.jsonProvider().isMap(model)) {
+            // Special case handling of the 'length' property of arrays.
+            if (isLeaf() && ctx.jsonProvider().isArray(model) && properties.size() == 1 && properties.get(0).equals("length")) {
+                handleArrayLength(currentPath, model, ctx);
+                return;
+            }
             throw new PathNotFoundException("Property " + getPathFragment() + " not found in path " + currentPath);
         }
 
