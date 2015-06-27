@@ -17,13 +17,7 @@ package com.jayway.jsonpath.internal;
 import com.jayway.jsonpath.Filter;
 import com.jayway.jsonpath.InvalidPathException;
 import com.jayway.jsonpath.Predicate;
-import com.jayway.jsonpath.internal.token.ArrayPathToken;
-import com.jayway.jsonpath.internal.token.PathToken;
-import com.jayway.jsonpath.internal.token.PredicatePathToken;
-import com.jayway.jsonpath.internal.token.PropertyPathToken;
-import com.jayway.jsonpath.internal.token.RootPathToken;
-import com.jayway.jsonpath.internal.token.ScanPathToken;
-import com.jayway.jsonpath.internal.token.WildcardPathToken;
+import com.jayway.jsonpath.internal.token.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -47,6 +41,9 @@ public class PathCompiler {
     private static final char BRACKET_OPEN = '[';
     private static final char BRACKET_CLOSE = ']';
     private static final char SPACE = ' ';
+    private static final char PERCENT = '%';
+    private static final char PAREN_OPEN = '(';
+    private static final char PAREN_CLOSE = ')';
     private static final Cache cache = new Cache(200);
 
 
@@ -104,6 +101,11 @@ public class PathCompiler {
                         break;
                     case BRACKET_OPEN:
                         positions = fastForwardUntilClosed(path, i);
+                        fragment = path.substring(i, i + positions);
+                        i += positions;
+                        break;
+                    case PERCENT:
+                        positions = fastForwardUntilCloseParens(path, i);
                         fragment = path.substring(i, i + positions);
                         i += positions;
                         break;
@@ -185,6 +187,33 @@ public class PathCompiler {
         return skipCount;
     }
 
+    private static int fastForwardUntilCloseParens(String s, int index) {
+        int skipCount = 0;
+        int nestedParens = 0;
+
+        //First char is always '[' no need to check it
+        index++;
+        skipCount++;
+
+        while (index < s.length()) {
+            char current = s.charAt(index);
+
+            index++;
+            skipCount++;
+
+            if (current == PAREN_CLOSE && nestedParens == 0) {
+                break;
+            }
+            if (current == PAREN_OPEN) {
+                nestedParens++;
+            }
+            if (current == PAREN_CLOSE) {
+                nestedParens--;
+            }
+        }
+        return skipCount;
+    }
+
     private static int fastForwardUntilClosed(String s, int index) {
         int skipCount = 0;
         int nestedBrackets = 0;
@@ -242,6 +271,7 @@ public class PathCompiler {
             else if ("..".equals(pathFragment)) return new ScanPathToken();
             else if ("[*]".equals(pathFragment)) return new WildcardPathToken();
             else if (".*".equals(pathFragment)) return new WildcardPathToken();
+            else if (".%".equals(pathFragment) || pathFragment.startsWith("['%")) return new FunctionPathToken(pathFragment);
             else if ("[?]".equals(pathFragment)) return new PredicatePathToken(filterList.poll());
 
             else if (FILTER_PATTERN.matcher(pathFragment).matches()) {

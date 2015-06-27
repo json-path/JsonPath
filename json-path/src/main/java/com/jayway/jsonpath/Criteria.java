@@ -39,7 +39,7 @@ public class Criteria implements Predicate {
 
     private static final Logger logger = LoggerFactory.getLogger(Criteria.class);
 
-    private static final String[] OPERATORS = {
+    public static final String[] OPERATORS = {
             CriteriaType.EQ.toString(),
             CriteriaType.GTE.toString(),
             CriteriaType.LTE.toString(),
@@ -314,24 +314,23 @@ public class Criteria implements Predicate {
 
         abstract boolean eval(Object expected, Object model, PredicateContext ctx);
 
+        /**
+         * Retrieve the CriteriaType based on the incoming string token - assumes the CriteriaType toString()
+         * method will match the string token presented
+         *
+         * @param str
+         *      The string token representing the CriteriaType
+         *
+         * @return
+         *      The enum type CriteriaType
+         */
         public static CriteriaType parse(String str) {
-            if ("==".equals(str)) {
-                return EQ;
-            } else if (">".equals(str)) {
-                return GT;
-            } else if (">=".equals(str)) {
-                return GTE;
-            } else if ("<".equals(str)) {
-                return LT;
-            } else if ("<=".equals(str)) {
-                return LTE;
-            } else if ("!=".equals(str)) {
-                return NE;
-            } else if ("=~".equals(str)) {
-                return REGEX;
-            } else {
-                throw new UnsupportedOperationException("CriteriaType " + str + " can not be parsed");
+            for (CriteriaType value : values()) {
+                if (value.toString().matches(str)) {
+                    return value;
+                }
             }
+            throw new UnsupportedOperationException("CriteriaType " + str + " can not be parsed");
         }
     }
 
