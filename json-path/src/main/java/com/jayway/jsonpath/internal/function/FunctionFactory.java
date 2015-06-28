@@ -45,27 +45,24 @@ public class FunctionFactory {
      * @see #FUNCTIONS
      * @see Function
      *
-     * @param pathFragment
-     *      The path fragment that is currently being processed which is believed to be the name of a function
+     * @param name
+     *      The name of the function
      *
      * @return
      *      The implementation of a function
      *
      * @throws InvalidPathException
      */
-    public static Function newFunction(String pathFragment) throws InvalidPathException {
+    public static Function newFunction(String name) throws InvalidPathException {
         Function result = new PassthruFunction();
-        if (null != pathFragment) {
-            String name = pathFragment.replaceAll("['%\\]\\[\\(\\)]", "").trim().toLowerCase();
 
-            if (null != name && FUNCTIONS.containsKey(name) && Function.class.isAssignableFrom(FUNCTIONS.get(name))) {
-                try {
-                    result = (Function)FUNCTIONS.get(name).newInstance();
-                } catch (InstantiationException e) {
-                    throw new InvalidPathException("Function of name: " + name + " cannot be created", e);
-                } catch (IllegalAccessException e) {
-                    throw new InvalidPathException("Function of name: " + name + " cannot be created", e);
-                }
+        if (null != name && FUNCTIONS.containsKey(name) && Function.class.isAssignableFrom(FUNCTIONS.get(name))) {
+            try {
+                result = (Function)FUNCTIONS.get(name).newInstance();
+            } catch (InstantiationException e) {
+                throw new InvalidPathException("Function of name: " + name + " cannot be created", e);
+            } catch (IllegalAccessException e) {
+                throw new InvalidPathException("Function of name: " + name + " cannot be created", e);
             }
         }
         return result;
