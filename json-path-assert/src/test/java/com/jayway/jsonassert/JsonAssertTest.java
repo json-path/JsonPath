@@ -40,6 +40,7 @@ public class JsonAssertTest {
                     "      \"price\": 19.95\n," +
                     "      \"gears\": [23, 50]\n," +
                     "      \"extra\": {\"x\": 0}\n," +
+                    "      \"escape\" : \"Esc\\b\\f\\n\\r\\t\\u002A\",\n" +
                     "      \"nullValue\": null\n" +
                     "    }\n" +
                     "  }\n" +
@@ -62,6 +63,7 @@ public class JsonAssertTest {
         with(JSON).assertThat("$.store.bicycle[?(@.gears == [23, 50])]", is(collectionWithSize(equalTo(1))));
         with(JSON).assertThat("$.store.bicycle[?(@.gears == [23, 77])]", is(collectionWithSize(equalTo(0))));
         with(JSON).assertThat("$.store.bicycle[?(@.extra == {\"x\":0})]", is(collectionWithSize(equalTo(1))));
+        with(JSON).assertThat("$.store.bicycle[?(@.escape == 'Esc\\b\\f\\n\\r\\t\\u002A')]", is(collectionWithSize(equalTo(1))));
     }
 
     @Test(expected = AssertionError.class)

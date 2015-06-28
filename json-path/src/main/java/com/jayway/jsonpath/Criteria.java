@@ -49,6 +49,7 @@ public class Criteria implements Predicate {
             CriteriaType.GT.toString(),
             CriteriaType.REGEX.toString()
     };
+    private static final char BS = '\\';
 
     private Object left;
     private CriteriaType criteriaType;
@@ -844,6 +845,38 @@ public class Criteria implements Predicate {
         return safeCompare(left, right, null);
     }
 
+    private static String unescape(String s) {
+        if (s.indexOf(BS) == - 1)
+            return s;
+        StringBuilder sb = new StringBuilder(s.length());
+        for (int i = 0; i < s.length(); i++) {
+            char c = s.charAt(i);
+            if (c == BS) {
+                char c2 = s.charAt(++i);
+                switch (c2) {
+                    case 'b': c2 = '\b'; break;
+                    case 'f': c2 = '\f'; break;
+                    case 'n': c2 = '\n'; break;
+                    case 'r': c2 = '\r'; break;
+                    case 't': c2 = '\t'; break;
+                    case 'u':
+                        try {
+                            String hex = s.substring(i + 1, i + 5);
+                            c2 = (char)Integer.parseInt(hex, 16);
+                            i += 4;
+                        } catch (Exception e) {
+                            throw new ValueCompareException("\\u parse failed", e);
+                        }
+                        break;
+                }
+                sb.append(c2);
+            } else {
+                sb.append(c);
+            }
+        }
+        return sb.toString();
+    }
+
     private static int safeCompare(Object left, Object right, PredicateContext ctx) throws ValueCompareException {
 
         if (left == right) {
@@ -860,11 +893,8 @@ public class Criteria implements Predicate {
         } else if (leftNullish && rightNullish) {
             return 0;
         } else if (left instanceof String && right instanceof String) {
-            String exp = (String) left;
-            if (exp.contains("\'")) {
-                exp = exp.replace("\\'", "'");
-            }
-            return exp.compareTo((String) right);
+            String expected = unescape((String) left);
+            return expected.compareTo((String) right);
         } else if (left instanceof Number && right instanceof Number) {
             return new BigDecimal(left.toString()).compareTo(new BigDecimal(right.toString()));
         } else if (left instanceof String && right instanceof Number) {
