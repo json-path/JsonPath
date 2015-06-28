@@ -60,6 +60,12 @@ public class JSONEntityFunctionTest extends BaseFunctionTest {
         verifyFunction("$.numbers.%length()", NUMBER_SERIES, 10);
     }
 
+
+    @Test
+    public void testLengthOfStructure() {
+        verifyFunction("$.batches.%length()", BATCH_JSON, 2);
+    }
+
     /**
      * The fictitious use-case/story - is we have a collection of batches with values indicating some quality metric.
      * We want to determine the average of the values for only the batch's values where the number of items in the batch
