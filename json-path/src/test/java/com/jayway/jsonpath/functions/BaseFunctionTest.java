@@ -2,6 +2,9 @@ package com.jayway.jsonpath.functions;
 
 import com.jayway.jsonpath.Configuration;
 
+import java.io.IOException;
+import java.util.Scanner;
+
 import static com.jayway.jsonpath.JsonPath.using;
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -32,5 +35,9 @@ public class BaseFunctionTest {
 
     protected void verifyMathFunction(String pathExpr, Object expectedValue) {
         verifyFunction(pathExpr, NUMBER_SERIES, expectedValue);
+    }
+
+    protected String getResourceAsText(String resourceName) throws IOException {
+        return new Scanner(BaseFunctionTest.class.getResourceAsStream(resourceName), "UTF-8").useDelimiter("\\A").next();
     }
 }

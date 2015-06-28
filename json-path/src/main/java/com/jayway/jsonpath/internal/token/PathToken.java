@@ -73,9 +73,6 @@ public abstract class PathToken {
             PathRef pathRef = ctx.forUpdate() ? PathRef.create(model, property) : PathRef.NO_OP;
             if (isLeaf()) {
                 ctx.addResult(evalPath, pathRef, propertyVal);
-//            } else if (isFunction()) {
-//                Function function = FunctionFactory.newFunction(next.getPathFragment());
-//                next.invoke(function, evalPath, pathRef, propertyVal, ctx);
             }
             else {
                 next().evaluate(evalPath, pathRef, propertyVal, ctx);
@@ -152,10 +149,6 @@ public abstract class PathToken {
     boolean isLeaf() {
         return next == null;
     }
-
-//    boolean isFunction() {
-//        return null != next && next.getPathFragment().startsWith("['%");
-//    }
 
     boolean isRoot() {
         return  prev == null;

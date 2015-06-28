@@ -10,7 +10,7 @@ public class Min extends AbstractAggregation {
 
     @Override
     protected void next(Number value) {
-        if (min < value.doubleValue()) {
+        if (min > value.doubleValue()) {
             min = value.doubleValue();
         }
     }

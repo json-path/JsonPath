@@ -25,7 +25,7 @@ public class NumericFunctionTest extends BaseFunctionTest {
 
     @Test
     public void testAverageOfDoubles() {
-        verifyMathFunction("$.numbers.%average()", (10d * (10d + 1d)) / 2d);
+        verifyMathFunction("$.numbers.%avg()", 5.5);
     }
 
     @Test
@@ -45,7 +45,7 @@ public class NumericFunctionTest extends BaseFunctionTest {
 
     @Test
     public void testStdDevOfDouble() {
-        verifyMathFunction("$.numbers.%stddev()", 1d);
+        verifyMathFunction("$.numbers.%stddev()", 2.8722813232690143d);
     }
 
     /**

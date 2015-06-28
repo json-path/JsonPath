@@ -1,6 +1,5 @@
 {
   "lotto": {
-    "maxAverage": 100,
     "lottoId": 5,
     "winning-numbers": [
       2,
