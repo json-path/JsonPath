@@ -25,6 +25,7 @@ public class TokenStack
     protected Map<TokenStackElement, Path> matchedPaths;
 
     private TokenStackElement curr;
+    private Path rootMatch;
 
     public TokenStack(Configuration conf)
     {
@@ -32,6 +33,7 @@ public class TokenStack
         paths = new ArrayList<Path>();
         matchedPaths = new HashMap<TokenStackElement, Path>();
         elements = new Stack<TokenStackElement>();
+        rootMatch = null;
     }
 
     public Stack<TokenStackElement> getStack()
@@ -56,6 +58,16 @@ public class TokenStack
         assert(callback != null);
 
         boolean needsPathCheck = false;
+        if (null == curr && elements.empty()) {
+            // check for $ patterns
+            for (Path path : paths) {
+                if (path.checkForMatch(this)) {
+                    //if (saveMatch) matchedPaths.put(curr, path);
+                    callback.resultFound(path);
+                    rootMatch = path;
+                }
+            }
+        }
         while (parser.nextToken() != null) {
             boolean saveMatch = false;
             switch (parser.getCurrentToken()) {
@@ -90,8 +102,8 @@ public class TokenStack
                 if (curr != null && curr.getType() == TokenType.ARRAY_TOKEN) {
 
                     if (((ArrayToken)curr).getValue() != null &&
-                        matchedPaths.containsKey(curr)) {
-
+                        matchedPaths.containsKey(curr))
+                    {
                         Path match = matchedPaths.remove(curr);
                         callback.resultFoundExit(match);
 
@@ -188,6 +200,11 @@ public class TokenStack
                 needsPathCheck = false;
             }
         }
+
+        if (rootMatch != null && elements.empty()) {
+            callback.resultFoundExit(rootMatch);
+            rootMatch = null;
+        }
     }
 
     public String toString()
@@ -200,7 +217,7 @@ public class TokenStack
             sb.append(elem.toString());
         }
         sb.append(" ");
-        sb.append(elements.peek().getValue());
+        if (!elements.empty()) sb.append(elements.peek().getValue());
         return sb.toString();
     }
 
