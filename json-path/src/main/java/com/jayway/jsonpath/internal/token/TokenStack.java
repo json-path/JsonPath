@@ -199,11 +199,11 @@ public class TokenStack
                 }
                 needsPathCheck = false;
             }
-        }
 
-        if (rootMatch != null && elements.empty()) {
-            callback.resultFoundExit(rootMatch);
-            rootMatch = null;
+            if (rootMatch != null && elements.empty()) {
+                callback.resultFoundExit(rootMatch);
+                rootMatch = null;
+            }
         }
     }
 
