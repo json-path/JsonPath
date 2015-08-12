@@ -30,13 +30,13 @@ dependencies {
     compile project(':json-path')
     compile 'commons-io:commons-io:2.4'
     compile libs.jacksonDatabind
-    compile 'io.fastjson:boon:0.32'
+    compile 'io.fastjson:boon:0.33'
     compile 'com.nebhale.jsonpath:jsonpath:1.2'
-    compile 'io.gatling:jsonpath_2.10:0.6.2'
+    compile 'io.gatling:jsonpath_2.10:0.6.4'
     compile 'org.eclipse.jetty:jetty-server:9.3.0.M1'
     compile 'org.eclipse.jetty:jetty-webapp:9.3.0.M1'
-    compile 'org.glassfish.jersey.containers:jersey-container-servlet:2.16'
-    compile('org.glassfish.jersey.media:jersey-media-json-jackson:2.16'){
+    compile 'org.glassfish.jersey.containers:jersey-container-servlet:2.20'
+    compile('org.glassfish.jersey.media:jersey-media-json-jackson:2.20'){
         exclude module: 'jackson-annotations:com.fasterxml.jackson.core'
         exclude module: 'jackson-core:com.fasterxml.jackson.core'
     }
