@@ -576,7 +576,7 @@ public class IssuesTest extends BaseTest {
 
     @Test
     public void issue_76() throws Exception {
-        /*
+
         String json = "{\n" +
                 "    \"cpus\": -8.88178419700125e-16,\n" +
                 "    \"disk\": 0,\n" +
@@ -586,22 +586,7 @@ public class IssuesTest extends BaseTest {
         JSONParser parser = new JSONParser(JSONParser.MODE_PERMISSIVE);
         JSONAware jsonModel = (JSONAware)parser.parse(json);
 
-        jsonModel.toJSONString(); //java.lang.RuntimeException: no Getter for field scale in class java.math.BigDecimal
-        */
-
-
-        DocumentContext doc = JsonPath.parse(this.getClass().getResourceAsStream("/issue_76.json"));
-
-        Object o;
-        o = doc.read("$.frameworks");
-
-        //Bug filed  in json-smart
-        // https://code.google.com/p/json-smart/issues/detail?id=55&thanks=55&ts=1427547500
-        try {
-            System.out.println(JSON_SMART_CONFIGURATION.jsonProvider().toJson(o));
-            Assert.assertTrue(false);
-        } catch (RuntimeException e){
-        }
+        jsonModel.toJSONString();
     }
 
     @Test
