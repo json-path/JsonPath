@@ -9,6 +9,7 @@ jar {
     baseName 'json-path'
     manifest {
         attributes 'Implementation-Title': 'json-path', 'Implementation-Version': version
+		instruction 'Import-Package', 'com.google.gson.*;resolution:=optional', 'com.fasterxml.jackson.*;resolution:=optional', 'net.minidev.json.*;resolution:=optional', '*'
     }
 }
 
