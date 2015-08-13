@@ -40,7 +40,7 @@ public abstract class PathToken {
 
         if(properties.size() == 1) {
             String property = properties.get(0);
-            String evalPath = currentPath + "['" + property + "']";
+            String evalPath = Utils.concat(currentPath, "['", property, "']");
             Object propertyVal = readObjectProperty(property, model, ctx);
             if(propertyVal == JsonProvider.UNDEFINED){
                 if(isLeaf()) {
@@ -115,7 +115,7 @@ public abstract class PathToken {
 
 
     void handleArrayIndex(int index, String currentPath, Object model, EvaluationContextImpl ctx) {
-        String evalPath = currentPath + "[" + index + "]";
+        String evalPath = Utils.concat(currentPath, "[", String.valueOf(index), "]");
         PathRef pathRef = ctx.forUpdate() ? PathRef.create(model, index) : PathRef.NO_OP;
         try {
             Object evalHit = ctx.jsonProvider().getArrayIndex(model, index);

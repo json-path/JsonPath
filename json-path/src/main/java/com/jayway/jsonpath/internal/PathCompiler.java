@@ -63,13 +63,13 @@ public class PathCompiler {
             LinkedList<Predicate> filterList = new LinkedList<Predicate>(asList(filters));
 
             if (trimmedPath.charAt(0) != '$' && trimmedPath.charAt(0) != '@') {
-                trimmedPath = "$." + trimmedPath;
+                trimmedPath = Utils.concat("$.", trimmedPath);
             }
 
             boolean isRootPath = (trimmedPath.charAt(0) == '$');
 
             if (trimmedPath.charAt(0) == '@') {
-                trimmedPath = "$" + trimmedPath.substring(1);
+                trimmedPath = Utils.concat("$", trimmedPath.substring(1));
             }
 
             if (trimmedPath.length() > 1 &&
@@ -78,10 +78,10 @@ public class PathCompiler {
                 throw new InvalidPathException("Invalid path " + trimmedPath);
             }
 
-            String cacheKey = trimmedPath + isRootPath + filterList.toString();
+            String cacheKey = Utils.concat(trimmedPath, Boolean.toString(isRootPath), filterList.toString());
             Path p = cache.get(cacheKey);
             if (p != null) {
-                if (logger.isDebugEnabled()) logger.debug("Using cached path: " + cacheKey);
+                if (logger.isDebugEnabled()) logger.debug("Using cached path: {}", cacheKey);
                 return p;
             }
 
@@ -123,7 +123,7 @@ public class PathCompiler {
                             } else {
                                 assertValidFieldChars(trimmedPath, i, positions);
 
-                                fragment = PROPERTY_OPEN + trimmedPath.substring(i, i + positions) + PROPERTY_CLOSE;
+                                fragment = Utils.concat(PROPERTY_OPEN, trimmedPath.substring(i, i + positions), PROPERTY_CLOSE);
                             }
                             i += positions;
                         }
@@ -135,7 +135,7 @@ public class PathCompiler {
                     default:
                         positions = fastForward(trimmedPath, i);
 
-                        fragment = PROPERTY_OPEN + trimmedPath.substring(i, i + positions) + PROPERTY_CLOSE;
+                        fragment = Utils.concat(PROPERTY_OPEN, trimmedPath.substring(i, i + positions), PROPERTY_CLOSE);
                         i += positions;
                         break;
                 }
