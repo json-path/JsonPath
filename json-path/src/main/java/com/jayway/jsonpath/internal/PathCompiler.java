@@ -50,38 +50,38 @@ public class PathCompiler {
     private static final Cache cache = new Cache(200);
 
 
-    public static Path compile(String path, Predicate... filters) {
+    public static Path compile(final String path, final Predicate... filters) {
 
         notEmpty(path, "Path may not be null empty");
         try {
-            path = path.trim();
+            String trimmedPath = path.trim();
 
-            if (path.endsWith("..")) {
+            if (trimmedPath.endsWith("..")) {
                 throw new InvalidPathException("A path can not end with a scan.");
             }
 
             LinkedList<Predicate> filterList = new LinkedList<Predicate>(asList(filters));
 
-            if (path.charAt(0) != '$' && path.charAt(0) != '@') {
-                path = "$." + path;
+            if (trimmedPath.charAt(0) != '$' && trimmedPath.charAt(0) != '@') {
+                trimmedPath = Utils.concat("$.", trimmedPath);
             }
 
-            boolean isRootPath = (path.charAt(0) == '$');
+            boolean isRootPath = (trimmedPath.charAt(0) == '$');
 
-            if (path.charAt(0) == '@') {
-                path = "$" + path.substring(1);
+            if (trimmedPath.charAt(0) == '@') {
+                trimmedPath = Utils.concat("$", trimmedPath.substring(1));
             }
 
-            if (path.length() > 1 &&
-                    path.charAt(1) != '.' &&
-                    path.charAt(1) != '[') {
-                throw new InvalidPathException("Invalid path " + path);
+            if (trimmedPath.length() > 1 &&
+                    trimmedPath.charAt(1) != '.' &&
+                    trimmedPath.charAt(1) != '[') {
+                throw new InvalidPathException("Invalid path " + trimmedPath);
             }
 
-            String cacheKey = path + isRootPath + filterList.toString();
+            String cacheKey = Utils.concat(trimmedPath, Boolean.toString(isRootPath), filterList.toString());
             Path p = cache.get(cacheKey);
             if (p != null) {
-                if (logger.isDebugEnabled()) logger.debug("Using cached path: " + cacheKey);
+                if (logger.isDebugEnabled()) logger.debug("Using cached path: {}", cacheKey);
                 return p;
             }
 
@@ -93,7 +93,7 @@ public class PathCompiler {
             String fragment = "";
 
             do {
-                char current = path.charAt(i);
+                char current = trimmedPath.charAt(i);
 
                 switch (current) {
                     case SPACE:
@@ -103,27 +103,27 @@ public class PathCompiler {
                         i++;
                         break;
                     case BRACKET_OPEN:
-                        positions = fastForwardUntilClosed(path, i);
-                        fragment = path.substring(i, i + positions);
+                        positions = fastForwardUntilClosed(trimmedPath, i);
+                        fragment = trimmedPath.substring(i, i + positions);
                         i += positions;
                         break;
                     case PERIOD:
                         i++;
-                        if ( i < path.length() && path.charAt(i) == PERIOD) {
+                        if ( i < trimmedPath.length() && trimmedPath.charAt(i) == PERIOD) {
                             //This is a deep scan
                             fragment = "..";
                             i++;
                         } else {
-                            positions = fastForward(path, i);
+                            positions = fastForward(trimmedPath, i);
                             if (positions == 0) {
                                 continue;
 
-                            } else if (positions == 1 && path.charAt(i) == '*') {
+                            } else if (positions == 1 && trimmedPath.charAt(i) == '*') {
                                 fragment = new String("[*]");
                             } else {
-                                assertValidFieldChars(path, i, positions);
+                                assertValidFieldChars(trimmedPath, i, positions);
 
-                                fragment = PROPERTY_OPEN + path.substring(i, i + positions) + PROPERTY_CLOSE;
+                                fragment = Utils.concat(PROPERTY_OPEN, trimmedPath.substring(i, i + positions), PROPERTY_CLOSE);
                             }
                             i += positions;
                         }
@@ -133,9 +133,9 @@ public class PathCompiler {
                         i++;
                         break;
                     default:
-                        positions = fastForward(path, i);
+                        positions = fastForward(trimmedPath, i);
 
-                        fragment = PROPERTY_OPEN + path.substring(i, i + positions) + PROPERTY_CLOSE;
+                        fragment = Utils.concat(PROPERTY_OPEN, trimmedPath.substring(i, i + positions), PROPERTY_CLOSE);
                         i += positions;
                         break;
                 }
@@ -145,7 +145,7 @@ public class PathCompiler {
                     root.append(PathComponentAnalyzer.analyze(fragment, filterList));
                 }
 
-            } while (i < path.length());
+            } while (i < trimmedPath.length());
 
             Path pa = new CompiledPath(root, isRootPath);
 

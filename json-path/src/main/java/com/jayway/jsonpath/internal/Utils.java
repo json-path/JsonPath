@@ -74,6 +74,42 @@ public final class Utils {
     public static String join(String delimiter, Iterable<? extends Object> objs) {
         return join(delimiter, "", objs);
     }
+    
+    public static String concat(CharSequence... strings) {
+        if (strings.length == 0){
+            return "";
+        }
+        if (strings.length == 1){
+            return strings[0].toString();
+        }
+        int length = 0;
+        // -1 = no result, -2 = multiple results
+        int indexOfSingleNonEmptyString = -1;
+        for (int i = 0; i< strings.length; i++) {
+            CharSequence charSequence = strings[i];
+            int len = charSequence.length();
+            length += len;
+            if (indexOfSingleNonEmptyString != -2 && len > 0){
+                if (indexOfSingleNonEmptyString == -1){
+                    indexOfSingleNonEmptyString = i;
+                } else {
+                    indexOfSingleNonEmptyString = -2;
+                }
+            }
+        }
+        if (length == 0){
+            return "";
+        }
+        if (indexOfSingleNonEmptyString > 0){
+            return strings[indexOfSingleNonEmptyString].toString();
+        }
+        StringBuilder sb = new StringBuilder(length);
+        for (CharSequence charSequence : strings) {
+          sb.append(charSequence);
+        }
+        return sb.toString();
+
+    }
 
     //---------------------------------------------------------
     //
