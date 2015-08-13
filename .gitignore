@@ -12,3 +12,4 @@ target
 TODO
 gradle.properties
 build
+bin/
