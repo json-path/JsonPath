@@ -828,7 +828,12 @@ public class Criteria implements Predicate {
             if (exp.contains("\'")) {
                 exp = exp.replace("\\'", "'");
             }
-            return exp.compareTo((String) right);
+//            return exp.compareTo((String) right);
+	        if(Utils.isNumeric(left.toString()) && Utils.isNumeric(right.toString())) {
+		        return new BigDecimal(left.toString()).compareTo(new BigDecimal(right.toString()));
+	        } else {
+		        return exp.compareTo((String) right);
+	        }
         } else if (left instanceof Number && right instanceof Number) {
             return new BigDecimal(left.toString()).compareTo(new BigDecimal(right.toString()));
         } else if (left instanceof String && right instanceof Number) {
