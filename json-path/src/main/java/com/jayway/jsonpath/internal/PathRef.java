@@ -89,7 +89,7 @@ public abstract class PathRef implements Comparable<PathRef>  {
         @Override
         public void add(Object newVal, Configuration configuration) {
             if(configuration.jsonProvider().isArray(parent)){
-                configuration.jsonProvider().setProperty(parent, null, newVal);
+                configuration.jsonProvider().setArrayIndex(parent, configuration.jsonProvider().length(parent), newVal);
             } else {
                 throw new InvalidModificationException("Invalid add operation. $ is not an array");
             }
@@ -185,7 +185,7 @@ public abstract class PathRef implements Comparable<PathRef>  {
                 return;
             }
             if(configuration.jsonProvider().isArray(target)){
-                configuration.jsonProvider().setProperty(target, null, value);
+                configuration.jsonProvider().setArrayIndex(target, configuration.jsonProvider().length(target), value);
             } else {
                 throw new InvalidModificationException("Can only add to an array");
             }
