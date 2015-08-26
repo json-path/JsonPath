@@ -219,21 +219,12 @@ public class GsonJsonProvider extends AbstractJsonProvider {
 
     @Override
     public Iterable<?> toIterable(Object obj) {
-        if (isArray(obj)) {
-            JsonArray arr = toJsonArray(obj);
-            List<Object> values = new ArrayList<Object>(arr.size());
-            for (Object o : arr) {
-                values.add(unwrap(o));
-            }
-            return values;
-        } else {
-            JsonObject jsonObject = toJsonObject(obj);
-            List<Object> values = new ArrayList<Object>();
-            for (Map.Entry<String, JsonElement> entry : jsonObject.entrySet()) {
-                values.add(unwrap(entry.getValue()));
-            }
-            return values;
+        JsonArray arr = toJsonArray(obj);
+        List<Object> values = new ArrayList<Object>(arr.size());
+        for (Object o : arr) {
+            values.add(unwrap(o));
         }
+        return values;
     }
 
     private JsonElement createJsonElement(Object o) {

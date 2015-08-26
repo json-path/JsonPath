@@ -76,10 +76,10 @@ public interface JsonProvider {
     int length(Object obj);
 
     /**
-     * Converts given object to an {@link Iterable}
+     * Converts given array to an {@link Iterable}
      *
-     * @param obj an array or an object
-     * @return the entries for an array or the values for a map
+     * @param obj an array
+     * @return an Iterable that iterates over the entries of an array
      */
     Iterable<?> toIterable(Object obj);
 

@@ -163,17 +163,17 @@ public abstract class AbstractJsonProvider implements JsonProvider {
     }
 
     /**
-     * Converts given object to an {@link Iterable}
+     * Converts given array to an {@link Iterable}
      *
-     * @param obj an array or an object
-     * @return the entries for an array or the values for a map
+     * @param obj an array
+     * @return an Iterable that iterates over the entries of an array
      */
     @SuppressWarnings("unchecked")
     public Iterable<? extends Object> toIterable(Object obj) {
         if (isArray(obj))
             return ((Iterable) obj);
         else
-            return ((Map) obj).values();
+            throw new JsonPathException("Cannot iterate over " + obj!=null?obj.getClass().getName():"null");
     }
 
     @Override

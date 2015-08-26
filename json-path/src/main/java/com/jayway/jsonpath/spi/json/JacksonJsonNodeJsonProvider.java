@@ -217,21 +217,12 @@ public class JacksonJsonNodeJsonProvider extends AbstractJsonProvider {
 
     @Override
     public Iterable<?> toIterable(Object obj) {
-        if (isArray(obj)) {
-            ArrayNode arr = toJsonArray(obj);
-            List<Object> values = new ArrayList<Object>(arr.size());
-            for (Object o : arr) {
-                values.add(unwrap(o));
-            }
-            return values;
-        } else {
-            List<Object> values = new ArrayList<Object>();
-            Iterator<JsonNode> iter = toJsonObject(obj).elements();
-            while (iter.hasNext()){
-                values.add(unwrap(iter.next()));
-            }
-            return values;
+        ArrayNode arr = toJsonArray(obj);
+        List<Object> values = new ArrayList<Object>(arr.size());
+        for (Object o : arr) {
+            values.add(unwrap(o));
         }
+        return values;
     }
 
     private JsonNode createJsonElement(Object o) {
