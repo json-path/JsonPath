@@ -31,6 +31,10 @@ public class CallbackRecorder implements EvaluationCallback {
             }
             return false;
         }
+
+        public String toString() {
+            return path + " isexit=" + exit;
+        }
     }
 
     private List<CallbackEvent> results;

@@ -58,16 +58,18 @@ public class TokenStack
         assert(callback != null);
 
         boolean needsPathCheck = false;
+        /*
         if (null == curr && elements.empty()) {
             // check for $ patterns
             for (Path path : paths) {
                 if (path.checkForMatch(this)) {
-                    //if (saveMatch) matchedPaths.put(curr, path);
+                    matchedPaths.put(curr, path);
                     callback.resultFound(path);
                     rootMatch = path;
                 }
             }
         }
+        */
         while (parser.nextToken() != null) {
             boolean saveMatch = false;
             switch (parser.getCurrentToken()) {
@@ -100,7 +102,6 @@ public class TokenStack
             case START_OBJECT:
             {
                 if (curr != null && curr.getType() == TokenType.ARRAY_TOKEN) {
-
                     if (((ArrayToken)curr).getValue() != null &&
                         matchedPaths.containsKey(curr))
                     {
@@ -111,6 +112,15 @@ public class TokenStack
 
                             matchedPaths.put(curr, match);
                             callback.resultFound(match);
+                        }
+                    }
+                } else if (null == curr && elements.empty()) {
+                    // check for $ patterns
+                    for (Path path : paths) {
+                        if (path.checkForMatch(this)) {
+                            matchedPaths.put(curr, path);
+                            callback.resultFound(path);
+                            rootMatch = path;
                         }
                     }
                 }
@@ -129,9 +139,16 @@ public class TokenStack
             }
             case END_OBJECT:
             {
-                Path match = matchedPaths.remove(curr);
-                if (match != null) {
-                    callback.resultFoundExit(match);
+                if (!"$".equals(curr)) {
+                    Path match = matchedPaths.remove(curr);
+                    if (match != null) {
+                        callback.resultFoundExit(match);
+                    }
+                } else {
+                    Path match = matchedPaths.get("$");
+                    if (match != null) {
+                        callback.resultFoundExit(match);
+                    }
                 }
                 elements.pop();
                 if (elements.empty()) curr = null;
