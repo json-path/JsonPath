@@ -230,12 +230,14 @@ public class Configuration {
         }
 
         public Configuration build() {
-            Defaults defaults = getEffectiveDefaults();
-            if (jsonProvider == null) {
-                jsonProvider = defaults.jsonProvider();
-            }
-            if(mappingProvider == null){
-                mappingProvider = defaults.mappingProvider();
+            if(null==jsonProvider || null== mappingProvider) {
+                Defaults defaults = getEffectiveDefaults();
+                if (jsonProvider == null) {
+                    jsonProvider = defaults.jsonProvider();
+                }
+                if (mappingProvider == null) {
+                    mappingProvider = defaults.mappingProvider();
+                }
             }
             return new Configuration(jsonProvider, mappingProvider, options, evaluationListener);
         }
