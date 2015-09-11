@@ -21,7 +21,7 @@ public class PredicateTest extends BaseTest {
                 return ctx.item(Map.class).containsKey("isbn");
             }
 
-            @Override
+                //@Override
             public boolean check(TokenStack stack, int idx) {
                 return false;
             }

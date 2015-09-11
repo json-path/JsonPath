@@ -347,7 +347,7 @@ public class FilterTest extends BaseTest {
                 }
                 return false;
             }
-            @Override
+                //@Override
             public boolean check(TokenStack stack, int idx) {
                 return false;
             }
@@ -371,7 +371,7 @@ public class FilterTest extends BaseTest {
             public boolean apply(PredicateContext ctx) {
                 return 1 == (Integer)ctx.item();
             }
-            @Override
+                //@Override
             public boolean check(TokenStack stack, int idx) {
                 return false;
             }

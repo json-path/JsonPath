@@ -29,7 +29,7 @@ import static java.util.Arrays.asList;
 /**
  *
  */
-public abstract class Filter implements Predicate {
+public abstract class Filter implements StreamingPredicate {
 
     private static final Logger logger = LoggerFactory.getLogger(Filter.class);
     private static final Pattern OPERATOR_SPLIT = Pattern.compile("((?<=&&|\\|\\|)|(?=&&|\\|\\|))");
@@ -85,7 +85,7 @@ public abstract class Filter implements Predicate {
 
         @Override
         public boolean check(TokenStack stack, int idx) {
-            return predicate.check(stack, idx);
+            return ((StreamingPredicate)predicate).check(stack, idx);
         }
 
         @Override
@@ -125,7 +125,7 @@ public abstract class Filter implements Predicate {
         @Override
         public boolean check(TokenStack stack, int idx) {
             for (Predicate predicate : predicates) {
-                if(!predicate.check(stack, idx)){
+                if(!((StreamingPredicate)predicate).check(stack, idx)){
                     return false;
                 }
             }
@@ -160,8 +160,8 @@ public abstract class Filter implements Predicate {
 
         @Override
         public boolean check(TokenStack stack, int idx) {
-            boolean a = left.check(stack, idx);
-            return a || right.check(stack, idx);
+            boolean a = ((StreamingPredicate)left).check(stack, idx);
+            return a || ((StreamingPredicate)right).check(stack, idx);
         }
 
         @Override
