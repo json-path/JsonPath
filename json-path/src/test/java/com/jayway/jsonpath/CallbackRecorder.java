@@ -44,12 +44,12 @@ public class CallbackRecorder implements EvaluationCallback {
         results = new ArrayList<CallbackEvent>();
     }
 
-    public void resultFound(Path path) {
+    public void resultFound(Object src, Object val, Path path) {
         System.err.println("found result " + path);
         results.add(new CallbackEvent(path, false));
     }
 
-    public void resultFoundExit(Path path) {
+    public void resultFoundExit(Object src, Object val, Path path) {
         System.err.println("exiting result " + path);
         results.add(new CallbackEvent(path, true));
     }

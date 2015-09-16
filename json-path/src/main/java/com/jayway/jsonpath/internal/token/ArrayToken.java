@@ -5,7 +5,7 @@ package com.jayway.jsonpath.internal.token;
  *
  * @author Hunter Payne
  **/
-public class ArrayToken implements TokenStackElement
+public class ArrayToken extends TokenStackElement
 {
     int currentIndex;
     TokenStackElement value; // can be an object, array, or property
