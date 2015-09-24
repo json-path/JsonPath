@@ -9,12 +9,10 @@ import java.nio.charset.Charset;
 
 import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.core.JsonFactory;
-
 import com.jayway.jsonpath.EvaluationCallback;
 import com.jayway.jsonpath.internal.Path;
 import com.jayway.jsonpath.internal.PathCompiler;
 import com.jayway.jsonpath.internal.token.*;
-
 import static java.util.Collections.singletonMap;
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -607,7 +605,7 @@ public class JacksonTest extends BaseTest implements EvaluationCallback {
                equals(new CallbackRecorder.CallbackEvent(rootPath, true)));
     }
 
-    public void resultFound(Path path) {
+    public void resultFound(Object src, Object val, Path path) {
         if (path == idPath) {
             switch (match++) {
             case 0:
@@ -1040,14 +1038,14 @@ public class JacksonTest extends BaseTest implements EvaluationCallback {
                 break;
             }
         }
-        recorder.resultFound(path);
+        recorder.resultFound(src, val, path);
     }
 
-    public void resultFoundExit(Path path) {
+    public void resultFoundExit(Object src, Object val, Path path) {
         assert(path != idPath);
         assert(path != floatPath);
         assert(path != intPath);
-        recorder.resultFoundExit(path);
+        recorder.resultFoundExit(src, val, path);
     }
 
     protected void checkResult(TokenStack stack, Object expected) {
