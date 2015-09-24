@@ -24,8 +24,6 @@ import com.google.gson.JsonPrimitive;
 import com.google.gson.internal.LazilyParsedNumber;
 import com.jayway.jsonpath.InvalidJsonException;
 import com.jayway.jsonpath.JsonPathException;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -37,8 +35,6 @@ import java.util.List;
 import java.util.Map;
 
 public class GsonJsonProvider extends AbstractJsonProvider {
-
-    private static final Logger logger = LoggerFactory.getLogger(GsonJsonProvider.class);
 
     private static final JsonParser parser = new JsonParser();
     private static final Gson gson = new GsonBuilder().create();
