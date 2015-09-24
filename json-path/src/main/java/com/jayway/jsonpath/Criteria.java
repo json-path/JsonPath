@@ -168,7 +168,7 @@ public class Criteria implements StreamingPredicate {
                         StringToken leftT = (StringToken)left;
                         StringToken rightT = (StringToken)right;
                         if (leftT.value != null && rightT.value != null) {
-                            return leftT.value.equals(rightT.value);
+                            return leftT.value.compareTo(rightT.value) > 0;
                         }
                         break;
                     }
@@ -229,7 +229,7 @@ public class Criteria implements StreamingPredicate {
                         StringToken leftT = (StringToken)left;
                         StringToken rightT = (StringToken)right;
                         if (leftT.value != null && rightT.value != null) {
-                            return leftT.value.equals(rightT.value);
+                            return leftT.value.compareTo(rightT.value) >= 0;
                         }
                         break;
                     }
@@ -291,7 +291,7 @@ public class Criteria implements StreamingPredicate {
                         StringToken leftT = (StringToken)left;
                         StringToken rightT = (StringToken)right;
                         if (leftT.value != null && rightT.value != null) {
-                            return leftT.value.equals(rightT.value);
+                            return leftT.value.compareTo(rightT.value) < 0;
                         }
                         break;
                     }
@@ -353,7 +353,7 @@ public class Criteria implements StreamingPredicate {
                         StringToken leftT = (StringToken)left;
                         StringToken rightT = (StringToken)right;
                         if (leftT.value != null && rightT.value != null) {
-                            return leftT.value.equals(rightT.value);
+                            return leftT.value.compareTo(rightT.value) <= 0;
                         }
                         break;
                     }
@@ -361,13 +361,13 @@ public class Criteria implements StreamingPredicate {
                     {
                         FloatToken leftT = (FloatToken)left;
                         FloatToken rightT = (FloatToken)right;
-                        return leftT.value < rightT.value;
+                        return leftT.value <= rightT.value;
                     }
                     case INTEGER_TOKEN:
                     {
                         IntToken leftT = (IntToken)left;
                         IntToken rightT = (IntToken)right;
-                        return leftT.value < rightT.value;
+                        return leftT.value <= rightT.value;
                     }
                     }
                 }
@@ -398,6 +398,8 @@ public class Criteria implements StreamingPredicate {
             public boolean check(TokenStackElement left,
                                  TokenStackElement right) {
 
+                throw new UnsupportedOperationException();
+                /*
                 switch (left.getType()) {
                 case ARRAY_TOKEN:
                 {
@@ -411,6 +413,7 @@ public class Criteria implements StreamingPredicate {
                     break;
                 }
                 return false;
+                */
             }
         },
         NIN {
@@ -425,6 +428,8 @@ public class Criteria implements StreamingPredicate {
             @Override
             public boolean check(TokenStackElement left,
                                  TokenStackElement right) {
+                throw new UnsupportedOperationException();
+                /*
                 switch (left.getType()) {
                 case ARRAY_TOKEN:
                 {
@@ -438,6 +443,7 @@ public class Criteria implements StreamingPredicate {
                     break;
                 }
                 return false;
+                */
             }
         },
         CONTAINS {
@@ -466,6 +472,7 @@ public class Criteria implements StreamingPredicate {
             public boolean check(TokenStackElement left,
                                  TokenStackElement right) {
 
+                //throw new UnsupportedOperationException();
                 switch (right.getType()) {
                 case ARRAY_TOKEN:
                 {
@@ -538,6 +545,8 @@ public class Criteria implements StreamingPredicate {
             public boolean check(TokenStackElement left,
                                  TokenStackElement right) {
 
+                throw new UnsupportedOperationException();
+                /*
                 switch (left.getType()) {
                 case ARRAY_TOKEN:
                 {
@@ -551,6 +560,7 @@ public class Criteria implements StreamingPredicate {
                     break;
                 }
                 return false;
+                */
             }
         },
         SIZE {
@@ -577,6 +587,8 @@ public class Criteria implements StreamingPredicate {
             @Override
             public boolean check(TokenStackElement left,
                                  TokenStackElement right) {
+                throw new UnsupportedOperationException();
+                /*
                 if (left.getType() == TokenType.INTEGER_TOKEN) {
                     int size = ((IntToken)left).value;
                     switch (right.getType()) {
@@ -597,6 +609,7 @@ public class Criteria implements StreamingPredicate {
                     }
                 }
                 return false;
+                */
             }
         },
         EXISTS {
@@ -651,7 +664,16 @@ public class Criteria implements StreamingPredicate {
 
             @Override
             public boolean check(TokenStackElement left, TokenStackElement right) {
-                throw new UnsupportedOperationException();
+                if (right.getType() == TokenType.STRING_TOKEN
+                    && left.getType() == right.getType())
+                {
+                    StringToken rightT = (StringToken)right;
+                    if (null == rightT.pattern) {
+                        rightT.pattern = Pattern.compile(rightT.value);
+                    }
+                    return rightT.pattern.matcher(((StringToken)left).value).matches();
+                }
+                return false;
             }
 
             @Override
@@ -669,6 +691,9 @@ public class Criteria implements StreamingPredicate {
 
             @Override
             public boolean check(TokenStackElement left, TokenStackElement right) {
+                //PredicateContextImpl pci = (PredicateContextImpl) ctx;
+                //StreamingPredicate exp = (StreamingPredicate) left;
+                //return exp.check();
                 throw new UnsupportedOperationException();
             }
         },

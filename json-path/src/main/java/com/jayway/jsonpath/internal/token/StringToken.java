@@ -1,6 +1,8 @@
 
 package com.jayway.jsonpath.internal.token;
 
+import java.util.regex.Pattern;
+
 /**
  *
  * @author Hunter Payne
@@ -8,10 +10,12 @@ package com.jayway.jsonpath.internal.token;
 public class StringToken extends TokenStackElement
 {
     public String value;
+    public Pattern pattern;
 
     public StringToken(String s)
     {
         value = s;
+        pattern = null;
     }
 
     public TokenType getType()
