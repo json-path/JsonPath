@@ -23,8 +23,6 @@ import com.jayway.jsonpath.ParseContext;
 import com.jayway.jsonpath.Predicate;
 import com.jayway.jsonpath.ReadContext;
 import com.jayway.jsonpath.TypeRef;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -37,8 +35,6 @@ import static com.jayway.jsonpath.internal.Utils.notEmpty;
 import static com.jayway.jsonpath.internal.Utils.notNull;
 
 public class JsonReader implements ParseContext, DocumentContext {
-
-    private static final Logger logger = LoggerFactory.getLogger(JsonReader.class);
 
     private final Configuration configuration;
     private Object json;
@@ -186,11 +182,6 @@ public class JsonReader implements ParseContext, DocumentContext {
     @Override
     public DocumentContext set(JsonPath path, Object newValue){
         List<String> modified = path.set(json, newValue, configuration.addOptions(Option.AS_PATH_LIST));
-        if(logger.isDebugEnabled()){
-            for (String p : modified) {
-                logger.debug("Set path {} new value {}", p, newValue);
-            }
-        }
         return this;
     }
 
@@ -202,11 +193,6 @@ public class JsonReader implements ParseContext, DocumentContext {
     @Override
     public DocumentContext delete(JsonPath path) {
         List<String> modified = path.delete(json, configuration.addOptions(Option.AS_PATH_LIST));
-        if(logger.isDebugEnabled()){
-            for (String p : modified) {
-                logger.debug("Delete path {}");
-            }
-        }
         return this;
     }
 
@@ -218,11 +204,6 @@ public class JsonReader implements ParseContext, DocumentContext {
     @Override
     public DocumentContext add(JsonPath path, Object value){
         List<String> modified =  path.add(json, value, configuration.addOptions(Option.AS_PATH_LIST));
-        if(logger.isDebugEnabled()){
-            for (String p : modified) {
-                logger.debug("Add path {} new value {}", p, value);
-            }
-        }
         return this;
     }
 
@@ -234,11 +215,6 @@ public class JsonReader implements ParseContext, DocumentContext {
     @Override
     public DocumentContext put(JsonPath path, String key, Object value){
         List<String> modified = path.put(json, key, value, configuration.addOptions(Option.AS_PATH_LIST));
-        if(logger.isDebugEnabled()){
-            for (String p : modified) {
-                logger.debug("Put path {} key {} value {}", p, key, value);
-            }
-        }
         return this;
     }
 

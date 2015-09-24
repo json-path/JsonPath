@@ -18,14 +18,10 @@ import com.jayway.jsonpath.Configuration;
 import com.jayway.jsonpath.Predicate;
 import com.jayway.jsonpath.internal.Path;
 import com.jayway.jsonpath.spi.mapper.MappingException;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.util.HashMap;
 
 public class PredicateContextImpl implements Predicate.PredicateContext {
-
-    private static final Logger logger = LoggerFactory.getLogger(PredicateContextImpl.class);
 
     private final Object contextDocument;
     private final Object rootDocument;
@@ -43,7 +39,6 @@ public class PredicateContextImpl implements Predicate.PredicateContext {
         Object result;
         if(path.isRootPath()){
             if(documentPathCache.containsKey(path)){
-                logger.debug("Using cached result for root path: " + path.toString());
                 result = documentPathCache.get(path);
             } else {
                 result = path.evaluate(rootDocument, rootDocument, configuration).getValue();
