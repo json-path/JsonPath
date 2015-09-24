@@ -15,8 +15,6 @@
 package com.jayway.jsonpath;
 
 import com.jayway.jsonpath.internal.Utils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -30,7 +28,6 @@ import static java.util.Arrays.asList;
  */
 public abstract class Filter implements Predicate {
 
-    private static final Logger logger = LoggerFactory.getLogger(Filter.class);
     private static final Pattern OPERATOR_SPLIT = Pattern.compile("((?<=&&|\\|\\|)|(?=&&|\\|\\|))");
     private static final String AND = "&&";
     private static final String OR = "||";
@@ -192,7 +189,6 @@ public abstract class Filter implements Predicate {
             throw new InvalidPathException("Invalid operators " + filter);
         }
 
-        if(logger.isDebugEnabled()) logger.debug("Parsed filter: " + root.toString());
         return root;
     }
 
