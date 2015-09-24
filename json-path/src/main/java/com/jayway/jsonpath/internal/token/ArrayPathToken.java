@@ -18,8 +18,6 @@ import com.jayway.jsonpath.InvalidPathException;
 import com.jayway.jsonpath.PathNotFoundException;
 import com.jayway.jsonpath.internal.PathRef;
 import com.jayway.jsonpath.internal.Utils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.util.List;
 
@@ -29,8 +27,6 @@ import static java.lang.String.format;
  *
  */
 public class ArrayPathToken extends PathToken {
-
-    private static final Logger logger = LoggerFactory.getLogger(ArrayPathToken.class);
 
     public static enum Operation {
         CONTEXT_SIZE,
@@ -94,8 +90,6 @@ public class ArrayPathToken extends PathToken {
                     }
                     from = Math.max(0, from);
 
-                    logger.debug("Slice from index on array with length: {}. From index: {} to: {}. Input: {}", length, from, length - 1, toString());
-
                     if (length == 0 || from >= length) {
                         return;
                     }
@@ -113,8 +107,6 @@ public class ArrayPathToken extends PathToken {
                         to = length + to;
                     }
                     to = Math.min(length, to);
-
-                    logger.debug("Slice to index on array with length: {}. From index: 0 to: {}. Input: {}", length, to, toString());
 
                     if (length == 0) {
                         return;
@@ -134,8 +126,6 @@ public class ArrayPathToken extends PathToken {
                     if (from >= to || length == 0) {
                         return;
                     }
-
-                    logger.debug("Slice between indexes on array with length: {}. From index: {} to: {}. Input: {}", length, from, to, toString());
 
                     for (int i = from; i < to; i++) {
                         handleArrayIndex(i, currentPath, model, ctx);

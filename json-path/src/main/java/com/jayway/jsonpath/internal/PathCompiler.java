@@ -24,8 +24,6 @@ import com.jayway.jsonpath.internal.token.PropertyPathToken;
 import com.jayway.jsonpath.internal.token.RootPathToken;
 import com.jayway.jsonpath.internal.token.ScanPathToken;
 import com.jayway.jsonpath.internal.token.WildcardPathToken;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
 import java.util.LinkedList;
@@ -36,8 +34,6 @@ import static com.jayway.jsonpath.internal.Utils.notEmpty;
 import static java.util.Arrays.asList;
 
 public class PathCompiler {
-
-    private static final Logger logger = LoggerFactory.getLogger(PathCompiler.class);
 
     private static final String PROPERTY_OPEN = "['";
     private static final String PROPERTY_CLOSE = "']";
@@ -81,7 +77,6 @@ public class PathCompiler {
             String cacheKey = Utils.concat(trimmedPath, Boolean.toString(isRootPath), filterList.toString());
             Path p = cache.get(cacheKey);
             if (p != null) {
-                if (logger.isDebugEnabled()) logger.debug("Using cached path: {}", cacheKey);
                 return p;
             }
 
@@ -475,16 +470,6 @@ public class PathCompiler {
             }
             singleIndex = (numbers.size() == 1) && !sliceTo && !sliceFrom && !contextSize;
 
-            if (logger.isTraceEnabled()) {
-                logger.debug("numbers are                : {}", numbers.toString());
-                logger.debug("sequence is singleNumber   : {}", singleIndex);
-                logger.debug("sequence is numberSequence : {}", indexSequence);
-                logger.debug("sequence is sliceFrom      : {}", sliceFrom);
-                logger.debug("sequence is sliceTo        : {}", sliceTo);
-                logger.debug("sequence is sliceBetween   : {}", sliceBetween);
-                logger.debug("sequence is contextFetch   : {}", contextSize);
-                logger.debug("---------------------------------------------");
-            }
             ArrayPathToken.Operation operation = null;
 
             if (singleIndex) operation = ArrayPathToken.Operation.SINGLE_INDEX;
