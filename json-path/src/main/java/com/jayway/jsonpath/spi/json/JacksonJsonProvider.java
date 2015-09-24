@@ -18,8 +18,6 @@ import com.fasterxml.jackson.core.JsonGenerator;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.ObjectReader;
 import com.jayway.jsonpath.InvalidJsonException;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -30,8 +28,6 @@ import java.util.LinkedList;
 import java.util.List;
 
 public class JacksonJsonProvider extends AbstractJsonProvider {
-
-    private static final Logger logger = LoggerFactory.getLogger(JacksonJsonProvider.class);
 
     private static final ObjectMapper defaultObjectMapper = new ObjectMapper();
     private static final ObjectReader defaultObjectReader = defaultObjectMapper.reader().withType(Object.class);
@@ -73,8 +69,7 @@ public class JacksonJsonProvider extends AbstractJsonProvider {
         try {
             return objectReader.readValue(json);
         } catch (IOException e) {
-            logger.debug("Invalid JSON: \n" + json);
-            throw new InvalidJsonException(e);
+            throw new InvalidJsonException(e, json);
         }
     }
 
