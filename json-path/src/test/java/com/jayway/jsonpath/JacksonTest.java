@@ -605,7 +605,7 @@ public class JacksonTest extends BaseTest implements EvaluationCallback {
                equals(new CallbackRecorder.CallbackEvent(rootPath, true)));
     }
 
-    public void resultFound(Object src, Object val, Path path) {
+    public void resultFound(Path path) {
         if (path == idPath) {
             switch (match++) {
             case 0:
@@ -1038,14 +1038,14 @@ public class JacksonTest extends BaseTest implements EvaluationCallback {
                 break;
             }
         }
-        recorder.resultFound(src, val, path);
+        recorder.resultFound(path);
     }
 
-    public void resultFoundExit(Object src, Object val, Path path) {
+    public void resultFoundExit(Path path) {
         assert(path != idPath);
         assert(path != floatPath);
         assert(path != intPath);
-        recorder.resultFoundExit(src, val, path);
+        recorder.resultFoundExit(path);
     }
 
     protected void checkResult(TokenStack stack, Object expected) {

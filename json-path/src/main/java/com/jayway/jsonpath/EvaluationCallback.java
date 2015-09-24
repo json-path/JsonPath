@@ -26,12 +26,12 @@ public interface EvaluationCallback {
      * Callback invoked when result is found
      * @param path -- the specific path that was triggered
      */
-    public void resultFound(Object source, Object obj, Path path) throws Exception;
+    public void resultFound(Path path) throws Exception;
 
     /**
      * Callback invoked when the parser leaves the region in which the match
      * was found
      * @param path -- the specific path that was untriggered
      */
-    public void resultFoundExit(Object source, Object obj, Path path) throws Exception;
+    public void resultFoundExit(Path path) throws Exception;
 }

@@ -7,7 +7,7 @@ import java.util.regex.Pattern;
  *
  * @author Hunter Payne
  **/
-public class StringToken extends TokenStackElement
+public class StringToken implements TokenStackElement
 {
     public String value;
     public Pattern pattern;

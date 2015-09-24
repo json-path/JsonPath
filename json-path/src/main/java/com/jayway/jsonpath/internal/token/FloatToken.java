@@ -5,7 +5,7 @@ package com.jayway.jsonpath.internal.token;
  *
  * @author Hunter Payne
  **/
-public class FloatToken extends TokenStackElement
+public class FloatToken implements TokenStackElement
 {
     public float value;
 

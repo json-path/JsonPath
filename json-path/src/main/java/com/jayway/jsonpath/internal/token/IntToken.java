@@ -5,7 +5,7 @@ package com.jayway.jsonpath.internal.token;
  *
  * @author Hunter Payne
  **/
-public class IntToken extends TokenStackElement
+public class IntToken implements TokenStackElement
 {
     public int value;
 
