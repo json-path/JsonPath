@@ -2,10 +2,12 @@ package com.jayway.jsonpath;
 
 import static org.junit.Assert.*;
 import com.fasterxml.jackson.core.JsonFactory;
+import com.fasterxml.jackson.core.JsonParseException;
 import com.jayway.jsonpath.internal.Path;
 import com.jayway.jsonpath.internal.PathCompiler;
 import com.jayway.jsonpath.internal.token.TokenStack;
 
+import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
@@ -20,12 +22,20 @@ public class JacksonTest_Split extends BaseTest implements EvaluationCallback {
     private List<Object> results = new ArrayList<Object>();
     
     @Test
-    public void jsonTest() throws Exception {
+    public void json_Test() throws Exception {
+        jsonSplit_Test(JACKSON_CONFIGURATION);
+        results.clear();
+        jsonSplit_Test(JSON_SMART_CONFIGURATION);
+        results.clear();
+    }
+
+    private void jsonSplit_Test(Configuration jsonProviderCfg) throws JsonParseException, IOException, Exception {
+
         String res = "json_opsview1.json";
         try (InputStream stream = getClass().getClassLoader().getResourceAsStream(res)) {
              Path path = PathCompiler.compile("$.list[*]");
              
-             TokenStack stack = new TokenStack(JACKSON_CONFIGURATION);
+             TokenStack stack = new TokenStack(jsonProviderCfg);
            
              JsonFactory factory = new JsonFactory();
              stack.registerPath(path);

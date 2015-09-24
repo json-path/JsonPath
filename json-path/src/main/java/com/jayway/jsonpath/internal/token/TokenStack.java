@@ -28,6 +28,8 @@ public class TokenStack
 
     private TokenStackElement curr;
     private Path rootMatch;
+    private Class jsonArrayType;
+    private Class jsonObjectType;
 
     public TokenStack(Configuration conf)
     {
@@ -37,6 +39,9 @@ public class TokenStack
         elements = new Stack<TokenStackElement>();
         objStack = new Stack<Object>();
         rootMatch = null;
+        
+        this.jsonArrayType = this.getNewJsonArray().getClass();
+        this.jsonObjectType = this.getNewJsonObject().getClass(); 
     }
 
     public Stack<TokenStackElement> getStack()
@@ -59,7 +64,8 @@ public class TokenStack
     }
     
     /**
-     * reads from stream and notifies the callback of matched registered paths
+     * reads from stream and notifies the callback of matched registered paths, with results.
+     * Note: GSON not supported
      */
     public void read(JsonParser parser, EvaluationCallback callback, boolean getParents)
         throws Exception
@@ -68,18 +74,7 @@ public class TokenStack
 
         Object obj = null;
         boolean needsPathCheck = false;
-        /*
-        if (null == curr && elements.empty()) {
-            // check for $ patterns
-            for (Path path : paths) {
-                if (path.checkForMatch(this)) {
-                    matchedPaths.put(curr, path);
-                    callback.resultFound(path);
-                    rootMatch = path;
-                }
-            }
-        }
-        */
+
         while (parser.nextToken() != null) {
             //log.debug("type/name/val: " + parser.getCurrentToken() + " " + parser.getCurrentName() + " " + parser.getText());
             boolean saveMatch = false;
@@ -97,7 +92,7 @@ public class TokenStack
                 needsPathCheck = true;
                 elements.push(curr);
                
-                obj = stackPush(parser.getCurrentName(),new JSONArray());
+                obj = stackPush(parser.getCurrentName(),getNewJsonArray());
                 break;
             }
             case END_ARRAY:
@@ -110,13 +105,13 @@ public class TokenStack
                 if (elements.empty()) curr = null;
                 else curr = elements.peek();
                 
-                obj = stackPop(callback, curr, JSONArray.class, match);
+                obj = stackPop(callback, curr, getJsonArrayType(), match);
                 break;
             }
             case VALUE_EMBEDDED_OBJECT:
             case START_OBJECT:
             {
-                obj = stackPush(parser.getCurrentName(), new JSONObject());
+                obj = stackPush(parser.getCurrentName(), getNewJsonObject());
                 
                 if (isArray(curr)) {
                     if (((ArrayToken)curr).getValue() != null &&
@@ -176,7 +171,7 @@ public class TokenStack
                 if (elements.empty()) curr = null;
                 else curr = elements.peek();
                 
-                obj = stackPop(callback, curr, JSONObject.class, null);
+                obj = stackPop(callback, curr, this.getJsonObjectType(), null);
                 break;
             }
             case FIELD_NAME:
@@ -252,7 +247,7 @@ public class TokenStack
 
             if (rootMatch != null && elements.empty() && getParents) {
                if (isArray(curr)) {
-                    obj = new JSONArray();
+                    obj = this.getNewJsonArray();
                 }
                 callback.resultFoundExit(parser.getCurrentToken(), obj, rootMatch);
                 rootMatch = null;
@@ -260,6 +255,22 @@ public class TokenStack
         }
     }
     
+    private Object getNewJsonObject() {
+        return conf.jsonProvider().createMap();
+    }
+
+    private Object getJsonArrayType() {
+        return this.jsonArrayType;
+    }
+
+    private Object getNewJsonArray() {
+        return conf.jsonProvider().createArray();
+    }
+   
+    private Class<? extends Object> getJsonObjectType() {
+        return this.jsonObjectType;
+    }
+
     private Object stackPush(String key, Object jsObj) throws Exception {
         if (jsObj == null) {
             return null;
@@ -268,10 +279,10 @@ public class TokenStack
         if (this.objStack.size() > 0) {
             Object obj = this.objStack.peek();
             //log.trace("PP : Push[" + this.objStack.size() + "] " + jsObj.getClass().getSimpleName() + " -> " + obj.getClass());
-            if (obj.getClass() == JSONArray.class) {
-                ((JSONArray)obj).add(jsObj);
-            } else if (obj.getClass() == JSONObject.class) {
-                ((JSONObject)obj).put(key, jsObj);
+            if (obj.getClass() == getJsonArrayType()) {
+                ((List)obj).add(jsObj);
+            } else if (obj.getClass() == getJsonObjectType()) {
+                ((HashMap<String,Object>)obj).put(key, jsObj);
             } else {
                 throw new Exception("Unhandled type: " + obj.getClass());
             }
@@ -323,9 +334,9 @@ public class TokenStack
     public String objShow(Object obj) {
         if (obj != null) {
             Class cls = obj.getClass();
-            if (cls == JSONObject.class) {
+            if (cls == this.getJsonObjectType()) {
                 return "JSONObject: " + ((JSONObject)obj).toString();
-            } else if (cls == JSONArray.class) {
+            } else if (cls == this.getJsonArrayType()) {
                 return "JSONArray: " + Arrays.toString(((JSONArray)obj).toArray());                
             }
         }
@@ -338,11 +349,11 @@ public class TokenStack
         }
         
         Class objInCls = objIn.getClass();
-        if (objInCls == JSONObject.class) {
-            JSONObject obj = (JSONObject)objIn;
+        if (objInCls == this.getJsonObjectType()) {
+            HashMap obj = (HashMap)objIn;
             obj.put(((ObjectToken)el).key, value);
-        } else if (objInCls == JSONArray.class) {
-            JSONArray obj = (JSONArray)objIn;
+        } else if (objInCls == this.getJsonArrayType()) {
+            ArrayList obj = (ArrayList)objIn;
             obj.add(value);
         } else {
             throw new Exception("Unhandled type: " + objInCls);
