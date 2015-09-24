@@ -15,15 +15,11 @@
 package com.jayway.jsonpath.internal.token;
 
 import com.jayway.jsonpath.internal.PathRef;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  *
  */
 public class RootPathToken extends PathToken {
-
-    private static final Logger logger = LoggerFactory.getLogger(RootPathToken.class);
 
     private PathToken tail;
     private int tokenCount;
