@@ -20,14 +20,10 @@ import com.google.gson.reflect.TypeToken;
 import com.jayway.jsonpath.Configuration;
 import com.jayway.jsonpath.JsonPathException;
 import com.jayway.jsonpath.TypeRef;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.util.concurrent.Callable;
 
 public class GsonMappingProvider implements MappingProvider {
-
-    private static final Logger logger = LoggerFactory.getLogger(GsonMappingProvider.class);
 
     private final Callable<Gson> factory;
 
@@ -55,7 +51,6 @@ public class GsonMappingProvider implements MappingProvider {
                 }
             };
         } catch (ClassNotFoundException e) {
-            logger.error("Gson not found on class path. No converters configured.");
             throw new JsonPathException("Gson not found on path", e);
         }
     }
