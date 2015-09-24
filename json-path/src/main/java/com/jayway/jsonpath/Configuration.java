@@ -18,9 +18,6 @@ import com.jayway.jsonpath.internal.DefaultsImpl;
 import com.jayway.jsonpath.spi.json.JsonProvider;
 import com.jayway.jsonpath.spi.mapper.MappingProvider;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -35,8 +32,6 @@ import static java.util.Arrays.asList;
  * Immutable configuration object
  */
 public class Configuration {
-
-    private static final Logger logger = LoggerFactory.getLogger(Configuration.class);
 
     private static Defaults DEFAULTS = null;
 
