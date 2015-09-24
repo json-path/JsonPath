@@ -3,8 +3,6 @@ package com.jayway.jsonpath.internal.token;
 
 import java.util.*;
 
-import net.minidev.json.JSONArray;
-import net.minidev.json.JSONObject;
 import com.jayway.jsonpath.Configuration;
 import com.jayway.jsonpath.EvaluationCallback;
 import com.jayway.jsonpath.internal.Path;
@@ -323,26 +321,13 @@ public class TokenStack
             callback.resultFound("Stack", popObj, path);
         } 
         
-        //log.info("PP : Parent now[" + this.objStack.size() + "]: " + objShow(obj));
         return obj;
     }
     
     private boolean isArray(TokenStackElement current) { 
         return current != null && current.getType() == TokenType.ARRAY_TOKEN;
     }
-    
-    public String objShow(Object obj) {
-        if (obj != null) {
-            Class cls = obj.getClass();
-            if (cls == this.getJsonObjectType()) {
-                return "JSONObject: " + ((JSONObject)obj).toString();
-            } else if (cls == this.getJsonArrayType()) {
-                return "JSONArray: " + Arrays.toString(((JSONArray)obj).toArray());                
-            }
-        }
-        return "NA";
-    }
-    
+        
     private void objPutVal(Object objIn, TokenStackElement el, Object value) throws Exception {
         if (objIn == null) {
             return;
