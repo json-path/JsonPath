@@ -178,7 +178,7 @@ public class JsonPath {
                 Object res = path.evaluate(jsonObject, jsonObject, configuration).getValue(false);
                 if(optAlwaysReturnList && path.isDefinite()){
                     Object array = configuration.jsonProvider().createArray();
-                    configuration.jsonProvider().setProperty(array, 0, res);
+                    configuration.jsonProvider().setArrayIndex(array, 0, res);
                     return (T)array;
                 } else {
                     return (T)res;

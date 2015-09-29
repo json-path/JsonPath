@@ -56,7 +56,12 @@ public abstract class AbstractJsonProvider implements JsonProvider {
         if (!isArray(array)) {
             throw new UnsupportedOperationException();
         } else {
-            ((List) array).set(index, newValue);
+            List l = (List) array;
+            if (index == l.size()){
+                l.add(newValue);
+            }else {
+                l.set(index, newValue);
+            }
         }
     }
 
@@ -78,10 +83,10 @@ public abstract class AbstractJsonProvider implements JsonProvider {
     }
 
     /**
-     * Sets a value in an object or array
+     * Sets a value in an object
      *
-     * @param obj   an array or an object
-     * @param key   a String key or a numerical index
+     * @param obj   an object
+     * @param key   a String key
      * @param value the value to set
      */
     @SuppressWarnings("unchecked")
@@ -89,14 +94,7 @@ public abstract class AbstractJsonProvider implements JsonProvider {
         if (isMap(obj))
             ((Map) obj).put(key.toString(), value);
         else {
-            List list = (List) obj;
-            int index;
-            if (key != null) {
-                index = key instanceof Integer ? (Integer) key : Integer.parseInt(key.toString());
-            } else {
-                index = list.size();
-            }
-            list.add(index, value);
+            throw new JsonPathException("setProperty operation cannot be used with " + obj!=null?obj.getClass().getName():"null");
         }
     }
 
@@ -159,21 +157,21 @@ public abstract class AbstractJsonProvider implements JsonProvider {
         } else if(obj instanceof String){
             return ((String)obj).length();
         }
-        throw new JsonPathException("length operation can not applied to " + obj!=null?obj.getClass().getName():"null");
+        throw new JsonPathException("length operation cannot be applied to " + obj!=null?obj.getClass().getName():"null");
     }
 
     /**
-     * Converts given object to an {@link Iterable}
+     * Converts given array to an {@link Iterable}
      *
-     * @param obj an array or an object
-     * @return the entries for an array or the values for a map
+     * @param obj an array
+     * @return an Iterable that iterates over the entries of an array
      */
     @SuppressWarnings("unchecked")
     public Iterable<? extends Object> toIterable(Object obj) {
         if (isArray(obj))
             return ((Iterable) obj);
         else
-            return ((Map) obj).values();
+            throw new JsonPathException("Cannot iterate over " + obj!=null?obj.getClass().getName():"null");
     }
 
     @Override

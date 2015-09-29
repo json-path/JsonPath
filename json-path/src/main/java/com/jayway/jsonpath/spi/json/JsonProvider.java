@@ -76,10 +76,10 @@ public interface JsonProvider {
     int length(Object obj);
 
     /**
-     * Converts given object to an {@link Iterable}
+     * Converts given array to an {@link Iterable}
      *
-     * @param obj an array or an object
-     * @return the entries for an array or the values for a map
+     * @param obj an array
+     * @return an Iterable that iterates over the entries of an array
      */
     Iterable<?> toIterable(Object obj);
 
@@ -113,7 +113,7 @@ public interface JsonProvider {
     Object getArrayIndex(Object obj, int idx, boolean unwrap);
 
     /**
-     * Sets a value in an array
+     * Sets a value in an array. If the array is too small, the provider is supposed to enlarge it.
      *
      * @param array an array
      * @param idx index
@@ -131,10 +131,10 @@ public interface JsonProvider {
     Object getMapValue(Object obj, String key);
 
     /**
-     * Sets a value in an object or array
+     * Sets a value in an object
      *
-     * @param obj   an array or an object
-     * @param key   a String key or a numerical index
+     * @param obj   an object
+     * @param key   a String key
      * @param value the value to set
      */
     void setProperty(Object obj, Object key, Object value);

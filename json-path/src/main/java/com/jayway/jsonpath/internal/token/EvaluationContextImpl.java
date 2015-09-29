@@ -80,8 +80,8 @@ public class EvaluationContextImpl implements EvaluationContext {
             updateOperations.add(operation);
         }
 
-        configuration.jsonProvider().setProperty(valueResult, resultIndex, model);
-        configuration.jsonProvider().setProperty(pathResult, resultIndex, path);
+        configuration.jsonProvider().setArrayIndex(valueResult, resultIndex, model);
+        configuration.jsonProvider().setArrayIndex(pathResult, resultIndex, path);
         resultIndex++;
         if(!configuration().getEvaluationListeners().isEmpty()){
             int idx = resultIndex - 1;
