@@ -77,11 +77,40 @@ public class PredicatePathToken extends PathToken {
         Predicate.PredicateContext ctx = new PredicateContextImpl(obj, root, configuration, evaluationContext.documentEvalCache());
 
         for (Predicate predicate : predicates) {
-            if (!predicate.apply (ctx)) {
+            if (!predicate.apply(ctx)) {
                 return false;
             }
         }
         return true;
+    }
+
+    private StackElementWrapper wrapper = null;
+
+    @Override
+    public boolean checkForMatch(TokenStack stack, int idx)
+    {
+        assert(stack.getStack().size() > idx);
+        TokenStackElement curr = stack.getStack().get(idx);
+
+        if (curr.getType() == TokenType.ARRAY_TOKEN || curr.getType() == TokenType.OBJECT_TOKEN) {
+            if (null == wrapper) {
+                wrapper = new StackElementWrapper(stack, idx);
+            } else {
+                wrapper.reset(idx);
+            }
+
+            for (Predicate predicate : predicates) {
+                if (!predicate.apply(wrapper)) {
+                    //if (!predicate.check(stack, idx)) {
+                    return false;
+                }
+            }
+            if (isLeaf()) {
+                return stack.getStack().size() - 1 == idx;
+            }
+            return next().checkForMatch(stack, idx + 1);
+        }
+        return false;
     }
 
     @Override

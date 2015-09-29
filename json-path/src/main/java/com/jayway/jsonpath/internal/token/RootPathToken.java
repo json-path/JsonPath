@@ -55,6 +55,16 @@ public class RootPathToken extends PathToken {
     }
 
     @Override
+    public boolean checkForMatch(TokenStack stack, int idx)
+    {
+        assert(0 == idx);
+        if (0 == stack.getStack().size()) {
+            return isLeaf();
+        }
+        return !isLeaf() && next().checkForMatch(stack, 0);
+    }
+
+    @Override
     public String getPathFragment() {
         return "$";
     }

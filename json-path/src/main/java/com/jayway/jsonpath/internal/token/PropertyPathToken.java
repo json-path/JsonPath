@@ -14,11 +14,12 @@
  */
 package com.jayway.jsonpath.internal.token;
 
+import java.util.List;
+import java.util.logging.Logger;
+
 import com.jayway.jsonpath.PathNotFoundException;
 import com.jayway.jsonpath.internal.PathRef;
 import com.jayway.jsonpath.internal.Utils;
-
-import java.util.List;
 
 /**
  *
@@ -42,6 +43,29 @@ public class PropertyPathToken extends PathToken {
         }
 
         handleObjectProperty(currentPath, model, ctx, properties);
+    }
+
+    @Override
+    public boolean checkForMatch(TokenStack stack, int idx)
+    {
+        if (stack.getStack().size() <= idx) return false;
+        TokenStackElement curr = stack.getStack().get(idx);
+
+        if (curr.getType() == TokenType.OBJECT_TOKEN) {
+            ObjectToken token = (ObjectToken)curr;
+            if (token.getKey() != null) {
+                for (String checkKey : properties) {
+                    if (token.getKey().equals(checkKey)) {
+                        if (isLeaf()) {
+                            return stack.getStack().size() - 1 == idx;
+                        }
+                        return next().checkForMatch(stack, idx + 1);
+                    }
+                }
+            }
+        }
+
+        return false;
     }
 
     @Override

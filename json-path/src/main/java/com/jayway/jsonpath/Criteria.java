@@ -16,7 +16,7 @@ package com.jayway.jsonpath;
 
 import com.jayway.jsonpath.internal.Path;
 import com.jayway.jsonpath.internal.PathCompiler;
-import com.jayway.jsonpath.internal.token.PredicateContextImpl;
+import com.jayway.jsonpath.internal.token.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -35,7 +35,7 @@ import static com.jayway.jsonpath.internal.Utils.notNull;
  *
  */
 @SuppressWarnings("unchecked")
-public class Criteria implements Predicate {
+public class Criteria implements StreamingPredicate {
 
     private static final Logger logger = LoggerFactory.getLogger(Criteria.class);
 
@@ -65,6 +65,52 @@ public class Criteria implements Predicate {
             }
 
             @Override
+            public boolean check(TokenStackElement left,
+                                 TokenStackElement right) {
+
+                if (left.getType() == right.getType()) {
+                    switch (left.getType()) {
+                    case ARRAY_TOKEN:
+                    {
+                        ArrayToken leftT = (ArrayToken)left;
+                        ArrayToken rightT = (ArrayToken)right;
+                        return check(leftT.getValue(), right.getValue());
+                        //break;
+                    }
+                    case OBJECT_TOKEN:
+                    {
+                        ObjectToken leftT = (ObjectToken)left;
+                        ObjectToken rightT = (ObjectToken)right;
+                        return check(leftT.getValue(), right.getValue());
+                        //break;
+                    }
+                    case STRING_TOKEN:
+                    {
+                        StringToken leftT = (StringToken)left;
+                        StringToken rightT = (StringToken)right;
+                        if (leftT.value != null && rightT.value != null) {
+                            return leftT.value.equals(rightT.value);
+                        }
+                        return leftT == rightT;
+                    }
+                    case FLOAT_TOKEN:
+                    {
+                        FloatToken leftT = (FloatToken)left;
+                        FloatToken rightT = (FloatToken)right;
+                        return leftT.value == rightT.value;
+                    }
+                    case INTEGER_TOKEN:
+                    {
+                        IntToken leftT = (IntToken)left;
+                        IntToken rightT = (IntToken)right;
+                        return leftT.value == rightT.value;
+                    }
+                    }
+                }
+                return false;
+            }
+
+            @Override
             public String toString() {
                 return "==";
             }
@@ -75,6 +121,11 @@ public class Criteria implements Predicate {
                 boolean res = (0 != safeCompare(expected, model));
                 if (logger.isDebugEnabled()) logger.debug("[{}] {} [{}] => {}", model, name(), expected, res);
                 return res;
+            }
+
+            @Override
+            public boolean check(TokenStackElement left, TokenStackElement right) {
+                return !EQ.check(left, right);
             }
 
             @Override
@@ -94,6 +145,51 @@ public class Criteria implements Predicate {
             }
 
             @Override
+            public boolean check(TokenStackElement left, TokenStackElement right) {
+
+                if (left.getType() == right.getType()) {
+                    switch (left.getType()) {
+                    case ARRAY_TOKEN:
+                    {
+                        ArrayToken leftT = (ArrayToken)left;
+                        ArrayToken rightT = (ArrayToken)right;
+                        return check(leftT.getValue(), right.getValue());
+                        //break;
+                    }
+                    case OBJECT_TOKEN:
+                    {
+                        ObjectToken leftT = (ObjectToken)left;
+                        ObjectToken rightT = (ObjectToken)right;
+                        return check(leftT.getValue(), right.getValue());
+                        //break;
+                    }
+                    case STRING_TOKEN:
+                    {
+                        StringToken leftT = (StringToken)left;
+                        StringToken rightT = (StringToken)right;
+                        if (leftT.value != null && rightT.value != null) {
+                            return leftT.value.compareTo(rightT.value) > 0;
+                        }
+                        break;
+                    }
+                    case FLOAT_TOKEN:
+                    {
+                        FloatToken leftT = (FloatToken)left;
+                        FloatToken rightT = (FloatToken)right;
+                        return leftT.value > rightT.value;
+                    }
+                    case INTEGER_TOKEN:
+                    {
+                        IntToken leftT = (IntToken)left;
+                        IntToken rightT = (IntToken)right;
+                        return leftT.value > rightT.value;
+                    }
+                    }
+                }
+                return false;
+            }
+
+            @Override
             public String toString() {
                 return ">";
             }
@@ -107,6 +203,51 @@ public class Criteria implements Predicate {
                 boolean res = (0 >= safeCompare(expected, model));
                 if (logger.isDebugEnabled()) logger.debug("[{}] {} [{}] => {}", model, name(), expected, res);
                 return res;
+            }
+
+            @Override
+            public boolean check(TokenStackElement left,
+                                 TokenStackElement right) {
+                if (left.getType() == right.getType()) {
+                    switch (left.getType()) {
+                    case ARRAY_TOKEN:
+                    {
+                        ArrayToken leftT = (ArrayToken)left;
+                        ArrayToken rightT = (ArrayToken)right;
+                        return check(leftT.getValue(), right.getValue());
+                        //break;
+                    }
+                    case OBJECT_TOKEN:
+                    {
+                        ObjectToken leftT = (ObjectToken)left;
+                        ObjectToken rightT = (ObjectToken)right;
+                        return check(leftT.getValue(), right.getValue());
+                        //break;
+                    }
+                    case STRING_TOKEN:
+                    {
+                        StringToken leftT = (StringToken)left;
+                        StringToken rightT = (StringToken)right;
+                        if (leftT.value != null && rightT.value != null) {
+                            return leftT.value.compareTo(rightT.value) >= 0;
+                        }
+                        break;
+                    }
+                    case FLOAT_TOKEN:
+                    {
+                        FloatToken leftT = (FloatToken)left;
+                        FloatToken rightT = (FloatToken)right;
+                        return leftT.value >= rightT.value;
+                    }
+                    case INTEGER_TOKEN:
+                    {
+                        IntToken leftT = (IntToken)left;
+                        IntToken rightT = (IntToken)right;
+                        return leftT.value >= rightT.value;
+                    }
+                    }
+                }
+                return false;
             }
 
             @Override
@@ -126,6 +267,52 @@ public class Criteria implements Predicate {
             }
 
             @Override
+            public boolean check(TokenStackElement left,
+                                 TokenStackElement right) {
+
+                if (left.getType() == right.getType()) {
+                    switch (left.getType()) {
+                    case ARRAY_TOKEN:
+                    {
+                        ArrayToken leftT = (ArrayToken)left;
+                        ArrayToken rightT = (ArrayToken)right;
+                        return check(leftT.getValue(), right.getValue());
+                        //break;
+                    }
+                    case OBJECT_TOKEN:
+                    {
+                        ObjectToken leftT = (ObjectToken)left;
+                        ObjectToken rightT = (ObjectToken)right;
+                        return check(leftT.getValue(), right.getValue());
+                        //break;
+                    }
+                    case STRING_TOKEN:
+                    {
+                        StringToken leftT = (StringToken)left;
+                        StringToken rightT = (StringToken)right;
+                        if (leftT.value != null && rightT.value != null) {
+                            return leftT.value.compareTo(rightT.value) < 0;
+                        }
+                        break;
+                    }
+                    case FLOAT_TOKEN:
+                    {
+                        FloatToken leftT = (FloatToken)left;
+                        FloatToken rightT = (FloatToken)right;
+                        return leftT.value < rightT.value;
+                    }
+                    case INTEGER_TOKEN:
+                    {
+                        IntToken leftT = (IntToken)left;
+                        IntToken rightT = (IntToken)right;
+                        return leftT.value < rightT.value;
+                    }
+                    }
+                }
+                return false;
+            }
+
+            @Override
             public String toString() {
                 return "<";
             }
@@ -139,6 +326,52 @@ public class Criteria implements Predicate {
                 boolean res = (0 <= safeCompare(expected, model));
                 if (logger.isDebugEnabled()) logger.debug("[{}] {} [{}] => {}", model, name(), expected, res);
                 return res;
+            }
+
+            @Override
+            public boolean check(TokenStackElement left,
+                                 TokenStackElement right) {
+
+                if (left.getType() == right.getType()) {
+                    switch (left.getType()) {
+                    case ARRAY_TOKEN:
+                    {
+                        ArrayToken leftT = (ArrayToken)left;
+                        ArrayToken rightT = (ArrayToken)right;
+                        return check(leftT.getValue(), right.getValue());
+                        //break;
+                    }
+                    case OBJECT_TOKEN:
+                    {
+                        ObjectToken leftT = (ObjectToken)left;
+                        ObjectToken rightT = (ObjectToken)right;
+                        return check(leftT.getValue(), right.getValue());
+                        //break;
+                    }
+                    case STRING_TOKEN:
+                    {
+                        StringToken leftT = (StringToken)left;
+                        StringToken rightT = (StringToken)right;
+                        if (leftT.value != null && rightT.value != null) {
+                            return leftT.value.compareTo(rightT.value) <= 0;
+                        }
+                        break;
+                    }
+                    case FLOAT_TOKEN:
+                    {
+                        FloatToken leftT = (FloatToken)left;
+                        FloatToken rightT = (FloatToken)right;
+                        return leftT.value <= rightT.value;
+                    }
+                    case INTEGER_TOKEN:
+                    {
+                        IntToken leftT = (IntToken)left;
+                        IntToken rightT = (IntToken)right;
+                        return leftT.value <= rightT.value;
+                    }
+                    }
+                }
+                return false;
             }
 
             @Override
@@ -160,6 +393,28 @@ public class Criteria implements Predicate {
                 if (logger.isDebugEnabled()) logger.debug("[{}] {} [{}] => {}", model, name(), join(", ", exps), res);
                 return res;
             }
+
+            @Override
+            public boolean check(TokenStackElement left,
+                                 TokenStackElement right) {
+
+                throw new UnsupportedOperationException();
+                /*
+                switch (left.getType()) {
+                case ARRAY_TOKEN:
+                {
+                    ArrayToken leftT = (ArrayToken)left;
+                    return (EQ.check(leftT.getValue(), right));
+                }
+                case OBJECT_TOKEN:
+                case STRING_TOKEN:
+                case FLOAT_TOKEN:
+                case INTEGER_TOKEN:
+                    break;
+                }
+                return false;
+                */
+            }
         },
         NIN {
             @Override
@@ -168,6 +423,27 @@ public class Criteria implements Predicate {
                 boolean res = !nexps.contains(model);
                 if (logger.isDebugEnabled()) logger.debug("[{}] {} [{}] => {}", model, name(), join(", ", nexps), res);
                 return res;
+            }
+
+            @Override
+            public boolean check(TokenStackElement left,
+                                 TokenStackElement right) {
+                throw new UnsupportedOperationException();
+                /*
+                switch (left.getType()) {
+                case ARRAY_TOKEN:
+                {
+                    ArrayToken leftT = (ArrayToken)left;
+                    return (NE.check(leftT.getValue(), right));
+                }
+                case OBJECT_TOKEN:
+                case STRING_TOKEN:
+                case FLOAT_TOKEN:
+                case INTEGER_TOKEN:
+                    break;
+                }
+                return false;
+                */
             }
         },
         CONTAINS {
@@ -190,6 +466,51 @@ public class Criteria implements Predicate {
                 }
                 if (logger.isDebugEnabled()) logger.debug("[{}] {} [{}] => {}", model, name(), expected, res);
                 return res;
+            }
+
+            @Override
+            public boolean check(TokenStackElement left,
+                                 TokenStackElement right) {
+
+                //throw new UnsupportedOperationException();
+                switch (right.getType()) {
+                case ARRAY_TOKEN:
+                {
+                    ArrayToken token = (ArrayToken)right;
+                    return (EQ.check(token.getValue(), left));
+                }
+                case OBJECT_TOKEN:
+                {
+                    ObjectToken token = (ObjectToken)right;
+                    return (EQ.check(token.getValue(), left));
+                }
+                case STRING_TOKEN:
+                {
+                    if (left.getType() == TokenType.STRING_TOKEN) {
+                        StringToken tokenL = (StringToken)right;
+                        StringToken tokenR = (StringToken)left;
+                        if (tokenL.value != null && tokenR.value != null) {
+                            return tokenL.value.equals(tokenR.value);
+                        }
+                    }
+                    break;
+                }
+                case FLOAT_TOKEN:
+                    if (left.getType() == TokenType.FLOAT_TOKEN) {
+                        FloatToken tokenL = (FloatToken)right;
+                        FloatToken tokenR = (FloatToken)left;
+                        return tokenL.value == tokenR.value;
+                    }
+                    break;
+                case INTEGER_TOKEN:
+                    if (left.getType() == TokenType.INTEGER_TOKEN) {
+                        IntToken tokenL = (IntToken)right;
+                        IntToken tokenR = (IntToken)left;
+                        return tokenL.value == tokenR.value;
+                    }
+                    break;
+                }
+                return false;
             }
         },
         ALL {
@@ -219,6 +540,28 @@ public class Criteria implements Predicate {
                 }
                 return res;
             }
+
+            @Override
+            public boolean check(TokenStackElement left,
+                                 TokenStackElement right) {
+
+                throw new UnsupportedOperationException();
+                /*
+                switch (left.getType()) {
+                case ARRAY_TOKEN:
+                {
+                    ArrayToken leftT = (ArrayToken)left;
+                    return (EQ.check(leftT.getValue(), right));
+                }
+                case OBJECT_TOKEN:
+                case STRING_TOKEN:
+                case FLOAT_TOKEN:
+                case INTEGER_TOKEN:
+                    break;
+                }
+                return false;
+                */
+            }
         },
         SIZE {
             @Override
@@ -240,11 +583,45 @@ public class Criteria implements Predicate {
                 }
                 return res;
             }
+
+            @Override
+            public boolean check(TokenStackElement left,
+                                 TokenStackElement right) {
+                throw new UnsupportedOperationException();
+                /*
+                if (left.getType() == TokenType.INTEGER_TOKEN) {
+                    int size = ((IntToken)left).value;
+                    switch (right.getType()) {
+                    case ARRAY_TOKEN:
+                    {
+                        ArrayToken token = (ArrayToken)right;
+                        return (token.getIndex() + 1) == size;
+                    }
+                    case STRING_TOKEN:
+                    {
+                        StringToken token = (StringToken)right;
+                        return token.value.length() == size;
+                    }
+                    case OBJECT_TOKEN:
+                    case FLOAT_TOKEN:
+                    case INTEGER_TOKEN:
+                        break;
+                    }
+                }
+                return false;
+                */
+            }
         },
         EXISTS {
             @Override
             boolean eval(Object expected, Object model, PredicateContext ctx) {
                 //This must be handled outside
+                throw new UnsupportedOperationException();
+            }
+
+            @Override
+            public boolean check(TokenStackElement left,
+                                 TokenStackElement right) {
                 throw new UnsupportedOperationException();
             }
         },
@@ -255,6 +632,11 @@ public class Criteria implements Predicate {
                 final Class<?> actType = model == null ? null : model.getClass();
 
                 return actType != null && expType.isAssignableFrom(actType);
+            }
+
+            @Override
+            public boolean check(TokenStackElement left, TokenStackElement right) {
+                return (left.getType() == right.getType());
             }
         },
         REGEX {
@@ -281,6 +663,20 @@ public class Criteria implements Predicate {
             }
 
             @Override
+            public boolean check(TokenStackElement left, TokenStackElement right) {
+                if (right.getType() == TokenType.STRING_TOKEN
+                    && left.getType() == right.getType())
+                {
+                    StringToken rightT = (StringToken)right;
+                    if (null == rightT.pattern) {
+                        rightT.pattern = Pattern.compile(rightT.value);
+                    }
+                    return rightT.pattern.matcher(((StringToken)left).value).matches();
+                }
+                return false;
+            }
+
+            @Override
             public String toString() {
                 return "=~";
             }
@@ -291,6 +687,14 @@ public class Criteria implements Predicate {
                 PredicateContextImpl pci = (PredicateContextImpl) ctx;
                 Predicate exp = (Predicate) expected;
                 return exp.apply(new PredicateContextImpl(model, ctx.root(), ctx.configuration(), pci.documentPathCache()));
+            }
+
+            @Override
+            public boolean check(TokenStackElement left, TokenStackElement right) {
+                //PredicateContextImpl pci = (PredicateContextImpl) ctx;
+                //StreamingPredicate exp = (StreamingPredicate) left;
+                //return exp.check();
+                throw new UnsupportedOperationException();
             }
         },
         NOT_EMPTY {
@@ -310,9 +714,34 @@ public class Criteria implements Predicate {
                 }
                 return res;
             }
+
+            @Override
+            public boolean check(TokenStackElement left,
+                                 TokenStackElement right) {
+                switch (right.getType()) {
+                case ARRAY_TOKEN:
+                {
+                    ArrayToken token = (ArrayToken)right;
+                    return token.getValue() != null;
+                }
+                case STRING_TOKEN:
+                {
+                    StringToken token = (StringToken)right;
+                    return token.value.length() > 0;
+                }
+                case OBJECT_TOKEN:
+                case FLOAT_TOKEN:
+                case INTEGER_TOKEN:
+                    break;
+                }
+                return false;
+            }
         };
 
-        abstract boolean eval(Object expected, Object model, PredicateContext ctx);
+        abstract boolean eval(Object expected, Object model,
+                              PredicateContext ctx);
+
+        abstract boolean check(TokenStackElement left, TokenStackElement right);
 
         public static CriteriaType parse(String str) {
             if ("==".equals(str)) {
@@ -414,6 +843,43 @@ public class Criteria implements Predicate {
         }
     }
 
+    @Override
+    public boolean check(TokenStack stack, int idx) {
+        for (Criteria criteria : criteriaChain) {
+            if (!criteria.check2(stack, idx)) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    private boolean check2(TokenStack stack, int idx) {
+        if (CriteriaType.EXISTS == criteriaType) {
+            boolean exists = ((Boolean) right);
+            try {
+                //Configuration c = Configuration.builder().jsonProvider(ctx.configuration().jsonProvider()).options(Option.REQUIRE_PROPERTIES).build();
+                //Object value = ((Path) left).evaluate(ctx.item(), ctx.root(), c).getValue();
+                Object value = null;
+
+                if (exists) {
+                    return (value != null);
+                } else {
+                    return (value == null);
+                }
+            } catch (PathNotFoundException e) {
+                return !exists;
+            }
+        }
+        try {
+            //Object leftVal = evaluateIfPath(left, ctx);
+            //Object rightVal = evaluateIfPath(right, ctx);
+
+            //return criteriaType.check(rightVal, leftVal);
+        } catch (ValueCompareException e) {
+        } catch (PathNotFoundException e) {
+        }
+        return false;
+    }
 
     /**
      * Static factory method to create a Criteria using the provided key

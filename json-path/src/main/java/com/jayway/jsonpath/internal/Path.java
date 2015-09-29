@@ -15,6 +15,7 @@
 package com.jayway.jsonpath.internal;
 
 import com.jayway.jsonpath.Configuration;
+import com.jayway.jsonpath.internal.token.TokenStack;
 
 /**
  *
@@ -42,6 +43,12 @@ public interface Path {
      * @return EvaluationContext containing results of evaluation
      */
     EvaluationContext evaluate(Object document, Object rootDocument, Configuration configuration, boolean forUpdate);
+
+    /**
+     * checks the parser state represented by stack and determines if this
+     * path matches it
+     */
+    boolean checkForMatch(TokenStack stack);
 
     /**
      *

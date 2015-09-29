@@ -15,6 +15,7 @@
 package com.jayway.jsonpath;
 
 import com.jayway.jsonpath.internal.Utils;
+import com.jayway.jsonpath.internal.token.TokenStack;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -28,7 +29,7 @@ import static java.util.Arrays.asList;
 /**
  *
  */
-public abstract class Filter implements Predicate {
+public abstract class Filter implements StreamingPredicate {
 
     private static final Logger logger = LoggerFactory.getLogger(Filter.class);
     private static final Pattern OPERATOR_SPLIT = Pattern.compile("((?<=&&|\\|\\|)|(?=&&|\\|\\|))");
@@ -56,6 +57,8 @@ public abstract class Filter implements Predicate {
     @Override
     public abstract boolean apply(PredicateContext ctx);
 
+    @Override
+    public abstract boolean check(TokenStack stack, int idx);
 
     public Filter or(final Predicate other){
         return new OrFilter(this, other);
@@ -78,6 +81,11 @@ public abstract class Filter implements Predicate {
         @Override
         public boolean apply(PredicateContext ctx) {
             return predicate.apply(ctx);
+        }
+
+        @Override
+        public boolean check(TokenStack stack, int idx) {
+            return ((StreamingPredicate)predicate).check(stack, idx);
         }
 
         @Override
@@ -115,6 +123,16 @@ public abstract class Filter implements Predicate {
         }
 
         @Override
+        public boolean check(TokenStack stack, int idx) {
+            for (Predicate predicate : predicates) {
+                if(!((StreamingPredicate)predicate).check(stack, idx)){
+                    return false;
+                }
+            }
+            return true;
+        }
+
+        @Override
         public String toString() {
             return "(" + Utils.join(" && ", predicates) + ")";
         }
@@ -124,7 +142,7 @@ public abstract class Filter implements Predicate {
 
         private final Predicate left;
         private final Predicate right;
-  
+
         private OrFilter(Predicate left, Predicate right) {
             this.left = left;
             this.right = right;
@@ -138,6 +156,12 @@ public abstract class Filter implements Predicate {
         public boolean apply(PredicateContext ctx) {
             boolean a = left.apply(ctx);
             return a || right.apply(ctx);
+        }
+
+        @Override
+        public boolean check(TokenStack stack, int idx) {
+            boolean a = ((StreamingPredicate)left).check(stack, idx);
+            return a || ((StreamingPredicate)right).check(stack, idx);
         }
 
         @Override
