@@ -8,8 +8,6 @@ import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.fasterxml.jackson.databind.node.TextNode;
 import com.jayway.jsonpath.InvalidJsonException;
 import com.jayway.jsonpath.JsonPathException;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -20,8 +18,6 @@ import java.util.Iterator;
 import java.util.List;
 
 public class JacksonJsonNodeJsonProvider extends AbstractJsonProvider {
-
-    private static final Logger logger = LoggerFactory.getLogger(JacksonJsonProvider.class);
 
     private static final ObjectMapper defaultObjectMapper = new ObjectMapper();
 
@@ -52,8 +48,7 @@ public class JacksonJsonNodeJsonProvider extends AbstractJsonProvider {
         try {
             return objectMapper.readTree(json);
         } catch (IOException e) {
-            logger.debug("Invalid JSON: \n" + json);
-            throw new InvalidJsonException(e);
+            throw new InvalidJsonException(e, json);
         }
     }
 
