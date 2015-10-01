@@ -912,8 +912,7 @@ public class Criteria implements Predicate {
             JsonValue json = (JsonValue) left;
             return right.equals(json.parsed(ctx)) ? 0 : -1;
         } else {
-            logger.debug("Can not compare a {} with a {}", left.getClass().getName(), right.getClass().getName());
-            throw new ValueCompareException();
+            throw new ValueCompareException(left, right);
         }
     }
 
