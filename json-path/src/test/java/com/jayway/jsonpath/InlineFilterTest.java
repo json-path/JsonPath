@@ -11,6 +11,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 public class InlineFilterTest extends BaseTest {
 
     private static ReadContext reader = JsonPath.parse(JSON_DOCUMENT);
+    private static int bookCount = 4;
 
     @Test
     public void root_context_can_be_referred_in_predicate() {
@@ -23,13 +24,13 @@ public class InlineFilterTest extends BaseTest {
     public void multiple_context_object_can_be_refered() {
 
         List all = reader.read("store.book[ ?(@.category == @.category) ]", List.class);
-        assertThat(all.size()).isEqualTo(4);
+        assertThat(all.size()).isEqualTo(bookCount);
 
         List all2 = reader.read("store.book[ ?(@.category == @['category']) ]", List.class);
-        assertThat(all2.size()).isEqualTo(4);
+        assertThat(all2.size()).isEqualTo(bookCount);
 
         List all3 = reader.read("store.book[ ?(@ == @) ]", List.class);
-        assertThat(all3.size()).isEqualTo(4);
+        assertThat(all3.size()).isEqualTo(bookCount);
 
         List none = reader.read("store.book[ ?(@.category != @.category) ]", List.class);
         assertThat(none.size()).isEqualTo(0);

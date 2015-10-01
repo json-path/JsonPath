@@ -78,6 +78,7 @@ public class BaseTest {
             "      ],\n" +
             "      \"bicycle\" : {\n" +
             "         \"foo\" : \"baz\",\n" +
+            "         \"escape\" : \"Esc\\b\\f\\n\\r\\t\\n\\t\\u002A\",\n" +
             "         \"color\" : \"red\",\n" +
             "         \"display-price\" : 19.95,\n" +
             "         \"foo:bar\" : \"fooBar\",\n" +
