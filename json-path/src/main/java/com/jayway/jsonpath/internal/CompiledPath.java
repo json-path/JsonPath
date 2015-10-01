@@ -29,8 +29,6 @@ public class CompiledPath implements Path {
     private final boolean isRootPath;
 
 
-
-
     public CompiledPath(PathToken root, boolean isRootPath) {
         this.root = root;
         this.isRootPath = isRootPath;

@@ -8,34 +8,28 @@ import com.jayway.jsonpath.Filter;
 import com.jayway.jsonpath.JsonPath;
 import com.jayway.jsonpath.Option;
 import com.jayway.jsonpath.PathNotFoundException;
-import com.jayway.jsonpath.Predicate;
+import com.jayway.jsonpath.internal.Cache;
+import com.jayway.jsonpath.internal.CompiledPath;
+import com.jayway.jsonpath.internal.Path;
 import com.jayway.jsonpath.internal.Utils;
 import com.jayway.jsonpath.spi.json.GsonJsonProvider;
-import com.jayway.jsonpath.spi.json.JacksonJsonProvider;
 import com.jayway.jsonpath.spi.json.JsonProvider;
 import com.jayway.jsonpath.spi.mapper.GsonMappingProvider;
-import com.jayway.jsonpath.spi.mapper.JacksonMappingProvider;
-import com.jayway.jsonpath.spi.mapper.MappingProvider;
 import net.minidev.json.JSONAware;
 import net.minidev.json.parser.JSONParser;
 import org.assertj.core.api.Assertions;
 import org.hamcrest.Matchers;
-import org.junit.Assert;
 import org.junit.Test;
 
-import java.io.IOException;
 import java.io.InputStream;
 import java.util.Collections;
-import java.util.EnumSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 import static com.jayway.jsonpath.JsonPath.read;
 import static junit.framework.Assert.assertNull;
 import static junit.framework.Assert.assertTrue;
 import static org.assertj.core.api.Assertions.failBecauseExceptionWasNotThrown;
-import static org.assertj.core.api.Assertions.filter;
 import static org.hamcrest.Matchers.is;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertThat;
@@ -584,28 +578,91 @@ public class IssuesTest extends BaseTest {
                 "}";
 
         JSONParser parser = new JSONParser(JSONParser.MODE_PERMISSIVE);
-        JSONAware jsonModel = (JSONAware)parser.parse(json);
+        JSONAware jsonModel = (JSONAware) parser.parse(json);
 
         jsonModel.toJSONString();
     }
 
     @Test
     public void issue_79() throws Exception {
-         String json = "{ \n" +
-                 "  \"c\": {\n" +
-                 "    \"d1\": {\n" +
-                 "      \"url\": [ \"url1\", \"url2\" ]\n" +
-                 "    },\n" +
-                 "    \"d2\": {\n" +
-                 "      \"url\": [ \"url3\", \"url4\",\"url5\" ]\n" +
-                 "    }\n" +
-                 "  }\n" +
-                 "}";
+        String json = "{ \n" +
+                "  \"c\": {\n" +
+                "    \"d1\": {\n" +
+                "      \"url\": [ \"url1\", \"url2\" ]\n" +
+                "    },\n" +
+                "    \"d2\": {\n" +
+                "      \"url\": [ \"url3\", \"url4\",\"url5\" ]\n" +
+                "    }\n" +
+                "  }\n" +
+                "}";
 
         List<String> res = JsonPath.read(json, "$.c.*.url[2]");
 
         Assertions.assertThat(res).containsExactly("url5");
     }
+
+    @Test
+    public void issue_94_1() throws Exception {
+        Cache cache = new Cache(200);
+        Path dummy = new CompiledPath(null, false);
+        for (int i = 0; i < 10000; ++i) {
+            String key = String.valueOf(i);
+            cache.get(key);
+            cache.put(key, dummy);
+        }
+        Thread.sleep(2000);
+
+        Assertions.assertThat(cache.size()).isEqualTo(200);
+    }
+
+    @Test
+    public void issue_94_2() throws Exception {
+        Cache cache = new Cache(5);
+
+        Path dummy = new CompiledPath(null, false);
+
+        cache.put("1", dummy);
+        cache.put("2", dummy);
+        cache.put("3", dummy);
+        cache.put("4", dummy);
+        cache.put("5", dummy);
+        cache.put("6", dummy);
+
+        cache.get("1");
+        cache.get("2");
+        cache.get("3");
+        cache.get("4");
+        cache.get("5");
+        cache.get("6");
+
+        cache.get("2");
+        cache.get("3");
+        cache.get("4");
+        cache.get("5");
+        cache.get("6");
+
+        cache.get("3");
+        cache.get("4");
+        cache.get("5");
+        cache.get("6");
+
+        cache.get("4");
+        cache.get("5");
+        cache.get("6");
+
+        cache.get("5");
+        cache.get("6");
+
+        cache.get("6");
+
+        Assertions.assertThat(cache.getSilent("6")).isNotNull();
+        Assertions.assertThat(cache.getSilent("5")).isNotNull();
+        Assertions.assertThat(cache.getSilent("4")).isNotNull();
+        Assertions.assertThat(cache.getSilent("3")).isNotNull();
+        Assertions.assertThat(cache.getSilent("2")).isNotNull();
+        Assertions.assertThat(cache.getSilent("1")).isNull();
+    }
+
     @Test
     public void issue_97() throws Exception {
         String json = "{ \"books\": [ " +
@@ -632,5 +689,30 @@ public class IssuesTest extends BaseTest {
         List<String> categories = context.read("$..category", List.class);
 
         Assertions.assertThat(categories).containsOnly("fiction");
+    }
+
+
+    @Test
+    public void issue_99() throws Exception {
+        String json = "{\n" +
+                "    \"array1\": [\n" +
+                "        {\n" +
+                "            \"array2\": []\n" +
+                "        },\n" +
+                "        {\n" +
+                "            \"array2\": [\n" +
+                "                {\n" +
+                "                    \"key\": \"test_key\"\n" +
+                "                }\n" +
+                "            ]\n" +
+                "        }\n" +
+                "    ]\n" +
+                "}";
+
+        Configuration configuration = Configuration.defaultConfiguration().addOptions(Option.DEFAULT_PATH_LEAF_TO_NULL);
+
+        List<String> keys = JsonPath.using(configuration).parse(json).read("$.array1[*].array2[0].key");
+
+        System.out.println(keys);
     }
 }

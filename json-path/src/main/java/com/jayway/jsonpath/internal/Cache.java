@@ -24,11 +24,9 @@ public class Cache {
 
     private final ReentrantLock lock = new ReentrantLock();
 
-
     private final Map<String, Path> map = new ConcurrentHashMap<String, Path>();
     private final Deque<String> queue = new LinkedList<String>();
     private final int limit;
-
 
     public Cache(int limit) {
         this.limit = limit;
@@ -47,7 +45,9 @@ public class Cache {
     }
 
     public Path get(String key) {
-        removeThenAddKey(key);
+        if(map.containsKey(key)){
+            removeThenAddKey(key);
+        }
         return map.get(key);
     }
 
@@ -58,8 +58,6 @@ public class Cache {
         } finally {
             lock.unlock();
         }
-
-
     }
 
     private String removeLast() {
@@ -90,9 +88,7 @@ public class Cache {
         } finally {
             lock.unlock();
         }
-
     }
-
 
     public Path getSilent(String key) {
         return map.get(key);
