@@ -19,6 +19,16 @@ public class ValueCompareException extends JsonPathException {
     public ValueCompareException() {
     }
 
+    /**
+     * Construct the exception with message capturing the classes for two objects.
+     *
+     * @param left first object
+     * @param right second object
+     */
+    public ValueCompareException(final Object left, final Object right) {
+        super(String.format("Can not compare a %1s with a %2s", left.getClass().getName(), right.getClass().getName()));
+    }
+
     public ValueCompareException(String message) {
         super(message);
     }
