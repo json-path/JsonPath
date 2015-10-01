@@ -23,8 +23,6 @@ import com.jayway.jsonpath.internal.EvaluationContext;
 import com.jayway.jsonpath.internal.Path;
 import com.jayway.jsonpath.internal.PathRef;
 import com.jayway.jsonpath.spi.json.JsonProvider;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -39,8 +37,6 @@ import static com.jayway.jsonpath.internal.Utils.notNull;
  *
  */
 public class EvaluationContextImpl implements EvaluationContext {
-
-    private static final Logger logger = LoggerFactory.getLogger(EvaluationContextImpl.class);
 
     private final Configuration configuration;
     private final Object valueResult;

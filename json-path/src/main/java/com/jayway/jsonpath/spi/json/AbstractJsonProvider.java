@@ -15,17 +15,12 @@
 package com.jayway.jsonpath.spi.json;
 
 import com.jayway.jsonpath.JsonPathException;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 
 public abstract class AbstractJsonProvider implements JsonProvider {
-
-    private static final Logger logger = LoggerFactory.getLogger(AbstractJsonProvider.class);
-
 
     /**
      * checks if object is an array
