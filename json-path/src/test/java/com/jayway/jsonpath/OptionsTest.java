@@ -100,4 +100,23 @@ public class OptionsTest extends BaseTest {
         } catch (PathNotFoundException pnf){}
     }
 
+    @Test
+    public void when_property_is_required_exception_is_thrown_2() {
+        Map<String, Object> model = new HashMap<String, Object>();
+        model.put("a", singletonMap("a-key", "a-val"));
+        model.put("b", singletonMap("b-key", "b-val"));
+
+        Configuration conf = Configuration.defaultConfiguration();
+
+        assertThat(using(conf).parse(model).read("$.*.a-key", List.class)).containsExactly("a-val");
+
+
+        conf = conf.addOptions(Option.REQUIRE_PROPERTIES);
+
+        try{
+            using(conf).parse(model).read("$.*.a-key", List.class);
+            fail("Should throw PathNotFoundException");
+        } catch (PathNotFoundException pnf){}
+    }
+
 }
