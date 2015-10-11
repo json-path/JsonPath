@@ -451,7 +451,6 @@ public class Criteria implements Predicate {
                 } else {
                     return (value == null);
                 }
-
             } catch (PathNotFoundException e) {
                 return !exists;
             }
@@ -841,7 +840,7 @@ public class Criteria implements Predicate {
 
         @Override
         public String toString() {
-            return getClass().getSimpleName() + " " + value;
+            return value;
         }
     }
 
