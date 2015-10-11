@@ -132,7 +132,13 @@ public class JsonReader implements ParseContext, DocumentContext {
     @Override
     public <T> T read(String path, Predicate... filters) {
         notEmpty(path, "path can not be null or empty");
-        return read(compile(path, filters));
+        JsonPath cached = configuration.CacheProvider().get(path);
+        if(cached != null){
+        	return read(cached);
+        }else {
+        	return read(compile(path, filters));
+        }
+
     }
 
     @Override
