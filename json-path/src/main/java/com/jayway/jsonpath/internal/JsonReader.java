@@ -23,6 +23,8 @@ import com.jayway.jsonpath.ParseContext;
 import com.jayway.jsonpath.Predicate;
 import com.jayway.jsonpath.ReadContext;
 import com.jayway.jsonpath.TypeRef;
+import com.jayway.jsonpath.spi.cache.CacheProvider;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -132,11 +134,14 @@ public class JsonReader implements ParseContext, DocumentContext {
     @Override
     public <T> T read(String path, Predicate... filters) {
         notEmpty(path, "path can not be null or empty");
-        JsonPath cached = configuration.CacheProvider().get(path);
-        if(cached != null){
-        	return read(cached);
+        CacheProvider cache = configuration.CacheProvider();
+        JsonPath jsonPath = cache.get(path);
+        if(jsonPath != null){
+        	return read(jsonPath);
         }else {
-        	return read(compile(path, filters));
+        	jsonPath = compile(path, filters);
+        	cache.put(path, jsonPath);
+        	return read(jsonPath);
         }
 
     }
