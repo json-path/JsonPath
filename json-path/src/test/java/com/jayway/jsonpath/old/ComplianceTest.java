@@ -73,7 +73,6 @@ public class ComplianceTest {
         assertThat(JsonPath.<List<Integer>>read(json, "$.points[?(@.id == 'i4')].x"), hasItem(-6));
         assertThat(JsonPath.<List<Integer>>read(json, "$.points[*].x"), hasItems(4, -2, 8, -6, 0, 1));
         assertThat(JsonPath.<List<String>>read(json, "$.points[?(@.z)].id"), hasItems("i2", "i5"));
-        assertThat(JsonPath.<String>read(json, "$.points[(@.length - 1)].id"), equalTo("i6"));
     }
 
     @Test

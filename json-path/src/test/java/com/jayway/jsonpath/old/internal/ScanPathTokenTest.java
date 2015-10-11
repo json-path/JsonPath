@@ -200,16 +200,5 @@ public class ScanPathTokenTest {
                 "$['store']['book'][2]");
     }
 
-    @Test
-    public void a_document_can_be_scanned_for_array_indexes() {
-
-        List<String> result = PathCompiler.compile("$..[(@.length - 1)]").evaluate(DOCUMENT, DOCUMENT, Configuration.defaultConfiguration()).getPathList();
-
-        assertThat(result).containsOnly(
-                "$['store']['bicycle']['items'][5]",
-                "$['store']['bicycle']['items'][0][2]",
-                "$['store']['book'][2]");
-
-    }
 
 }

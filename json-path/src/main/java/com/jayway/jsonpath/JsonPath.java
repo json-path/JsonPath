@@ -528,6 +528,7 @@ public class JsonPath {
      * @param provider jsonProvider to use when parsing JSON
      * @return a parsing context based on given jsonProvider
      */
+    @Deprecated
     public static ParseContext using(JsonProvider provider) {
         return new JsonReader(Configuration.builder().jsonProvider(provider).build());
     }

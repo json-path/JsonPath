@@ -8,18 +8,10 @@ import java.util.Map;
 import static com.jayway.jsonpath.JsonPath.read;
 import static java.util.Collections.singletonMap;
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.data.MapEntry.entry;
 
 public class ArrayPathTokenTest extends TestBase {
 
 
-    @Test
-    public void array_can_select_single_index_by_context_length() {
-
-        Map<String, Object> result = read(ARRAY, "$[(@.length-1)]");
-
-        assertThat(result).contains(entry("foo", "foo-val-6"));
-    }
 
     @Test
     public void array_can_select_multiple_indexes() {

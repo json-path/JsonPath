@@ -115,7 +115,7 @@ public abstract class PathToken {
     }
 
 
-    void handleArrayIndex(int index, String currentPath, Object model, EvaluationContextImpl ctx) {
+    protected void handleArrayIndex(int index, String currentPath, Object model, EvaluationContextImpl ctx) {
         String evalPath = Utils.concat(currentPath, "[", String.valueOf(index), "]");
         PathRef pathRef = ctx.forUpdate() ? PathRef.create(model, index) : PathRef.NO_OP;
         try {
@@ -204,8 +204,8 @@ public abstract class PathToken {
 
     public abstract void evaluate(String currentPath, PathRef parent,  Object model, EvaluationContextImpl ctx);
 
-    abstract boolean isTokenDefinite();
+    public abstract boolean isTokenDefinite();
 
-    abstract String getPathFragment();
+    protected abstract String getPathFragment();
 
 }

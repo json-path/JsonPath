@@ -2,7 +2,6 @@ package com.jayway.jsonpath.old;
 
 import com.jayway.jsonpath.BaseTest;
 import com.jayway.jsonpath.Configuration;
-import com.jayway.jsonpath.Criteria;
 import com.jayway.jsonpath.DocumentContext;
 import com.jayway.jsonpath.Filter;
 import com.jayway.jsonpath.JsonPath;
@@ -15,6 +14,7 @@ import com.jayway.jsonpath.internal.Utils;
 import com.jayway.jsonpath.spi.json.GsonJsonProvider;
 import com.jayway.jsonpath.spi.json.JsonProvider;
 import com.jayway.jsonpath.spi.mapper.GsonMappingProvider;
+import com.jayway.jsonpath.spi.mapper.MappingException;
 import net.minidev.json.JSONAware;
 import net.minidev.json.parser.JSONParser;
 import org.assertj.core.api.Assertions;
@@ -23,9 +23,13 @@ import org.junit.Test;
 
 import java.io.InputStream;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import static com.jayway.jsonpath.Criteria.PredicateContext;
+import static com.jayway.jsonpath.Criteria.where;
+import static com.jayway.jsonpath.Filter.filter;
 import static com.jayway.jsonpath.JsonPath.read;
 import static junit.framework.Assert.assertNull;
 import static junit.framework.Assert.assertTrue;
@@ -49,8 +53,6 @@ public class IssuesTest extends BaseTest {
 
         assertEquals(1, fullOnes.size());
         assertEquals("full", fullOnes.get(0).get("kind"));
-
-
     }
 
     @Test
@@ -171,7 +173,7 @@ public class IssuesTest extends BaseTest {
                 "    }\n" +
                 "]";
 
-        List<String> result = read(json, "$.[?(@.compatible == true)].sku");
+        List<String> result = read(json, "$[?(@.compatible == true)].sku");
 
         Assertions.assertThat(result).containsExactly("SKU-005", "SKU-003");
     }
@@ -285,7 +287,7 @@ public class IssuesTest extends BaseTest {
     @Test
     public void issue_29_b() throws Exception {
         String json = "{\"list\": [ { \"a\":\"atext\", \"b\":{ \"b-a\":\"batext\", \"b-b\":\"bbtext\" } }, { \"a\":\"atext2\", \"b\":{ \"b-a\":\"batext2\", \"b-b\":\"bbtext2\" } } ] }";
-        List<String> result = read(json, "$.list[?]", Filter.filter(Criteria.where("b.b-a").eq("batext2")));
+        List<String> result = read(json, "$.list[?]", filter(where("b.b-a").eq("batext2")));
 
         assertTrue(result.size() == 1);
     }
@@ -545,7 +547,7 @@ public class IssuesTest extends BaseTest {
                 "}";
 
 
-        Filter filter = Filter.filter(Criteria.where("authors[*].lastName").contains("Waugh"));
+        Filter filter = filter(where("authors[*].lastName").contains("Waugh"));
 
         Object read = JsonPath.parse(json).read("$.store.book[?]", filter);
 
@@ -714,5 +716,53 @@ public class IssuesTest extends BaseTest {
         List<String> keys = JsonPath.using(configuration).parse(json).read("$.array1[*].array2[0].key");
 
         System.out.println(keys);
+    }
+
+
+    @Test
+    public void issue_129() throws Exception {
+
+        final Map<String, Integer> match = new HashMap<String, Integer>();
+        match.put("a", 1);
+        match.put("b", 2);
+
+        Map<String, Integer> noMatch = new HashMap<String, Integer>();
+        noMatch.put("a", -1);
+        noMatch.put("b", -2);
+
+        Filter orig = filter(where("a").eq(1).and("b").eq(2));
+
+        String filterAsString = orig.toString();
+
+        Filter parsed = Filter.parse(filterAsString);
+
+        Assertions.assertThat(orig.apply(createPredicateContext(match))).isTrue();
+        Assertions.assertThat(parsed.apply(createPredicateContext(match))).isTrue();
+        Assertions.assertThat(orig.apply(createPredicateContext(noMatch))).isFalse();
+        Assertions.assertThat(parsed.apply(createPredicateContext(noMatch))).isFalse();
+    }
+
+    private PredicateContext createPredicateContext(final Map<String, Integer> map){
+        return new PredicateContext() {
+            @Override
+            public Object item() {
+                return map;
+            }
+
+            @Override
+            public <T> T item(Class<T> clazz) throws MappingException {
+                return (T)map;
+            }
+
+            @Override
+            public Object root() {
+                return map;
+            }
+
+            @Override
+            public Configuration configuration() {
+                return Configuration.defaultConfiguration();
+            }
+        };
     }
 }

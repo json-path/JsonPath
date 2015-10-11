@@ -24,6 +24,9 @@ import java.util.Collection;
  */
 public class ScanPathToken extends PathToken {
 
+    ScanPathToken() {
+    }
+
     @Override
     public void evaluate(String currentPath, PathRef parent, Object model, EvaluationContextImpl ctx) {
 
@@ -98,7 +101,7 @@ public class ScanPathToken extends PathToken {
 
 
     @Override
-    boolean isTokenDefinite() {
+    public boolean isTokenDefinite() {
         return false;
     }
 

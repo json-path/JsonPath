@@ -7,7 +7,6 @@ import com.jayway.jsonpath.JsonPath;
 import com.jayway.jsonpath.Option;
 import com.jayway.jsonpath.PathNotFoundException;
 import com.jayway.jsonpath.internal.PathCompiler;
-
 import org.assertj.core.api.Assertions;
 import org.junit.Test;
 
@@ -242,7 +241,6 @@ public class JsonPathTest extends BaseTest {
 
     @Test
     public void access_array_by_index_from_tail() throws Exception {
-        assertThat(JsonPath.<List<String>>read(DOCUMENT, "$..book[(@.length-1)].author"), hasItems("J. R. R. Tolkien"));
         assertThat(JsonPath.<List<String>>read(DOCUMENT, "$..book[1:].author"), hasItems("Evelyn Waugh", "Herman Melville", "J. R. R. Tolkien"));
     }
 

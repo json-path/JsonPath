@@ -14,12 +14,12 @@
  */
 package com.jayway.jsonpath;
 
-import com.jayway.jsonpath.internal.Utils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Iterator;
 import java.util.Stack;
 import java.util.regex.Pattern;
 
@@ -82,7 +82,7 @@ public abstract class Filter implements Predicate {
 
         @Override
         public String toString() {
-            return predicate.toString();
+            return "[?(" + predicate.toString() + ")]";
         }
     }
 
@@ -116,7 +116,23 @@ public abstract class Filter implements Predicate {
 
         @Override
         public String toString() {
-            return "(" + Utils.join(" && ", predicates) + ")";
+            Iterator<Predicate> i = predicates.iterator();
+            StringBuilder sb = new StringBuilder();
+            sb.append("[?(");
+            while (i.hasNext()){
+                String p = i.next().toString();
+
+                if(p.startsWith("[?(")){
+                    p = p.substring(3, p.length() - 2);
+                }
+                sb.append(p);
+
+                if(i.hasNext()){
+                    sb.append(" && ");
+                }
+            }
+            sb.append(")]");
+            return sb.toString();
         }
     }
 
@@ -142,8 +158,25 @@ public abstract class Filter implements Predicate {
 
         @Override
         public String toString() {
-            return "(" + left.toString() + " || " + right.toString() + ")";
+            StringBuilder sb = new StringBuilder();
+            sb.append("[?(");
+
+            String l = left.toString();
+            String r = right.toString();
+
+            if(l.startsWith("[?(")){
+                l = l.substring(3, l.length() - 2);
+            }
+            if(r.startsWith("[?(")){
+                r = r.substring(3, r.length() - 2);
+            }
+
+            sb.append(l).append(" || ").append(r);
+
+            sb.append(")]");
+            return sb.toString();
         }
+
     }
 
 
