@@ -48,12 +48,19 @@ public class OptionsTest extends BaseTest {
         assertThat(using(conf).parse("{\"foo\" : \"bar\"}").read("$.foo")).isInstanceOf(List.class);
 
         assertThat(using(conf).parse("{\"foo\": null}").read("$.foo")).isInstanceOf(List.class);
+
+        assertThat(using(conf).parse("{\"foo\": [1, 4, 8]}").read("$.foo")).asList()
+                .containsExactly(Arrays.asList(1, 4, 8));
+    }
+
+    @Test
+    public void an_indefinite_path_can_be_returned_as_list() {
+        Configuration conf = Configuration.builder().options(ALWAYS_RETURN_LIST).build();
+
         List<Object> result = using(conf).parse("{\"bar\": {\"foo\": null}}").read("$..foo");
         assertThat(result).hasSize(1);
         assertThat(result.get(0)).isNull();
 
-        assertThat(using(conf).parse("{\"foo\": [1, 4, 8]}").read("$.foo")).asList()
-                .containsExactly(Arrays.asList(1, 4, 8));
         assertThat(using(conf).parse("{\"bar\": {\"foo\": [1, 4, 8]}}").read("$..foo")).asList()
                 .containsExactly(Arrays.asList(1, 4, 8));
     }
