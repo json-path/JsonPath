@@ -2,6 +2,7 @@ package com.jayway.jsonpath;
 
 import org.junit.Test;
 
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -45,6 +46,9 @@ public class OptionsTest extends BaseTest {
         Configuration conf = Configuration.builder().options(ALWAYS_RETURN_LIST).build();
 
         assertThat(using(conf).parse("{\"foo\" : \"bar\"}").read("$.foo")).isInstanceOf(List.class);
+        assertThat(using(conf).parse("{\"foo\": null}").read("$.foo")).isInstanceOf(List.class);
+        assertThat(using(conf).parse("{\"foo\": [1, 4, 8]}").read("$.foo")).asList()
+                .containsExactly(Arrays.asList(1, 4, 8));
     }
 
     @Test
