@@ -32,11 +32,13 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.LinkedList;
 import java.util.List;
 
 import static com.jayway.jsonpath.JsonPath.compile;
 import static com.jayway.jsonpath.internal.Utils.notEmpty;
 import static com.jayway.jsonpath.internal.Utils.notNull;
+import static java.util.Arrays.asList;
 
 public class JsonReader implements ParseContext, DocumentContext {
 
@@ -135,7 +137,12 @@ public class JsonReader implements ParseContext, DocumentContext {
     public <T> T read(String path, Predicate... filters) {
         notEmpty(path, "path can not be null or empty");
         CacheProvider cache = configuration.CacheProvider();
-        JsonPath jsonPath = cache.get(path);
+        
+        path = path.trim();
+        LinkedList filterStack = new LinkedList<Predicate>(asList(filters));
+        String cacheKey = Utils.concat(path, filterStack.toString());
+        
+        JsonPath jsonPath = cache.get(cacheKey);
         if(jsonPath != null){
         	return read(jsonPath);
         }else {
