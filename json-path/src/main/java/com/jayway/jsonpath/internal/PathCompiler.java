@@ -8,8 +8,6 @@ import com.jayway.jsonpath.internal.token.ArraySliceOperation;
 import com.jayway.jsonpath.internal.token.PathTokenAppender;
 import com.jayway.jsonpath.internal.token.PathTokenFactory;
 import com.jayway.jsonpath.internal.token.RootPathToken;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -21,8 +19,6 @@ import static java.lang.Math.min;
 import static java.util.Arrays.asList;
 
 public class PathCompiler {
-
-    private static final Logger logger = LoggerFactory.getLogger(PathCompiler.class);
 
     private static final char DOC_CONTEXT = '$';
     private static final char EVAL_CONTEXT = '@';
@@ -562,6 +558,3 @@ public class PathCompiler {
         }
     }
 }
-
-
-
