@@ -137,4 +137,17 @@ public class OptionsTest extends BaseTest {
         } catch (PathNotFoundException pnf){}
     }
 
+
+    @Test
+    public void issue_suppress_exceptions_does_not_break_indefinite_evaluation() {
+        Configuration conf = Configuration.builder().options(SUPPRESS_EXCEPTIONS).build();
+
+        assertThat(using(conf).parse("{\"foo2\": [5]}").read("$..foo2[0]")).asList().containsOnly(5);
+        assertThat(using(conf).parse("{\"foo\" : {\"foo2\": [5]}}").read("$..foo2[0]")).asList().containsOnly(5);
+        assertThat(using(conf).parse("[null, [{\"foo\" : {\"foo2\": [5]}}]]").read("$..foo2[0]")).asList().containsOnly(5);
+
+        assertThat(using(conf).parse("[null, [{\"foo\" : {\"foo2\": [5]}}]]").read("$..foo.foo2[0]")).asList().containsOnly(5);
+
+        assertThat(using(conf).parse("{\"aoo\" : {}, \"foo\" : {\"foo2\": [5]}, \"zoo\" : {}}").read("$[*].foo2[0]")).asList().containsOnly(5);
+    }
 }

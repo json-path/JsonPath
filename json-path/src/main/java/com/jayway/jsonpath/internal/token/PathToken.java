@@ -57,8 +57,8 @@ public abstract class PathToken {
                     }
                 } else {
                     if(!isUpstreamDefinite() &&
-                       !ctx.options().contains(Option.REQUIRE_PROPERTIES) &&
-                       !ctx.options().contains(Option.SUPPRESS_EXCEPTIONS)){
+                       !ctx.options().contains(Option.REQUIRE_PROPERTIES) ||
+                       ctx.options().contains(Option.SUPPRESS_EXCEPTIONS)){
                         return;
                     } else {
                         throw new PathNotFoundException("Missing property in path " + evalPath);
