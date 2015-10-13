@@ -147,7 +147,7 @@ public class JsonReader implements ParseContext, DocumentContext {
         	return read(jsonPath);
         }else {
         	jsonPath = compile(path, filters);
-        	cache.put(path, jsonPath);
+        	cache.put(cacheKey, jsonPath);
         	return read(jsonPath);
         }
 
