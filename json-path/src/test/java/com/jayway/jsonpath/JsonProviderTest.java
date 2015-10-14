@@ -75,6 +75,13 @@ public class JsonProviderTest extends BaseTest {
         assertThat(using(GSON_CONFIGURATION).parse(JSON).read("$", typeRef)).extracting("foo").containsExactly("foo0", "foo1", "foo2");
     }
 
+    @Test
+    public void length_of_array() {
+        assertThat(using(JACKSON_CONFIGURATION).parse(JSON_DOCUMENT).read("$.store.book.length", Integer.class)).isEqualTo(4);
+        assertThat(using(JACKSON_JSON_NODE_CONFIGURATION).parse(JSON_DOCUMENT).read("$.store.book.length", Integer.class)).isEqualTo(4);
+        assertThat(using(JSON_SMART_CONFIGURATION).parse(JSON_DOCUMENT).read("$.store.book.length", Integer.class)).isEqualTo(4);
+        assertThat(using(GSON_CONFIGURATION).parse(JSON_DOCUMENT).read("$.store.book.length", Integer.class)).isEqualTo(4);
+    }
 
     public static class FooBarBaz<T> {
         public T gen;

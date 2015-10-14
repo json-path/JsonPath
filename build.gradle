@@ -27,6 +27,7 @@ allprojects {
     ext.displayName = null
     ext.buildTimestamp = new Date().format('yyyy-MM-dd HH:mm:ss')
 
+    apply plugin: 'maven'
     group = 'com.jayway.jsonpath'
     version = '2.0.1' + (snapshotVersion ? "-SNAPSHOT" : "")
 

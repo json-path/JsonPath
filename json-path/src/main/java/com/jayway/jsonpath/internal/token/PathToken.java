@@ -128,6 +128,17 @@ public abstract class PathToken {
         }
     }
 
+    void handleArrayLength(String currentPath, Object model, EvaluationContextImpl ctx) {
+        String evalPath = currentPath + ".length";
+        PathRef pathRef = ctx.forUpdate() ? PathRef.create(model, "length") : PathRef.NO_OP;
+        Object evalHit = ctx.jsonProvider().length(model);
+        if (isLeaf()) {
+            ctx.addResult(evalPath, pathRef, evalHit);
+        } else {
+            next().evaluate(evalPath, pathRef, evalHit, ctx);
+        }
+    }
+
     PathToken prev(){
         return prev;
     }
