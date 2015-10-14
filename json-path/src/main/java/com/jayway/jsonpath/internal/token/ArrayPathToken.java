@@ -17,8 +17,7 @@ package com.jayway.jsonpath.internal.token;
 import com.jayway.jsonpath.InvalidPathException;
 import com.jayway.jsonpath.PathNotFoundException;
 import com.jayway.jsonpath.internal.PathRef;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import com.jayway.jsonpath.internal.Utils;
 
 import static java.lang.String.format;
 
@@ -26,8 +25,6 @@ import static java.lang.String.format;
  *
  */
 public class ArrayPathToken extends PathToken {
-
-    private static final Logger logger = LoggerFactory.getLogger(ArrayPathToken.class);
 
     private final ArraySliceOperation arraySliceOperation;
     private final ArrayIndexOperation arrayIndexOperation;
@@ -107,7 +104,7 @@ public class ArrayPathToken extends PathToken {
         }
         from = Math.max(0, from);
 
-        logger.debug("Slice from index on array with length: {}. From index: {} to: {}. Input: {}", length, from, length - 1, toString());
+        //logger.debug("Slice from index on array with length: {}. From index: {} to: {}. Input: {}", length, from, length - 1, toString());
 
         if (length == 0 || from >= length) {
             return;
@@ -128,7 +125,7 @@ public class ArrayPathToken extends PathToken {
             return;
         }
 
-        logger.debug("Slice between indexes on array with length: {}. From index: {} to: {}. Input: {}", length, from, to, toString());
+        //logger.debug("Slice between indexes on array with length: {}. From index: {} to: {}. Input: {}", length, from, to, toString());
 
         for (int i = from; i < to; i++) {
             handleArrayIndex(i, currentPath, model, ctx);
@@ -147,7 +144,7 @@ public class ArrayPathToken extends PathToken {
         }
         to = Math.min(length, to);
 
-        logger.debug("Slice to index on array with length: {}. From index: 0 to: {}. Input: {}", length, to, toString());
+        //logger.debug("Slice to index on array with length: {}. From index: 0 to: {}. Input: {}", length, to, toString());
 
         for (int i = 0; i < to; i++) {
             handleArrayIndex(i, currentPath, model, ctx);
