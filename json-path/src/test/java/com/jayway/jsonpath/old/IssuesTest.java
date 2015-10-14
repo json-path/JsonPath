@@ -811,4 +811,24 @@ public class IssuesTest extends BaseTest {
 
         assertThat(result).containsExactly("0");
     }
+
+
+    @Test
+    public void issue_131_3() {
+        String json = "[\n" +
+                "    1,\n" +
+                "    2,\n" +
+                "    {\n" +
+                "        \"d\": {\n" +
+                "            \"random\": null,\n" +
+                "            \"date\": 1234\n" +
+                "        },\n" +
+                "        \"l\": \"filler\"\n" +
+                "    }\n" +
+                "]";
+
+        List<Integer> result = JsonPath.read(json, "$[2]['d'][?(@.random)]['date']");
+
+        assertThat(result).containsExactly(1234);
+    }
 }
