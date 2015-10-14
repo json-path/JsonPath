@@ -605,21 +605,18 @@ public class IssuesTest extends BaseTest {
 
     @Test
     public void issue_94_1() throws Exception {
-        Cache cache = new Cache(200);
+        Cache cache = new Cache();
         Path dummy = new CompiledPath(null, false);
         for (int i = 0; i < 10000; ++i) {
             String key = String.valueOf(i);
             cache.get(key);
             cache.put(key, dummy);
         }
-        Thread.sleep(2000);
-
-        Assertions.assertThat(cache.size()).isEqualTo(200);
     }
 
     @Test
     public void issue_94_2() throws Exception {
-        Cache cache = new Cache(5);
+        Cache cache = new Cache();
 
         Path dummy = new CompiledPath(null, false);
 
@@ -662,7 +659,7 @@ public class IssuesTest extends BaseTest {
         Assertions.assertThat(cache.getSilent("4")).isNotNull();
         Assertions.assertThat(cache.getSilent("3")).isNotNull();
         Assertions.assertThat(cache.getSilent("2")).isNotNull();
-        Assertions.assertThat(cache.getSilent("1")).isNull();
+        Assertions.assertThat(cache.getSilent("1")).isNotNull();
     }
 
     @Test

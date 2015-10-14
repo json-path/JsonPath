@@ -36,7 +36,7 @@ public class PathCompiler {
     private static final char ESCAPE = '\\';
     private static final char TICK = '\'';
 
-    private static final Cache cache = new Cache(200);
+    private static final Cache cache = new Cache();
 
     private final LinkedList<Predicate> filterStack;
     private final CharacterIndex path;

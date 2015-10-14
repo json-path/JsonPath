@@ -16,10 +16,12 @@ package com.jayway.jsonpath.internal;
 
 import com.jayway.jsonpath.Configuration;
 
+import java.io.Serializable;
+
 /**
  *
  */
-public interface Path {
+public interface Path extends Serializable {
 
 
     /**
