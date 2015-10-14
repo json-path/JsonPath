@@ -445,11 +445,11 @@ public class Criteria implements Predicate {
             boolean exists = ((Boolean) right);
             try {
                 Configuration c = Configuration.builder().jsonProvider(ctx.configuration().jsonProvider()).options(Option.REQUIRE_PROPERTIES).build();
-                Object value = ((Path) left).evaluate(ctx.item(), ctx.root(), c).getValue();
+                Object value = ((Path) left).evaluate(ctx.item(), ctx.root(), c).getValue(false);
                 if (exists) {
-                    return (value != null);
+                    return (value != JsonProvider.UNDEFINED);
                 } else {
-                    return (value == null);
+                    return (value == JsonProvider.UNDEFINED);
                 }
             } catch (PathNotFoundException e) {
                 return !exists;
