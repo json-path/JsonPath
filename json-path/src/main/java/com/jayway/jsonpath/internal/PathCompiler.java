@@ -368,10 +368,7 @@ public class PathCompiler {
         while (path.inBounds(readPosition)) {
             char c = path.charAt(readPosition);
 
-            if (c == CLOSE_SQUARE_BRACKET) {
-                if (inProperty) {
-                    throw new InvalidPathException("Expected property to be closed at position " + readPosition);
-                }
+            if (c == CLOSE_SQUARE_BRACKET && !inProperty) {
                 break;
             } else if (c == TICK) {
                 if (inProperty) {

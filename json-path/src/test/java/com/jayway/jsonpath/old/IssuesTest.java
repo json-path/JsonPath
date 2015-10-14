@@ -17,6 +17,7 @@ import com.jayway.jsonpath.spi.mapper.GsonMappingProvider;
 import com.jayway.jsonpath.spi.mapper.MappingException;
 import net.minidev.json.JSONAware;
 import net.minidev.json.parser.JSONParser;
+import org.assertj.core.api.Assertions;
 import org.hamcrest.Matchers;
 import org.junit.Test;
 
@@ -830,5 +831,17 @@ public class IssuesTest extends BaseTest {
         List<Integer> result = JsonPath.read(json, "$[2]['d'][?(@.random)]['date']");
 
         assertThat(result).containsExactly(1234);
+    }
+
+
+    //https://groups.google.com/forum/#!topic/jsonpath/Ojv8XF6LgqM
+    @Test
+    public void using_square_bracket_literal_path() {
+
+        String json = "{ \"valid key[@num = 2]\" : \"value\" }";
+
+        String result = JsonPath.read(json, "$['valid key[@num = 2]']");
+
+        Assertions.assertThat(result).isEqualTo("value");
     }
 }
