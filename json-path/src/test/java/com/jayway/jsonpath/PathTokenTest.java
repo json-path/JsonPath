@@ -30,7 +30,7 @@ public class PathTokenTest extends BaseTest {
     public void is_upstream_definite_in_complex_case() {
         assertThat(makePathReturningTail(makePPT("foo"), makePPT("bar"), makePPT("baz")).isUpstreamDefinite()).isTrue();
 
-        assertThat(makePathReturningTail(makePPT("foo"), new WildcardPathToken()).isUpstreamDefinite()).isFalse();
+        assertThat(makePathReturningTail(makePPT("foo"), new WildcardPathToken()).isUpstreamDefinite()).isTrue();
 
         assertThat(makePathReturningTail(new WildcardPathToken(), makePPT("bar"), makePPT("baz")).isUpstreamDefinite()).isFalse();
     }

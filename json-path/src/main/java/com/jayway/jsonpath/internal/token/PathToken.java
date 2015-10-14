@@ -43,6 +43,10 @@ public abstract class PathToken {
             String evalPath = Utils.concat(currentPath, "['", property, "']");
             Object propertyVal = readObjectProperty(property, model, ctx);
             if(propertyVal == JsonProvider.UNDEFINED){
+                // Conditions below heavily depend on current token type (and its logic) and are not "universal",
+                // so this code is quite dangerous. Better safe than sorry.
+                assert this instanceof PropertyPathToken : "only PropertyPathToken is supported";
+
                 if(isLeaf()) {
                     if(ctx.options().contains(Option.DEFAULT_PATH_LEAF_TO_NULL)){
                         propertyVal =  null;
@@ -148,16 +152,11 @@ public abstract class PathToken {
         return  prev == null;
     }
 
-    public boolean isUpstreamDefinite(){
-        if(upstreamDefinite != null){
-            return upstreamDefinite.booleanValue();
+    public boolean isUpstreamDefinite() {
+        if (upstreamDefinite == null) {
+            upstreamDefinite = isRoot() || prev.isTokenDefinite() && prev.isUpstreamDefinite();
         }
-        boolean isUpstreamDefinite = isTokenDefinite();
-        if (isUpstreamDefinite && !isRoot()) {
-            isUpstreamDefinite = prev.isUpstreamDefinite();
-        }
-        upstreamDefinite = isUpstreamDefinite;
-        return isUpstreamDefinite;
+        return upstreamDefinite;
     }
 
     public int getTokenCount() {
