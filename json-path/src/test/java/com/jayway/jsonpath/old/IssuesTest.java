@@ -844,4 +844,35 @@ public class IssuesTest extends BaseTest {
 
         Assertions.assertThat(result).isEqualTo("value");
     }
+
+    @Test
+    public void issue_90() {
+
+        String json = "{\n" +
+                "    \"store\": {\n" +
+                "        \"book\": [\n" +
+                "            {\n" +
+                "                \"price\": \"120\"\n" +
+                "            },\n" +
+                "            {\n" +
+                "                \"price\": 8.95\n" +
+                "            },\n" +
+                "            {\n" +
+                "                \"price\": 12.99\n" +
+                "            },\n" +
+                "            {\n" +
+                "                \"price\": 8.99\n" +
+                "            },\n" +
+                "            {\n" +
+                "                \"price\": 22.99\n" +
+                "            }\n" +
+                "        ]\n" +
+                "    },\n" +
+                "    \"expensive\": 10\n" +
+                "}";
+
+        List<Double> numbers = JsonPath.read(json, "$.store.book[?(@.price <= 90)].price");
+
+        assertThat(numbers).containsExactly(8.95D, 12.99D, 8.99D, 22.99D);
+    }
 }
