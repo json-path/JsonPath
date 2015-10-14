@@ -69,7 +69,9 @@ public class PredicatePathToken extends PathToken {
                 idx++;
             }
         } else {
-            throw new InvalidPathException(format("Filter: %s can not be applied to primitives. Current context is: %s", toString(), model));
+            if (isUpstreamDefinite()) {
+                throw new InvalidPathException(format("Filter: %s can not be applied to primitives. Current context is: %s", toString(), model));
+            }
         }
     }
 

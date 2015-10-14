@@ -54,10 +54,18 @@ public class ArrayPathToken extends PathToken {
     @Override
     public void evaluate(String currentPath, PathRef parent, Object model, EvaluationContextImpl ctx) {
         if(model == null){
-            throw new PathNotFoundException("The path " + currentPath + " is null");
+            if (! isUpstreamDefinite()) {
+                return;
+            } else {
+                throw new PathNotFoundException("The path " + currentPath + " is null");
+            }
         }
         if (!ctx.jsonProvider().isArray(model)) {
-            throw new InvalidPathException(format("Filter: %s can only be applied to arrays. Current context is: %s", toString(), model));
+            if (! isUpstreamDefinite()) {
+                return;
+            } else {
+                throw new InvalidPathException(format("Filter: %s can only be applied to arrays. Current context is: %s", toString(), model));
+            }
         }
 
         try {
@@ -143,7 +151,9 @@ public class ArrayPathToken extends PathToken {
                     break;
                 }
         } catch (IndexOutOfBoundsException e) {
-            throw new PathNotFoundException("Index out of bounds when evaluating path " + currentPath);
+            if (isUpstreamDefinite()) {
+                throw new PathNotFoundException("Index out of bounds when evaluating path " + currentPath);
+            }
         }
     }
 
