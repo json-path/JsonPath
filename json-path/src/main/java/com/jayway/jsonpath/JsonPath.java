@@ -172,6 +172,9 @@ public class JsonPath {
         boolean optSuppressExceptions = configuration.containsOption(Option.SUPPRESS_EXCEPTIONS);
 
         try {
+            if(path.isFunctionPath()){
+                return path.evaluate(jsonObject, jsonObject, configuration).getValue(true);
+            }
             if(optAsPathList){
                 return  (T)path.evaluate(jsonObject, jsonObject, configuration).getPath();
             } else {
