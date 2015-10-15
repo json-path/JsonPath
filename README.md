@@ -61,7 +61,7 @@ Operators
 | `[start:end]`             | Array slice operator                                               |
 | `[?(<expression>)]`       | Filter expression. Expression must evaluate to a boolean value.    |
 
-
+<!---
 Functions (not released yet)
 ---------
 
@@ -75,7 +75,7 @@ The function output is dictated by the function itself.
 | %avg()                    | Provides the average value of an array of numbers                  | Double    |
 | %stddev()                 | Provides the standard deviation value of an array of numbers       | Double    |
 | %length()                 | Provides the length of an array                                    | Integer   |
-
+-->
 
 Path Examples
 -------------
