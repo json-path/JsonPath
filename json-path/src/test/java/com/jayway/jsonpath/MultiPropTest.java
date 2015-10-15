@@ -24,6 +24,10 @@ public class MultiPropTest {
         assertThat(using(conf).parse(model).read("$['a', 'b']", Map.class))
                 .containsEntry("a", "a-val")
                 .containsEntry("b", "b-val");
+
+        // current semantics: absent props are skipped
+        assertThat(using(conf).parse(model).read("$['a', 'd']", Map.class))
+                .hasSize(1).containsEntry("a", "a-val");
     }
 
     @Test

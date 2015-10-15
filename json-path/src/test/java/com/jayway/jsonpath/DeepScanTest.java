@@ -2,9 +2,13 @@ package com.jayway.jsonpath;
 
 import org.junit.Test;
 
+import static com.jayway.jsonpath.JsonPath.using;
 import static com.jayway.jsonpath.TestUtils.assertEvaluationThrows;
 
 import static org.assertj.core.api.Assertions.assertThat;
+
+import java.util.List;
+import java.util.Map;
 
 /**
  * Deep scan is indefinite, so certain "illegal" actions become a no-op instead of a path evaluation exception.
@@ -84,5 +88,31 @@ public class DeepScanTest extends BaseTest {
 
         // foo.bar must be found in every object node after deep scan (which is impossible)
         assertEvaluationThrows("{\"foo\": {\"bar\": 4}}", "$..foo.bar", PathNotFoundException.class, conf);
+
+        assertEvaluationThrows("{\"foo\": {\"bar\": 4}, \"baz\": 2}", "$..['foo', 'baz']", PathNotFoundException.class, conf);
+    }
+
+    @Test
+    public void when_deep_scanning_leaf_multi_props_work() {
+        Object result = JsonPath.parse("[{\"a\": \"a-val\", \"b\": \"b-val\", \"c\": \"c-val\"}, [1, 5], {\"a\": \"a-val\"}]").read(
+                "$..['a', 'c']");
+        // This is current deep scan semantics: only objects containing all properties specified in multiprops token are
+        // considered.
+        assertThat(result).asList().hasSize(1);
+        result = ((List)result).get(0);
+
+        assertThat(result).isInstanceOf(Map.class);
+        assertThat((Map)result).hasSize(2).containsEntry("a", "a-val").containsEntry("c", "c-val");
+
+        // But this semantics changes when DEFAULT_PATH_LEAF_TO_NULL comes into play.
+        Configuration conf = Configuration.defaultConfiguration().addOptions(Option.DEFAULT_PATH_LEAF_TO_NULL);
+        result = using(conf).parse("[{\"a\": \"a-val\", \"b\": \"b-val\", \"c\": \"c-val\"}, [1, 5], {\"a\": \"a-val\"}]").read(
+                "$..['a', 'c']");
+        // todo: deep equality test, but not tied to any json provider
+        assertThat(result).asList().hasSize(2);
+        for (final Object node : (List)result) {
+            assertThat(node).isInstanceOf(Map.class);
+            assertThat((Map)node).hasSize(2).containsEntry("a", "a-val");
+        }
     }
 }

@@ -167,16 +167,29 @@ public class ScanPathToken extends PathToken {
 
         @Override
         public boolean matches(Object model) {
-            if (ctx.jsonProvider().isMap(model)) {
-                if (ctx.options().contains(Option.REQUIRE_PROPERTIES)) {
-                    // Have to require properties defined in path when an indefinite path is evaluated,
-                    // so have to go there and search for it.
-                    return true;
-                }
-                Collection<String> keys = ctx.jsonProvider().getPropertyKeys(model);
-                return keys.containsAll(propertyPathToken.getProperties());
+            if (! ctx.jsonProvider().isMap(model)) {
+                return false;
             }
-            return false;
+
+            if (ctx.options().contains(Option.REQUIRE_PROPERTIES)) {
+                // Have to require properties defined in path when an indefinite path is evaluated,
+                // so have to go there and search for it.
+                return true;
+            }
+
+            if (! propertyPathToken.isTokenDefinite()) {
+                // It's responsibility of PropertyPathToken code to handle indefinite scenario of properties,
+                // so we'll allow it to do its job.
+                return true;
+            }
+
+            if (ctx.options().contains(Option.DEFAULT_PATH_LEAF_TO_NULL)) {
+                // In case of DEFAULT_PATH_LEAF_TO_NULL missing properties is not a problem.
+                return true;
+            }
+
+            Collection<String> keys = ctx.jsonProvider().getPropertyKeys(model);
+            return keys.containsAll(propertyPathToken.getProperties());
         }
     }
 }
