@@ -62,7 +62,7 @@ Operators
 | `[?(<expression>)]`       | Filter expression. Expression must evaluate to a boolean value.    |
 
 
-Functions
+Functions (not released yet)
 ---------
 
 Functions can be invoked at the tail end of a path - the input to a function is the output of the path expression.
