@@ -19,7 +19,7 @@ public class PathTokenTest extends BaseTest {
 
         assertThat(makePathReturningTail(makePPT("foo"), makePPT("bar")).isUpstreamDefinite()).isTrue();
 
-        // assertThat(makePathReturningTail(makePPT("foo", "foo2"), makePPT("bar")).isUpstreamDefinite()).isFalse();
+        assertThat(makePathReturningTail(makePPT("foo", "foo2"), makePPT("bar")).isUpstreamDefinite()).isFalse();
 
         assertThat(makePathReturningTail(new WildcardPathToken(), makePPT("bar")).isUpstreamDefinite()).isFalse();
 

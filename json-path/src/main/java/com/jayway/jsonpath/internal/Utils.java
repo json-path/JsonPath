@@ -273,6 +273,29 @@ public final class Utils {
     }
 
     /**
+     * Check if one and only one condition is true; otherwise
+     * throw an exception with the specified message.
+     * @param message error describing message
+     * @param expressions the boolean expressions to check
+     * @throws IllegalArgumentException if zero or more than one expressions are true
+     */
+    public static void onlyOneIsTrue(final String message, final boolean ... expressions) {
+        if (! onlyOneIsTrueNonThrow(expressions)) {
+            throw new IllegalArgumentException(message);
+        }
+    }
+
+    public static boolean onlyOneIsTrueNonThrow(final boolean ... expressions) {
+        int count = 0;
+        for (final boolean expression : expressions) {
+            if (expression && ++count > 1) {
+                return false;
+            }
+        }
+        return 1 == count;
+    }
+
+    /**
      * <p>Validate that the specified argument character sequence is
      * neither {@code null} nor a length of zero (no characters);
      * otherwise throwing an exception with the specified message.

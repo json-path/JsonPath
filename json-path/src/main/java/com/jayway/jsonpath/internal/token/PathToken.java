@@ -44,7 +44,9 @@ public abstract class PathToken {
             Object propertyVal = readObjectProperty(property, model, ctx);
             if(propertyVal == JsonProvider.UNDEFINED){
                 // Conditions below heavily depend on current token type (and its logic) and are not "universal",
-                // so this code is quite dangerous. Better safe than sorry.
+                // so this code is quite dangerous (I'd rather rewrite it & move to PropertyPathToken and implemented
+                // WildcardPathToken as a dynamic multi prop case of PropertyPathToken).
+                // Better safe than sorry.
                 assert this instanceof PropertyPathToken : "only PropertyPathToken is supported";
 
                 if(isLeaf()) {
@@ -60,9 +62,12 @@ public abstract class PathToken {
 
                     }
                 } else {
-                    if(!isUpstreamDefinite() &&
+                    if (! (isUpstreamDefinite() && isTokenDefinite()) &&
                        !ctx.options().contains(Option.REQUIRE_PROPERTIES) ||
                        ctx.options().contains(Option.SUPPRESS_EXCEPTIONS)){
+                        // If there is some indefiniteness in the path and properties are not required - we'll ignore
+                        // absent property. And also in case of exception suppression - so that other path evaluation
+                        // branches could be examined.
                         return;
                     } else {
                         throw new PathNotFoundException("Missing property in path " + evalPath);
@@ -78,9 +83,7 @@ public abstract class PathToken {
         } else {
             String evalPath = currentPath + "[" + Utils.join(", ", "'", properties) + "]";
 
-            if (!isLeaf()) {
-                throw new InvalidPathException("Multi properties can only be used as path leafs: " + evalPath);
-            }
+            assert isLeaf() : "non-leaf multi props handled elsewhere";
 
             Object merged = ctx.jsonProvider().createMap();
             for (String property : properties) {
