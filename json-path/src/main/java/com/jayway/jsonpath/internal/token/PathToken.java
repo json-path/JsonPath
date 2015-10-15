@@ -14,11 +14,17 @@
  */
 package com.jayway.jsonpath.internal.token;
 
+import com.jayway.jsonpath.Function;
 import com.jayway.jsonpath.InvalidPathException;
 import com.jayway.jsonpath.Option;
 import com.jayway.jsonpath.PathNotFoundException;
 import com.jayway.jsonpath.internal.PathRef;
 import com.jayway.jsonpath.internal.Utils;
+import com.jayway.jsonpath.internal.function.FunctionFactory;
+import com.jayway.jsonpath.internal.function.numeric.Average;
+import com.jayway.jsonpath.internal.function.Length;
+import com.jayway.jsonpath.internal.function.PassthruFunction;
+import com.jayway.jsonpath.internal.function.numeric.Sum;
 import com.jayway.jsonpath.spi.json.JsonProvider;
 
 import java.util.List;
@@ -67,7 +73,8 @@ public abstract class PathToken {
             PathRef pathRef = ctx.forUpdate() ? PathRef.create(model, property) : PathRef.NO_OP;
             if (isLeaf()) {
                 ctx.addResult(evalPath, pathRef, propertyVal);
-            } else {
+            }
+            else {
                 next().evaluate(evalPath, pathRef, propertyVal, ctx);
             }
         } else {
@@ -199,6 +206,10 @@ public abstract class PathToken {
     @Override
     public boolean equals(Object obj) {
         return super.equals(obj);
+    }
+
+    public void invoke(Function function, String currentPath, PathRef parent, Object model, EvaluationContextImpl ctx) {
+        ctx.addResult(currentPath, parent, function.invoke(currentPath, parent, model, ctx));
     }
 
     public abstract void evaluate(String currentPath, PathRef parent,  Object model, EvaluationContextImpl ctx);
