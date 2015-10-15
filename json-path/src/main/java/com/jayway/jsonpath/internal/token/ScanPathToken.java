@@ -183,7 +183,7 @@ public class ScanPathToken extends PathToken {
                 return true;
             }
 
-            if (ctx.options().contains(Option.DEFAULT_PATH_LEAF_TO_NULL)) {
+            if (propertyPathToken.isLeaf() && ctx.options().contains(Option.DEFAULT_PATH_LEAF_TO_NULL)) {
                 // In case of DEFAULT_PATH_LEAF_TO_NULL missing properties is not a problem.
                 return true;
             }
