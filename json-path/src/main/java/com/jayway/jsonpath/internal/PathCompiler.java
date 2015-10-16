@@ -292,7 +292,7 @@ public class PathCompiler {
                 start--;
             }
 
-            int mem  = ' ';
+            int mem  = -1;
             int curr = start;
             boolean inProp          = false;
             int openSquareBracket = 0;
@@ -315,6 +315,13 @@ public class PathCompiler {
                             if(openBrackets == 0){
                                 end = curr + 1;
                             }
+                        }
+                        break;
+                    case '\\':
+                        if (mem == '\\') {  // escaped backslash, skip it
+                            mem = -1;
+                            curr++;
+                            continue;
                         }
                         break;
                     case '\'':

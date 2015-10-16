@@ -25,17 +25,17 @@ public class PredicateTest extends BaseTest {
         assertThat(reader.read("$.store.book[?].isbn", List.class, booksWithISBN)).containsOnly("0-395-19395-8", "0-553-21311-3");
     }
 
-    @Ignore("not ready yet (requires compiler reimplementation)")
     @Test
     public void issue_predicate_can_have_escaped_backslash_in_prop() {
         String json = "{\n"
                 + "    \"logs\": [\n"
                 + "        {\n"
-                + "            \"message\": \"it\\\",\n"
+                + "            \"message\": \"it\\\\\",\n"
                 + "            \"id\": 2\n"
                 + "        }\n"
                 + "    ]\n"
                 + "}";
+        // message: it\ -> (after json escaping) -> "it\\" -> (after java escaping) -> "\"it\\\\\""
 
         List<String> result = JsonPath.read(json, "$.logs[?(@.message == 'it\\\\')].message");
 
