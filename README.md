@@ -61,6 +61,22 @@ Operators
 | `[start:end]`             | Array slice operator                                               |
 | `[?(<expression>)]`       | Filter expression. Expression must evaluate to a boolean value.    |
 
+<!---
+Functions (not released yet)
+---------
+
+Functions can be invoked at the tail end of a path - the input to a function is the output of the path expression.
+The function output is dictated by the function itself.
+
+| Function                  | Description                                                        | Output    |
+| :------------------------ | :----------------------------------------------------------------- |-----------|
+| %min()                    | Provides the min value of an array of numbers                      | Double    |
+| %max()                    | Provides the max value of an array of numbers                      | Double    |
+| %avg()                    | Provides the average value of an array of numbers                  | Double    |
+| %stddev()                 | Provides the standard deviation value of an array of numbers       | Double    |
+| %length()                 | Provides the length of an array                                    | Integer   |
+-->
+
 Path Examples
 -------------
 
@@ -123,9 +139,10 @@ Given the json
 | <a href="http://jsonpath.herokuapp.com/?path=$.store.book[?(@.price < 10)]" target="_blank">$.store.book[?(@.price < 10)]</a> | All books in store cheaper than 10  |
 | <a href="http://jsonpath.herokuapp.com/?path=$..book[?(@.price <= $['expensive'])]" target="_blank">$..book[?(@.price <= $['expensive'])]</a> | All books in store that are not "expensive"  |
 | <a href="http://jsonpath.herokuapp.com/?path=$..book[?(@.author =~ /.*REES/i)]" target="_blank">$..book[?(@.author =~ /.*REES/i)]</a> | All books matching regex (ignore case)  |
-| <a href="http://jsonpath.herokuapp.com/?path=$..*" target="_blank">$..*</a>                        | Give me every thing                   |
-
-
+| <a href="http://jsonpath.herokuapp.com/?path=$..*" target="_blank">$..*</a>                        | Give me every thing   
+<!---
+| <a href="http://jsonpath.herokuapp.com/?path=$..book.%length()" target="_blank">$..book.%length()</a>                 | The number of books                      |
+-->
 Reading a Document
 ------------------
 The simplest most straight forward way to use JsonPath is via the static read API.

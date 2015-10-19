@@ -29,6 +29,8 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
 
+import static com.jayway.jsonpath.Option.ALWAYS_RETURN_LIST;
+import static com.jayway.jsonpath.Option.AS_PATH_LIST;
 import static com.jayway.jsonpath.internal.Utils.*;
 
 /**
@@ -167,11 +169,17 @@ public class JsonPath {
      */
     @SuppressWarnings("unchecked")
     public <T> T read(Object jsonObject, Configuration configuration) {
-        boolean optAsPathList = configuration.containsOption(Option.AS_PATH_LIST);
+        boolean optAsPathList = configuration.containsOption(AS_PATH_LIST);
         boolean optAlwaysReturnList = configuration.containsOption(Option.ALWAYS_RETURN_LIST);
         boolean optSuppressExceptions = configuration.containsOption(Option.SUPPRESS_EXCEPTIONS);
 
         try {
+            if(path.isFunctionPath()){
+                if(optAsPathList || optAlwaysReturnList){
+                    throw new JsonPathException("Options " + AS_PATH_LIST + " and " + ALWAYS_RETURN_LIST + " are not allowed when using path functions!");
+                }
+                return path.evaluate(jsonObject, jsonObject, configuration).getValue(true);
+            }
             if(optAsPathList){
                 return  (T)path.evaluate(jsonObject, jsonObject, configuration).getPath();
             } else {
@@ -644,7 +652,7 @@ public class JsonPath {
     }
 
     private <T> T resultByConfiguration(Object jsonObject, Configuration configuration, EvaluationContext evaluationContext) {
-        if(configuration.containsOption(Option.AS_PATH_LIST)){
+        if(configuration.containsOption(AS_PATH_LIST)){
             return (T)evaluationContext.getPathList();
         } else {
             return (T) jsonObject;

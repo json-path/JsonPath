@@ -16,7 +16,7 @@ package com.jayway.jsonpath.internal;
 
 import com.jayway.jsonpath.Configuration;
 import com.jayway.jsonpath.internal.token.EvaluationContextImpl;
-import com.jayway.jsonpath.internal.token.PathToken;
+import com.jayway.jsonpath.internal.token.RootPathToken;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -24,12 +24,12 @@ public class CompiledPath implements Path {
 
     private static final Logger logger = LoggerFactory.getLogger(CompiledPath.class);
 
-    private final PathToken root;
+    private final RootPathToken root;
 
     private final boolean isRootPath;
 
 
-    public CompiledPath(PathToken root, boolean isRootPath) {
+    public CompiledPath(RootPathToken root, boolean isRootPath) {
         this.root = root;
         this.isRootPath = isRootPath;
     }
@@ -62,6 +62,11 @@ public class CompiledPath implements Path {
     @Override
     public boolean isDefinite() {
         return root.isPathDefinite();
+    }
+
+    @Override
+    public boolean isFunctionPath() {
+        return root.isFunctionPath();
     }
 
     @Override

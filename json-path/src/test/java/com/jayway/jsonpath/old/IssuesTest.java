@@ -1,5 +1,6 @@
 package com.jayway.jsonpath.old;
 
+import com.google.gson.JsonObject;
 import com.jayway.jsonpath.BaseTest;
 import com.jayway.jsonpath.Configuration;
 import com.jayway.jsonpath.DocumentContext;
@@ -33,6 +34,7 @@ import static com.jayway.jsonpath.Filter.filter;
 import static com.jayway.jsonpath.JsonPath.read;
 import static junit.framework.Assert.assertNull;
 import static junit.framework.Assert.assertTrue;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.failBecauseExceptionWasNotThrown;
 import static org.hamcrest.Matchers.is;
 import static org.junit.Assert.assertEquals;
@@ -175,7 +177,7 @@ public class IssuesTest extends BaseTest {
 
         List<String> result = read(json, "$[?(@.compatible == true)].sku");
 
-        Assertions.assertThat(result).containsExactly("SKU-005", "SKU-003");
+        assertThat(result).containsExactly("SKU-005", "SKU-003");
     }
 
 
@@ -259,7 +261,7 @@ public class IssuesTest extends BaseTest {
     public void issue_22b() throws Exception {
         String json = "{\"a\":[{\"b\":1,\"c\":2},{\"b\":5,\"c\":2}]}";
         List<Object> res = JsonPath.using(Configuration.defaultConfiguration().setOptions(Option.DEFAULT_PATH_LEAF_TO_NULL)).parse(json).read("a[?(@.b==5)].d");
-        Assertions.assertThat(res).hasSize(1).containsNull();
+        assertThat(res).hasSize(1).containsNull();
     }
 
     @Test(expected = PathNotFoundException.class)
@@ -334,8 +336,8 @@ public class IssuesTest extends BaseTest {
 
         List<Map<String, Object>> result = read(json, "$.store.book[?(@.author.age == 36)]");
 
-        Assertions.assertThat(result).hasSize(1);
-        Assertions.assertThat(result.get(0)).containsEntry("title", "Sayings of the Century");
+        assertThat(result).hasSize(1);
+        assertThat(result.get(0)).containsEntry("title", "Sayings of the Century");
     }
 
     @Test
@@ -381,7 +383,7 @@ public class IssuesTest extends BaseTest {
 
         List<Map<String, String>> result = read(json, "$.list[?(@.name == 'My (String)')]");
 
-        Assertions.assertThat(result).containsExactly(Collections.singletonMap("name", "My (String)"));
+        assertThat(result).containsExactly(Collections.singletonMap("name", "My (String)"));
     }
 
     @Test
@@ -389,9 +391,9 @@ public class IssuesTest extends BaseTest {
 
         String json = "{\"test\":null}";
 
-        Assertions.assertThat(read(json, "test")).isNull();
+        assertThat(read(json, "test")).isNull();
 
-        Assertions.assertThat(JsonPath.using(Configuration.defaultConfiguration().setOptions(Option.SUPPRESS_EXCEPTIONS)).parse(json).read("nonExistingProperty")).isNull();
+        assertThat(JsonPath.using(Configuration.defaultConfiguration().setOptions(Option.SUPPRESS_EXCEPTIONS)).parse(json).read("nonExistingProperty")).isNull();
 
         try {
             read(json, "nonExistingProperty");
@@ -416,7 +418,7 @@ public class IssuesTest extends BaseTest {
     public void issue_45() {
         String json = "{\"rootkey\":{\"sub.key\":\"value\"}}";
 
-        Assertions.assertThat(read(json, "rootkey['sub.key']")).isEqualTo("value");
+        assertThat(read(json, "rootkey['sub.key']")).isEqualTo("value");
     }
 
     @Test
@@ -426,14 +428,14 @@ public class IssuesTest extends BaseTest {
         String json = "{\"a\": {}}";
 
         Configuration configuration = Configuration.defaultConfiguration().setOptions(Option.SUPPRESS_EXCEPTIONS);
-        Assertions.assertThat(JsonPath.using(configuration).parse(json).read("a.x")).isNull();
+        assertThat(JsonPath.using(configuration).parse(json).read("a.x")).isNull();
 
         try {
             read(json, "a.x");
 
             failBecauseExceptionWasNotThrown(PathNotFoundException.class);
         } catch (PathNotFoundException e) {
-            Assertions.assertThat(e).hasMessage("No results for path: $['a']['x']");
+            assertThat(e).hasMessage("No results for path: $['a']['x']");
         }
     }
 
@@ -449,7 +451,7 @@ public class IssuesTest extends BaseTest {
 
         List<String> result = JsonPath.read(json, "$.a.*.b.*.c");
 
-        Assertions.assertThat(result).containsExactly("foo");
+        assertThat(result).containsExactly("foo");
 
     }
 
@@ -505,7 +507,7 @@ public class IssuesTest extends BaseTest {
 
         List<String> problems = JsonPath.read(json, "$..narratives[?(@.lastRule==true)].message");
 
-        Assertions.assertThat(problems).containsExactly("Chain does not have a discovery event. Possible it was cut by the date that was picked", "No start transcoding events found");
+        assertThat(problems).containsExactly("Chain does not have a discovery event. Possible it was cut by the date that was picked", "No start transcoding events found");
     }
 
     //http://stackoverflow.com/questions/28596324/jsonpath-filtering-api
@@ -567,7 +569,7 @@ public class IssuesTest extends BaseTest {
 
         List<String> result = JsonPath.read(json, "$.logs[?(@.message == 'it\\'s here')].message");
 
-        Assertions.assertThat(result).containsExactly("it's here");
+        assertThat(result).containsExactly("it's here");
     }
 
     @Test
@@ -600,7 +602,7 @@ public class IssuesTest extends BaseTest {
 
         List<String> res = JsonPath.read(json, "$.c.*.url[2]");
 
-        Assertions.assertThat(res).containsExactly("url5");
+        assertThat(res).containsExactly("url5");
     }
 
     @Test
@@ -614,7 +616,7 @@ public class IssuesTest extends BaseTest {
         }
         Thread.sleep(2000);
 
-        Assertions.assertThat(cache.size()).isEqualTo(200);
+        assertThat(cache.size()).isEqualTo(200);
     }
 
     @Test
@@ -657,12 +659,12 @@ public class IssuesTest extends BaseTest {
 
         cache.get("6");
 
-        Assertions.assertThat(cache.getSilent("6")).isNotNull();
-        Assertions.assertThat(cache.getSilent("5")).isNotNull();
-        Assertions.assertThat(cache.getSilent("4")).isNotNull();
-        Assertions.assertThat(cache.getSilent("3")).isNotNull();
-        Assertions.assertThat(cache.getSilent("2")).isNotNull();
-        Assertions.assertThat(cache.getSilent("1")).isNull();
+        assertThat(cache.getSilent("6")).isNotNull();
+        assertThat(cache.getSilent("5")).isNotNull();
+        assertThat(cache.getSilent("4")).isNotNull();
+        assertThat(cache.getSilent("3")).isNotNull();
+        assertThat(cache.getSilent("2")).isNotNull();
+        assertThat(cache.getSilent("1")).isNull();
     }
 
     @Test
@@ -690,7 +692,7 @@ public class IssuesTest extends BaseTest {
 
         List<String> categories = context.read("$..category", List.class);
 
-        Assertions.assertThat(categories).containsOnly("fiction");
+        assertThat(categories).containsOnly("fiction");
     }
 
 
@@ -736,10 +738,10 @@ public class IssuesTest extends BaseTest {
 
         Filter parsed = Filter.parse(filterAsString);
 
-        Assertions.assertThat(orig.apply(createPredicateContext(match))).isTrue();
-        Assertions.assertThat(parsed.apply(createPredicateContext(match))).isTrue();
-        Assertions.assertThat(orig.apply(createPredicateContext(noMatch))).isFalse();
-        Assertions.assertThat(parsed.apply(createPredicateContext(noMatch))).isFalse();
+        assertThat(orig.apply(createPredicateContext(match))).isTrue();
+        assertThat(parsed.apply(createPredicateContext(match))).isTrue();
+        assertThat(orig.apply(createPredicateContext(noMatch))).isFalse();
+        assertThat(parsed.apply(createPredicateContext(noMatch))).isFalse();
     }
 
     private PredicateContext createPredicateContext(final Map<String, Integer> map){
@@ -764,5 +766,125 @@ public class IssuesTest extends BaseTest {
                 return Configuration.defaultConfiguration();
             }
         };
+    }
+
+    @Test
+    public void issue_131() {
+
+        String json = "[\n" +
+                "    {\n" +
+                "        \"foo\": \"1\"\n" +
+                "    },\n" +
+                "    {\n" +
+                "        \"foo\": null\n" +
+                "    },\n" +
+                "    {\n" +
+                "        \"xxx\": null\n" +
+                "    }\n" +
+                "]";
+
+        List<Map<String, String>> result = JsonPath.read(json, "$[?(@.foo)]");
+
+        assertThat(result).extracting("foo").containsExactly("1", null);
+    }
+
+
+    @Test
+    public void issue_131_2() {
+
+        String json = "[\n" +
+                "    {\n" +
+                "        \"foo\": { \"bar\" : \"0\"}\n" +
+                "    },\n" +
+                "    {\n" +
+                "        \"foo\": null\n" +
+                "    },\n" +
+                "    {\n" +
+                "        \"xxx\": null\n" +
+                "    }\n" +
+                "]";
+
+        List<String> result = JsonPath.read(json, "$[?(@.foo != null)].foo.bar");
+
+        assertThat(result).containsExactly("0");
+
+
+        result = JsonPath.read(json, "$[?(@.foo.bar)].foo.bar");
+
+        assertThat(result).containsExactly("0");
+    }
+
+
+    @Test
+    public void issue_131_3() {
+        String json = "[\n" +
+                "    1,\n" +
+                "    2,\n" +
+                "    {\n" +
+                "        \"d\": {\n" +
+                "            \"random\": null,\n" +
+                "            \"date\": 1234\n" +
+                "        },\n" +
+                "        \"l\": \"filler\"\n" +
+                "    }\n" +
+                "]";
+
+        List<Integer> result = JsonPath.read(json, "$[2]['d'][?(@.random)]['date']");
+
+        assertThat(result).containsExactly(1234);
+    }
+
+
+    //https://groups.google.com/forum/#!topic/jsonpath/Ojv8XF6LgqM
+    @Test
+    public void using_square_bracket_literal_path() {
+
+        String json = "{ \"valid key[@num = 2]\" : \"value\" }";
+
+        String result = JsonPath.read(json, "$['valid key[@num = 2]']");
+
+        Assertions.assertThat(result).isEqualTo("value");
+    }
+
+    @Test
+    public void issue_90() {
+
+        String json = "{\n" +
+                "    \"store\": {\n" +
+                "        \"book\": [\n" +
+                "            {\n" +
+                "                \"price\": \"120\"\n" +
+                "            },\n" +
+                "            {\n" +
+                "                \"price\": 8.95\n" +
+                "            },\n" +
+                "            {\n" +
+                "                \"price\": 12.99\n" +
+                "            },\n" +
+                "            {\n" +
+                "                \"price\": 8.99\n" +
+                "            },\n" +
+                "            {\n" +
+                "                \"price\": 22.99\n" +
+                "            }\n" +
+                "        ]\n" +
+                "    },\n" +
+                "    \"expensive\": 10\n" +
+                "}";
+
+        List<Double> numbers = JsonPath.read(json, "$.store.book[?(@.price <= 90)].price");
+
+        assertThat(numbers).containsExactly(8.95D, 12.99D, 8.99D, 22.99D);
+    }
+
+    @Test(expected = PathNotFoundException.class)
+    public void github_89() {
+
+        com.google.gson.JsonObject json = new JsonObject();
+        json.addProperty("foo", "bar");
+
+        JsonPath path = JsonPath.compile("$.foo");
+        String object = path.read(json);
+
     }
 }

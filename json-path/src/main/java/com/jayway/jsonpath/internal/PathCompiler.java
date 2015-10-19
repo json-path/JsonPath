@@ -5,11 +5,10 @@ import com.jayway.jsonpath.InvalidPathException;
 import com.jayway.jsonpath.Predicate;
 import com.jayway.jsonpath.internal.token.ArrayIndexOperation;
 import com.jayway.jsonpath.internal.token.ArraySliceOperation;
+import com.jayway.jsonpath.internal.token.FunctionPathToken;
 import com.jayway.jsonpath.internal.token.PathTokenAppender;
 import com.jayway.jsonpath.internal.token.PathTokenFactory;
 import com.jayway.jsonpath.internal.token.RootPathToken;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -21,8 +20,6 @@ import static java.lang.Math.min;
 import static java.util.Arrays.asList;
 
 public class PathCompiler {
-
-    private static final Logger logger = LoggerFactory.getLogger(PathCompiler.class);
 
     private static final char DOC_CONTEXT = '$';
     private static final char EVAL_CONTEXT = '@';
@@ -39,6 +36,7 @@ public class PathCompiler {
     private static final char MINUS = '-';
     private static final char ESCAPE = '\\';
     private static final char TICK = '\'';
+    private static final char FUNCTION = '%';
 
     private static final Cache cache = new Cache(200);
 
@@ -131,10 +129,40 @@ public class PathCompiler {
             case WILDCARD:
                 return readWildCardToken(appender) ||
                         fail("Could not parse token at position " + path.position);
+            case FUNCTION:
+                return readFunctionToken(appender) ||
+                        fail("Could not parse token at position " + path.position);
             default:
                 return readPropertyToken(appender) ||
                         fail("Could not parse token at position " + path.position);
         }
+    }
+
+    //
+    // $function()
+    //
+    private boolean readFunctionToken(PathTokenAppender appender) {
+        if (path.currentCharIs(OPEN_SQUARE_BRACKET) || path.currentCharIs(WILDCARD) || path.currentCharIs(PERIOD) || path.currentCharIs(SPACE)) {
+            return false;
+        }
+        int startPosition = path.position;
+        int readPosition = startPosition;
+        int endPosition = 0;
+        while (path.inBounds(readPosition)) {
+            char c = path.charAt(readPosition);
+            if (c == OPEN_BRACKET && path.nextSignificantCharIs(readPosition, CLOSE_BRACKET)) {
+                endPosition = path.indexOfNextSignificantChar(readPosition, CLOSE_BRACKET);
+                break;
+            }
+            readPosition++;
+        }
+        path.setPosition(endPosition);
+
+        String function = path.subSequence(startPosition, endPosition + 1).toString();
+
+        appender.appendPathToken(PathTokenFactory.createFunctionPathToken(function));
+
+        return path.currentIsTail();
     }
 
     //
@@ -372,10 +400,7 @@ public class PathCompiler {
         while (path.inBounds(readPosition)) {
             char c = path.charAt(readPosition);
 
-            if (c == CLOSE_SQUARE_BRACKET) {
-                if (inProperty) {
-                    throw new InvalidPathException("Expected property to be closed at position " + readPosition);
-                }
+            if (c == CLOSE_SQUARE_BRACKET && !inProperty) {
                 break;
             } else if (c == TICK) {
                 if (inProperty) {
@@ -571,6 +596,3 @@ public class PathCompiler {
         }
     }
 }
-
-
-

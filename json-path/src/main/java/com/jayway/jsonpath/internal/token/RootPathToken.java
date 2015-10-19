@@ -73,5 +73,7 @@ public class RootPathToken extends PathToken {
         return true;
     }
 
-
+    public boolean isFunctionPath() {
+        return (tail instanceof FunctionPathToken);
+    }
 }

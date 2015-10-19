@@ -64,7 +64,12 @@ public class PropertyPathToken extends PathToken {
             if (! isUpstreamDefinite()) {
                 return;
             } else {
-                throw new PathNotFoundException("Property " + getPathFragment() + " not found in path " + currentPath);
+                String m = model == null ? "null" : model.getClass().getName();
+
+                throw new PathNotFoundException(String.format(
+                        "Expected to find an object with property %s in path %s but found '%s'. " +
+                        "This is not a json object according to the JsonProvider: '%s'.",
+                        getPathFragment(), currentPath, m, ctx.configuration().jsonProvider().getClass().getName()));
             }
         }
 
