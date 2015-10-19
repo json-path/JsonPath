@@ -23,8 +23,11 @@ public class RootPathToken extends PathToken {
 
     private PathToken tail;
     private int tokenCount;
+    private final String rootToken;
 
-    public RootPathToken() {
+
+    RootPathToken(char rootToken) {
+        this.rootToken = Character.toString(rootToken);;
         this.tail = this;
         this.tokenCount = 1;
     }
@@ -40,23 +43,35 @@ public class RootPathToken extends PathToken {
         return this;
     }
 
+    public PathTokenAppender getPathTokenAppender(){
+        return new PathTokenAppender(){
+            @Override
+            public PathTokenAppender appendPathToken(PathToken next) {
+                append(next);
+                return this;
+            }
+        };
+    }
+
     @Override
     public void evaluate(String currentPath, PathRef pathRef, Object model, EvaluationContextImpl ctx) {
         if (isLeaf()) {
             PathRef op = ctx.forUpdate() ?  pathRef : PathRef.NO_OP;
-            ctx.addResult("$", op, model);
+            ctx.addResult(rootToken, op, model);
         } else {
-            next().evaluate("$", pathRef, model, ctx);
+            next().evaluate(rootToken, pathRef, model, ctx);
         }
     }
 
     @Override
     public String getPathFragment() {
-        return "$";
+        return rootToken;
     }
 
     @Override
-    boolean isTokenDefinite() {
+    public boolean isTokenDefinite() {
         return true;
     }
+
+
 }

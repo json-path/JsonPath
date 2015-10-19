@@ -84,12 +84,6 @@ public class ArraySlicingTest {
     }
 
     @Test
-    public void get_from_tail_length(){
-        Integer result = JsonPath.read(JSON_ARRAY, "$[(@.length -3)]");
-        assertEquals(8, result.intValue());
-    }
-
-    @Test
     public void get_indexes(){
         List<Integer> result = JsonPath.read(JSON_ARRAY, "$[0,1,2]");
         assertThat(result, Matchers.contains(1,3,5));

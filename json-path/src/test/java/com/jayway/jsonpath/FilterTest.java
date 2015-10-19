@@ -10,6 +10,9 @@ import java.util.regex.Pattern;
 
 import static com.jayway.jsonpath.Criteria.where;
 import static com.jayway.jsonpath.Filter.filter;
+import static com.jayway.jsonpath.Filter.parse;
+import static java.lang.System.out;
+import static java.util.Arrays.asList;
 import static org.assertj.core.api.Assertions.assertThat;
 
 public class FilterTest extends BaseTest {
@@ -252,9 +255,9 @@ public class FilterTest extends BaseTest {
         String json = "{\"foo\":" + arr + ", \"bar\":" + nest + "}";
         Object tree = Configuration.defaultConfiguration().jsonProvider().parse(json);
         Predicate.PredicateContext context = createPredicateContext(tree);
-        Filter farr = Filter.parse("[?(@.foo == " + arr + ")]");
-        Filter fobjF = Filter.parse("[?(@.foo == " + nest + ")]");
-        Filter fobjT = Filter.parse("[?(@.bar == " + nest + ")]");
+        Filter farr = parse("[?(@.foo == " + arr + ")]");
+        Filter fobjF = parse("[?(@.foo == " + nest + ")]");
+        Filter fobjT = parse("[?(@.bar == " + nest + ")]");
         assertThat(farr.apply(context)).isEqualTo(true);
         assertThat(fobjF.apply(context)).isEqualTo(false);
         assertThat(fobjT.apply(context)).isEqualTo(true);
@@ -424,45 +427,194 @@ public class FilterTest extends BaseTest {
         Filter isBar = filter(where("bar").is(true));
 
 
-        Filter fooOrBar = filter(where("foo").exists(true)).or(where("bar").exists(true));
-        Filter fooAndBar = filter(where("foo").exists(true)).and(where("bar").exists(true));
+        Filter fooOrBar = filter(where("foo").is(true)).or(where("bar").is(true));
+        Filter fooAndBar = filter(where("foo").is(true)).and(where("bar").is(true));
 
         assertThat(isFoo.or(isBar).apply(createPredicateContext(model))).isTrue();
         assertThat(isFoo.and(isBar).apply(createPredicateContext(model))).isFalse();
+        assertThat(fooOrBar.apply(createPredicateContext(model))).isTrue();
+        assertThat(fooAndBar.apply(createPredicateContext(model))).isFalse();
 
     }
 
     @Test
     public void a_filter_can_be_parsed() {
 
-        Filter.parse("[?(@.foo)]");
-        Filter.parse("[?(@.foo == 1)]");
-        Filter.parse("[?(@.foo == 1 || @['bar'])]");
-        Filter.parse("[?(@.foo == 1 && @['bar'])]");
+        parse("[?(@.foo)]");
+        parse("[?(@.foo == 1)]");
+        parse("[?(@.foo == 1 || @['bar'])]");
+        parse("[?(@.foo == 1 && @['bar'])]");
     }
 
     @Test
     public void an_invalid_filter_can_not_be_parsed() {
         try {
-            Filter.parse("[?(@.foo == 1)");
+            parse("[?(@.foo == 1)");
             Assertions.fail("expected " + InvalidPathException.class.getName());
         } catch (InvalidPathException ipe){}
 
         try {
-            Filter.parse("[?(@.foo == 1) ||]");
+            parse("[?(@.foo == 1) ||]");
             Assertions.fail("expected " + InvalidPathException.class.getName());
         } catch (InvalidPathException ipe){}
 
         try {
-            Filter.parse("[(@.foo == 1)]");
+            parse("[(@.foo == 1)]");
             Assertions.fail("expected " + InvalidPathException.class.getName());
         } catch (InvalidPathException ipe){}
 
         try {
-            Filter.parse("[?@.foo == 1)]");
+            parse("[?@.foo == 1)]");
             Assertions.fail("expected " + InvalidPathException.class.getName());
         } catch (InvalidPathException ipe){}
     }
 
 
+    @Test
+    public void a_gte_filter_can_be_serialized() {
+
+        System.out.println(filter(where("a").gte(1)).toString());
+
+        assertThat(filter(where("a").gte(1)).toString()).isEqualTo(parse("[?(@['a'] >= 1)]").toString());
+    }
+
+    @Test
+    public void a_lte_filter_can_be_serialized() {
+        assertThat(filter(where("a").lte(1)).toString()).isEqualTo("[?(@['a'] <= 1)]");
+    }
+
+    @Test
+    public void a_eq_filter_can_be_serialized() {
+        assertThat(filter(where("a").eq(1)).toString()).isEqualTo("[?(@['a'] == 1)]");
+    }
+
+    @Test
+    public void a_ne_filter_can_be_serialized() {
+        assertThat(filter(where("a").ne(1)).toString()).isEqualTo("[?(@['a'] != 1)]");
+    }
+
+    @Test
+    public void a_lt_filter_can_be_serialized() {
+        assertThat(filter(where("a").lt(1)).toString()).isEqualTo("[?(@['a'] < 1)]");
+    }
+
+    @Test
+    public void a_gt_filter_can_be_serialized() {
+        assertThat(filter(where("a").gt(1)).toString()).isEqualTo("[?(@['a'] > 1)]");
+    }
+
+    @Test
+    public void a_regex_filter_can_be_serialized() {
+        assertThat(filter(where("a").regex(Pattern.compile("/.*?/i"))).toString()).isEqualTo("[?(@['a'] =~ /.*?/i)]");
+    }
+
+    @Test
+    public void a_nin_filter_can_be_serialized() {
+        assertThat(filter(where("a").nin(1)).toString()).isEqualTo("[?(@['a'] ¦NIN¦ [1])]");
+    }
+
+    @Test
+    public void a_in_filter_can_be_serialized() {
+        assertThat(filter(where("a").in("a")).toString()).isEqualTo("[?(@['a'] ¦IN¦ ['a'])]");
+    }
+
+    @Test
+    public void a_contains_filter_can_be_serialized() {
+        assertThat(filter(where("a").contains("a")).toString()).isEqualTo("[?(@['a'] ¦CONTAINS¦ 'a')]");
+    }
+
+    @Test
+    public void a_all_filter_can_be_serialized() {
+        assertThat(filter(where("a").all("a", "b")).toString()).isEqualTo("[?(@['a'] ¦ALL¦ ['a','b'])]");
+    }
+
+    @Test
+    public void a_size_filter_can_be_serialized() {
+        assertThat(filter(where("a").size(5)).toString()).isEqualTo("[?(@['a'] ¦SIZE¦ 5)]");
+    }
+
+    @Test
+    public void a_exists_filter_can_be_serialized() {
+        assertThat(filter(where("a").exists(true)).toString()).isEqualTo("[?(@['a'])]");
+    }
+
+    @Test
+    public void a_not_exists_filter_can_be_serialized() {
+        assertThat(filter(where("a").exists(false)).toString()).isEqualTo("[?(!@['a'])]");
+    }
+
+    @Test
+    public void a_type_filter_can_be_serialized() {
+        assertThat(filter(where("a").type(String.class)).toString()).isEqualTo("[?(@['a'] ¦TYPE¦ java.lang.String)]");
+    }
+
+    @Test
+    public void a_matches_filter_can_be_serialized() {
+        Filter a = filter(where("x").eq(1000));
+
+        assertThat(filter(where("a").matches(a)).toString()).isEqualTo("[?(@['a'] ¦MATCHES¦ [?(@['x'] == 1000)])]");
+    }
+
+    @Test
+    public void a_not_empty_filter_can_be_serialized() {
+        assertThat(filter(where("a").notEmpty()).toString()).isEqualTo("[?(@['a'] ¦NOT_EMPTY¦)]");
+    }
+
+    @Test
+    public void and_filter_can_be_serialized() {
+        assertThat(filter(where("a").eq(1).and("b").eq(2)).toString()).isEqualTo("[?(@['a'] == 1 && @['b'] == 2)]");
+    }
+
+    @Test
+    public void in_string_filter_can_be_serialized() {
+        assertThat(filter(where("a").in("1","2")).toString()).isEqualTo("[?(@['a'] ¦IN¦ ['1','2'])]");
+    }
+
+    @Test
+    public void a_deep_path_filter_can_be_serialized() {
+        assertThat(filter(where("a.b.c").in("1","2")).toString()).isEqualTo("[?(@['a']['b']['c'] ¦IN¦ ['1','2'])]");
+    }
+
+    @Test
+    public void a_doc_ref_filter_can_be_serialized() {
+        assertThat(parse("[?(@.display-price <= $.max-price)]").toString()).isEqualTo("[?(@['display-price'] <= $['max-price'])]");
+    }
+
+    @Test
+    public void and_combined_filters_can_be_serialized() {
+
+        Filter a = filter(where("a").eq(1));
+        Filter b = filter(where("b").eq(2));
+        Filter c = a.and(b);
+
+        assertThat(c.toString()).isEqualTo("[?(@['a'] == 1 && @['b'] == 2)]");
+    }
+
+    @Test
+    public void or_combined_filters_can_be_serialized() {
+
+        Filter a = filter(where("a").eq(1));
+        Filter b = filter(where("b").eq(2));
+        Filter c = a.or(b);
+
+        assertThat(c.toString()).isEqualTo("[?(@['a'] == 1 || @['b'] == 2)]");
+    }
+
+
+    @Test
+    public void a_____() {
+        // :2
+        // 1:2
+        // -2:
+        //2:
+
+
+
+        out.println(asList(":2".split(":")));  //[, 2]
+        out.println(asList("1:2".split(":")));  //[1, 2]
+        out.println(asList("-2:".split(":")));  //[-2]
+        out.println(asList("2:".split(":")));  //[2]
+        out.println(asList(":2".split(":")).get(0).equals(""));  //true
+
+    }
 }

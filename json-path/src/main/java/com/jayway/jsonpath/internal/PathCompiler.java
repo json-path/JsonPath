@@ -1,512 +1,576 @@
-/*
- * Copyright 2011 the original author or authors.
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *       http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
 package com.jayway.jsonpath.internal;
 
 import com.jayway.jsonpath.Filter;
 import com.jayway.jsonpath.InvalidPathException;
 import com.jayway.jsonpath.Predicate;
-import com.jayway.jsonpath.internal.token.ArrayPathToken;
-import com.jayway.jsonpath.internal.token.PathToken;
-import com.jayway.jsonpath.internal.token.PredicatePathToken;
-import com.jayway.jsonpath.internal.token.PropertyPathToken;
+import com.jayway.jsonpath.internal.token.ArrayIndexOperation;
+import com.jayway.jsonpath.internal.token.ArraySliceOperation;
+import com.jayway.jsonpath.internal.token.PathTokenAppender;
+import com.jayway.jsonpath.internal.token.PathTokenFactory;
 import com.jayway.jsonpath.internal.token.RootPathToken;
-import com.jayway.jsonpath.internal.token.ScanPathToken;
-import com.jayway.jsonpath.internal.token.WildcardPathToken;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.regex.Pattern;
 
-import static com.jayway.jsonpath.internal.Utils.notEmpty;
+import static java.lang.Character.isDigit;
+import static java.lang.Math.min;
 import static java.util.Arrays.asList;
 
 public class PathCompiler {
 
     private static final Logger logger = LoggerFactory.getLogger(PathCompiler.class);
 
-    private static final String PROPERTY_OPEN = "['";
-    private static final String PROPERTY_CLOSE = "']";
-    private static final char DOCUMENT = '$';
-    private static final char ANY = '*';
+    private static final char DOC_CONTEXT = '$';
+    private static final char EVAL_CONTEXT = '@';
+    private static final char OPEN_SQUARE_BRACKET = '[';
+    private static final char CLOSE_SQUARE_BRACKET = ']';
+    private static final char OPEN_BRACKET = '(';
+    private static final char CLOSE_BRACKET = ')';
+    private static final char WILDCARD = '*';
     private static final char PERIOD = '.';
-    private static final char BRACKET_OPEN = '[';
-    private static final char BRACKET_CLOSE = ']';
     private static final char SPACE = ' ';
+    private static final char QUESTIONMARK = '?';
+    private static final char COMMA = ',';
+    private static final char SPLIT = ':';
+    private static final char MINUS = '-';
+    private static final char ESCAPE = '\\';
+    private static final char TICK = '\'';
+
     private static final Cache cache = new Cache(200);
 
+    private final LinkedList<Predicate> filterStack;
+    private final CharacterIndex path;
 
-    public static Path compile(final String path, final Predicate... filters) {
+    private PathCompiler(String path, LinkedList<Predicate> filterStack) {
+        this.filterStack = filterStack;
+        this.path = new CharacterIndex(path);
+    }
 
-        notEmpty(path, "Path may not be null empty");
+    private Path compile() {
+        RootPathToken root = readContextToken();
+        return new CompiledPath(root, root.getPathFragment().equals("$"));
+    }
+
+    public static Path compile(String path, final Predicate... filters) {
         try {
-            String trimmedPath = path.trim();
+            path = path.trim();
 
-            if (trimmedPath.endsWith("..")) {
-                throw new InvalidPathException("A path can not end with a scan.");
+            if(!path.startsWith("$") && !path.startsWith("@")){
+                path = "$." + path;
             }
-
-            LinkedList<Predicate> filterList = new LinkedList<Predicate>(asList(filters));
-
-            if (trimmedPath.charAt(0) != '$' && trimmedPath.charAt(0) != '@') {
-                trimmedPath = Utils.concat("$.", trimmedPath);
+            if(path.endsWith("..")){
+                fail("Path must not end wid a scan operation '..'");
             }
-
-            boolean isRootPath = (trimmedPath.charAt(0) == '$');
-
-            if (trimmedPath.charAt(0) == '@') {
-                trimmedPath = Utils.concat("$", trimmedPath.substring(1));
-            }
-
-            if (trimmedPath.length() > 1 &&
-                    trimmedPath.charAt(1) != '.' &&
-                    trimmedPath.charAt(1) != '[') {
-                throw new InvalidPathException("Invalid path " + trimmedPath);
-            }
-
-            String cacheKey = Utils.concat(trimmedPath, Boolean.toString(isRootPath), filterList.toString());
+            LinkedList filterStack = new LinkedList<Predicate>(asList(filters));
+            String cacheKey = Utils.concat(path, filterStack.toString());
             Path p = cache.get(cacheKey);
-            if (p != null) {
-                if (logger.isDebugEnabled()) logger.debug("Using cached path: {}", cacheKey);
-                return p;
+            if (p == null) {
+                p = new PathCompiler(path.trim(), filterStack).compile();
+                cache.put(cacheKey, p);
             }
-
-            RootPathToken root = null;
-
-
-            int i = 0;
-            int positions;
-            String fragment = "";
-
-            do {
-                char current = trimmedPath.charAt(i);
-
-                switch (current) {
-                    case SPACE:
-                        throw new InvalidPathException("Space not allowed in path");
-                    case DOCUMENT:
-                        fragment = "$";
-                        i++;
-                        break;
-                    case BRACKET_OPEN:
-                        positions = fastForwardUntilClosed(trimmedPath, i);
-                        fragment = trimmedPath.substring(i, i + positions);
-                        i += positions;
-                        break;
-                    case PERIOD:
-                        i++;
-                        if ( i < trimmedPath.length() && trimmedPath.charAt(i) == PERIOD) {
-                            //This is a deep scan
-                            fragment = "..";
-                            i++;
-                        } else {
-                            positions = fastForward(trimmedPath, i);
-                            if (positions == 0) {
-                                continue;
-
-                            } else if (positions == 1 && trimmedPath.charAt(i) == '*') {
-                                fragment = new String("[*]");
-                            } else {
-                                assertValidFieldChars(trimmedPath, i, positions);
-
-                                fragment = Utils.concat(PROPERTY_OPEN, trimmedPath.substring(i, i + positions), PROPERTY_CLOSE);
-                            }
-                            i += positions;
-                        }
-                        break;
-                    case ANY:
-                        fragment = new String("[*]");
-                        i++;
-                        break;
-                    default:
-                        positions = fastForward(trimmedPath, i);
-
-                        fragment = Utils.concat(PROPERTY_OPEN, trimmedPath.substring(i, i + positions), PROPERTY_CLOSE);
-                        i += positions;
-                        break;
-                }
-                if (root == null) {
-                    root = (RootPathToken) PathComponentAnalyzer.analyze(fragment, filterList);
-                } else {
-                    root.append(PathComponentAnalyzer.analyze(fragment, filterList));
-                }
-
-            } while (i < trimmedPath.length());
-
-            Path pa = new CompiledPath(root, isRootPath);
-
-            cache.put(cacheKey, pa);
-
-            return pa;
-
-        } catch (Exception ex){
-            throw new InvalidPathException(ex);
-        }
-    }
-
-    private static void assertValidFieldChars(String s, int start, int positions) {
-        /*
-        int i = start;
-        while (i < start + positions) {
-            char c = s.charAt(i);
-
-            if (!Character.isLetterOrDigit(c) && c != '-' && c != '_' && c != '$' && c != '@') {
-                throw new InvalidPathException("Invalid field name! Use bracket notation if your filed names does not match pattern: ([a-zA-Z@][a-zA-Z0-9@\\$_\\-]*)$");
-            }
-            i++;
-        }
-        */
-    }
-
-    private static int fastForward(String s, int index) {
-        int skipCount = 0;
-        while (index < s.length()) {
-            char current = s.charAt(index);
-            if (current == PERIOD || current == BRACKET_OPEN || current == SPACE) {
-                break;
-            }
-            index++;
-            skipCount++;
-        }
-        return skipCount;
-    }
-
-    private static int fastForwardUntilClosed(String s, int index) {
-        int skipCount = 0;
-        int nestedBrackets = 0;
-
-        //First char is always '[' no need to check it
-        index++;
-        skipCount++;
-
-        while (index < s.length()) {
-            char current = s.charAt(index);
-
-            index++;
-            skipCount++;
-
-            if (current == BRACKET_CLOSE && nestedBrackets == 0) {
-                break;
-            }
-            if (current == BRACKET_OPEN) {
-                nestedBrackets++;
-            }
-            if (current == BRACKET_CLOSE) {
-                nestedBrackets--;
-            }
-        }
-        return skipCount;
-    }
-
-
-    //---------------------------------------------
-    //
-    //
-    //
-    //---------------------------------------------
-    static class PathComponentAnalyzer {
-
-        private static final Pattern FILTER_PATTERN = Pattern.compile("^\\[\\s*\\?\\s*[,\\s*\\?]*?\\s*]$"); //[?] or [?, ?, ...]
-        private int i;
-        private char current;
-
-        private final LinkedList<Predicate> filterList;
-        private final String pathFragment;
-
-        PathComponentAnalyzer(String pathFragment, LinkedList<Predicate> filterList) {
-            this.pathFragment = pathFragment;
-            this.filterList = filterList;
-        }
-
-        static PathToken analyze(String pathFragment, LinkedList<Predicate> filterList) {
-            return new PathComponentAnalyzer(pathFragment, filterList).analyze();
-        }
-
-        public PathToken analyze() {
-
-            if ("$".equals(pathFragment)) return new RootPathToken();
-            else if ("..".equals(pathFragment)) return new ScanPathToken();
-            else if ("[*]".equals(pathFragment)) return new WildcardPathToken();
-            else if (".*".equals(pathFragment)) return new WildcardPathToken();
-            else if ("[?]".equals(pathFragment)) return new PredicatePathToken(filterList.poll());
-
-            else if (FILTER_PATTERN.matcher(pathFragment).matches()) {
-                final int criteriaCount = Utils.countMatches(pathFragment, "?");
-                List<Predicate> filters = new ArrayList<Predicate>(criteriaCount);
-                for (int i = 0; i < criteriaCount; i++) {
-                    filters.add(filterList.poll());
-                }
-                return new PredicatePathToken(filters);
-            }
-
-            this.i = 0;
-            do {
-                current = pathFragment.charAt(i);
-
-                switch (current) {
-                    case '?':
-                        return analyzeCriteriaSequence4();
-                    case '\'':
-                        return analyzeProperty();
-                    default:
-                        if (Character.isDigit(current) || current == ':' || current == '-' || current == '@') {
-                            return analyzeArraySequence();
-                        }
-                        i++;
-                        break;
-                }
-
-
-            } while (i < pathFragment.length());
-
-            throw new InvalidPathException("Could not analyze path component: " + pathFragment);
-        }
-
-
-        public PathToken analyzeCriteriaSequence4() {
-            int[] bounds = findFilterBounds();
-            i = bounds[1];
-
-            return new PredicatePathToken(Filter.parse(pathFragment.substring(bounds[0], bounds[1])));
-        }
-
-        int[] findFilterBounds(){
-            int end = 0;
-            int start = i;
-
-            while(pathFragment.charAt(start) != '['){
-                start--;
-            }
-
-            int mem  = -1;
-            int curr = start;
-            boolean inProp          = false;
-            int openSquareBracket = 0;
-            int openBrackets = 0;
-            while(end == 0){
-                char c = pathFragment.charAt(curr);
-                switch (c){
-                    case '(':
-                        if(!inProp) openBrackets++;
-                        break;
-                    case ')':
-                        if(!inProp) openBrackets--;
-                        break;
-                    case '[':
-                        if(!inProp) openSquareBracket++;
-                        break;
-                    case ']':
-                        if(!inProp){
-                            openSquareBracket--;
-                            if(openBrackets == 0){
-                                end = curr + 1;
-                            }
-                        }
-                        break;
-                    case '\\':
-                        if (mem == '\\') {  // escaped backslash, skip it
-                            mem = -1;
-                            curr++;
-                            continue;
-                        }
-                        break;
-                    case '\'':
-                        if(mem == '\\') {
-                            break;
-                        }
-                        inProp = !inProp;
-                        break;
-                    default:
-                        break;
-                }
-                mem = c;
-                curr++;
-            }
-            if(openBrackets != 0 || openSquareBracket != 0){
-                throw new InvalidPathException("Filter brackets are not balanced");
-            }
-            return new int[]{start, end};
-        }
-
-
-
-
-        //"['foo']"
-        private PathToken analyzeProperty() {
-            List<String> properties = new ArrayList<String>();
-            StringBuilder buffer = new StringBuilder();
-
-            boolean propertyIsOpen = false;
-
-            while (current != ']') {
-                switch (current) {
-                    case '\'':
-                        if (propertyIsOpen) {
-                            properties.add(buffer.toString());
-                            buffer.setLength(0);
-                            propertyIsOpen = false;
-                        } else {
-                            propertyIsOpen = true;
-                        }
-                        break;
-                    default:
-                        if (propertyIsOpen) {
-                            buffer.append(current);
-                        }
-                        break;
-                }
-                current = pathFragment.charAt(++i);
-            }
-            return new PropertyPathToken(properties);
-        }
-
-
-        //"[-1:]"  sliceFrom
-        //"[:1]"   sliceTo
-        //"[0:5]"  sliceBetween
-        //"[1]"
-        //"[1,2,3]"
-        //"[(@.length - 1)]"
-        private PathToken analyzeArraySequence() {
-            StringBuilder buffer = new StringBuilder();
-            List<Integer> numbers = new ArrayList<Integer>();
-
-            boolean contextSize = (current == '@');
-            boolean sliceTo = false;
-            boolean sliceFrom = false;
-            boolean sliceBetween = false;
-            boolean indexSequence = false;
-            boolean singleIndex = false;
-
-            if (contextSize) {
-
-                current = pathFragment.charAt(++i);
-                current = pathFragment.charAt(++i);
-                while (current != '-') {
-                    if (current == ' ' || current == '(' || current == ')') {
-                        current = pathFragment.charAt(++i);
-                        continue;
-                    }
-                    buffer.append(current);
-                    current = pathFragment.charAt(++i);
-                }
-                String function = buffer.toString();
-                buffer.setLength(0);
-                if (!function.equals("size") && !function.equals("length")) {
-                    throw new InvalidPathException("Invalid function: @." + function + ". Supported functions are: [(@.length - n)] and [(@.size() - n)]");
-                }
-                while (current != ')') {
-                    if (current == ' ') {
-                        current = pathFragment.charAt(++i);
-                        continue;
-                    }
-                    buffer.append(current);
-                    current = pathFragment.charAt(++i);
-                }
-
+            return p;
+        } catch (Exception e) {
+            InvalidPathException ipe;
+            if (e instanceof InvalidPathException) {
+                ipe = (InvalidPathException) e;
             } else {
-
-
-                while (Character.isDigit(current) || current == ',' || current == ' ' || current == ':' || current == '-') {
-
-                    switch (current) {
-                        case ' ':
-                            break;
-                        case ':':
-                            if (buffer.length() == 0) {
-                                //this is a tail slice [:12]
-                                sliceTo = true;
-                                current = pathFragment.charAt(++i);
-                                while (Character.isDigit(current) || current == ' ' || current == '-') {
-                                    if (current != ' ') {
-                                        buffer.append(current);
-                                    }
-                                    current = pathFragment.charAt(++i);
-                                }
-                                numbers.add(Integer.parseInt(buffer.toString()));
-                                buffer.setLength(0);
-                            } else {
-                                //we now this starts with [12:???
-                                numbers.add(Integer.parseInt(buffer.toString()));
-                                buffer.setLength(0);
-                                current = pathFragment.charAt(++i);
-
-                                //this is a tail slice [:12]
-                                while (Character.isDigit(current) || current == ' ' || current == '-') {
-                                    if (current != ' ') {
-                                        buffer.append(current);
-                                    }
-                                    current = pathFragment.charAt(++i);
-                                }
-
-                                if (buffer.length() == 0) {
-                                    sliceFrom = true;
-                                } else {
-                                    sliceBetween = true;
-                                    numbers.add(Integer.parseInt(buffer.toString()));
-                                    buffer.setLength(0);
-                                }
-                            }
-                            break;
-                        case ',':
-                            numbers.add(Integer.parseInt(buffer.toString()));
-                            buffer.setLength(0);
-                            indexSequence = true;
-                            break;
-                        default:
-                            buffer.append(current);
-                            break;
-                    }
-                    if (current == ']') {
-                        break;
-                    }
-                    current = pathFragment.charAt(++i);
-                }
+                ipe = new InvalidPathException(e);
             }
-            if (buffer.length() > 0) {
-                numbers.add(Integer.parseInt(buffer.toString()));
-            }
-            singleIndex = (numbers.size() == 1) && !sliceTo && !sliceFrom && !contextSize;
-
-            if (logger.isTraceEnabled()) {
-                logger.debug("numbers are                : {}", numbers.toString());
-                logger.debug("sequence is singleNumber   : {}", singleIndex);
-                logger.debug("sequence is numberSequence : {}", indexSequence);
-                logger.debug("sequence is sliceFrom      : {}", sliceFrom);
-                logger.debug("sequence is sliceTo        : {}", sliceTo);
-                logger.debug("sequence is sliceBetween   : {}", sliceBetween);
-                logger.debug("sequence is contextFetch   : {}", contextSize);
-                logger.debug("---------------------------------------------");
-            }
-            ArrayPathToken.Operation operation = null;
-
-            if (singleIndex) operation = ArrayPathToken.Operation.SINGLE_INDEX;
-            else if (indexSequence) operation = ArrayPathToken.Operation.INDEX_SEQUENCE;
-            else if (sliceFrom) operation = ArrayPathToken.Operation.SLICE_FROM;
-            else if (sliceTo) operation = ArrayPathToken.Operation.SLICE_TO;
-            else if (sliceBetween) operation = ArrayPathToken.Operation.SLICE_BETWEEN;
-            else if (contextSize) operation = ArrayPathToken.Operation.CONTEXT_SIZE;
-
-            assert operation != null;
-
-            return new ArrayPathToken(numbers, operation);
-
+            throw ipe;
         }
     }
 
+    //[$ | @]
+    private RootPathToken readContextToken() {
 
+        if (!path.currentCharIs(DOC_CONTEXT) && !path.currentCharIs(EVAL_CONTEXT)) {
+            throw new InvalidPathException("Path must start with '$' or '@'");
+        }
+
+        RootPathToken pathToken = PathTokenFactory.createRootPathToken(path.currentChar());
+        PathTokenAppender appender = pathToken.getPathTokenAppender();
+
+        if (path.currentIsTail()) {
+            return pathToken;
+        }
+
+        path.incrementPosition(1);
+
+        if(path.currentChar() != PERIOD && path.currentChar() != OPEN_SQUARE_BRACKET){
+            fail("Illegal character at position " + path.position + " expected '.' or '[");
+        }
+
+        readNextToken(appender);
+
+        return pathToken;
+    }
+
+    //
+    //
+    //
+    private boolean readNextToken(PathTokenAppender appender) {
+
+        char c = path.currentChar();
+
+        switch (c) {
+            case OPEN_SQUARE_BRACKET:
+                return readBracketPropertyToken(appender) ||
+                        readArrayToken(appender) ||
+                        readWildCardToken(appender) ||
+                        readFilterToken(appender) ||
+                        readPlaceholderToken(appender) ||
+                        fail("Could not parse bracket statement at position " + path.position);
+            case PERIOD:
+                return readDotSeparatorToken(appender) ||
+                        readScanToken(appender) ||
+                        fail("Could not parse token at position " + path.position);
+            case WILDCARD:
+                return readWildCardToken(appender) ||
+                        fail("Could not parse token at position " + path.position);
+            default:
+                return readPropertyToken(appender) ||
+                        fail("Could not parse token at position " + path.position);
+        }
+    }
+
+    //
+    // .
+    //
+    private boolean readDotSeparatorToken(PathTokenAppender appender) {
+        if (!path.currentCharIs('.') || path.nextCharIs('.')) {
+            return false;
+        }
+        if (!path.hasMoreCharacters()) {
+            throw new InvalidPathException("Path must not end with a '.");
+        }
+//        if (path.nextSignificantCharIs('[')) {
+//            throw new InvalidPathException("A bracket may not follow a '.");
+//        }
+
+        path.incrementPosition(1);
+
+        return readNextToken(appender);
+    }
+
+    //
+    // fooBar
+    //
+    private boolean readPropertyToken(PathTokenAppender appender) {
+        if (path.currentCharIs(OPEN_SQUARE_BRACKET) || path.currentCharIs(WILDCARD) || path.currentCharIs(PERIOD) || path.currentCharIs(SPACE)) {
+            return false;
+        }
+        int startPosition = path.position;
+        int readPosition = startPosition;
+        int endPosition = 0;
+
+        while (path.inBounds(readPosition)) {
+            char c = path.charAt(readPosition);
+            if (c == SPACE) {
+                throw new InvalidPathException("Use bracket notion ['my prop'] if your property contains blank characters. position: " + path.position);
+            }
+            if (c == PERIOD || c == OPEN_SQUARE_BRACKET) {
+                endPosition = readPosition;
+                break;
+            }
+            readPosition++;
+        }
+        if (endPosition == 0) {
+            endPosition = path.length();
+        }
+
+        path.setPosition(endPosition);
+
+        String property = path.subSequence(startPosition, endPosition).toString();
+
+        appender.appendPathToken(PathTokenFactory.createSinglePropertyPathToken(property));
+
+        return path.currentIsTail() || readNextToken(appender);
+    }
+
+    //
+    // [?], [?,?, ..]
+    //
+    private boolean readPlaceholderToken(PathTokenAppender appender) {
+
+        if (!path.currentCharIs(OPEN_SQUARE_BRACKET)) {
+            return false;
+        }
+        int questionmarkIndex = path.indexOfNextSignificantChar(QUESTIONMARK);
+        if (questionmarkIndex == -1) {
+            return false;
+        }
+        char nextSignificantChar = path.nextSignificantChar(questionmarkIndex);
+        if (nextSignificantChar != CLOSE_SQUARE_BRACKET && nextSignificantChar != COMMA) {
+            return false;
+        }
+
+        int expressionBeginIndex = path.position + 1;
+        int expressionEndIndex = path.nextIndexOf(expressionBeginIndex, CLOSE_SQUARE_BRACKET);
+
+        if (expressionEndIndex == -1) {
+            return false;
+        }
+
+        String expression = path.subSequence(expressionBeginIndex, expressionEndIndex).toString();
+
+        String[] tokens = expression.split(",");
+
+        if (filterStack.size() < tokens.length) {
+            throw new InvalidPathException("Not enough predicates supplied for filter [" + expression + "] at position " + path.position);
+        }
+
+        Collection<Predicate> predicates = new ArrayList<Predicate>();
+        for (String token : tokens) {
+            token = token != null ? token.trim() : token;
+            if (!"?".equals(token == null ? "" : token)) {
+                throw new InvalidPathException("Expected '?' but found " + token);
+            }
+            predicates.add(filterStack.pop());
+        }
+
+        appender.appendPathToken(PathTokenFactory.createPredicatePathToken(predicates));
+
+        path.setPosition(expressionEndIndex + 1);
+
+        return path.currentIsTail() || readNextToken(appender);
+    }
+
+    //
+    // [?(...)]
+    //
+    private boolean readFilterToken(PathTokenAppender appender) {
+        if (!path.currentCharIs(OPEN_SQUARE_BRACKET) && !path.nextSignificantCharIs(QUESTIONMARK)) {
+            return false;
+        }
+
+        int openStatementBracketIndex = path.position;
+        int questionMarkIndex = path.indexOfNextSignificantChar(QUESTIONMARK);
+        if (questionMarkIndex == -1) {
+            return false;
+        }
+        int openBracketIndex = path.indexOfNextSignificantChar(questionMarkIndex, OPEN_BRACKET);
+        if (openBracketIndex == -1) {
+            return false;
+        }
+        int closeBracketIndex = path.indexOfClosingBracket(openBracketIndex + 1, true);
+        if (closeBracketIndex == -1) {
+            return false;
+        }
+        if (!path.nextSignificantCharIs(closeBracketIndex, CLOSE_SQUARE_BRACKET)) {
+            return false;
+        }
+        int closeStatementBracketIndex = path.indexOfNextSignificantChar(closeBracketIndex, CLOSE_SQUARE_BRACKET);
+
+        String criteria = path.subSequence(openStatementBracketIndex, closeStatementBracketIndex + 1).toString();
+
+        appender.appendPathToken(PathTokenFactory.createPredicatePathToken(Filter.parse(criteria)));
+
+        path.setPosition(closeStatementBracketIndex + 1);
+
+        return path.currentIsTail() || readNextToken(appender);
+
+    }
+
+    //
+    // [*]
+    // *
+    //
+    private boolean readWildCardToken(PathTokenAppender appender) {
+
+        boolean inBracket = path.currentCharIs(OPEN_SQUARE_BRACKET);
+
+        if (inBracket && !path.nextSignificantCharIs(WILDCARD)) {
+            return false;
+        }
+        if (!path.currentCharIs(WILDCARD) && path.isOutOfBounds(path.position + 1)) {
+            return false;
+        }
+        if (inBracket) {
+            int wildCardIndex = path.indexOfNextSignificantChar(WILDCARD);
+            if (!path.nextSignificantCharIs(wildCardIndex, CLOSE_SQUARE_BRACKET)) {
+                throw new InvalidPathException("Expected wildcard token to end with ']' on position " + wildCardIndex + 1);
+            }
+            int bracketCloseIndex = path.indexOfNextSignificantChar(wildCardIndex, CLOSE_SQUARE_BRACKET);
+            path.setPosition(bracketCloseIndex + 1);
+        } else {
+            path.incrementPosition(1);
+        }
+
+        appender.appendPathToken(PathTokenFactory.createWildCardPathToken());
+
+        return path.currentIsTail() || readNextToken(appender);
+    }
+
+    //
+    // [1], [1,2, n], [1:], [1:2], [:2]
+    //
+    private boolean readArrayToken(PathTokenAppender appender) {
+
+        if (!path.currentCharIs(OPEN_SQUARE_BRACKET)) {
+            return false;
+        }
+        char nextSignificantChar = path.nextSignificantChar();
+        if (!isDigit(nextSignificantChar) && nextSignificantChar != MINUS && nextSignificantChar != SPLIT) {
+            return false;
+        }
+
+        int expressionBeginIndex = path.position + 1;
+        int expressionEndIndex = path.nextIndexOf(expressionBeginIndex, CLOSE_SQUARE_BRACKET);
+
+        if (expressionEndIndex == -1) {
+            return false;
+        }
+
+        String expression = path.subSequence(expressionBeginIndex, expressionEndIndex).toString().replace(" ", "");
+
+        if ("*".equals(expression)) {
+            return false;
+        }
+
+        //check valid chars
+        for (int i = 0; i < expression.length(); i++) {
+            char c = expression.charAt(i);
+            if (!isDigit(c) && c != COMMA && c != MINUS && c != SPLIT) {
+                return false;
+            }
+        }
+
+        boolean isSliceOperation = expression.contains(":");
+
+        if (isSliceOperation) {
+            ArraySliceOperation arraySliceOperation = ArraySliceOperation.parse(expression);
+            appender.appendPathToken(PathTokenFactory.createSliceArrayPathToken(arraySliceOperation));
+        } else {
+            ArrayIndexOperation arrayIndexOperation = ArrayIndexOperation.parse(expression);
+            appender.appendPathToken(PathTokenFactory.createIndexArrayPathToken(arrayIndexOperation));
+        }
+
+        path.setPosition(expressionEndIndex + 1);
+
+        return path.currentIsTail() || readNextToken(appender);
+    }
+
+    //
+    // ['foo']
+    //
+    private boolean readBracketPropertyToken(PathTokenAppender appender) {
+        if (!path.currentCharIs(OPEN_SQUARE_BRACKET) || !path.nextSignificantCharIs(TICK)) {
+            return false;
+        }
+
+        List<String> properties = new ArrayList<String>();
+
+        int startPosition = path.position + 1;
+        int readPosition = startPosition;
+        int endPosition = 0;
+        boolean inProperty = false;
+
+        while (path.inBounds(readPosition)) {
+            char c = path.charAt(readPosition);
+
+            if (c == CLOSE_SQUARE_BRACKET) {
+                if (inProperty) {
+                    throw new InvalidPathException("Expected property to be closed at position " + readPosition);
+                }
+                break;
+            } else if (c == TICK) {
+                if (inProperty) {
+                    endPosition = readPosition;
+                    properties.add(path.subSequence(startPosition, endPosition).toString());
+                    inProperty = false;
+                } else {
+                    startPosition = readPosition + 1;
+                    inProperty = true;
+                }
+            }
+            readPosition++;
+        }
+
+        int endBracketIndex = path.indexOfNextSignificantChar(endPosition, CLOSE_SQUARE_BRACKET) + 1;
+
+        path.setPosition(endBracketIndex);
+
+        appender.appendPathToken(PathTokenFactory.createPropertyPathToken(properties));
+
+        return path.currentIsTail() || readNextToken(appender);
+    }
+
+    //
+    // ..
+    //
+    private boolean readScanToken(PathTokenAppender appender) {
+        if (!path.currentCharIs(PERIOD) || !path.nextCharIs(PERIOD)) {
+            return false;
+        }
+        appender.appendPathToken(PathTokenFactory.crateScanToken());
+        path.incrementPosition(2);
+
+        return readNextToken(appender);
+    }
+
+
+    public static boolean fail(String message) {
+        throw new InvalidPathException(message);
+    }
+
+
+    private static class CharacterIndex {
+
+        private final CharSequence charSequence;
+        private int position;
+
+        private CharacterIndex(CharSequence charSequence) {
+            this.charSequence = charSequence;
+            this.position = 0;
+        }
+
+        private int length() {
+            return charSequence.length();
+        }
+
+        private char charAt(int idx) {
+            return charSequence.charAt(idx);
+        }
+
+        private char currentChar() {
+            return charSequence.charAt(position);
+        }
+
+        private boolean currentCharIs(char c) {
+            return (charSequence.charAt(position) == c);
+        }
+
+        private boolean nextCharIs(char c) {
+            return inBounds(position + 1) && (charSequence.charAt(position + 1) == c);
+        }
+
+        private int incrementPosition(int charCount) {
+            return setPosition(position + charCount);
+        }
+
+        private int setPosition(int newPosition) {
+            position = min(newPosition, charSequence.length() - 1);
+            return position;
+        }
+
+        private int indexOfClosingBracket(int startPosition, boolean skipStrings) {
+            int opened  = 1;
+            int readPosition = startPosition;
+            while (inBounds(readPosition)) {
+                if (skipStrings) {
+                    if (charAt(readPosition) == TICK) {
+                        boolean escaped = false;
+                        while (inBounds(readPosition)) {
+                            readPosition++;
+                            if (escaped) {
+                                escaped = false;
+                                continue;
+                            }
+                            if (charAt(readPosition) == ESCAPE) {
+                                escaped = true;
+                                continue;
+                            }
+                            if (charAt(readPosition) == TICK) {
+                                readPosition++;
+                                break;
+                            }
+                        }
+                    }
+                }
+                if (charAt(readPosition) == OPEN_BRACKET) {
+                    opened++;
+                }
+                if (charAt(readPosition) == CLOSE_BRACKET) {
+                    opened--;
+                    if(opened == 0){
+                        return readPosition;
+                    }
+                }
+                readPosition++;
+            }
+            return -1;
+        }
+
+        public int indexOfNextSignificantChar(char c) {
+            return indexOfNextSignificantChar(position, c);
+        }
+
+        public int indexOfNextSignificantChar(int startPosition, char c) {
+            int readPosition = startPosition + 1;
+            while (!isOutOfBounds(readPosition) && charAt(readPosition) == SPACE) {
+                readPosition++;
+            }
+            if (charAt(readPosition) == c) {
+                return readPosition;
+            } else {
+                return -1;
+            }
+        }
+
+        public int nextIndexOf(int startPosition, char c) {
+            int readPosition = startPosition;
+            while (!isOutOfBounds(readPosition)) {
+                if (charAt(readPosition) == c) {
+                    return readPosition;
+                }
+                readPosition++;
+            }
+            return -1;
+        }
+
+        public boolean nextSignificantCharIs(int startPosition, char c) {
+            int readPosition = startPosition + 1;
+            while (!isOutOfBounds(readPosition) && charAt(readPosition) == SPACE) {
+                readPosition++;
+            }
+            return !isOutOfBounds(readPosition) && charAt(readPosition) == c;
+        }
+
+        public boolean nextSignificantCharIs(char c) {
+            return nextSignificantCharIs(position, c);
+        }
+
+        public char nextSignificantChar() {
+            return nextSignificantChar(position);
+        }
+
+        public char nextSignificantChar(int startPosition) {
+            int readPosition = startPosition + 1;
+            while (!isOutOfBounds(readPosition) && charAt(readPosition) == SPACE) {
+                readPosition++;
+            }
+            if (!isOutOfBounds(readPosition)) {
+                return charAt(readPosition);
+            } else {
+                return ' ';
+            }
+        }
+
+        private boolean currentIsTail() {
+            return isOutOfBounds(position + 1);
+        }
+
+        private boolean hasMoreCharacters() {
+            return inBounds(position + 1);
+        }
+
+        private boolean inBounds(int idx) {
+            return (idx >= 0) && (idx < charSequence.length());
+        }
+
+        private boolean isOutOfBounds(int idx) {
+            return !inBounds(idx);
+        }
+
+        private CharSequence subSequence(int start, int end) {
+            return charSequence.subSequence(start, end);
+        }
+    }
 }
+
+
+

@@ -83,7 +83,7 @@ public class PropertyPathToken extends PathToken {
     }
 
     @Override
-    boolean isTokenDefinite() {
+    public boolean isTokenDefinite() {
         // in case of leaf multiprops will be merged, so it's kinda definite
         return singlePropertyCase() || multiPropertyMergeCase();
     }
@@ -92,7 +92,7 @@ public class PropertyPathToken extends PathToken {
     public String getPathFragment() {
         return new StringBuilder()
                 .append("[")
-                .append(Utils.join(", ", "'", properties))
+                .append(Utils.join(",", "'", properties))
                 .append("]").toString();
     }
 }

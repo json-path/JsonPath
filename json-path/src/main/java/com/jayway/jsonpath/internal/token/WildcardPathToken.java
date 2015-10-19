@@ -25,6 +25,9 @@ import static java.util.Arrays.asList;
  */
 public class WildcardPathToken extends PathToken {
 
+    public WildcardPathToken() {
+    }
+
     @Override
     public void evaluate(String currentPath, PathRef parent, Object model, EvaluationContextImpl ctx) {
         if (ctx.jsonProvider().isMap(model)) {
@@ -46,7 +49,7 @@ public class WildcardPathToken extends PathToken {
 
 
     @Override
-    boolean isTokenDefinite() {
+    public boolean isTokenDefinite() {
         return false;
     }
 

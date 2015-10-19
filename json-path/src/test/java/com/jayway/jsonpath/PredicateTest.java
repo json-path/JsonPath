@@ -111,7 +111,6 @@ public class PredicateTest extends BaseTest {
         assertThat(result).isEmpty();
     }
 
-    @Ignore("not ready yet (requires compiler reimplementation)")
     @Test
     public void issue_predicate_can_have_square_bracket_in_prop() {
         String json = "{\n"
