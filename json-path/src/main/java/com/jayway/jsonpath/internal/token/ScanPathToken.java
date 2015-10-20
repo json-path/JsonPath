@@ -25,7 +25,7 @@ import java.util.Collection;
  */
 public class ScanPathToken extends PathToken {
 
-    public ScanPathToken() {
+    ScanPathToken() {
     }
 
     @Override

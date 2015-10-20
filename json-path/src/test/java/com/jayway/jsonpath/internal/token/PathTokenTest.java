@@ -1,5 +1,6 @@
-package com.jayway.jsonpath;
+package com.jayway.jsonpath.internal.token;
 
+import com.jayway.jsonpath.BaseTest;
 import com.jayway.jsonpath.internal.token.PathToken;
 import com.jayway.jsonpath.internal.token.PropertyPathToken;
 import com.jayway.jsonpath.internal.token.ScanPathToken;

@@ -36,7 +36,7 @@ public abstract class PathToken {
     private Boolean definite = null;
     private Boolean upstreamDefinite = null;
 
-    public PathToken appendTailToken(PathToken next) {
+    PathToken appendTailToken(PathToken next) {
         this.next = next;
         this.next.prev = this;
         return next;
@@ -161,7 +161,7 @@ public abstract class PathToken {
         return  prev == null;
     }
 
-    public boolean isUpstreamDefinite() {
+    boolean isUpstreamDefinite() {
         if (upstreamDefinite == null) {
             upstreamDefinite = isRoot() || prev.isTokenDefinite() && prev.isUpstreamDefinite();
         }
