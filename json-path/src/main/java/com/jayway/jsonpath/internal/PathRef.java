@@ -154,7 +154,7 @@ public abstract class PathRef implements Comparable<PathRef>  {
         public int compareTo(PathRef o) {
             if(o instanceof ArrayIndexPathRef){
                 ArrayIndexPathRef pf = (ArrayIndexPathRef) o;
-                return Integer.compare(pf.index, this.index);
+                return Integer.valueOf(pf.index).compareTo(this.index);
             }
             return super.compareTo(o);
         }

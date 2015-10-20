@@ -44,12 +44,8 @@ public class ArrayPathToken extends PathToken {
 
     @Override
     public void evaluate(String currentPath, PathRef parent, Object model, EvaluationContextImpl ctx) {
-        if(model == null){
-            throw new PathNotFoundException("The path " + currentPath + " is null");
-        }
-        if (!ctx.jsonProvider().isArray(model)) {
-            throw new InvalidPathException(format("Filter: %s can only be applied to arrays. Current context is: %s", toString(), model));
-        }
+        if (! checkArrayModel(currentPath, model, ctx))
+            return;
         if(arraySliceOperation != null){
             evaluateSliceOperation(currentPath, parent, model, ctx);
         } else {
@@ -60,12 +56,8 @@ public class ArrayPathToken extends PathToken {
 
     public void evaluateIndexOperation(String currentPath, PathRef parent, Object model, EvaluationContextImpl ctx) {
 
-        if (model == null) {
-            throw new PathNotFoundException("The path " + currentPath + " is null");
-        }
-        if (!ctx.jsonProvider().isArray(model)) {
-            throw new InvalidPathException(format("Filter: %s can only be applied to arrays. Current context is: %s", toString(), model));
-        }
+        if (! checkArrayModel(currentPath, model, ctx))
+            return;
 
         if(arrayIndexOperation.isSingleIndexOperation()){
             handleArrayIndex(arrayIndexOperation.indexes().get(0), currentPath, model, ctx);
@@ -78,12 +70,8 @@ public class ArrayPathToken extends PathToken {
 
     public void evaluateSliceOperation(String currentPath, PathRef parent, Object model, EvaluationContextImpl ctx) {
 
-        if (model == null) {
-            throw new PathNotFoundException("The path " + currentPath + " is null");
-        }
-        if (!ctx.jsonProvider().isArray(model)) {
-            throw new InvalidPathException(format("Filter: %s can only be applied to arrays. Current context is: %s", toString(), model));
-        }
+        if (! checkArrayModel(currentPath, model, ctx))
+            return;
 
         switch (arraySliceOperation.operation()) {
             case SLICE_FROM:
@@ -170,5 +158,32 @@ public class ArrayPathToken extends PathToken {
         } else {
             return false;
         }
+    }
+
+    /**
+     * Check if model is non-null and array.
+     * @param currentPath
+     * @param model
+     * @param ctx
+     * @return false if current evaluation call must be skipped, true otherwise
+     * @throws PathNotFoundException if model is null and evaluation must be interrupted
+     * @throws InvalidPathException if model is not an array and evaluation must be interrupted
+     */
+    protected boolean checkArrayModel(String currentPath, Object model, EvaluationContextImpl ctx) {
+        if (model == null){
+            if (! isUpstreamDefinite()) {
+                return false;
+            } else {
+                throw new PathNotFoundException("The path " + currentPath + " is null");
+            }
+        }
+        if (!ctx.jsonProvider().isArray(model)) {
+            if (! isUpstreamDefinite()) {
+                return false;
+            } else {
+                throw new InvalidPathException(format("Filter: %s can only be applied to arrays. Current context is: %s", toString(), model));
+            }
+        }
+        return true;
     }
 }

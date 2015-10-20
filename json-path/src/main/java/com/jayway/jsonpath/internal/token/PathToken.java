@@ -49,6 +49,12 @@ public abstract class PathToken {
             String evalPath = Utils.concat(currentPath, "['", property, "']");
             Object propertyVal = readObjectProperty(property, model, ctx);
             if(propertyVal == JsonProvider.UNDEFINED){
+                // Conditions below heavily depend on current token type (and its logic) and are not "universal",
+                // so this code is quite dangerous (I'd rather rewrite it & move to PropertyPathToken and implemented
+                // WildcardPathToken as a dynamic multi prop case of PropertyPathToken).
+                // Better safe than sorry.
+                assert this instanceof PropertyPathToken : "only PropertyPathToken is supported";
+
                 if(isLeaf()) {
                     if(ctx.options().contains(Option.DEFAULT_PATH_LEAF_TO_NULL)){
                         propertyVal =  null;
@@ -61,9 +67,12 @@ public abstract class PathToken {
                         }
                     }
                 } else {
-                    if(!isUpstreamDefinite() &&
-                       !ctx.options().contains(Option.REQUIRE_PROPERTIES) &&
-                       !ctx.options().contains(Option.SUPPRESS_EXCEPTIONS)){
+                    if (! (isUpstreamDefinite() && isTokenDefinite()) &&
+                       !ctx.options().contains(Option.REQUIRE_PROPERTIES) ||
+                       ctx.options().contains(Option.SUPPRESS_EXCEPTIONS)){
+                        // If there is some indefiniteness in the path and properties are not required - we'll ignore
+                        // absent property. And also in case of exception suppression - so that other path evaluation
+                        // branches could be examined.
                         return;
                     } else {
                         throw new PathNotFoundException("Missing property in path " + evalPath);
@@ -80,9 +89,7 @@ public abstract class PathToken {
         } else {
             String evalPath = currentPath + "[" + Utils.join(", ", "'", properties) + "]";
 
-            if (!isLeaf()) {
-                throw new InvalidPathException("Multi properties can only be used as path leafs: " + evalPath);
-            }
+            assert isLeaf() : "non-leaf multi props handled elsewhere";
 
             Object merged = ctx.jsonProvider().createMap();
             for (String property : properties) {
@@ -154,16 +161,11 @@ public abstract class PathToken {
         return  prev == null;
     }
 
-    boolean isUpstreamDefinite(){
-        if(upstreamDefinite != null){
-            return upstreamDefinite.booleanValue();
+    boolean isUpstreamDefinite() {
+        if (upstreamDefinite == null) {
+            upstreamDefinite = isRoot() || prev.isTokenDefinite() && prev.isUpstreamDefinite();
         }
-        boolean isUpstreamDefinite = isTokenDefinite();
-        if (isUpstreamDefinite && !isRoot()) {
-            isUpstreamDefinite = prev.isPathDefinite();
-        }
-        upstreamDefinite = isUpstreamDefinite;
-        return isUpstreamDefinite;
+        return upstreamDefinite;
     }
 
     public int getTokenCount() {

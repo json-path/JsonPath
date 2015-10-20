@@ -488,9 +488,18 @@ public class PathCompiler {
             while (inBounds(readPosition)) {
                 if (skipStrings) {
                     if (charAt(readPosition) == TICK) {
+                        boolean escaped = false;
                         while (inBounds(readPosition)) {
                             readPosition++;
-                            if (charAt(readPosition) == TICK && charAt(readPosition - 1) != ESCAPE) {
+                            if (escaped) {
+                                escaped = false;
+                                continue;
+                            }
+                            if (charAt(readPosition) == ESCAPE) {
+                                escaped = true;
+                                continue;
+                            }
+                            if (charAt(readPosition) == TICK) {
                                 readPosition++;
                                 break;
                             }

@@ -3,6 +3,8 @@ package com.jayway.jsonpath;
 import org.junit.Ignore;
 import org.junit.Test;
 
+import java.util.List;
+
 import static com.jayway.jsonpath.internal.PathCompiler.compile;
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -128,4 +130,105 @@ public class PathCompilerTest {
         assertThat(compile("$..['prop']..[*]").toString()).isEqualTo("$..['prop']..[*]");
     }
 
+    @Test
+    public void issue_predicate_can_have_escaped_backslash_in_prop() {
+        String json = "{\n"
+                + "    \"logs\": [\n"
+                + "        {\n"
+                + "            \"message\": \"it\\\\\",\n"
+                + "            \"id\": 2\n"
+                + "        }\n"
+                + "    ]\n"
+                + "}";
+        // message: it\ -> (after json escaping) -> "it\\" -> (after java escaping) -> "\"it\\\\\""
+
+        List<String> result = JsonPath.read(json, "$.logs[?(@.message == 'it\\\\')].message");
+
+        assertThat(result).containsExactly("it\\");
+    }
+
+    @Ignore("not ready yet (requires compiler reimplementation)")
+    @Test
+    public void issue_predicate_can_have_bracket_in_regex() {
+        String json = "{\n"
+                + "    \"logs\": [\n"
+                + "        {\n"
+                + "            \"message\": \"(it\",\n"
+                + "            \"id\": 2\n"
+                + "        }\n"
+                + "    ]\n"
+                + "}";
+
+        List<String> result = JsonPath.read(json, "$.logs[?(@.message =~ /\\(it/)].message");
+
+        assertThat(result).containsExactly("(it");
+    }
+
+    @Ignore("not ready yet (requires compiler reimplementation)")
+    @Test
+    public void issue_predicate_can_have_and_in_regex() {
+        String json = "{\n"
+                + "    \"logs\": [\n"
+                + "        {\n"
+                + "            \"message\": \"it\",\n"
+                + "            \"id\": 2\n"
+                + "        }\n"
+                + "    ]\n"
+                + "}";
+
+        List<String> result = JsonPath.read(json, "$.logs[?(@.message =~ /&&|it/)].message");
+
+        assertThat(result).containsExactly("it");
+    }
+
+    @Ignore("not ready yet (requires compiler reimplementation)")
+    @Test
+    public void issue_predicate_can_have_and_in_prop() {
+        String json = "{\n"
+                + "    \"logs\": [\n"
+                + "        {\n"
+                + "            \"message\": \"&& it\",\n"
+                + "            \"id\": 2\n"
+                + "        }\n"
+                + "    ]\n"
+                + "}";
+
+        List<String> result = JsonPath.read(json, "$.logs[?(@.message == '&& it')].message");
+
+        assertThat(result).containsExactly("&& it");
+    }
+
+    @Ignore("not ready yet (requires compiler reimplementation)")
+    @Test
+    public void issue_predicate_brackets_must_change_priorities() {
+        String json = "{\n"
+                + "    \"logs\": [\n"
+                + "        {\n"
+                + "            \"id\": 2\n"
+                + "        }\n"
+                + "    ]\n"
+                + "}";
+
+        List<String> result = JsonPath.read(json, "$.logs[?(@.message && (@.id == 1 || @.id == 2))].id");
+        assertThat(result).isEmpty();
+
+        result = JsonPath.read(json, "$.logs[?((@.id == 2 || @.id == 1) && @.message)].id");
+        assertThat(result).isEmpty();
+    }
+
+    @Test
+    public void issue_predicate_can_have_square_bracket_in_prop() {
+        String json = "{\n"
+                + "    \"logs\": [\n"
+                + "        {\n"
+                + "            \"message\": \"] it\",\n"
+                + "            \"id\": 2\n"
+                + "        }\n"
+                + "    ]\n"
+                + "}";
+
+        List<String> result = JsonPath.read(json, "$.logs[?(@.message == '] it')].message");
+
+        assertThat(result).containsExactly("] it");
+    }
 }

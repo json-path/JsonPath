@@ -14,11 +14,15 @@
  */
 package com.jayway.jsonpath.internal.token;
 
+import com.jayway.jsonpath.InvalidPathException;
 import com.jayway.jsonpath.PathNotFoundException;
 import com.jayway.jsonpath.internal.PathRef;
 import com.jayway.jsonpath.internal.Utils;
 
+import java.util.ArrayList;
 import java.util.List;
+
+import static com.jayway.jsonpath.internal.Utils.onlyOneIsTrueNonThrow;
 
 /**
  *
@@ -28,6 +32,9 @@ class PropertyPathToken extends PathToken {
     private final List<String> properties;
 
     public PropertyPathToken(List<String> properties) {
+        if (properties.isEmpty()) {
+            throw new InvalidPathException("Empty properties");
+        }
         this.properties = properties;
     }
 
@@ -35,21 +42,55 @@ class PropertyPathToken extends PathToken {
         return properties;
     }
 
+    public boolean singlePropertyCase() {
+        return properties.size() == 1;
+    }
+
+    public boolean multiPropertyMergeCase() {
+        return isLeaf() && properties.size() > 1;
+    }
+
+    public boolean multiPropertyIterationCase() {
+        // Semantics of this case is the same as semantics of ArrayPathToken with INDEX_SEQUENCE operation.
+        return ! isLeaf() && properties.size() > 1;
+    }
+
     @Override
     public void evaluate(String currentPath, PathRef parent, Object model, EvaluationContextImpl ctx) {
+        // Can't assert it in ctor because isLeaf() could be changed later on.
+        assert onlyOneIsTrueNonThrow(singlePropertyCase(), multiPropertyMergeCase(), multiPropertyIterationCase());
+
         if (!ctx.jsonProvider().isMap(model)) {
+            if (! isUpstreamDefinite()) {
+                return;
+            } else {
+                String m = model == null ? "null" : model.getClass().getName();
 
-            String m = model == null ? "null" : model.getClass().getName();
-
-            throw new PathNotFoundException("Expected to find an object with property " + getPathFragment() + " but found '" + m + "'. This is not a json object according to the JsonProvider: '" + ctx.configuration().jsonProvider().getClass().getName() + "'.");
+                throw new PathNotFoundException(String.format(
+                        "Expected to find an object with property %s in path %s but found '%s'. " +
+                        "This is not a json object according to the JsonProvider: '%s'.",
+                        getPathFragment(), currentPath, m, ctx.configuration().jsonProvider().getClass().getName()));
+            }
         }
 
-        handleObjectProperty(currentPath, model, ctx, properties);
+        if (singlePropertyCase() || multiPropertyMergeCase()) {
+            handleObjectProperty(currentPath, model, ctx, properties);
+            return;
+        }
+
+        assert multiPropertyIterationCase();
+        final List<String> currentlyHandledProperty = new ArrayList<String>(1);
+        currentlyHandledProperty.add(null);
+        for (final String property : properties) {
+            currentlyHandledProperty.set(0, property);
+            handleObjectProperty(currentPath, model, ctx, currentlyHandledProperty);
+        }
     }
 
     @Override
     public boolean isTokenDefinite() {
-        return true;
+        // in case of leaf multiprops will be merged, so it's kinda definite
+        return singlePropertyCase() || multiPropertyMergeCase();
     }
 
     @Override
