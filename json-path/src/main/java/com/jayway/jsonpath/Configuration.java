@@ -15,6 +15,8 @@
 package com.jayway.jsonpath;
 
 import com.jayway.jsonpath.internal.DefaultsImpl;
+import com.jayway.jsonpath.spi.cache.CacheProvider;
+import com.jayway.jsonpath.spi.cache.DefaultCache;
 import com.jayway.jsonpath.spi.json.JsonProvider;
 import com.jayway.jsonpath.spi.mapper.MappingProvider;
 
@@ -55,14 +57,16 @@ public class Configuration {
     private final MappingProvider mappingProvider;
     private final Set<Option> options;
     private final Collection<EvaluationListener> evaluationListeners;
+    private final CacheProvider cacheProvider;
 
-    private Configuration(JsonProvider jsonProvider, MappingProvider mappingProvider, EnumSet<Option> options, Collection<EvaluationListener> evaluationListeners) {
+    private Configuration(JsonProvider jsonProvider, MappingProvider mappingProvider, CacheProvider cacheProvider, EnumSet<Option> options, Collection<EvaluationListener> evaluationListeners) {
         notNull(jsonProvider, "jsonProvider can not be null");
         notNull(mappingProvider, "mappingProvider can not be null");
         notNull(options, "setOptions can not be null");
         notNull(evaluationListeners, "evaluationListeners can not be null");
         this.jsonProvider = jsonProvider;
         this.mappingProvider = mappingProvider;
+        this.cacheProvider = cacheProvider;
         this.options = Collections.unmodifiableSet(options);
         this.evaluationListeners = Collections.unmodifiableCollection(evaluationListeners);
     }
@@ -125,6 +129,23 @@ public class Configuration {
      */
     public MappingProvider mappingProvider() {
         return mappingProvider;
+    }
+    
+    /**
+     * Creates a new Configuration based on the given {@link com.jayway.jsonpath.spi.cache.CacheProvider}
+     * @param newCacheProvider cache provider to use in new configuration
+     * @return a new configuration
+     */
+    public Configuration CacheProvider(CacheProvider newCacheProvider) {
+        return Configuration.builder().jsonProvider(jsonProvider).mappingProvider(mappingProvider).cacheProvider(newCacheProvider).options(options).evaluationListener(evaluationListeners).build();
+    }
+
+    /**
+     * Returns {@link com.jayway.jsonpath.spi.cache.CacheProvider} used by this configuration
+     * @return cacheProvider used
+     */
+    public CacheProvider CacheProvider() {
+        return cacheProvider;
     }
 
     /**
@@ -189,6 +210,7 @@ public class Configuration {
 
         private JsonProvider jsonProvider;
         private MappingProvider mappingProvider;
+        private CacheProvider cacheProvider = new DefaultCache(200);
         private EnumSet<Option> options = EnumSet.noneOf(Option.class);
         private Collection<EvaluationListener> evaluationListener = new ArrayList<EvaluationListener>();
 
@@ -199,6 +221,11 @@ public class Configuration {
 
         public ConfigurationBuilder mappingProvider(MappingProvider provider) {
             this.mappingProvider = provider;
+            return this;
+        }
+        
+        public ConfigurationBuilder cacheProvider(CacheProvider provider) {
+            this.cacheProvider = provider;
             return this;
         }
 
@@ -233,8 +260,11 @@ public class Configuration {
                 if (mappingProvider == null){
                     mappingProvider = defaults.mappingProvider();
                 }
+                if (cacheProvider == null){
+                    cacheProvider = defaults.cacheProvider();
+                }
             }
-            return new Configuration(jsonProvider, mappingProvider, options, evaluationListener);
+            return new Configuration(jsonProvider, mappingProvider, cacheProvider, options, evaluationListener);
         }
     }
 
@@ -257,6 +287,13 @@ public class Configuration {
          * @return default mapping provider
          */
         MappingProvider mappingProvider();
+        
+        /**
+         * Returns the default {@link com.jayway.jsonpath.spi.cache.CacheProvider}
+         *
+         * @return default cache provider
+         */
+        CacheProvider cacheProvider();
 
     }
 }
