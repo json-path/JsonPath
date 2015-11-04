@@ -2,7 +2,11 @@ package com.jayway.jsonpath.internal.function;
 
 import com.jayway.jsonpath.Function;
 import com.jayway.jsonpath.InvalidPathException;
-import com.jayway.jsonpath.internal.function.numeric.*;
+import com.jayway.jsonpath.internal.function.numeric.Average;
+import com.jayway.jsonpath.internal.function.numeric.Max;
+import com.jayway.jsonpath.internal.function.numeric.Min;
+import com.jayway.jsonpath.internal.function.numeric.StandardDeviation;
+import com.jayway.jsonpath.internal.function.numeric.Sum;
 
 import java.util.Collections;
 import java.util.HashMap;

@@ -1,14 +1,14 @@
 package com.jayway.jsonpath.internal;
 
-import java.util.EnumSet;
-import java.util.Set;
-
 import com.jayway.jsonpath.Configuration.Defaults;
 import com.jayway.jsonpath.Option;
 import com.jayway.jsonpath.spi.json.JsonProvider;
 import com.jayway.jsonpath.spi.json.JsonSmartJsonProvider;
 import com.jayway.jsonpath.spi.mapper.JsonSmartMappingProvider;
 import com.jayway.jsonpath.spi.mapper.MappingProvider;
+
+import java.util.EnumSet;
+import java.util.Set;
 
 public final class DefaultsImpl implements Defaults {
 

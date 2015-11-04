@@ -5,7 +5,6 @@ import com.jayway.jsonpath.InvalidPathException;
 import com.jayway.jsonpath.Predicate;
 import com.jayway.jsonpath.internal.token.ArrayIndexOperation;
 import com.jayway.jsonpath.internal.token.ArraySliceOperation;
-import com.jayway.jsonpath.internal.token.FunctionPathToken;
 import com.jayway.jsonpath.internal.token.PathTokenAppender;
 import com.jayway.jsonpath.internal.token.PathTokenFactory;
 import com.jayway.jsonpath.internal.token.RootPathToken;
@@ -64,12 +63,12 @@ public class PathCompiler {
                 fail("Path must not end wid a scan operation '..'");
             }
             LinkedList filterStack = new LinkedList<Predicate>(asList(filters));
-            String cacheKey = Utils.concat(path, filterStack.toString());
-            Path p = cache.get(cacheKey);
-            if (p == null) {
-                p = new PathCompiler(path.trim(), filterStack).compile();
-                cache.put(cacheKey, p);
-            }
+//            String cacheKey = Utils.concat(path, filterStack.toString());
+//            Path p = cache.get(cacheKey);
+//            if (p == null) {
+            Path p = new PathCompiler(path.trim(), filterStack).compile();
+//                cache.put(cacheKey, p);
+//            }
             return p;
         } catch (Exception e) {
             InvalidPathException ipe;
