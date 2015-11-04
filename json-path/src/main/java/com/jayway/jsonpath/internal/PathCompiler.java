@@ -5,7 +5,6 @@ import com.jayway.jsonpath.InvalidPathException;
 import com.jayway.jsonpath.Predicate;
 import com.jayway.jsonpath.internal.token.ArrayIndexOperation;
 import com.jayway.jsonpath.internal.token.ArraySliceOperation;
-import com.jayway.jsonpath.internal.token.FunctionPathToken;
 import com.jayway.jsonpath.internal.token.PathTokenAppender;
 import com.jayway.jsonpath.internal.token.PathTokenFactory;
 import com.jayway.jsonpath.internal.token.RootPathToken;

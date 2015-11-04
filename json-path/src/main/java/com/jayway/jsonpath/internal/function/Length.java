@@ -3,9 +3,6 @@ package com.jayway.jsonpath.internal.function;
 import com.jayway.jsonpath.Function;
 import com.jayway.jsonpath.internal.EvaluationContext;
 import com.jayway.jsonpath.internal.PathRef;
-import net.minidev.json.JSONArray;
-
-import java.util.*;
 
 /**
  * Provides the length of a JSONArray Object

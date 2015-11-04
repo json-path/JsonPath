@@ -1,23 +1,21 @@
 package com.jayway.jsonpath.spi.cache;
 
-import com.jayway.jsonpath.InvalidJsonException;
-import com.jayway.jsonpath.JsonPath;
+import com.jayway.jsonpath.JsonPathException;
 
-public interface CacheProvider {
+public class CacheProvider {
+    private static Cache cache = new LRUCache(200);
 
-	/**
-     * Get the Cached JsonPath
-     * @param key cache key to lookup the JsonPath
-     * @return JsonPath
-     */
-	public JsonPath get(String key);
-	
-	/**
-     * Add JsonPath to the cache
-     * @param key cache key to store the JsonPath
-     * @param value JsonPath to be cached
-     * @return void
-     * @throws InvalidJsonException
-     */
-	public void put(String key, JsonPath value);
+    public static void setCache(Cache cache){
+        if (cache != null){
+            CacheProvider.cache = cache;
+        }
+    }
+
+    public static Cache getCache() {
+        try {
+            return cache;
+        } catch (Exception e) {
+            throw new JsonPathException("Failed to get cache", e);
+        }
+    }
 }

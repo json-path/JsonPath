@@ -14,20 +14,15 @@
  */
 package com.jayway.jsonpath.spi.cache;
 
+import com.jayway.jsonpath.JsonPath;
+
 import java.util.Deque;
 import java.util.LinkedList;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.locks.ReentrantLock;
 
-import com.jayway.jsonpath.JsonPath;
-
-/*
- * LRU implementation copied from com.jayway.jsonpath.internal.Cache
- * Will have the same bugs
- */
-
-public class DefaultCache implements CacheProvider{
+public class LRUCache implements Cache {
 
     private final ReentrantLock lock = new ReentrantLock();
 
@@ -35,7 +30,7 @@ public class DefaultCache implements CacheProvider{
     private final Deque<String> queue = new LinkedList<String>();
     private final int limit;
 
-    public DefaultCache(int limit) {
+    public LRUCache(int limit) {
         this.limit = limit;
     }
 
@@ -52,10 +47,11 @@ public class DefaultCache implements CacheProvider{
     }
 
     public JsonPath get(String key) {
-        if(map.containsKey(key)){
+        JsonPath jsonPath = map.get(key);
+        if(jsonPath != null){
             removeThenAddKey(key);
         }
-        return map.get(key);
+        return jsonPath;
     }
 
     private void addKey(String key) {
