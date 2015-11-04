@@ -955,6 +955,7 @@ public class Criteria implements Predicate {
 
         boolean leftNullish = isNullish(left);
         boolean rightNullish = isNullish(right);
+        BigDecimal bigDecimal;
 
         if (leftNullish && !rightNullish) {
             return -1;
@@ -965,12 +966,12 @@ public class Criteria implements Predicate {
         } else if (left instanceof String && right instanceof String) {
             String expected = unescape((String) left);
             return expected.compareTo((String) right);
-        } else if (left instanceof Number && right instanceof Number) {
-            return new BigDecimal(left.toString()).compareTo(new BigDecimal(right.toString()));
         } else if (left instanceof Number && right instanceof BigDecimal) {
             return new BigDecimal(left.toString()).compareTo((BigDecimal)right);
-        } else if (left instanceof String && right instanceof Number) {
+        } else if (left instanceof Number && right instanceof Number) {
             return new BigDecimal(left.toString()).compareTo(new BigDecimal(right.toString()));
+        } else if (left instanceof String && right instanceof Number && (bigDecimal = safeBigDecimal((String)left)) != null) {
+            return bigDecimal.compareTo(new BigDecimal(right.toString()));
         } else if (left instanceof String && right instanceof Boolean) {
             Boolean e = Boolean.valueOf((String) left);
             Boolean a = (Boolean) right;
@@ -985,6 +986,14 @@ public class Criteria implements Predicate {
             return right.equals(json.parsed(ctx)) ? 0 : -1;
         } else {
             throw new ValueCompareException(left, right);
+        }
+    }
+
+    private static BigDecimal safeBigDecimal(final String value) {
+        try {
+            return new BigDecimal(value);
+        } catch (NumberFormatException exc) {
+            return null;
         }
     }
 
