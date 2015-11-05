@@ -36,6 +36,7 @@ import java.util.LinkedList;
 import java.util.List;
 
 import static com.jayway.jsonpath.JsonPath.compile;
+import static com.jayway.jsonpath.JsonPath.parse;
 import static com.jayway.jsonpath.internal.Utils.notEmpty;
 import static com.jayway.jsonpath.internal.Utils.notNull;
 import static java.util.Arrays.asList;
@@ -213,6 +214,18 @@ public class JsonReader implements ParseContext, DocumentContext {
     }
 
     @Override
+    public DocumentContext convert(String path, ValueConverter valueConverter, Predicate... filters) {
+        convert(compile(path, filters), valueConverter);
+        return this;
+    }
+
+    @Override
+    public DocumentContext convert(JsonPath path, ValueConverter valueConverter) {
+        path.convert(json, valueConverter, configuration);
+        return this;
+    }
+
+    @Override
     public DocumentContext delete(String path, Predicate... filters) {
         return delete(compile(path, filters));
     }
@@ -248,6 +261,23 @@ public class JsonReader implements ParseContext, DocumentContext {
     public DocumentContext put(String path, String key, Object value, Predicate... filters){
         return put(compile(path, filters), key, value);
     }
+
+    @Override
+    public DocumentContext renameKey(String path, String oldKeyName, String newKeyName, Predicate... filters) {
+        return renameKey(compile(path, filters), oldKeyName, newKeyName);
+    }
+
+    @Override
+    public DocumentContext renameKey(JsonPath path, String oldKeyName, String newKeyName) {
+        List<String> modified =  path.renameKey(json, oldKeyName, newKeyName, configuration.addOptions(Option.AS_PATH_LIST));
+        if(logger.isDebugEnabled()){
+            for (String p : modified) {
+                logger.debug("Rename path {} new value {}", p, newKeyName);
+            }
+        }
+        return this;
+    }
+
 
     @Override
     public DocumentContext put(JsonPath path, String key, Object value){

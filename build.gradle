@@ -41,6 +41,7 @@ subprojects {
     apply plugin: 'java'
     apply plugin: 'signing'
     apply plugin: 'osgi'
+    apply plugin: 'maven'
 
     sourceCompatibility = 1.6
     targetCompatibility = 1.6
