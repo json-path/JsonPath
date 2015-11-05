@@ -23,6 +23,7 @@ import com.jayway.jsonpath.ParseContext;
 import com.jayway.jsonpath.Predicate;
 import com.jayway.jsonpath.ReadContext;
 import com.jayway.jsonpath.TypeRef;
+import com.jayway.jsonpath.ValueConverter;
 import com.jayway.jsonpath.spi.cache.Cache;
 import com.jayway.jsonpath.spi.cache.CacheProvider;
 import org.slf4j.Logger;
@@ -213,6 +214,18 @@ public class JsonReader implements ParseContext, DocumentContext {
     }
 
     @Override
+    public DocumentContext convert(String path, ValueConverter valueConverter, Predicate... filters) {
+        convert(compile(path, filters), valueConverter);
+        return this;
+    }
+
+    @Override
+    public DocumentContext convert(JsonPath path, ValueConverter valueConverter) {
+        path.convert(json, valueConverter, configuration);
+        return this;
+    }
+
+    @Override
     public DocumentContext delete(String path, Predicate... filters) {
         return delete(compile(path, filters));
     }
@@ -248,6 +261,23 @@ public class JsonReader implements ParseContext, DocumentContext {
     public DocumentContext put(String path, String key, Object value, Predicate... filters){
         return put(compile(path, filters), key, value);
     }
+
+    @Override
+    public DocumentContext renameKey(String path, String oldKeyName, String newKeyName, Predicate... filters) {
+        return renameKey(compile(path, filters), oldKeyName, newKeyName);
+    }
+
+    @Override
+    public DocumentContext renameKey(JsonPath path, String oldKeyName, String newKeyName) {
+        List<String> modified =  path.renameKey(json, oldKeyName, newKeyName, configuration.addOptions(Option.AS_PATH_LIST));
+        if(logger.isDebugEnabled()){
+            for (String p : modified) {
+                logger.debug("Rename path {} new value {}", p, newKeyName);
+            }
+        }
+        return this;
+    }
+
 
     @Override
     public DocumentContext put(JsonPath path, String key, Object value){

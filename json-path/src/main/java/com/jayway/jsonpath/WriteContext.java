@@ -57,6 +57,25 @@ public interface WriteContext {
     DocumentContext set(JsonPath path, Object newValue);
 
     /**
+     * Converts the value on the given path.
+     *
+     * @param path              path to be converted set
+     * @param valueConverter    Converter object to be invoked
+     * @param filters           filters
+     * @return a document context
+     */
+    DocumentContext convert(String path, ValueConverter valueConverter, Predicate... filters);
+
+    /**
+     * Converts the value on the given path.
+     *
+     * @param path              path to be converted set
+     * @param valueConverter    Converter object to be invoked (or lambda:))
+     * @return a document context
+     */
+    DocumentContext convert(JsonPath path, ValueConverter valueConverter);
+
+    /**
      * Deletes the given path
      *
      * @param path    path to delete
@@ -126,4 +145,24 @@ public interface WriteContext {
      */
     DocumentContext put(JsonPath path, String key, Object value);
 
+    /**
+     * Renames the last key element of a given path.
+     * @param path          The path to the old key. Should be resolved to a map
+     *                      or an array including map items.
+     * @param oldKeyName    The old key name.
+     * @param newKeyName    The new key name.
+     * @param filters       filters.
+     * @return a document content.
+     */
+    DocumentContext renameKey(String path, String oldKeyName, String newKeyName, Predicate... filters);
+
+    /**
+     * Renames the last key element of a given path.
+     * @param path          The path to the old key. Should be resolved to a map
+     *                      or an array including map items.
+     * @param oldKeyName    The old key name.
+     * @param newKeyName    The new key name.
+     * @return a document content.
+     */
+    DocumentContext renameKey(JsonPath path, String oldKeyName, String newKeyName);
 }

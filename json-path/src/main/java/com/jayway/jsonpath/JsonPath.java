@@ -226,6 +226,26 @@ public class JsonPath {
         return resultByConfiguration(jsonObject, configuration, evaluationContext);
     }
 
+
+    /**
+     * Converts the value on the given path.
+     *
+     * @param jsonObject        a json object
+     * @param valueConverter    Converter object to be invoked
+     * @param configuration     configuration to use
+     * @return the updated jsonObject or the path list to updated objects if option AS_PATH_LIST is set.
+     */
+    public <T> T convert(Object jsonObject, ValueConverter valueConverter, Configuration configuration) {
+        notNull(jsonObject, "json can not be null");
+        notNull(configuration, "configuration can not be null");
+        notNull(valueConverter, "valueConverter can not be null");
+        EvaluationContext evaluationContext = path.evaluate(jsonObject, jsonObject, configuration, true);
+        for (PathRef updateOperation : evaluationContext.updateOperations()) {
+            updateOperation.convert(valueConverter, configuration);
+        }
+        return resultByConfiguration(jsonObject, configuration, evaluationContext);
+    }
+
     /**
      * Deletes the object this path points to in the provided jsonObject
      *
@@ -280,6 +300,17 @@ public class JsonPath {
         EvaluationContext evaluationContext = path.evaluate(jsonObject, jsonObject, configuration, true);
         for (PathRef updateOperation : evaluationContext.updateOperations()) {
             updateOperation.put(key, value, configuration);
+        }
+        return resultByConfiguration(jsonObject, configuration, evaluationContext);
+    }
+
+    public <T> T renameKey(Object jsonObject, String oldKeyName, String newKeyName, Configuration configuration){
+        notNull(jsonObject, "json can not be null");
+        notEmpty(newKeyName, "newKeyName can not be null or empty");
+        notNull(configuration, "configuration can not be null");
+        EvaluationContext evaluationContext = path.evaluate(jsonObject, jsonObject, configuration, true);
+        for (PathRef updateOperation : evaluationContext.updateOperations()) {
+            updateOperation.renameKey(oldKeyName, newKeyName, configuration);
         }
         return resultByConfiguration(jsonObject, configuration, evaluationContext);
     }

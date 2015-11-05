@@ -1,6 +1,5 @@
 package com.jayway.jsonpath.internal.function;
 
-import com.jayway.jsonpath.Function;
 import com.jayway.jsonpath.InvalidPathException;
 import com.jayway.jsonpath.internal.function.numeric.Average;
 import com.jayway.jsonpath.internal.function.numeric.Max;
