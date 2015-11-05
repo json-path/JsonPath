@@ -1,3 +1,10 @@
 language: java
+
 sudo: false
 
+jdk:
+ - oraclejdk7
+
+cache:
+  directories:
+  - $HOME/.gradle
