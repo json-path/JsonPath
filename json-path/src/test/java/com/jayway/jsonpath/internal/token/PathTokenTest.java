@@ -1,16 +1,11 @@
 package com.jayway.jsonpath.internal.token;
 
 import com.jayway.jsonpath.BaseTest;
-import com.jayway.jsonpath.internal.token.PathToken;
-import com.jayway.jsonpath.internal.token.PropertyPathToken;
-import com.jayway.jsonpath.internal.token.ScanPathToken;
-import com.jayway.jsonpath.internal.token.WildcardPathToken;
-
-import static org.assertj.core.api.Assertions.assertThat;
-
 import org.junit.Test;
 
 import java.util.Arrays;
+
+import static org.assertj.core.api.Assertions.assertThat;
 
 public class PathTokenTest extends BaseTest {
 

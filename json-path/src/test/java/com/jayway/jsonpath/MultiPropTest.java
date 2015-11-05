@@ -7,7 +7,6 @@ import java.util.Map;
 
 import static com.jayway.jsonpath.JsonPath.using;
 import static com.jayway.jsonpath.TestUtils.assertEvaluationThrows;
-
 import static org.assertj.core.api.Assertions.assertThat;
 
 public class MultiPropTest {

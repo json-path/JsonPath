@@ -23,6 +23,7 @@ import com.jayway.jsonpath.ParseContext;
 import com.jayway.jsonpath.Predicate;
 import com.jayway.jsonpath.ReadContext;
 import com.jayway.jsonpath.TypeRef;
+import com.jayway.jsonpath.ValueConverter;
 import com.jayway.jsonpath.spi.cache.Cache;
 import com.jayway.jsonpath.spi.cache.CacheProvider;
 import org.slf4j.Logger;
@@ -36,7 +37,6 @@ import java.util.LinkedList;
 import java.util.List;
 
 import static com.jayway.jsonpath.JsonPath.compile;
-import static com.jayway.jsonpath.JsonPath.parse;
 import static com.jayway.jsonpath.internal.Utils.notEmpty;
 import static com.jayway.jsonpath.internal.Utils.notNull;
 import static java.util.Arrays.asList;

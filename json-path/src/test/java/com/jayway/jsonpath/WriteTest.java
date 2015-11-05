@@ -1,9 +1,12 @@
 package com.jayway.jsonpath;
 
-import com.jayway.jsonpath.internal.ValueConverter;
 import org.junit.Test;
 
-import java.util.*;
+import java.io.InputStream;
+import java.util.HashMap;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
 
 import static com.jayway.jsonpath.JsonPath.parse;
 import static java.util.Collections.emptyMap;
@@ -126,8 +129,9 @@ public class WriteTest extends BaseTest {
 
     @Test
     public void an_array_criteria_with_multiple_results_can_be_deleted(){
+        InputStream stream = this.getClass().getResourceAsStream("/json_array_multiple_delete.json");
         String deletePath = "$._embedded.mandates[?(@.count=~/0/)]";
-        DocumentContext documentContext = JsonPath.parse(getClass().getResourceAsStream("/json_array_multiple_delete.json"));
+        DocumentContext documentContext = JsonPath.parse(stream);
         documentContext.delete(deletePath);
         List<Object> result = documentContext.read(deletePath);
         assertThat(result.size()).isEqualTo(0);
@@ -265,7 +269,7 @@ public class WriteTest extends BaseTest {
     public void rootCannotBeConverted(){
         ValueConverter valueConverter = new ValueConverter() {
             @Override
-            public Object convert(Object currentValue) {
+            public Object convert(Object currentValue, Configuration configuration) {
                 return currentValue.toString()+"converted";
             }
         };
@@ -281,13 +285,14 @@ public class WriteTest extends BaseTest {
 
     @Test
     public void object_can_be_converted(){
+        TypeRef<List<String>> typeRef = new TypeRef<List<String>>() {};
         ValueConverter valueConverter = new ToStringValueConverterImpl();
-        DocumentContext documentContext = parse(JSON_DOCUMENT);
+        DocumentContext documentContext = JsonPath.using(JACKSON_CONFIGURATION).parse(JSON_DOCUMENT);
         Object list = documentContext.read("$..book");
         assertThat(list).isInstanceOf(List.class);
-        String result = ((List<String>)documentContext.convert("$..book", valueConverter).read("$..book")).get(0);
+        String result = documentContext.convert("$..book", valueConverter).read("$..book", typeRef).get(0);
         assertThat(result).isInstanceOf(String.class);
-        assertThat(((String)result).endsWith("converted")).isTrue();
+        assertThat(result).endsWith("converted");
     }
 
     @Test
@@ -308,7 +313,7 @@ public class WriteTest extends BaseTest {
     private class ToStringValueConverterImpl implements ValueConverter{
 
         @Override
-        public Object convert(Object currentValue) {
+        public Object convert(Object currentValue, Configuration configuration) {
             return currentValue.toString()+"converted";
         }
     }

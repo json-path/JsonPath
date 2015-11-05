@@ -2,13 +2,12 @@ package com.jayway.jsonpath;
 
 import org.junit.Test;
 
-import static com.jayway.jsonpath.JsonPath.using;
-import static com.jayway.jsonpath.TestUtils.assertEvaluationThrows;
-
-import static org.assertj.core.api.Assertions.assertThat;
-
 import java.util.List;
 import java.util.Map;
+
+import static com.jayway.jsonpath.JsonPath.using;
+import static com.jayway.jsonpath.TestUtils.assertEvaluationThrows;
+import static org.assertj.core.api.Assertions.assertThat;
 
 /**
  * Deep scan is indefinite, so certain "illegal" actions become a no-op instead of a path evaluation exception.

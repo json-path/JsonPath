@@ -1,7 +1,7 @@
 package com.jayway.jsonpath.internal.token;
 
-import com.jayway.jsonpath.Function;
 import com.jayway.jsonpath.internal.PathRef;
+import com.jayway.jsonpath.internal.function.Function;
 import com.jayway.jsonpath.internal.function.FunctionFactory;
 
 import java.util.regex.Matcher;

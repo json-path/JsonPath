@@ -2,23 +2,12 @@ package com.jayway.jsonpath.functions;
 
 import com.jayway.jsonpath.Configuration;
 import com.jayway.jsonpath.Configurations;
-import com.jayway.jsonpath.JsonPath;
-import net.minidev.json.JSONArray;
-import org.junit.Ignore;
 import org.junit.Test;
-import org.junit.experimental.theories.DataPoints;
-import org.junit.experimental.theories.Theories;
-import org.junit.experimental.theories.Theory;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.Arrays;
-
-import static com.jayway.jsonpath.Configurations.*;
-import static com.jayway.jsonpath.JsonPath.using;
-import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.runners.Parameterized.Parameters;
 
 /**

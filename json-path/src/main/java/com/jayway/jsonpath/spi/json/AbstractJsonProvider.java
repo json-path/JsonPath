@@ -99,16 +99,16 @@ public abstract class AbstractJsonProvider implements JsonProvider {
      * Removes a value in an object or array
      *
      * @param obj   an array or an object
-     * @param key   a String key or an object in a Collection to be removed.
+     * @param key   a String key or a numerical index to remove
      */
     @SuppressWarnings("unchecked")
     public void removeProperty(Object obj, Object key) {
         if (isMap(obj))
             ((Map) obj).remove(key.toString());
         else {
-            Collection collection = (Collection) obj;
-            //int index = key instanceof Integer ? (Integer) key : Integer.parseInt(key.toString());
-            collection.remove(key);
+            List list = (List) obj;
+            int index = key instanceof Integer ? (Integer) key : Integer.parseInt(key.toString());
+            list.remove(index);
         }
     }
 

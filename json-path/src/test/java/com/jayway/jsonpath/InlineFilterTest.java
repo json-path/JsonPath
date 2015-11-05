@@ -1,13 +1,12 @@
 package com.jayway.jsonpath;
 
-import static com.jayway.jsonpath.TestUtils.assertHasNoResults;
-import static com.jayway.jsonpath.TestUtils.assertHasOneResult;
-
 import org.junit.Test;
 
 import java.util.ArrayList;
 import java.util.List;
 
+import static com.jayway.jsonpath.TestUtils.assertHasNoResults;
+import static com.jayway.jsonpath.TestUtils.assertHasOneResult;
 import static java.util.Arrays.asList;
 import static org.assertj.core.api.Assertions.assertThat;
 

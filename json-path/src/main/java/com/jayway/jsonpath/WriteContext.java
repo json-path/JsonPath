@@ -14,8 +14,6 @@
  */
 package com.jayway.jsonpath;
 
-import com.jayway.jsonpath.internal.ValueConverter;
-
 public interface WriteContext {
 
     /**
@@ -62,7 +60,7 @@ public interface WriteContext {
      * Converts the value on the given path.
      *
      * @param path              path to be converted set
-     * @param valueConverter    Converter object to be invoked (or lambda:))
+     * @param valueConverter    Converter object to be invoked
      * @param filters           filters
      * @return a document context
      */
@@ -137,7 +135,6 @@ public interface WriteContext {
      */
     DocumentContext put(String path, String key, Object value, Predicate... filters);
 
-
     /**
      * Add or update the key with a the given value at the given path
      *
@@ -168,5 +165,4 @@ public interface WriteContext {
      * @return a document content.
      */
     DocumentContext renameKey(JsonPath path, String oldKeyName, String newKeyName);
-
 }
