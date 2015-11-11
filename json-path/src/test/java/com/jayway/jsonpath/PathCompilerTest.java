@@ -142,12 +142,13 @@ public class PathCompilerTest {
                 + "}";
         // message: it\ -> (after json escaping) -> "it\\" -> (after java escaping) -> "\"it\\\\\""
 
+        System.out.println(JsonPath.parse(json).json().toString());
+
         List<String> result = JsonPath.read(json, "$.logs[?(@.message == 'it\\\\')].message");
 
         assertThat(result).containsExactly("it\\");
     }
 
-    @Ignore("not ready yet (requires compiler reimplementation)")
     @Test
     public void issue_predicate_can_have_bracket_in_regex() {
         String json = "{\n"
@@ -164,7 +165,6 @@ public class PathCompilerTest {
         assertThat(result).containsExactly("(it");
     }
 
-    @Ignore("not ready yet (requires compiler reimplementation)")
     @Test
     public void issue_predicate_can_have_and_in_regex() {
         String json = "{\n"
@@ -181,7 +181,6 @@ public class PathCompilerTest {
         assertThat(result).containsExactly("it");
     }
 
-    @Ignore("not ready yet (requires compiler reimplementation)")
     @Test
     public void issue_predicate_can_have_and_in_prop() {
         String json = "{\n"
@@ -198,7 +197,6 @@ public class PathCompilerTest {
         assertThat(result).containsExactly("&& it");
     }
 
-    @Ignore("not ready yet (requires compiler reimplementation)")
     @Test
     public void issue_predicate_brackets_must_change_priorities() {
         String json = "{\n"

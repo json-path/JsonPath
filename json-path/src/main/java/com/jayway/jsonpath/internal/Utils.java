@@ -15,6 +15,7 @@
 package com.jayway.jsonpath.internal;
 
 import com.jayway.jsonpath.JsonPathException;
+import com.jayway.jsonpath.ValueCompareException;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -30,10 +31,12 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
+import java.util.ListIterator;
 
 public final class Utils {
 
     public static final String CR = System.getProperty("line.separator");
+    private static final char BACKSLASH = '\\';
 
     /**
      * Creates a range of integers from start (inclusive) to end (exclusive)
@@ -46,14 +49,18 @@ public final class Utils {
         if (end <= start) {
             throw new IllegalArgumentException("Cannot create range from " + start + " to " + end + ", end must be greater than start.");
         }
-        if (start == end-1) {
+        if (start == end - 1) {
             return Collections.emptyList();
         }
-        List<Integer> range = new ArrayList<Integer>(end-start-1);
+        List<Integer> range = new ArrayList<Integer>(end - start - 1);
         for (int i = start; i < end; i++) {
             range.add(i);
         }
         return range;
+    }
+
+    public static <T> Iterable<T> reverse(final List<T> list) {
+        return new ListReverser<T>(list);
     }
 
     // accept a collection of objects, since all objects have toString()
@@ -74,38 +81,38 @@ public final class Utils {
     public static String join(String delimiter, Iterable<? extends Object> objs) {
         return join(delimiter, "", objs);
     }
-    
+
     public static String concat(CharSequence... strings) {
-        if (strings.length == 0){
+        if (strings.length == 0) {
             return "";
         }
-        if (strings.length == 1){
+        if (strings.length == 1) {
             return strings[0].toString();
         }
         int length = 0;
         // -1 = no result, -2 = multiple results
         int indexOfSingleNonEmptyString = -1;
-        for (int i = 0; i< strings.length; i++) {
+        for (int i = 0; i < strings.length; i++) {
             CharSequence charSequence = strings[i];
             int len = charSequence.length();
             length += len;
-            if (indexOfSingleNonEmptyString != -2 && len > 0){
-                if (indexOfSingleNonEmptyString == -1){
+            if (indexOfSingleNonEmptyString != -2 && len > 0) {
+                if (indexOfSingleNonEmptyString == -1) {
                     indexOfSingleNonEmptyString = i;
                 } else {
                     indexOfSingleNonEmptyString = -2;
                 }
             }
         }
-        if (length == 0){
+        if (length == 0) {
             return "";
         }
-        if (indexOfSingleNonEmptyString > 0){
+        if (indexOfSingleNonEmptyString > 0) {
             return strings[indexOfSingleNonEmptyString].toString();
         }
         StringBuilder sb = new StringBuilder(length);
         for (CharSequence charSequence : strings) {
-          sb.append(charSequence);
+            sb.append(charSequence);
         }
         return sb.toString();
 
@@ -155,6 +162,52 @@ public final class Utils {
             }
         }
         return true;
+    }
+
+    public static String unescape(String s) {
+        if (s.indexOf(BACKSLASH) == -1) {
+            return s;
+        }
+        StringBuilder sb = new StringBuilder(s.length());
+        for (int i = 0; i < s.length(); i++) {
+            char c = s.charAt(i);
+            if (c == BACKSLASH) {
+                char c2 = s.charAt(++i);
+                switch (c2) {
+                    case '\\':
+                        c2 = '\\';
+                        break;
+                    case 'b':
+                        c2 = '\b';
+                        break;
+                    case 'f':
+                        c2 = '\f';
+                        break;
+                    case 'n':
+                        c2 = '\n';
+                        break;
+                    case 'r':
+                        c2 = '\r';
+                        break;
+                    case 't':
+                        c2 = '\t';
+                        break;
+                    case 'u':
+                        try {
+                            String hex = s.substring(i + 1, i + 5);
+                            c2 = (char) Integer.parseInt(hex, 16);
+                            i += 4;
+                        } catch (Exception e) {
+                            throw new ValueCompareException("\\u parse failed", e);
+                        }
+                        break;
+                }
+                sb.append(c2);
+            } else {
+                sb.append(c);
+            }
+        }
+        return sb.toString();
     }
 
     /**
@@ -275,17 +328,18 @@ public final class Utils {
     /**
      * Check if one and only one condition is true; otherwise
      * throw an exception with the specified message.
-     * @param message error describing message
+     *
+     * @param message     error describing message
      * @param expressions the boolean expressions to check
      * @throws IllegalArgumentException if zero or more than one expressions are true
      */
-    public static void onlyOneIsTrue(final String message, final boolean ... expressions) {
-        if (! onlyOneIsTrueNonThrow(expressions)) {
+    public static void onlyOneIsTrue(final String message, final boolean... expressions) {
+        if (!onlyOneIsTrueNonThrow(expressions)) {
             throw new IllegalArgumentException(message);
         }
     }
 
-    public static boolean onlyOneIsTrueNonThrow(final boolean ... expressions) {
+    public static boolean onlyOneIsTrueNonThrow(final boolean... expressions) {
         int count = 0;
         for (final boolean expression : expressions) {
             if (expression && ++count > 1) {
@@ -502,5 +556,28 @@ public final class Utils {
 
     }
 
-    private Utils () {}
+    private static class ListReverser<T> implements Iterable<T> {
+        private ListIterator<T> listIterator;
+
+        public ListReverser(List<T> wrappedList) {
+            this.listIterator = wrappedList.listIterator(wrappedList.size());
+        }
+
+        public Iterator<T> iterator() {
+            return new Iterator<T>() {
+                public boolean hasNext() {
+                    return listIterator.hasPrevious();
+                }
+                public T next() {
+                    return listIterator.previous();
+                }
+                public void remove() {
+                    listIterator.remove();
+                }
+            };
+        }
+    }
+
+    private Utils() {
+    }
 }

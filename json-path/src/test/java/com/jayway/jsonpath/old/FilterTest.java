@@ -214,19 +214,23 @@ public class FilterTest extends BaseTest {
         check.put("int", 1);
         check.put("long", 1L);
         check.put("double", 1.12D);
+        check.put("boolean", true);
 
         assertFalse(filter(where("string_null").type(String.class)).apply(createPredicateContext(check)));
         assertTrue(filter(where("string").type(String.class)).apply(createPredicateContext(check)));
         assertFalse(filter(where("string").type(Number.class)).apply(createPredicateContext(check)));
 
-        assertTrue(filter(where("int").type(Integer.class)).apply(createPredicateContext(check)));
-        assertFalse(filter(where("int").type(Long.class)).apply(createPredicateContext(check)));
+        assertTrue(filter(where("int").type(Number.class)).apply(createPredicateContext(check)));
+        assertFalse(filter(where("int").type(String.class)).apply(createPredicateContext(check)));
 
-        assertTrue(filter(where("long").type(Long.class)).apply(createPredicateContext(check)));
-        assertFalse(filter(where("long").type(Integer.class)).apply(createPredicateContext(check)));
+        assertTrue(filter(where("long").type(Number.class)).apply(createPredicateContext(check)));
+        assertFalse(filter(where("long").type(String.class)).apply(createPredicateContext(check)));
 
-        assertTrue(filter(where("double").type(Double.class)).apply(createPredicateContext(check)));
-        assertFalse(filter(where("double").type(Integer.class)).apply(createPredicateContext(check)));
+        assertTrue(filter(where("double").type(Number.class)).apply(createPredicateContext(check)));
+        assertFalse(filter(where("double").type(String.class)).apply(createPredicateContext(check)));
+
+        assertTrue(filter(where("boolean").type(Boolean.class)).apply(createPredicateContext(check)));
+        assertFalse(filter(where("boolean").type(String.class)).apply(createPredicateContext(check)));
     }
 
     @Test

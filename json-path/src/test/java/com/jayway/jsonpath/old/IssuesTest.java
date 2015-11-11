@@ -8,10 +8,8 @@ import com.jayway.jsonpath.Filter;
 import com.jayway.jsonpath.JsonPath;
 import com.jayway.jsonpath.Option;
 import com.jayway.jsonpath.PathNotFoundException;
-import com.jayway.jsonpath.internal.Cache;
-import com.jayway.jsonpath.internal.CompiledPath;
-import com.jayway.jsonpath.internal.Path;
 import com.jayway.jsonpath.internal.Utils;
+import com.jayway.jsonpath.spi.cache.LRUCache;
 import com.jayway.jsonpath.spi.json.GsonJsonProvider;
 import com.jayway.jsonpath.spi.json.JsonProvider;
 import com.jayway.jsonpath.spi.mapper.GsonMappingProvider;
@@ -51,7 +49,7 @@ public class IssuesTest extends BaseTest {
                 " {\"kind\" : \"empty\"}\n" +
                 "]";
 
-        List<Map<String, String>> fullOnes = read(json, "$[?(@.kind == full)]");
+        List<Map<String, String>> fullOnes = read(json, "$[?(@.kind == 'full')]");
 
         assertEquals(1, fullOnes.size());
         assertEquals("full", fullOnes.get(0).get("kind"));
@@ -552,8 +550,6 @@ public class IssuesTest extends BaseTest {
         Filter filter = filter(where("authors[*].lastName").contains("Waugh"));
 
         Object read = JsonPath.parse(json).read("$.store.book[?]", filter);
-
-        System.out.println(read);
     }
 
     @Test
@@ -607,23 +603,21 @@ public class IssuesTest extends BaseTest {
 
     @Test
     public void issue_94_1() throws Exception {
-        Cache cache = new Cache(200);
-        Path dummy = new CompiledPath(null, false);
-        for (int i = 0; i < 10000; ++i) {
+        LRUCache cache = new LRUCache(200);
+        JsonPath dummy = JsonPath.compile("$");
+        for (int i = 0; i < 1000; ++i) {
             String key = String.valueOf(i);
             cache.get(key);
             cache.put(key, dummy);
         }
-        Thread.sleep(2000);
-
         assertThat(cache.size()).isEqualTo(200);
     }
 
     @Test
     public void issue_94_2() throws Exception {
-        Cache cache = new Cache(5);
+        LRUCache cache = new LRUCache(5);
 
-        Path dummy = new CompiledPath(null, false);
+        JsonPath dummy = JsonPath.compile("$");
 
         cache.put("1", dummy);
         cache.put("2", dummy);
@@ -716,8 +710,6 @@ public class IssuesTest extends BaseTest {
         Configuration configuration = Configuration.defaultConfiguration().addOptions(Option.DEFAULT_PATH_LEAF_TO_NULL);
 
         List<String> keys = JsonPath.using(configuration).parse(json).read("$.array1[*].array2[0].key");
-
-        System.out.println(keys);
     }
 
 

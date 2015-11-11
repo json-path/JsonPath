@@ -54,7 +54,6 @@ public class JSONEntityFunctionTest extends BaseFunctionTest {
     @Test
     public void testLengthOfTextArray() {
         // The length of JSONArray is an integer
-        System.out.println(TEXT_SERIES);
         verifyFunction(conf, "$['text'].%length()", TEXT_SERIES, 6);
     }
     @Test
