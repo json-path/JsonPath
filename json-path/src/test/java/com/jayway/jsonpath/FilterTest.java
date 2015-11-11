@@ -670,4 +670,16 @@ public class FilterTest extends BaseTest {
 
         assertThat(filter).isEqualTo(parsed);
     }
+
+    @Test
+    public void testFilterWithOrShortCircuit1() throws Exception {
+        Object json = Configuration.defaultConfiguration().jsonProvider().parse( "{\"firstname\":\"Bob\",\"surname\":\"Smith\",\"age\":30}");
+        assertThat(Filter.parse("[?((@.firstname == 'Bob' || @.firstname == 'Jane') && @.surname == 'Doe')]").apply(createPredicateContext(json))).isFalse();
+    }
+
+    @Test
+    public void testFilterWithOrShortCircuit2() throws Exception {
+        Object json = Configuration.defaultConfiguration().jsonProvider().parse("{\"firstname\":\"Bob\",\"surname\":\"Smith\",\"age\":30}");
+        assertThat(Filter.parse("[?((@.firstname == 'Bob' || @.firstname == 'Jane') && @.surname == 'Smith')]").apply(createPredicateContext(json))).isTrue();
+    }
 }
