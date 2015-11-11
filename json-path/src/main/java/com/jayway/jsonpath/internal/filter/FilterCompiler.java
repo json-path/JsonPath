@@ -14,15 +14,9 @@ public class FilterCompiler {
     private static final char DOC_CONTEXT = '$';
     private static final char EVAL_CONTEXT = '@';
     private static final char OPEN_SQUARE_BRACKET = '[';
-    private static final char CLOSE_SQUARE_BRACKET = ']';
     private static final char OPEN_BRACKET = '(';
     private static final char CLOSE_BRACKET = ')';
-    private static final char WILDCARD = '*';
-    private static final char PERIOD = '.';
     private static final char SPACE = ' ';
-    private static final char QUESTIONMARK = '?';
-    private static final char COMMA = ',';
-    private static final char SPLIT = ':';
     private static final char MINUS = '-';
     private static final char TICK = '\'';
     private static final char FUNCTION = '%';
@@ -63,7 +57,6 @@ public class FilterCompiler {
         if (!filterString.startsWith("(") || !filterString.endsWith(")")) {
             throw new InvalidPathException("Filter must start with '[?(' and end with ')]'. " + filterString);
         }
-//        filterString = filterString.substring(1, filterString.length() - 1).trim();
 
         filter = new CharacterIndex(filterString);
     }
@@ -87,7 +80,6 @@ public class FilterCompiler {
                     unbalancedBrackets--;
                     filter.incrementPosition(1);
                     while(!opsStack.isEmpty()){
-                        //expStack.push(opsStack.pop().createExpressionNode(expStack.pop(), expStack.pop()));
                         expStack.push(ExpressionNode.createExpressionNode(expStack.pop(), opsStack.pop(), expStack.pop()));
                     }
                     break;
@@ -113,7 +105,7 @@ public class FilterCompiler {
         }
 
         Predicate predicate = expStack.pop();
-        logger.trace("--------> {}", predicate.toString());
+        logger.trace(predicate.toString());
 
         return predicate;
     }
@@ -145,15 +137,11 @@ public class FilterCompiler {
         if (left.isPathNode()) {
             final PathNode pathNode = left.asPathNode();
             if (pathNode.isExistsCheck()) {
-
-                return new RelationalExpressionNode(pathNode, RelationalOperator.fromString("¦EXISTS¦"), pathNode.shouldExists() ? ValueNode.TRUE : ValueNode.FALSE);
+                return new RelationalExpressionNode(pathNode, RelationalOperator.EXISTS, pathNode.shouldExists() ? ValueNode.TRUE : ValueNode.FALSE);
             }
         }
         RelationalOperator operator = readRelationalOperator();
-        //ValueNode right = ValueNode.TRUE;
-        //if(operator != RelationalOperator.EMPTY) {
         ValueNode right = readValueNode();
-        //}
 
         return new RelationalExpressionNode(left, operator, right);
     }
@@ -199,7 +187,7 @@ public class FilterCompiler {
         int begin = filter.position();
         if(filter.currentChar() == 'n' && filter.inBounds(filter.position() + 3)){
             CharSequence nullValue = filter.subSequence(filter.position(), filter.position() + 4);
-            if("null".endsWith(nullValue.toString())){
+            if("null".equals(nullValue.toString())){
                 logger.trace("NullLiteral from {} to {} -> [{}]", begin, filter.position()+3, nullValue);
                 filter.incrementPosition(nullValue.length());
                 return ValueNode.createNullNode();
