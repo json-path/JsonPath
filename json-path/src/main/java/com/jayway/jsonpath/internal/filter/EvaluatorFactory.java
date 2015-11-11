@@ -20,7 +20,7 @@ public class EvaluatorFactory {
         evaluators.put(RelationalOperator.GTE, new GreaterThanEqualsEvaluator());
         evaluators.put(RelationalOperator.REGEX, new RegexpEvaluator());
         evaluators.put(RelationalOperator.SIZE, new SizeEvaluator());
-        evaluators.put(RelationalOperator.NOT_EMPTY, new NotEmptyEvaluator());
+        evaluators.put(RelationalOperator.EMPTY, new EmptyEvaluator());
         evaluators.put(RelationalOperator.IN, new InEvaluator());
         evaluators.put(RelationalOperator.NIN, new NotInEvaluator());
         evaluators.put(RelationalOperator.ALL, new AllEvaluator());
@@ -130,13 +130,13 @@ public class EvaluatorFactory {
         }
     }
 
-    private static class NotEmptyEvaluator implements Evaluator {
+    private static class EmptyEvaluator implements Evaluator {
         @Override
         public boolean evaluate(ValueNode left, ValueNode right, Predicate.PredicateContext ctx) {
             if(left.isStringNode()){
-                return !left.asStringNode().isEmpty();
+                return left.asStringNode().isEmpty() == right.asBooleanNode().getBoolean();
             } else if(left.isJsonNode()){
-                return !left.asJsonNode().isEmpty(ctx);
+                return left.asJsonNode().isEmpty(ctx) == right.asBooleanNode().getBoolean();
             }
             return false;
         }

@@ -19,7 +19,7 @@ public enum RelationalOperator {
     EXISTS("¦EXISTS¦"),
     TYPE("¦TYPE¦"),
     MATCHES("¦MATCHES¦"),
-    NOT_EMPTY("¦NOT_EMPTY¦");
+    EMPTY("¦EMPTY¦");
 
     private final String operatorString;
 

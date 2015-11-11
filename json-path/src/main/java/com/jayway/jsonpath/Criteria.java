@@ -350,9 +350,20 @@ public class Criteria implements Predicate {
      *
      * @return the criteria
      */
+    @Deprecated
     public Criteria notEmpty() {
-        this.criteriaType = RelationalOperator.NOT_EMPTY;
-        this.right = ValueNode.TRUE;
+        return empty(false);
+    }
+
+    /**
+     * The <code>notEmpty</code> operator checks that an array or String is empty.
+     *
+     * @param empty should be empty
+     * @return the criteria
+     */
+    public Criteria empty(boolean empty) {
+        this.criteriaType = RelationalOperator.EMPTY;
+        this.right = empty ? ValueNode.TRUE : ValueNode.FALSE;
         return this;
     }
 

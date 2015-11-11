@@ -176,8 +176,8 @@ public class FilterParseTest {
     @Test
     public void a_not_empty_filter_can_be_serialized() {
 
-        String filter = filter(where("a").notEmpty()).toString();
-        String parsed = parse("[?(@['a'] ¦NOT_EMPTY¦)]").toString();
+        String filter = filter(where("a").empty(false)).toString();
+        String parsed = parse("[?(@['a'] ¦EMPTY¦ false)]").toString();
 
         assertThat(filter).isEqualTo(parsed);
     }

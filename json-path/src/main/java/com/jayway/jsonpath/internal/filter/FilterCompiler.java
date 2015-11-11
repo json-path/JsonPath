@@ -150,10 +150,10 @@ public class FilterCompiler {
             }
         }
         RelationalOperator operator = readRelationalOperator();
-        ValueNode right = ValueNode.TRUE;
-        if(operator != RelationalOperator.NOT_EMPTY) {
-            right = readValueNode();
-        }
+        //ValueNode right = ValueNode.TRUE;
+        //if(operator != RelationalOperator.EMPTY) {
+        ValueNode right = readValueNode();
+        //}
 
         return new RelationalExpressionNode(left, operator, right);
     }
