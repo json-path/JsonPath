@@ -40,8 +40,12 @@ public class FilterCompiler {
     private CharacterIndex filter;
 
     public static Filter compile(String filterString) {
-        FilterCompiler compiler = new FilterCompiler(filterString);
-        return new CompiledFilter(compiler.compile());
+        try {
+            FilterCompiler compiler = new FilterCompiler(filterString);
+            return new CompiledFilter(compiler.compile());
+        } catch (Exception e){
+            throw new InvalidPathException("Could not compile inline filter : " + filterString, e);
+        }
     }
 
     private FilterCompiler(String filterString) {
