@@ -42,7 +42,6 @@ public class LogicalExpressionNode extends ExpressionNode {
 
     @Override
     public String toString() {
-        //return "(" + Utils.join(" " + operator.getOperatorString() + " ", Utils.reverse(chain)) + ")";
         return "(" + Utils.join(" " + operator.getOperatorString() + " ", chain) + ")";
     }
 

@@ -11,15 +11,15 @@ public enum RelationalOperator {
     LT("<"),
     GT(">"),
     REGEX("=~"),
-    NIN("¦NIN¦"),
-    IN("¦IN¦"),
-    CONTAINS("¦CONTAINS¦"),
-    ALL("¦ALL¦"),
-    SIZE("¦SIZE¦"),
-    EXISTS("¦EXISTS¦"),
-    TYPE("¦TYPE¦"),
-    MATCHES("¦MATCHES¦"),
-    EMPTY("¦EMPTY¦");
+    NIN("NIN"),
+    IN("IN"),
+    CONTAINS("CONTAINS"),
+    ALL("ALL"),
+    SIZE("SIZE"),
+    EXISTS("EXISTS"),
+    TYPE("TYPE"),
+    MATCHES("MATCHES"),
+    EMPTY("EMPTY");
 
     private final String operatorString;
 
@@ -27,13 +27,9 @@ public enum RelationalOperator {
         this.operatorString = operatorString;
     }
 
-    public String getOperatorString() {
-        return operatorString;
-    }
-
     public static RelationalOperator fromString(String operatorString){
         for (RelationalOperator operator : RelationalOperator.values()) {
-            if(operator.operatorString.equals(operatorString) ){
+            if(operator.operatorString.equals(operatorString.toUpperCase()) ){
                 return operator;
             }
         }

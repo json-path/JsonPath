@@ -20,7 +20,6 @@ public class FilterCompiler {
     private static final char MINUS = '-';
     private static final char TICK = '\'';
     private static final char FUNCTION = '%';
-    private static final char OPERATOR_PIPE = '¦';
     private static final char LT = '<';
     private static final char GT = '>';
     private static final char EQ = '=';
@@ -134,16 +133,17 @@ public class FilterCompiler {
 
     private RelationalExpressionNode readExpression() {
         ValueNode left = readValueNode();
-        if (left.isPathNode()) {
-            final PathNode pathNode = left.asPathNode();
-            if (pathNode.isExistsCheck()) {
-                return new RelationalExpressionNode(pathNode, RelationalOperator.EXISTS, pathNode.shouldExists() ? ValueNode.TRUE : ValueNode.FALSE);
-            }
+        if(expressionIsTerminated()) {
+            PathNode pathNode = left.asPathNode();
+            left = pathNode.asExistsCheck(pathNode.shouldExists());
+            RelationalOperator operator = RelationalOperator.EXISTS;
+            ValueNode right = left.asPathNode().shouldExists() ? ValueNode.TRUE : ValueNode.FALSE;
+            return new RelationalExpressionNode(left, operator, right);
+        } else {
+            RelationalOperator operator = readRelationalOperator();
+            ValueNode right = readValueNode();
+            return new RelationalExpressionNode(left, operator, right);
         }
-        RelationalOperator operator = readRelationalOperator();
-        ValueNode right = readValueNode();
-
-        return new RelationalExpressionNode(left, operator, right);
     }
 
     private LogicalOperator readLogicalOperator(){
@@ -166,18 +166,16 @@ public class FilterCompiler {
     private RelationalOperator readRelationalOperator() {
         int begin = filter.skipBlanks().position();
 
-        if (filter.currentChar() == OPERATOR_PIPE) {
-            int closingOperatorIndex = filter.nextIndexOf(OPERATOR_PIPE);
-            if (closingOperatorIndex == -1) {
-                throw new InvalidPathException("Operator not closed. Expected " + OPERATOR_PIPE + " in " + filter);
-            } else {
-                filter.setPosition(closingOperatorIndex + 1);
-            }
-        } else {
+        if(isRelationalOperatorChar(filter.currentChar())){
             while (filter.inBounds() && isRelationalOperatorChar(filter.currentChar())) {
                 filter.incrementPosition(1);
             }
+        } else {
+            while (filter.inBounds() && filter.currentChar() != SPACE) {
+                filter.incrementPosition(1);
+            }
         }
+
         CharSequence operator = filter.subSequence(begin, filter.position());
         logger.trace("Operator from {} to {} -> [{}]", begin, filter.position()-1, operator);
         return RelationalOperator.fromString(operator.toString());
@@ -277,7 +275,6 @@ public class FilterCompiler {
 
     private PathNode readPath() {
         char previousSignificantChar = filter.previousSignificantChar();
-        boolean operatorOnLeft = isRelationalOperatorChar(previousSignificantChar) && previousSignificantChar != BANG;
         int begin = filter.position();
 
         filter.incrementPosition(1); //skip $ and @
@@ -297,14 +294,22 @@ public class FilterCompiler {
                 filter.incrementPosition(1);
             }
         }
-        boolean operatorOnRight = isRelationalOperatorChar(filter.currentChar()) || isRelationalOperatorChar(filter.nextSignificantChar());
-        boolean existsCheck = !operatorOnLeft && !operatorOnRight;
-        boolean shouldExists = true;
-        if(existsCheck){
-            shouldExists = !(previousSignificantChar == BANG);
-        }
+
+        boolean shouldExists = !(previousSignificantChar == BANG);
         CharSequence path = filter.subSequence(begin, filter.position());
-        return new PathNode(path, existsCheck, shouldExists);
+        return new PathNode(path, false, shouldExists);
+    }
+
+    private boolean expressionIsTerminated(){
+        char c = filter.currentChar();
+        if(c == CLOSE_BRACKET || isLogicalOperatorChar(c)){
+            return true;
+        }
+        c = filter.nextSignificantChar();
+        if(c == CLOSE_BRACKET || isLogicalOperatorChar(c)){
+            return true;
+        }
+        return false;
     }
 
     private boolean currentCharIsClosingFunctionBracket(int lowerBound){
@@ -325,7 +330,10 @@ public class FilterCompiler {
         return false;
     }
 
+    private boolean isLogicalOperatorChar(char c) {
+        return c == AND || c == OR;
+    }
     private boolean isRelationalOperatorChar(char c) {
-        return c == OPERATOR_PIPE || c == LT || c == GT || c == EQ || c == TILDE || c == BANG;
+        return c == LT || c == GT || c == EQ || c == TILDE || c == BANG;
     }
 }

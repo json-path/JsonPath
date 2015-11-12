@@ -102,7 +102,7 @@ public class FilterParseTest {
     @Test
     public void a_nin_filter_can_be_serialized() {
         String filter = filter(where("a").nin(1)).toString();
-        String parsed = parse("[?(@['a'] ¦NIN¦ [1])]").toString();
+        String parsed = parse("[?(@['a'] NIN [1])]").toString();
 
         assertThat(filter).isEqualTo(parsed);
     }
@@ -111,7 +111,7 @@ public class FilterParseTest {
     public void a_in_filter_can_be_serialized() {
 
         String filter = filter(where("a").in("a")).toString();
-        String parsed = parse("[?(@['a'] ¦IN¦ ['a'])]").toString();
+        String parsed = parse("[?(@['a'] IN ['a'])]").toString();
 
         assertThat(filter).isEqualTo(parsed);
     }
@@ -119,7 +119,7 @@ public class FilterParseTest {
     @Test
     public void a_contains_filter_can_be_serialized() {
         String filter = filter(where("a").contains("a")).toString();
-        String parsed = parse("[?(@['a'] ¦CONTAINS¦ 'a')]").toString();
+        String parsed = parse("[?(@['a'] CONTAINS 'a')]").toString();
 
         assertThat(filter).isEqualTo(parsed);
     }
@@ -128,7 +128,7 @@ public class FilterParseTest {
     public void a_all_filter_can_be_serialized() {
 
         String filter = filter(where("a").all("a", "b")).toString();
-        String parsed = parse("[?(@['a'] ¦ALL¦ ['a','b'])]").toString();
+        String parsed = parse("[?(@['a'] ALL ['a','b'])]").toString();
 
         assertThat(filter).isEqualTo(parsed);
     }
@@ -137,7 +137,7 @@ public class FilterParseTest {
     public void a_size_filter_can_be_serialized() {
 
         String filter = filter(where("a").size(5)).toString();
-        String parsed = parse("[?(@['a'] ¦SIZE¦ 5)]").toString();
+        String parsed = parse("[?(@['a'] SIZE 5)]").toString();
 
         assertThat(filter).isEqualTo(parsed);
     }
@@ -163,21 +163,21 @@ public class FilterParseTest {
 
     @Test
     public void a_type_filter_can_be_serialized() {
-        assertThat(filter(where("a").type(String.class)).toString()).isEqualTo("[?(@['a'] ¦TYPE¦ java.lang.String)]");
+        assertThat(filter(where("a").type(String.class)).toString()).isEqualTo("[?(@['a'] TYPE java.lang.String)]");
     }
 
     @Test
     public void a_matches_filter_can_be_serialized() {
         Filter a = filter(where("x").eq(1000));
 
-        assertThat(filter(where("a").matches(a)).toString()).isEqualTo("[?(@['a'] ¦MATCHES¦ [?(@['x'] == 1000)])]");
+        assertThat(filter(where("a").matches(a)).toString()).isEqualTo("[?(@['a'] MATCHES [?(@['x'] == 1000)])]");
     }
 
     @Test
     public void a_not_empty_filter_can_be_serialized() {
 
         String filter = filter(where("a").empty(false)).toString();
-        String parsed = parse("[?(@['a'] ¦EMPTY¦ false)]").toString();
+        String parsed = parse("[?(@['a'] EMPTY false)]").toString();
 
         assertThat(filter).isEqualTo(parsed);
     }
@@ -195,7 +195,7 @@ public class FilterParseTest {
     public void in_string_filter_can_be_serialized() {
 
         String filter = filter(where("a").in("1","2")).toString();
-        String parsed = parse("[?(@['a'] ¦IN¦ ['1','2'])]").toString();
+        String parsed = parse("[?(@['a'] IN ['1','2'])]").toString();
 
         assertThat(filter).isEqualTo(parsed);
     }
@@ -204,7 +204,7 @@ public class FilterParseTest {
     public void a_deep_path_filter_can_be_serialized() {
 
         String filter = filter(where("a.b.c").in("1", "2")).toString();
-        String parsed = parse("[?(@['a']['b']['c'] ¦IN¦ ['1','2'])]").toString();
+        String parsed = parse("[?(@['a']['b']['c'] IN ['1','2'])]").toString();
 
         assertThat(filter).isEqualTo(parsed);
     }
