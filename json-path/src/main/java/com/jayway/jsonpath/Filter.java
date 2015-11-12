@@ -178,8 +178,7 @@ public abstract class Filter implements Predicate {
 
 
     public static Filter parse(String filter){
-        Predicate f = FilterCompiler.compile(filter);
-        return new SingleFilter(f);
+        return FilterCompiler.compile(filter);
     }
 
 

@@ -6,16 +6,16 @@ public abstract class ExpressionNode implements Predicate {
 
     public static ExpressionNode createExpressionNode(ExpressionNode right, LogicalOperator operator,  ExpressionNode left){
         if(operator == LogicalOperator.AND){
-            if((left instanceof LogicalExpressionNode) && ((LogicalExpressionNode)left).getOperator() == LogicalOperator.AND ){
-                LogicalExpressionNode len = (LogicalExpressionNode) left;
-                return len.append(right);
+            if((right instanceof LogicalExpressionNode) && ((LogicalExpressionNode)right).getOperator() == LogicalOperator.AND ){
+                LogicalExpressionNode len = (LogicalExpressionNode) right;
+                return len.append(left);
             } else {
                 return LogicalExpressionNode.createLogicalAnd(left, right);
             }
         } else {
-            if((left instanceof LogicalExpressionNode) && ((LogicalExpressionNode)left).getOperator() == LogicalOperator.OR ){
-                LogicalExpressionNode len = (LogicalExpressionNode) left;
-                return len.append(right);
+            if((right instanceof LogicalExpressionNode) && ((LogicalExpressionNode)right).getOperator() == LogicalOperator.OR ){
+                LogicalExpressionNode len = (LogicalExpressionNode) right;
+                return len.append(left);
             } else {
                 return LogicalExpressionNode.createLogicalOr(left, right);
             }
