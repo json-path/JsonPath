@@ -195,15 +195,16 @@ public class JsonPath {
         } catch (RuntimeException e){
             if(!optSuppressExceptions){
                 throw e;
-            }
-        }
-        if(optAsPathList){
-            return (T)configuration.jsonProvider().createArray();
-        } else {
-            if(optAlwaysReturnList){
-                return (T)configuration.jsonProvider().createArray();
             } else {
-                return (T)(path.isDefinite() ? null : configuration.jsonProvider().createArray());
+                if(optAsPathList){
+                    return (T)configuration.jsonProvider().createArray();
+                } else {
+                    if(optAlwaysReturnList){
+                        return (T)configuration.jsonProvider().createArray();
+                    } else {
+                        return (T)(path.isDefinite() ? null : configuration.jsonProvider().createArray());
+                    }
+                }
             }
         }
     }
