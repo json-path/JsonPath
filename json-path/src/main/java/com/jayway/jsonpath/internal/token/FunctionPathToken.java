@@ -51,6 +51,8 @@ public class FunctionPathToken extends PathToken {
 
     @Override
     public String getPathFragment() {
-        return pathFragment;
+        return "." + pathFragment;
     }
+
+
 }

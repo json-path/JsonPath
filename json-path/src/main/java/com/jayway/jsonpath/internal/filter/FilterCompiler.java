@@ -298,7 +298,9 @@ public class FilterCompiler {
                     filter.setPosition(closingSquareBracketIndex + 1);
                 }
             }
-            boolean closingLogicalBracket = (filter.currentChar() == CLOSE_BRACKET && !currentCharIsClosingFunctionBracket(begin));
+            boolean closingFunctionBracket = (filter.currentChar() == CLOSE_BRACKET && currentCharIsClosingFunctionBracket(begin));
+            boolean closingLogicalBracket  = (filter.currentChar() == CLOSE_BRACKET && !closingFunctionBracket);
+
             if (!filter.inBounds() || isRelationalOperatorChar(filter.currentChar()) || filter.currentChar() == SPACE || closingLogicalBracket) {
                 break;
             } else {
