@@ -264,10 +264,11 @@ public abstract class ValueNode {
             if((compiledPattern.flags() & Pattern.CASE_INSENSITIVE) == Pattern.CASE_INSENSITIVE){
                 flags = "i";
             }
-
-
-
-            return "/" + pattern + "/" + flags;
+            if(!pattern.startsWith("/")){
+                return "/" + pattern + "/" + flags;
+            } else {
+                return pattern;
+            }
         }
 
         @Override
