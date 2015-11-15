@@ -16,7 +16,6 @@ package com.jayway.jsonpath;
 
 import com.jayway.jsonpath.internal.Path;
 import com.jayway.jsonpath.internal.Utils;
-import com.jayway.jsonpath.internal.filter.PathNode;
 import com.jayway.jsonpath.internal.filter.RelationalExpressionNode;
 import com.jayway.jsonpath.internal.filter.RelationalOperator;
 import com.jayway.jsonpath.internal.filter.ValueNode;
@@ -84,7 +83,7 @@ public class Criteria implements Predicate {
     @Deprecated
     //This should be private.It exposes internal classes
     public static Criteria where(Path key) {
-        return new Criteria(new PathNode(key));
+        return new Criteria(ValueNode.createPathNode(key));
     }
 
 

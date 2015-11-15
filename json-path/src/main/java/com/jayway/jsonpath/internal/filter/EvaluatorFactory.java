@@ -46,7 +46,7 @@ public class EvaluatorFactory {
     private static class NotEqualsEvaluator implements Evaluator {
         @Override
         public boolean evaluate(ValueNode left, ValueNode right, Predicate.PredicateContext ctx) {
-            return !left.equals(right);
+            return !evaluators.get(RelationalOperator.EQ).evaluate(left, right, ctx);
         }
     }
 

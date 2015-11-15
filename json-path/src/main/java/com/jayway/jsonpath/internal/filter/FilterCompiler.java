@@ -148,7 +148,7 @@ public class FilterCompiler {
     private RelationalExpressionNode readExpression() {
         ValueNode left = readValueNode();
         if(expressionIsTerminated()) {
-            PathNode pathNode = left.asPathNode();
+            ValueNode.PathNode pathNode = left.asPathNode();
             left = pathNode.asExistsCheck(pathNode.shouldExists());
             RelationalOperator operator = RelationalOperator.EXISTS;
             ValueNode right = left.asPathNode().shouldExists() ? ValueNode.TRUE : ValueNode.FALSE;
@@ -287,7 +287,7 @@ public class FilterCompiler {
         return ValueNode.createBooleanNode(boolValue);
     }
 
-    private PathNode readPath() {
+    private ValueNode.PathNode readPath() {
         char previousSignificantChar = filter.previousSignificantChar();
         int begin = filter.position();
 
@@ -313,7 +313,7 @@ public class FilterCompiler {
 
         boolean shouldExists = !(previousSignificantChar == BANG);
         CharSequence path = filter.subSequence(begin, filter.position());
-        return new PathNode(path, false, shouldExists);
+        return ValueNode.createPathNode(path, false, shouldExists);
     }
 
     private boolean expressionIsTerminated(){
