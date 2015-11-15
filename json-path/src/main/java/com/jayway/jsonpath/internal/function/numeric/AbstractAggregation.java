@@ -35,11 +35,6 @@ public abstract class AbstractAggregation implements Function {
 
             Iterable<?> objects = ctx.configuration().jsonProvider().toIterable(model);
             for (Object obj : objects) {
-//                Object unwraped = ctx.configuration().jsonProvider().unwrap(obj);
-//                if (unwraped instanceof Number) {
-//                    Number value = (Number) unwraped;
-//                    next(value);
-//                }
                 if (obj instanceof Number) {
                     Number value = (Number) obj;
                     next(value);

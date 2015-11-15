@@ -85,6 +85,9 @@ public class FilterCompiler {
                     filter.incrementPosition(1);
                     ExpressionNode expressionNode = expStack.pop();
                     if(!opsStack.isEmpty()){
+                        if(expStack.isEmpty()){
+                            throw new InvalidPathException("Expected expression on right hand side of operator");
+                        }
                         ExpressionNode right = expStack.pop();
                         expressionNode = ExpressionNode.createExpressionNode(expressionNode, opsStack.pop(), right);
                         while(!opsStack.isEmpty()){
@@ -110,7 +113,7 @@ public class FilterCompiler {
                 throw new InvalidPathException("Failed to parse filter " + filter.toString());
             }
         }
-        if(unbalancedBrackets > 0){
+        if(unbalancedBrackets != 0){
             throw new InvalidPathException("Failed to parse filter. Brackets are not balanced. " + filter.toString());
         }
 

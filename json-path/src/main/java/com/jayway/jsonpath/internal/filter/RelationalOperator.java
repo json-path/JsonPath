@@ -33,7 +33,7 @@ public enum RelationalOperator {
                 return operator;
             }
         }
-        throw new InvalidPathException("Operator not supported " + operatorString);
+        throw new InvalidPathException("Operator " + operatorString + " not supported ");
     }
 
     @Override
