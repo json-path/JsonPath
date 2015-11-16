@@ -388,9 +388,34 @@ public class Criteria implements Predicate {
      */
     @Deprecated
     public static Criteria parse(String criteria) {
-        //TODO: fix
-        return null;
+        if(criteria == null){
+            throw new InvalidPathException("Criteria can not be null");
+        }
+        String[] split = criteria.trim().split(" ");
+        if(split.length == 3){
+            return create(split[0], split[1], split[2]);
+        } else if(split.length == 1){
+            return create(split[0], "EXISTS", "true");
+        } else {
+            throw new InvalidPathException("Could not parse criteria");
+        }
     }
+
+    /**
+     * Creates a new criteria
+     * @param left path to evaluate in criteria
+     * @param operator operator
+     * @param right expected value
+     * @return a new Criteria
+     */
+    @Deprecated
+    public static Criteria create(String left, String operator, String right) {
+        Criteria criteria = new Criteria(ValueNode.toValueNode(left));
+        criteria.criteriaType = RelationalOperator.fromString(operator);
+        criteria.right = ValueNode.toValueNode(right);
+        return criteria;
+    }
+
 
     private static String prefixPath(String key){
         if (!key.startsWith("$") && !key.startsWith("@")) {

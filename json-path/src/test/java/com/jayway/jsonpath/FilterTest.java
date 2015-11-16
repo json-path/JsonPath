@@ -469,4 +469,14 @@ public class FilterTest extends BaseTest {
         Object json = Configuration.defaultConfiguration().jsonProvider().parse("{\"firstname\":\"Bob\",\"surname\":\"Smith\",\"age\":30}");
         assertThat(Filter.parse("[?((@.firstname == 'Bob' || @.firstname == 'Jane') && @.surname == 'Smith')]").apply(createPredicateContext(json))).isTrue();
     }
+
+    @Test
+    public void criteria_can_be_parsed() {
+
+        Criteria criteria = Criteria.parse("@.foo == 'baar'");
+        assertThat(criteria.toString()).isEqualTo("@['foo'] == 'baar'");
+
+        criteria = Criteria.parse("@.foo");
+        assertThat(criteria.toString()).isEqualTo("@['foo']");
+    }
 }
