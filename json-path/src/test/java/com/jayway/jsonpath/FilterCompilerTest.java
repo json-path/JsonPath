@@ -53,6 +53,7 @@ public class FilterCompilerTest {
         assertInvalidPathException("[?(@ || )]");
         assertInvalidPathException("[?(@ == 'foo )]");
         assertInvalidPathException("[?(@ == 1' )]");
+        assertInvalidPathException("[?(@.foo bar == 1)]");
     }
 
 
