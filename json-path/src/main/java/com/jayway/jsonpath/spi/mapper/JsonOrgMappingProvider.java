@@ -33,16 +33,18 @@ public class JsonOrgMappingProvider implements MappingProvider {
             List<Object> mapped = new ArrayList<Object>();
             JSONArray array = (JSONArray) source;
 
-            for (Object o : array) {
-                mapped.add(mapToObject(o));
+            for (int i = 0; i < array.length(); i++){
+                mapped.add(mapToObject(array.get(i)));
             }
+
             return mapped;
         }
         else if (source instanceof JSONObject){
             Map<String, Object> mapped = new HashMap<String, Object>();
             JSONObject obj = (JSONObject) source;
 
-            for (String key : obj.keySet()) {
+            for (Object o : obj.keySet()) {
+                String key = o.toString();
                 mapped.put(key, mapToObject(obj.get(key)));
             }
             return mapped;
