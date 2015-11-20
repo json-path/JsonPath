@@ -142,8 +142,6 @@ public class PathCompilerTest {
                 + "}";
         // message: it\ -> (after json escaping) -> "it\\" -> (after java escaping) -> "\"it\\\\\""
 
-        System.out.println(JsonPath.parse(json).json().toString());
-
         List<String> result = JsonPath.read(json, "$.logs[?(@.message == 'it\\\\')].message");
 
         assertThat(result).containsExactly("it\\");

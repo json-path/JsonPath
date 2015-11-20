@@ -47,7 +47,6 @@ public class JsonReader implements ParseContext, DocumentContext {
 
     private final Configuration configuration;
     private Object json;
-    private Object patch;
 
     public JsonReader() {
         this(Configuration.defaultConfiguration());
@@ -138,15 +137,15 @@ public class JsonReader implements ParseContext, DocumentContext {
     public <T> T read(String path, Predicate... filters) {
         notEmpty(path, "path can not be null or empty");
         Cache cache = CacheProvider.getCache();
-        
+
         path = path.trim();
         LinkedList filterStack = new LinkedList<Predicate>(asList(filters));
         String cacheKey = Utils.concat(path, filterStack.toString());
-        
+
         JsonPath jsonPath = cache.get(cacheKey);
         if(jsonPath != null){
         	return read(jsonPath);
-        }else {
+        } else {
         	jsonPath = compile(path, filters);
         	cache.put(cacheKey, jsonPath);
         	return read(jsonPath);

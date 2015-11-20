@@ -57,7 +57,14 @@ public abstract class Filter implements Predicate {
         return new AndFilter(this, other);
     }
 
-
+    /**
+     * Parses a filter. The filter must match <code>[?(<filter>)]</code>, white spaces are ignored.
+     * @param filter filter string to parse
+     * @return the filter
+     */
+    public static Filter parse(String filter){
+        return FilterCompiler.compile(filter);
+    }
 
     private static final class SingleFilter extends Filter {
 
@@ -173,13 +180,5 @@ public abstract class Filter implements Predicate {
             sb.append(")]");
             return sb.toString();
         }
-
     }
-
-
-    public static Filter parse(String filter){
-        return FilterCompiler.compile(filter);
-    }
-
-
 }

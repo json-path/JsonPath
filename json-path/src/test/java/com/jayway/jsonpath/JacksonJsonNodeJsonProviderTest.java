@@ -72,7 +72,11 @@ public class JacksonJsonNodeJsonProviderTest extends BaseTest {
     @Test
     public void list_of_numbers() {
         ArrayNode objs = using(JACKSON_JSON_NODE_CONFIGURATION).parse(JSON_DOCUMENT).read("$.store.book[*].display-price");
-        System.out.println(objs.toString());
+
+        assertThat(objs.get(0).asDouble()).isEqualTo(8.95D);
+        assertThat(objs.get(1).asDouble()).isEqualTo(12.99D);
+        assertThat(objs.get(2).asDouble()).isEqualTo(8.99D);
+        assertThat(objs.get(3).asDouble()).isEqualTo(22.99D);
     }
 
     @Test

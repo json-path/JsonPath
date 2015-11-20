@@ -38,7 +38,6 @@ task checkBinaryCompatibility {
 if (JavaVersion.current().isJava7Compatible()) {
     apply plugin: 'me.champeau.gradle.japicmp'
 
-    def referenceMinorVersion = '1.1.0'
 
     def reportGenerator = { model ->
         outputProcessor {
@@ -61,14 +60,12 @@ if (JavaVersion.current().isJava7Compatible()) {
                     violations[c.fullyQualifiedName].error << "Class has been removed"
                 }
             }
-
             modifiedMethod { c, m ->
                 if (!skipMethod(c, m)) {
                     violations[c.fullyQualifiedName].warning << """<p>Method ${m.name} has been modified</p>
 <p>From <pre>${m.oldMethod.get()?.longName}</pre> to <pre>${m.newMethod.get()?.longName}</pre></p>"""
                 }
             }
-
             newClass { c ->
                 if (!skipClass(c)) {
                     violations[c.fullyQualifiedName].info << "Class has been added"
@@ -101,8 +98,8 @@ if (JavaVersion.current().isJava7Compatible()) {
 
         task japicmp(type: me.champeau.gradle.ArtifactJapicmpTask) {
             dependsOn jar
-            //baseline = "com.jayway.jsonpath:${project.name}:${referenceMinorVersion}@jar"
-            baseline = "com.jayway.jsonpath:${project.name}:+@jar"
+            //baseline = "com.jayway.jsonpath:${project.name}:+@jar"  //latest release
+            baseline = 'com.jayway.jsonpath:json-path:2.0.0@jar'
             to = jar.archivePath
             accessModifier = 'protected'
             onlyModified = true
@@ -125,7 +122,6 @@ if (JavaVersion.current().isJava7Compatible()) {
                     engine.createTemplateByPath(templateFile).make(model).writeTo(wrt)
                 }
             }
-
         }
     }
 

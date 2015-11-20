@@ -43,15 +43,6 @@ public class InlineFilterTest extends BaseTest {
     }
 
     @Test
-    public void document_queries_are_cached() {
-
-        Object read = reader.read("$.store.book[?(@.display-price <= $.max-price)]");
-
-        //System.out.println(read);
-
-    }
-
-    @Test
     public void simple_inline_or_statement_evaluates() {
 
         List a = reader.read("store.book[ ?(@.author == 'Nigel Rees' || @.author == 'Evelyn Waugh') ].author", List.class);
