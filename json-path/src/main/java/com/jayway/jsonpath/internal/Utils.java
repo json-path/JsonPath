@@ -248,7 +248,7 @@ public final class Utils {
      * Returns an upper case hexadecimal <code>String</code> for the given
      * character.
      *
-     * @param ch The character to convert.
+     * @param ch The character to map.
      * @return An upper case hexadecimal <code>String</code>
      */
     public static String hex(char ch) {

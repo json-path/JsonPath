@@ -16,7 +16,7 @@ package com.jayway.jsonpath;
 
 
 import com.jayway.jsonpath.internal.EvaluationContext;
-import com.jayway.jsonpath.internal.JsonReader;
+import com.jayway.jsonpath.internal.JsonContext;
 import com.jayway.jsonpath.internal.Path;
 import com.jayway.jsonpath.internal.PathCompiler;
 import com.jayway.jsonpath.internal.PathRef;
@@ -229,20 +229,20 @@ public class JsonPath {
 
 
     /**
-     * Converts the value on the given path.
+     * Replaces the value on the given path with the result of the {@link MapFunction}.
      *
      * @param jsonObject        a json object
-     * @param valueConverter    Converter object to be invoked
+     * @param mapFunction       Converter object to be invoked
      * @param configuration     configuration to use
      * @return the updated jsonObject or the path list to updated objects if option AS_PATH_LIST is set.
      */
-    public <T> T convert(Object jsonObject, ValueConverter valueConverter, Configuration configuration) {
+    public <T> T map(Object jsonObject, MapFunction mapFunction, Configuration configuration) {
         notNull(jsonObject, "json can not be null");
         notNull(configuration, "configuration can not be null");
-        notNull(valueConverter, "valueConverter can not be null");
+        notNull(mapFunction, "mapFunction can not be null");
         EvaluationContext evaluationContext = path.evaluate(jsonObject, jsonObject, configuration, true);
         for (PathRef updateOperation : evaluationContext.updateOperations()) {
-            updateOperation.convert(valueConverter, configuration);
+            updateOperation.convert(mapFunction, configuration);
         }
         return resultByConfiguration(jsonObject, configuration, evaluationContext);
     }
@@ -498,7 +498,7 @@ public class JsonPath {
      */
     @SuppressWarnings({"unchecked"})
     public static <T> T read(String json, String jsonPath, Predicate... filters) {
-        return new JsonReader().parse(json).read(jsonPath, filters);
+        return new JsonContext().parse(json).read(jsonPath, filters);
     }
 
 
@@ -513,7 +513,7 @@ public class JsonPath {
      */
     @SuppressWarnings({"unchecked"})
     public static <T> T read(URL jsonURL, String jsonPath, Predicate... filters) throws IOException {
-        return new JsonReader().parse(jsonURL).read(jsonPath, filters);
+        return new JsonContext().parse(jsonURL).read(jsonPath, filters);
     }
 
     /**
@@ -527,7 +527,7 @@ public class JsonPath {
      */
     @SuppressWarnings({"unchecked"})
     public static <T> T read(File jsonFile, String jsonPath, Predicate... filters) throws IOException {
-        return new JsonReader().parse(jsonFile).read(jsonPath, filters);
+        return new JsonContext().parse(jsonFile).read(jsonPath, filters);
     }
 
     /**
@@ -541,7 +541,7 @@ public class JsonPath {
      */
     @SuppressWarnings({"unchecked"})
     public static <T> T read(InputStream jsonInputStream, String jsonPath, Predicate... filters) throws IOException {
-        return new JsonReader().parse(jsonInputStream).read(jsonPath, filters);
+        return new JsonContext().parse(jsonInputStream).read(jsonPath, filters);
     }
 
 
@@ -559,7 +559,7 @@ public class JsonPath {
      * @return a parsing context based on given configuration
      */
     public static ParseContext using(Configuration configuration) {
-        return new JsonReader(configuration);
+        return new JsonContext(configuration);
     }
 
     /**
@@ -570,7 +570,7 @@ public class JsonPath {
      */
     @Deprecated
     public static ParseContext using(JsonProvider provider) {
-        return new JsonReader(Configuration.builder().jsonProvider(provider).build());
+        return new JsonContext(Configuration.builder().jsonProvider(provider).build());
     }
 
     /**
@@ -581,7 +581,7 @@ public class JsonPath {
      * @return a read context
      */
     public static DocumentContext parse(Object json) {
-        return new JsonReader().parse(json);
+        return new JsonContext().parse(json);
     }
 
     /**
@@ -592,7 +592,7 @@ public class JsonPath {
      * @return a read context
      */
     public static DocumentContext parse(String json) {
-        return new JsonReader().parse(json);
+        return new JsonContext().parse(json);
     }
 
     /**
@@ -603,7 +603,7 @@ public class JsonPath {
      * @return a read context
      */
     public static DocumentContext parse(InputStream json) {
-        return new JsonReader().parse(json);
+        return new JsonContext().parse(json);
     }
 
     /**
@@ -614,7 +614,7 @@ public class JsonPath {
      * @return a read context
      */
     public static DocumentContext parse(File json) throws IOException {
-        return new JsonReader().parse(json);
+        return new JsonContext().parse(json);
     }
 
     /**
@@ -625,7 +625,7 @@ public class JsonPath {
      * @return a read context
      */
     public static DocumentContext parse(URL json) throws IOException {
-        return new JsonReader().parse(json);
+        return new JsonContext().parse(json);
     }
 
     /**
@@ -636,7 +636,7 @@ public class JsonPath {
      * @return a read context
      */
     public static DocumentContext parse(Object json, Configuration configuration) {
-        return new JsonReader(configuration).parse(json);
+        return new JsonContext(configuration).parse(json);
     }
 
     /**
@@ -647,7 +647,7 @@ public class JsonPath {
      * @return a read context
      */
     public static DocumentContext parse(String json, Configuration configuration) {
-        return new JsonReader(configuration).parse(json);
+        return new JsonContext(configuration).parse(json);
     }
 
     /**
@@ -658,7 +658,7 @@ public class JsonPath {
      * @return a read context
      */
     public static DocumentContext parse(InputStream json, Configuration configuration) {
-        return new JsonReader(configuration).parse(json);
+        return new JsonContext(configuration).parse(json);
     }
 
     /**
@@ -669,7 +669,7 @@ public class JsonPath {
      * @return a read context
      */
     public static DocumentContext parse(File json, Configuration configuration) throws IOException {
-        return new JsonReader(configuration).parse(json);
+        return new JsonContext(configuration).parse(json);
     }
 
     /**
@@ -680,7 +680,7 @@ public class JsonPath {
      * @return a read context
      */
     public static DocumentContext parse(URL json, Configuration configuration) throws IOException {
-        return new JsonReader(configuration).parse(json);
+        return new JsonContext(configuration).parse(json);
     }
 
     private <T> T resultByConfiguration(Object jsonObject, Configuration configuration, EvaluationContext evaluationContext) {

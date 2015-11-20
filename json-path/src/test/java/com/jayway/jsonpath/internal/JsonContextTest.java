@@ -10,7 +10,7 @@ import org.junit.Test;
 
 import java.util.List;
 
-public class JsonReaderTest extends BaseTest {
+public class JsonContextTest extends BaseTest {
 
 	@Test
     public void cached_path_with_predicates() {

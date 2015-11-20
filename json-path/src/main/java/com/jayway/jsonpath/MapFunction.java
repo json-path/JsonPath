@@ -14,6 +14,10 @@
  */
 package com.jayway.jsonpath;
 
-public interface ValueConverter {
-    Object convert(Object currentValue, Configuration configuration);
+
+/**
+ * Returns a new representation for the input value.
+ */
+public interface MapFunction {
+    Object map(Object currentValue, Configuration configuration);
 }

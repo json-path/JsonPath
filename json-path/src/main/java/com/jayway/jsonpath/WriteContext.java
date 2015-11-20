@@ -40,9 +40,9 @@ public interface WriteContext {
     /**
      * Set the value a the given path
      *
-     * @param path    path to set
-     * @param newValue new value
-     * @param filters filters
+     * @param path      path to set
+     * @param newValue  new value
+     * @param filters   filters
      * @return a document context
      */
     DocumentContext set(String path, Object newValue, Predicate... filters);
@@ -50,30 +50,30 @@ public interface WriteContext {
     /**
      * Set the value a the given path
      *
-     * @param path    path to set
-     * @param newValue new value
+     * @param path      path to set
+     * @param newValue  new value
      * @return a document context
      */
     DocumentContext set(JsonPath path, Object newValue);
 
     /**
-     * Converts the value on the given path.
+     * Replaces the value on the given path with the result of the {@link MapFunction}.
      *
-     * @param path              path to be converted set
-     * @param valueConverter    Converter object to be invoked
-     * @param filters           filters
+     * @param path           path to be converted set
+     * @param mapFunction    Converter object to be invoked
+     * @param filters        filters
      * @return a document context
      */
-    DocumentContext convert(String path, ValueConverter valueConverter, Predicate... filters);
+    DocumentContext map(String path, MapFunction mapFunction, Predicate... filters);
 
     /**
-     * Converts the value on the given path.
+     * Replaces the value on the given path with the result of the {@link MapFunction}.
      *
-     * @param path              path to be converted set
-     * @param valueConverter    Converter object to be invoked (or lambda:))
+     * @param path           path to be converted set
+     * @param mapFunction    Converter object to be invoked (or lambda:))
      * @return a document context
      */
-    DocumentContext convert(JsonPath path, ValueConverter valueConverter);
+    DocumentContext map(JsonPath path, MapFunction mapFunction);
 
     /**
      * Deletes the given path
