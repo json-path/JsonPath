@@ -9,7 +9,7 @@ jar {
     baseName 'json-path'
     manifest {
         attributes 'Implementation-Title': 'json-path', 'Implementation-Version': version
-		instruction 'Import-Package', 'com.google.gson.*;resolution:=optional', 'com.fasterxml.jackson.*;resolution:=optional', 'net.minidev.json.*;resolution:=optional', '*'
+		instruction 'Import-Package', 'org.json.*;resolution:=optional', 'com.google.gson.*;resolution:=optional', 'com.fasterxml.jackson.*;resolution:=optional', 'net.minidev.json.*;resolution:=optional', '*'
     }
 }
 
@@ -37,7 +37,7 @@ task distZip(type: Zip, dependsOn: assemble) {
     }
     from(project.configurations.compile) {
         into 'lib'
-        exclude { it.file.name.contains('gson') || it.file.name.contains('jackson') }
+        exclude { it.file.name.contains('gson') || it.file.name.contains('jackson') || it.file.name.contains('json-2') }
     }
     from(project.configurations.compile) {
         into 'lib-optional/jackson'
@@ -46,6 +46,10 @@ task distZip(type: Zip, dependsOn: assemble) {
     from(project.configurations.compile) {
         into 'lib-optional/gson'
         include { it.file.name.contains('gson') }
+    }
+    from(project.configurations.compile) {
+        into 'lib-optional/jsonOrg'
+        include { it.file.name.contains('json-2') }
     }
 }
 
@@ -65,7 +69,7 @@ task distTar(type: Tar, dependsOn: assemble) {
     }
     from(project.configurations.compile) {
         into 'lib'
-        exclude { it.file.name.contains('gson') || it.file.name.contains('jackson') }
+        exclude { it.file.name.contains('gson') || it.file.name.contains('jackson') || it.file.name.contains('json-2')}
     }
     from(project.configurations.compile) {
         into 'lib-optional/jackson'
@@ -74,6 +78,10 @@ task distTar(type: Tar, dependsOn: assemble) {
     from(project.configurations.compile) {
         into 'lib-optional/gson'
         include { it.file.name.contains('gson') }
+    }
+    from(project.configurations.compile) {
+        into 'lib-optional/jsonOrg'
+        include { it.file.name.contains('json-2') }
     }
 }
 
