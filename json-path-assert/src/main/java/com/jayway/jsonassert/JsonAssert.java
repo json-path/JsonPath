@@ -20,6 +20,7 @@ import java.text.ParseException;
 import java.util.Collection;
 import java.util.Map;
 
+@Deprecated
 public class JsonAssert {
 
     /**

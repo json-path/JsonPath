@@ -2,6 +2,7 @@ package com.jayway.jsonassert;
 
 import org.hamcrest.Matcher;
 
+@Deprecated
 public interface JsonAsserter {
 
     /**
