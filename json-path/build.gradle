@@ -18,6 +18,7 @@ dependencies {
     compile libs.slf4jApi
     compile libs.jacksonDatabind, optional
     compile libs.gson, optional
+    compile libs.jsonOrg, optional
 
     testCompile libs.test
 }

@@ -1,23 +1,38 @@
 package com.jayway.jsonpath;
 
 import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.junit.runners.Parameterized;
 
 import java.util.ArrayList;
 import java.util.List;
 
+import static com.jayway.jsonpath.JsonPath.using;
 import static com.jayway.jsonpath.TestUtils.assertHasNoResults;
 import static com.jayway.jsonpath.TestUtils.assertHasOneResult;
 import static java.util.Arrays.asList;
 import static org.assertj.core.api.Assertions.assertThat;
 
+@RunWith(Parameterized.class)
 public class InlineFilterTest extends BaseTest {
 
-    private static ReadContext reader = JsonPath.parse(JSON_DOCUMENT);
     private static int bookCount = 4;
+
+
+    private Configuration conf = Configurations.GSON_CONFIGURATION;
+
+    public InlineFilterTest(Configuration conf) {
+        this.conf = conf;
+    }
+
+    @Parameterized.Parameters
+    public static Iterable<Configuration> configurations() {
+        return Configurations.configurations();
+    }
 
     @Test
     public void root_context_can_be_referred_in_predicate() {
-        List<Double> prices = reader.read("store.book[?(@.display-price <= $.max-price)].display-price", List.class);
+        List<Double> prices = using(conf).parse(JSON_DOCUMENT).read("store.book[?(@.display-price <= $.max-price)].display-price", List.class);
 
         assertThat(prices).containsAll(asList(8.95D, 8.99D));
     }
@@ -25,19 +40,19 @@ public class InlineFilterTest extends BaseTest {
     @Test
     public void multiple_context_object_can_be_refered() {
 
-        List all = reader.read("store.book[ ?(@.category == @.category) ]", List.class);
+        List all = using(conf).parse(JSON_DOCUMENT).read("store.book[ ?(@.category == @.category) ]", List.class);
         assertThat(all.size()).isEqualTo(bookCount);
 
-        List all2 = reader.read("store.book[ ?(@.category == @['category']) ]", List.class);
+        List all2 = using(conf).parse(JSON_DOCUMENT).read("store.book[ ?(@.category == @['category']) ]", List.class);
         assertThat(all2.size()).isEqualTo(bookCount);
 
-        List all3 = reader.read("store.book[ ?(@ == @) ]", List.class);
+        List all3 = using(conf).parse(JSON_DOCUMENT).read("store.book[ ?(@ == @) ]", List.class);
         assertThat(all3.size()).isEqualTo(bookCount);
 
-        List none = reader.read("store.book[ ?(@.category != @.category) ]", List.class);
+        List none = using(conf).parse(JSON_DOCUMENT).read("store.book[ ?(@.category != @.category) ]", List.class);
         assertThat(none.size()).isEqualTo(0);
 
-        List none2 = reader.read("store.book[ ?(@.category != @) ]", List.class);
+        List none2 = using(conf).parse(JSON_DOCUMENT).read("store.book[ ?(@.category != @) ]", List.class);
         assertThat(none2.size()).isEqualTo(4);
 
     }
@@ -45,16 +60,16 @@ public class InlineFilterTest extends BaseTest {
     @Test
     public void simple_inline_or_statement_evaluates() {
 
-        List a = reader.read("store.book[ ?(@.author == 'Nigel Rees' || @.author == 'Evelyn Waugh') ].author", List.class);
+        List a = using(conf).parse(JSON_DOCUMENT).read("store.book[ ?(@.author == 'Nigel Rees' || @.author == 'Evelyn Waugh') ].author", List.class);
         assertThat(a).containsExactly("Nigel Rees", "Evelyn Waugh");
 
-        List b = reader.read("store.book[ ?((@.author == 'Nigel Rees' || @.author == 'Evelyn Waugh') && @.display-price < 15) ].author", List.class);
+        List b = using(conf).parse(JSON_DOCUMENT).read("store.book[ ?((@.author == 'Nigel Rees' || @.author == 'Evelyn Waugh') && @.display-price < 15) ].author", List.class);
         assertThat(b).containsExactly("Nigel Rees", "Evelyn Waugh");
 
-        List c = reader.read("store.book[ ?((@.author == 'Nigel Rees' || @.author == 'Evelyn Waugh') && @.category == 'reference') ].author", List.class);
+        List c = using(conf).parse(JSON_DOCUMENT).read("store.book[ ?((@.author == 'Nigel Rees' || @.author == 'Evelyn Waugh') && @.category == 'reference') ].author", List.class);
         assertThat(c).containsExactly("Nigel Rees");
 
-        List d = reader.read("store.book[ ?((@.author == 'Nigel Rees') || (@.author == 'Evelyn Waugh' && @.category != 'fiction')) ].author", List.class);
+        List d = using(conf).parse(JSON_DOCUMENT).read("store.book[ ?((@.author == 'Nigel Rees') || (@.author == 'Evelyn Waugh' && @.category != 'fiction')) ].author", List.class);
         assertThat(d).containsExactly("Nigel Rees");
     }
 
@@ -143,34 +158,34 @@ public class InlineFilterTest extends BaseTest {
 
     @Test
     public void equality_check_does_not_break_evaluation() {
-        assertHasOneResult("[{\"value\":\"5\"}]", "$[?(@.value=='5')]");
-        assertHasOneResult("[{\"value\":5}]", "$[?(@.value==5)]");
+        assertHasOneResult("[{\"value\":\"5\"}]", "$[?(@.value=='5')]", conf);
+        assertHasOneResult("[{\"value\":5}]", "$[?(@.value==5)]", conf);
 
-        assertHasOneResult("[{\"value\":\"5.1.26\"}]", "$[?(@.value=='5.1.26')]");
+        assertHasOneResult("[{\"value\":\"5.1.26\"}]", "$[?(@.value=='5.1.26')]", conf);
 
-        assertHasNoResults("[{\"value\":\"5\"}]", "$[?(@.value=='5.1.26')]");
-        assertHasNoResults("[{\"value\":5}]", "$[?(@.value=='5.1.26')]");
-        assertHasNoResults("[{\"value\":5.1}]", "$[?(@.value=='5.1.26')]");
+        assertHasNoResults("[{\"value\":\"5\"}]", "$[?(@.value=='5.1.26')]", conf);
+        assertHasNoResults("[{\"value\":5}]", "$[?(@.value=='5.1.26')]", conf);
+        assertHasNoResults("[{\"value\":5.1}]", "$[?(@.value=='5.1.26')]", conf);
 
-        assertHasNoResults("[{\"value\":\"5.1.26\"}]", "$[?(@.value=='5')]");
-        assertHasNoResults("[{\"value\":\"5.1.26\"}]", "$[?(@.value==5)]");
-        assertHasNoResults("[{\"value\":\"5.1.26\"}]", "$[?(@.value==5.1)]");
+        assertHasNoResults("[{\"value\":\"5.1.26\"}]", "$[?(@.value=='5')]", conf);
+        assertHasNoResults("[{\"value\":\"5.1.26\"}]", "$[?(@.value==5)]", conf);
+        assertHasNoResults("[{\"value\":\"5.1.26\"}]", "$[?(@.value==5.1)]", conf);
     }
 
     @Test
     public void lt_check_does_not_break_evaluation() {
-        assertHasOneResult("[{\"value\":\"5\"}]", "$[?(@.value<'7')]");
+        assertHasOneResult("[{\"value\":\"5\"}]", "$[?(@.value<'7')]", conf);
 
-        assertHasNoResults("[{\"value\":\"7\"}]", "$[?(@.value<'5')]");
+        assertHasNoResults("[{\"value\":\"7\"}]", "$[?(@.value<'5')]", conf);
 
-        assertHasOneResult("[{\"value\":5}]", "$[?(@.value<7)]");
-        assertHasNoResults("[{\"value\":7}]", "$[?(@.value<5)]");
+        assertHasOneResult("[{\"value\":5}]", "$[?(@.value<7)]", conf);
+        assertHasNoResults("[{\"value\":7}]", "$[?(@.value<5)]", conf);
 
-        assertHasOneResult("[{\"value\":5}]", "$[?(@.value<7.1)]");
-        assertHasNoResults("[{\"value\":7}]", "$[?(@.value<5.1)]");
+        assertHasOneResult("[{\"value\":5}]", "$[?(@.value<7.1)]", conf);
+        assertHasNoResults("[{\"value\":7}]", "$[?(@.value<5.1)]", conf);
 
-        assertHasOneResult("[{\"value\":5.1}]", "$[?(@.value<7)]");
-        assertHasNoResults("[{\"value\":7.1}]", "$[?(@.value<5)]");
+        assertHasOneResult("[{\"value\":5.1}]", "$[?(@.value<7)]", conf);
+        assertHasNoResults("[{\"value\":7.1}]", "$[?(@.value<5)]", conf);
 
     }
 }

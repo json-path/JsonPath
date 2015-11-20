@@ -5,14 +5,22 @@ import com.jayway.jsonpath.internal.token.PredicateContextImpl;
 import com.jayway.jsonpath.spi.json.GsonJsonProvider;
 import com.jayway.jsonpath.spi.json.JacksonJsonNodeJsonProvider;
 import com.jayway.jsonpath.spi.json.JacksonJsonProvider;
+import com.jayway.jsonpath.spi.json.JsonOrgJsonProvider;
 import com.jayway.jsonpath.spi.json.JsonSmartJsonProvider;
 import com.jayway.jsonpath.spi.mapper.GsonMappingProvider;
 import com.jayway.jsonpath.spi.mapper.JacksonMappingProvider;
+import com.jayway.jsonpath.spi.mapper.JsonOrgMappingProvider;
 import com.jayway.jsonpath.spi.mapper.JsonSmartMappingProvider;
 
 import java.util.HashMap;
 
 public class BaseTest {
+
+    public static final Configuration JSON_ORG_CONFIGURATION = Configuration
+            .builder()
+            .mappingProvider(new JsonOrgMappingProvider())
+            .jsonProvider(new JsonOrgJsonProvider())
+            .build();
 
     public static final Configuration GSON_CONFIGURATION = Configuration
             .builder()
