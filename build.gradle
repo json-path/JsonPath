@@ -15,7 +15,7 @@ ext {
             jsonSmart: 'net.minidev:json-smart:2.2',
             jacksonDatabind: 'com.fasterxml.jackson.core:jackson-databind:2.6.3',
             gson: 'com.google.code.gson:gson:2.3.1',
-            jsonOrg: 'org.json:json:20150729',
+            jsonOrg: 'org.json:json:20141113',
             hamcrestCore: 'org.hamcrest:hamcrest-core:1.3',
             hamcrestLibrary: 'org.hamcrest:hamcrest-library:1.3',
 
