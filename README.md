@@ -396,5 +396,7 @@ Note that the JacksonJsonProvider requires `com.fasterxml.jackson.core:jackson-d
 
 
 
+## Sponsored by:
+[![JAYWAY](http://www.arctiquator.com/oppenkallkod/assets/images/jayway_logo.png)](http://www.jayway.com/)
 
 [![Analytics](https://ga-beacon.appspot.com/UA-54945131-1/jsonpath/index)](https://github.com/igrigorik/ga-beacon)
