@@ -181,7 +181,7 @@ public class ArrayPathToken extends PathToken {
             if (! isUpstreamDefinite()) {
                 return false;
             } else {
-                throw new InvalidPathException(format("Filter: %s can only be applied to arrays. Current context is: %s", toString(), model));
+                throw new PathNotFoundException(format("Filter: %s can only be applied to arrays. Current context is: %s", toString(), model));
             }
         }
         return true;

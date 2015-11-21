@@ -47,8 +47,8 @@ public class DeepScanTest extends BaseTest {
         assertEvaluationThrows("{\"foo\": {\"bar\": null}}", "$.foo.bar.[5]", PathNotFoundException.class);
         assertEvaluationThrows("{\"foo\": {\"bar\": null}}", "$.foo.bar.[5, 10]", PathNotFoundException.class);
 
-        assertEvaluationThrows("{\"foo\": {\"bar\": 4}}", "$.foo.bar.[5]", InvalidPathException.class);
-        assertEvaluationThrows("{\"foo\": {\"bar\": 4}}", "$.foo.bar.[5, 10]", InvalidPathException.class);
+        assertEvaluationThrows("{\"foo\": {\"bar\": 4}}", "$.foo.bar.[5]", PathNotFoundException.class);
+        assertEvaluationThrows("{\"foo\": {\"bar\": 4}}", "$.foo.bar.[5, 10]", PathNotFoundException.class);
 
         assertEvaluationThrows("{\"foo\": {\"bar\": []}}", "$.foo.bar.[5]", PathNotFoundException.class);
     }

@@ -4,7 +4,11 @@ import org.json.JSONArray;
 import org.json.JSONObject;
 import org.junit.Test;
 
+import java.util.List;
+import java.util.Map;
+
 import static com.jayway.jsonpath.JsonPath.using;
+import static org.assertj.core.api.Assertions.assertThat;
 
 public class JsonOrgJsonProviderTest extends BaseTest {
 
@@ -14,7 +18,7 @@ public class JsonOrgJsonProviderTest extends BaseTest {
 
         JSONObject book = using(JSON_ORG_CONFIGURATION).parse(JSON_DOCUMENT).read("$.store.book[0]");
 
-        System.out.println(book);
+        assertThat(book.get("author").toString()).isEqualTo("Nigel Rees");
     }
 
     @Test
@@ -22,7 +26,7 @@ public class JsonOrgJsonProviderTest extends BaseTest {
 
         String category = using(JSON_ORG_CONFIGURATION).parse(JSON_DOCUMENT).read("$.store.book[0].category");
 
-        System.out.println(category);
+        assertThat(category).isEqualTo("reference");
     }
 
     @Test
@@ -30,14 +34,14 @@ public class JsonOrgJsonProviderTest extends BaseTest {
 
         JSONArray fictionBooks = using(JSON_ORG_CONFIGURATION).parse(JSON_DOCUMENT).read("$.store.book[?(@.category == 'fiction')]");
 
-        System.out.println(fictionBooks);
+        assertThat(fictionBooks.length()).isEqualTo(3);
     }
 
     @Test
     public void result_can_be_mapped_to_object() {
 
-        Object result = using(JSON_ORG_CONFIGURATION).parse(JSON_DOCUMENT).read("$.store.book", Object.class);
+        List<Map<String, Object>> books = using(JSON_ORG_CONFIGURATION).parse(JSON_DOCUMENT).read("$.store.book", List.class);
 
-        System.out.println(result);
+        assertThat(books.size()).isEqualTo(4);
     }
 }

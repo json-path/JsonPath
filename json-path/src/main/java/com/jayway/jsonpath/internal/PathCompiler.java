@@ -111,20 +111,19 @@ public class PathCompiler {
                         readWildCardToken(appender) ||
                         readFilterToken(appender) ||
                         readPlaceholderToken(appender) ||
-                        fail("Could not parse bracket statement at position " + path.position());
+                        fail("Could not parse token starting at position " + path.position() + ". Expected ?, ', 0-9, * ");
             case PERIOD:
-                return readDotSeparatorToken(appender) ||
-                        readScanToken(appender) ||
-                        fail("Could not parse token at position " + path.position());
+                return readDotToken(appender) ||
+                        fail("Could not parse token starting at position " + path.position());
             case WILDCARD:
                 return readWildCardToken(appender) ||
-                        fail("Could not parse token at position " + path.position());
+                        fail("Could not parse token starting at position " + path.position());
             case FUNCTION:
                 return readFunctionToken(appender) ||
-                        fail("Could not parse token at position " + path.position());
+                        fail("Could not parse token starting at position " + path.position());
             default:
                 return readPropertyToken(appender) ||
-                        fail("Could not parse token at position " + path.position());
+                        fail("Could not parse token starting at position " + path.position());
         }
     }
 
@@ -156,21 +155,20 @@ public class PathCompiler {
     }
 
     //
-    // .
+    // . and ..
     //
-    private boolean readDotSeparatorToken(PathTokenAppender appender) {
-        if (!path.currentCharIs('.') || path.nextCharIs('.')) {
-            return false;
-        }
-        if (!path.hasMoreCharacters()) {
+    private boolean readDotToken(PathTokenAppender appender) {
+        if (path.currentCharIs('.') && path.nextCharIs('.')) {
+            appender.appendPathToken(PathTokenFactory.crateScanToken());
+            path.incrementPosition(2);
+        } else if (!path.hasMoreCharacters()) {
             throw new InvalidPathException("Path must not end with a '.");
+        } else {
+            path.incrementPosition(1);
         }
-//        if (path.nextSignificantCharIs('[')) {
-//            throw new InvalidPathException("A bracket may not follow a '.");
-//        }
-
-        path.incrementPosition(1);
-
+        if(path.currentCharIs('.')){
+            throw new InvalidPathException("Character '.' on position " + path.position() + " is not valid.");
+        }
         return readNextToken(appender);
     }
 
@@ -416,20 +414,6 @@ public class PathCompiler {
 
         return path.currentIsTail() || readNextToken(appender);
     }
-
-    //
-    // ..
-    //
-    private boolean readScanToken(PathTokenAppender appender) {
-        if (!path.currentCharIs(PERIOD) || !path.nextCharIs(PERIOD)) {
-            return false;
-        }
-        appender.appendPathToken(PathTokenFactory.crateScanToken());
-        path.incrementPosition(2);
-
-        return readNextToken(appender);
-    }
-
 
     public static boolean fail(String message) {
         throw new InvalidPathException(message);

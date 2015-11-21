@@ -5,6 +5,7 @@ import com.jayway.jsonpath.BaseTest;
 import com.jayway.jsonpath.Configuration;
 import com.jayway.jsonpath.DocumentContext;
 import com.jayway.jsonpath.Filter;
+import com.jayway.jsonpath.InvalidPathException;
 import com.jayway.jsonpath.JsonPath;
 import com.jayway.jsonpath.Option;
 import com.jayway.jsonpath.PathNotFoundException;
@@ -41,6 +42,71 @@ import static org.junit.Assert.assertThat;
 public class IssuesTest extends BaseTest {
 
     private static final JsonProvider jp = Configuration.defaultConfiguration().jsonProvider();
+
+    @Test
+    public void issue_114_a() {
+        String json = "{ \"p\":{\n" +
+                "\"s\": { \"u\": \"su\" }, \n" +
+                "\"t\": { \"u\": \"tu\" }\n" +
+                "}}";
+
+        List<String> result = read(json, "$.p.['s', 't'].u");
+        assertThat(result).containsExactly("su","tu");
+    }
+
+    @Test
+    public void issue_114_b() {
+        String json = "{ \"p\": [\"valp\", \"valq\", \"valr\"] }";
+
+        List<String> result = read(json, "$.p[?(@ == 'valp')]");
+        assertThat(result).containsExactly("valp");
+    }
+
+    @Test
+    public void issue_114_c() {
+        String json = "{ \"p\": [\"valp\", \"valq\", \"valr\"] }";
+
+        List<String> result = read(json, "$.p[?(@[0] == 'valp')]");
+        assertThat(result).isEmpty();
+    }
+
+    @Test(expected = InvalidPathException.class)
+    public void issue_114_d() {
+        read(JSON_BOOK_DOCUMENT, "$..book[(@.length-1)] ");
+    }
+
+
+    @Test
+    public void issue_151() {
+        String json = "{\n" +
+                "\"datas\": {\n" +
+                "    \"selling\": {\n" +
+                "        \"3\": [\n" +
+                "            26452067,\n" +
+                "            31625950\n" +
+                "        ],\n" +
+                "        \"206\": [\n" +
+                "            32381852,\n" +
+                "            32489262\n" +
+                "        ],\n" +
+                "        \"208\": [\n" +
+                "            458\n" +
+                "        ],\n" +
+                "        \"217\": [\n" +
+                "            27364892\n" +
+                "        ],\n" +
+                "        \"226\": [\n" +
+                "            30474109\n" +
+                "        ]\n" +
+                "    }\n" +
+                "},\n" +
+                "\"status\": 0\n" +
+                "}";
+
+        List<Integer> result = read(json, "$.datas.selling['3','206'].*");
+
+        assertThat(result).containsExactly(26452067,31625950,32381852,32489262);
+    }
 
     @Test
     public void full_ones_can_be_filtered() {
@@ -447,7 +513,7 @@ public class IssuesTest extends BaseTest {
                 " ]\n" +
                 "}\n";
 
-        List<String> result = JsonPath.read(json, "$.a.*.b.*.c");
+        List<String> result = read(json, "$.a.*.b.*.c");
 
         assertThat(result).containsExactly("foo");
 
@@ -503,7 +569,7 @@ public class IssuesTest extends BaseTest {
                 "  ]\n" +
                 "}]";
 
-        List<String> problems = JsonPath.read(json, "$..narratives[?(@.lastRule==true)].message");
+        List<String> problems = read(json, "$..narratives[?(@.lastRule==true)].message");
 
         assertThat(problems).containsExactly("Chain does not have a discovery event. Possible it was cut by the date that was picked", "No start transcoding events found");
     }
@@ -563,7 +629,7 @@ public class IssuesTest extends BaseTest {
                 + "    ]\n"
                 + "}";
 
-        List<String> result = JsonPath.read(json, "$.logs[?(@.message == 'it\\'s here')].message");
+        List<String> result = read(json, "$.logs[?(@.message == 'it\\'s here')].message");
 
         assertThat(result).containsExactly("it's here");
     }
@@ -596,7 +662,7 @@ public class IssuesTest extends BaseTest {
                 "  }\n" +
                 "}";
 
-        List<String> res = JsonPath.read(json, "$.c.*.url[2]");
+        List<String> res = read(json, "$.c.*.url[2]");
 
         assertThat(res).containsExactly("url5");
     }
@@ -775,7 +841,7 @@ public class IssuesTest extends BaseTest {
                 "    }\n" +
                 "]";
 
-        List<Map<String, String>> result = JsonPath.read(json, "$[?(@.foo)]");
+        List<Map<String, String>> result = read(json, "$[?(@.foo)]");
 
         assertThat(result).extracting("foo").containsExactly("1", null);
     }
@@ -796,12 +862,12 @@ public class IssuesTest extends BaseTest {
                 "    }\n" +
                 "]";
 
-        List<String> result = JsonPath.read(json, "$[?(@.foo != null)].foo.bar");
+        List<String> result = read(json, "$[?(@.foo != null)].foo.bar");
 
         assertThat(result).containsExactly("0");
 
 
-        result = JsonPath.read(json, "$[?(@.foo.bar)].foo.bar");
+        result = read(json, "$[?(@.foo.bar)].foo.bar");
 
         assertThat(result).containsExactly("0");
     }
@@ -821,7 +887,7 @@ public class IssuesTest extends BaseTest {
                 "    }\n" +
                 "]";
 
-        List<Integer> result = JsonPath.read(json, "$[2]['d'][?(@.random)]['date']");
+        List<Integer> result = read(json, "$[2]['d'][?(@.random)]['date']");
 
         assertThat(result).containsExactly(1234);
     }
@@ -833,7 +899,7 @@ public class IssuesTest extends BaseTest {
 
         String json = "{ \"valid key[@num = 2]\" : \"value\" }";
 
-        String result = JsonPath.read(json, "$['valid key[@num = 2]']");
+        String result = read(json, "$['valid key[@num = 2]']");
 
         Assertions.assertThat(result).isEqualTo("value");
     }
@@ -864,7 +930,7 @@ public class IssuesTest extends BaseTest {
                 "    \"expensive\": 10\n" +
                 "}";
 
-        List<Double> numbers = JsonPath.read(json, "$.store.book[?(@.price <= 90)].price");
+        List<Double> numbers = read(json, "$.store.book[?(@.price <= 90)].price");
 
         assertThat(numbers).containsExactly(8.95D, 12.99D, 8.99D, 22.99D);
     }
