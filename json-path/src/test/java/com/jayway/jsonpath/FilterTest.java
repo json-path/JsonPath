@@ -479,4 +479,14 @@ public class FilterTest extends BaseTest {
         criteria = Criteria.parse("@.foo");
         assertThat(criteria.toString()).isEqualTo("@['foo']");
     }
+
+
+    @Test
+    public void inline_in_criteria_evalueates() {
+
+        Object read = JsonPath.read(JSON_DOCUMENT, "$.store.book[?(@.category in ['reference', 'fiction'])]");
+
+        System.out.println(read);
+
+    }
 }

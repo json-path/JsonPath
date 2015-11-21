@@ -145,7 +145,17 @@ public class EvaluatorFactory {
     private static class InEvaluator implements Evaluator {
         @Override
         public boolean evaluate(ValueNode left, ValueNode right, Predicate.PredicateContext ctx) {
-            ValueNode.ValueListNode valueListNode = right.asValueListNode();
+            ValueNode.ValueListNode valueListNode;
+            if(right.isJsonNode()){
+                ValueNode vn = right.asJsonNode().asValueListNode(ctx);
+                if(vn.isUndefinedNode()){
+                    return false;
+                } else {
+                    valueListNode = vn.asValueListNode();
+                }
+            } else {
+                valueListNode = right.asValueListNode();
+            }
             return valueListNode.contains(left);
         }
     }
