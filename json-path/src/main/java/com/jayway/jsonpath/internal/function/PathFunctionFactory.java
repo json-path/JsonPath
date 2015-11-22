@@ -20,7 +20,7 @@ import java.util.Map;
  *
  * Created by mattg on 6/27/15.
  */
-public class FunctionFactory {
+public class PathFunctionFactory {
 
     public static final Map<String, Class> FUNCTIONS;
 
@@ -46,7 +46,7 @@ public class FunctionFactory {
      * implementation based on the name using the internal FUNCTION map
      *
      * @see #FUNCTIONS
-     * @see Function
+     * @see PathFunction
      *
      * @param name
      *      The name of the function
@@ -56,12 +56,12 @@ public class FunctionFactory {
      *
      * @throws InvalidPathException
      */
-    public static Function newFunction(String name) throws InvalidPathException {
-        Function result = new PassthruFunction();
+    public static PathFunction newFunction(String name) throws InvalidPathException {
+        PathFunction result = new PassthruPathFunction();
 
-        if (null != name && FUNCTIONS.containsKey(name) && Function.class.isAssignableFrom(FUNCTIONS.get(name))) {
+        if (null != name && FUNCTIONS.containsKey(name) && PathFunction.class.isAssignableFrom(FUNCTIONS.get(name))) {
             try {
-                result = (Function)FUNCTIONS.get(name).newInstance();
+                result = (PathFunction)FUNCTIONS.get(name).newInstance();
             } catch (InstantiationException e) {
                 throw new InvalidPathException("Function of name: " + name + " cannot be created", e);
             } catch (IllegalAccessException e) {

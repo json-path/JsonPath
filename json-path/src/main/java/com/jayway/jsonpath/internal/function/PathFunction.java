@@ -11,7 +11,7 @@ import com.jayway.jsonpath.internal.PathRef;
  *
  * Created by matt@mjgreenwood.net on 6/26/15.
  */
-public interface Function {
+public interface PathFunction {
 
     /**
      * Invoke the function and output a JSON object (or scalar) value which will be the result of executing the path

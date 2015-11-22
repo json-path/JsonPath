@@ -8,7 +8,7 @@ import com.jayway.jsonpath.internal.PathRef;
  *
  * Created by mattg on 6/26/15.
  */
-public class PassthruFunction implements Function {
+public class PassthruPathFunction implements PathFunction {
 
     @Override
     public Object invoke(String currentPath, PathRef parent, Object model, EvaluationContext ctx) {

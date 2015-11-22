@@ -18,7 +18,7 @@ import com.jayway.jsonpath.Option;
 import com.jayway.jsonpath.PathNotFoundException;
 import com.jayway.jsonpath.internal.PathRef;
 import com.jayway.jsonpath.internal.Utils;
-import com.jayway.jsonpath.internal.function.Function;
+import com.jayway.jsonpath.internal.function.PathFunction;
 import com.jayway.jsonpath.spi.json.JsonProvider;
 
 import java.util.List;
@@ -204,8 +204,8 @@ public abstract class PathToken {
         return super.equals(obj);
     }
 
-    public void invoke(Function function, String currentPath, PathRef parent, Object model, EvaluationContextImpl ctx) {
-        ctx.addResult(currentPath, parent, function.invoke(currentPath, parent, model, ctx));
+    public void invoke(PathFunction pathFunction, String currentPath, PathRef parent, Object model, EvaluationContextImpl ctx) {
+        ctx.addResult(currentPath, parent, pathFunction.invoke(currentPath, parent, model, ctx));
     }
 
     public abstract void evaluate(String currentPath, PathRef parent,  Object model, EvaluationContextImpl ctx);

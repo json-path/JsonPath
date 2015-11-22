@@ -11,7 +11,7 @@ import org.junit.Test;
  *
  * Created by mattg on 6/27/15.
  */
-public class JSONEntityFunctionTest extends BaseFunctionTest {
+public class JSONEntityPathFunctionTest extends BaseFunctionTest {
 
 
     private static final String BATCH_JSON = "{\n" +

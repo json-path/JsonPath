@@ -2,7 +2,7 @@ package com.jayway.jsonpath.internal.function.numeric;
 
 import com.jayway.jsonpath.internal.EvaluationContext;
 import com.jayway.jsonpath.internal.PathRef;
-import com.jayway.jsonpath.internal.function.Function;
+import com.jayway.jsonpath.internal.function.PathFunction;
 
 /**
  * Defines the pattern for processing numerical values via an abstract implementation that iterates over the collection
@@ -11,7 +11,7 @@ import com.jayway.jsonpath.internal.function.Function;
  *
  * Created by mattg on 6/26/15.
  */
-public abstract class AbstractAggregation implements Function {
+public abstract class AbstractAggregation implements PathFunction {
 
     /**
      * Defines the next value in the array to the mathmatical function
