@@ -5,7 +5,7 @@ import org.junit.Test;
 import java.util.List;
 import java.util.Map;
 
-import static com.jayway.jsonpath.internal.PathCompiler.compile;
+import static com.jayway.jsonpath.internal.path.PathCompiler.compile;
 import static org.assertj.core.api.Assertions.assertThat;
 
 /**

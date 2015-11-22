@@ -1,7 +1,7 @@
 package com.jayway.jsonpath.old.internal;
 
 import com.jayway.jsonpath.Configuration;
-import com.jayway.jsonpath.internal.PathCompiler;
+import com.jayway.jsonpath.internal.path.PathCompiler;
 import org.junit.Test;
 
 import java.util.List;

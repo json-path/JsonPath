@@ -1,4 +1,4 @@
-package com.jayway.jsonpath.internal.token;
+package com.jayway.jsonpath.internal.path;
 
 import com.jayway.jsonpath.BaseTest;
 import org.junit.Test;

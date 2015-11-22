@@ -1,13 +1,10 @@
-package com.jayway.jsonpath.internal;
+package com.jayway.jsonpath.internal.path;
 
 import com.jayway.jsonpath.InvalidPathException;
 import com.jayway.jsonpath.Predicate;
+import com.jayway.jsonpath.internal.CharacterIndex;
+import com.jayway.jsonpath.internal.Path;
 import com.jayway.jsonpath.internal.filter.FilterCompiler;
-import com.jayway.jsonpath.internal.token.ArrayIndexOperation;
-import com.jayway.jsonpath.internal.token.ArraySliceOperation;
-import com.jayway.jsonpath.internal.token.PathTokenAppender;
-import com.jayway.jsonpath.internal.token.PathTokenFactory;
-import com.jayway.jsonpath.internal.token.RootPathToken;
 
 import java.util.ArrayList;
 import java.util.Collection;
