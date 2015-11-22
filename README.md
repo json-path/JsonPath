@@ -82,8 +82,7 @@ The function output is dictated by the function itself.
 Filter Operators
 -----------------
 
-Functions can be invoked at the tail end of a path - the input to a function is the output of the path expression.
-The function output is dictated by the function itself.
+Filters are logical expressions used to filter arrays. A typical filter would be `[?(@.age > 18)]` where `@` represents the current item being processed. More complex filters can be created with logical operators `&&` and `||`.  
 
 | Operator                 | Description                                                       |
 | :----------------------- | :---------------------------------------------------------------- |
