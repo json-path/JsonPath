@@ -79,6 +79,27 @@ The function output is dictated by the function itself.
 | length()                 | Provides the length of an array                                     | Integer   |
 
 
+Filter Operators
+-----------------
+
+Functions can be invoked at the tail end of a path - the input to a function is the output of the path expression.
+The function output is dictated by the function itself.
+
+| Operator                 | Description                                                       |
+| :----------------------- | :---------------------------------------------------------------- |
+| ==                       | left is equal to right (note that 1 is not equal to '1')          |
+| !=                       | left is not equal to right                                        |
+| <                        | left is less than right                                           |
+| <=                       | left is less or equal to right                                    |
+| >                        | left is greater than right                                        |
+| >=                       | left is greater than or equal to right                            |
+| =~                       | left matches regular expression  [?(@.name =~ /foo.*?/i)]         |
+| in                       | left exists in right [?(@.size in ['S', 'M'])]                    |
+| nin                      | left does not exists in right                                     |
+| size                     | size of left (array or string) should match right                 |
+| empty                    | left (array or string) should be empty                            |
+
+
 Path Examples
 -------------
 
