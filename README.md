@@ -1,4 +1,4 @@
-Jayway JsonPath 2.0.0
+Jayway JsonPath 2.1.0
 =====================
 
 **A Java DSL for reading JSON documents.**
@@ -9,6 +9,8 @@ Jayway JsonPath is a Java port of [Stefan Goessner JsonPath implementation](http
 
 News
 ----
+22 Nov 2015 - Released JsonPath 2.1.0
+
 19 Mar 2015 - Released JsonPath 2.0.0
 
 11 Nov 2014 - Released JsonPath 1.2.0
@@ -28,7 +30,7 @@ JsonPath is available at the Central Maven Repository. Maven users add this to y
 <dependency>
     <groupId>com.jayway.jsonpath</groupId>
     <artifactId>json-path</artifactId>
-    <version>2.0.0</version>
+    <version>2.1.0</version>
 </dependency>
 ```
 
@@ -61,7 +63,7 @@ Operators
 | `[start:end]`             | Array slice operator                                               |
 | `[?(<expression>)]`       | Filter expression. Expression must evaluate to a boolean value.    |
 
-<!---
+
 Functions
 ---------
 
@@ -75,7 +77,7 @@ The function output is dictated by the function itself.
 | avg()                    | Provides the average value of an array of numbers                   | Double    |
 | stddev()                 | Provides the standard deviation value of an array of numbers        | Double    |
 | length()                 | Provides the length of an array                                     | Integer   |
--->
+
 
 Path Examples
 -------------
@@ -140,9 +142,8 @@ Given the json
 | <a href="http://jsonpath.herokuapp.com/?path=$..book[?(@.price <= $['expensive'])]" target="_blank">$..book[?(@.price <= $['expensive'])]</a> | All books in store that are not "expensive"  |
 | <a href="http://jsonpath.herokuapp.com/?path=$..book[?(@.author =~ /.*REES/i)]" target="_blank">$..book[?(@.author =~ /.*REES/i)]</a> | All books matching regex (ignore case)  |
 | <a href="http://jsonpath.herokuapp.com/?path=$..*" target="_blank">$..*</a>                        | Give me every thing   
-<!---
-| <a href="http://jsonpath.herokuapp.com/?path=$..book.length()" target="_blank">$..book.%length()</a>                 | The number of books                      |
--->
+| <a href="http://jsonpath.herokuapp.com/?path=$..book.length()" target="_blank">$..book.length()</a>                 | The number of books                      |
+
 Reading a Document
 ------------------
 The simplest most straight forward way to use JsonPath is via the static read API.
@@ -357,14 +358,15 @@ This option makes sure no exceptions are propagated from path evaluation. It fol
 * If option `ALWAYS_RETURN_LIST` is **NOT** present null returned 
 
 
-###JsonProvider
+###JsonProvider SPI
 
 JsonPath is shipped with three different JsonProviders:
 
 * [JsonSmartJsonProvider](https://code.google.com/p/json-smart/) (default)
 * [JacksonJsonProvider](https://github.com/FasterXML/jackson)
 * [JacksonJsonNodeJsonProvider](https://github.com/FasterXML/jackson)
-* [GsonJsonProvider](https://code.google.com/p/google-gson/) (experimental)
+* [GsonJsonProvider](https://code.google.com/p/google-gson/) 
+* [JsonOrgJsonProvider](http://www.json.org/java/index.html)
 
 Changing the configuration defaults as demonstrated should only be done when your application is being initialized. Changes during runtime is strongly discouraged, especially in multi threaded applications.
   
@@ -393,6 +395,35 @@ Configuration.setDefaults(new Configuration.Defaults() {
 ```
 
 Note that the JacksonJsonProvider requires `com.fasterxml.jackson.core:jackson-databind:2.4.5` and the GsonJsonProvider requires `com.google.code.gson:gson:2.3.1` on your classpath. 
+
+### Cache SPI
+
+In JsonPath 2.1.0 a new Cache SPI was introduced. This allows API consumers to configure path caching in a way that suits their needs. The cache must be configured before it is accesses for the first time or a JsonPathException is thrown. JsonPath ships with two cache implementations
+
+* `com.jayway.jsonpath.spi.cache.LRUCache` (default, thread safe)
+* `com.jayway.jsonpath.spi.cache.NOOPCache` (no cache)
+
+If you want to implement your own cache the API is simple. 
+
+```java
+CacheProvider.setCache(new Cache() {
+    //Not thread safe simple cache
+    private Map<String, JsonPath> map = new HashMap<String, JsonPath>();
+
+    @Override
+    public JsonPath get(String key) {
+        return map.get(key);
+    }
+
+    @Override
+    public void put(String key, JsonPath jsonPath) {
+        map.put(key, jsonPath);
+    }
+});
+```
+
+
+
 
 ## Sponsored by:
 [![JAYWAY](http://www.arctiquator.com/oppenkallkod/assets/images/jayway_logo.png)](http://www.jayway.com/)
