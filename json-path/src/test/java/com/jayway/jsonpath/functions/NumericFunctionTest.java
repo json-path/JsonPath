@@ -42,27 +42,27 @@ public class NumericFunctionTest extends BaseFunctionTest {
 
     @Test
     public void testAverageOfDoubles() {
-        verifyMathFunction(conf, "$.numbers.%avg()", 5.5);
+        verifyMathFunction(conf, "$.numbers.avg()", 5.5);
     }
 
     @Test
     public void testSumOfDouble() {
-        verifyMathFunction(conf, "$.numbers.%sum()", (10d * (10d + 1d)) / 2d);
+        verifyMathFunction(conf, "$.numbers.sum()", (10d * (10d + 1d)) / 2d);
     }
 
     @Test
     public void testMaxOfDouble() {
-        verifyMathFunction(conf, "$.numbers.%max()", 10d);
+        verifyMathFunction(conf, "$.numbers.max()", 10d);
     }
 
     @Test
     public void testMinOfDouble() {
-        verifyMathFunction(conf, "$.numbers.%min()", 1d);
+        verifyMathFunction(conf, "$.numbers.min()", 1d);
     }
 
     @Test
     public void testStdDevOfDouble() {
-        verifyMathFunction(conf, "$.numbers.%stddev()", 2.8722813232690143d);
+        verifyMathFunction(conf, "$.numbers.stddev()", 2.8722813232690143d);
     }
 
     /**
@@ -73,7 +73,7 @@ public class NumericFunctionTest extends BaseFunctionTest {
 //    public void testInvalidFunctionNameNegative() {
 //        JSONArray numberSeries = new JSONArray();
 //        numberSeries.addAll(Arrays.asList(1, 2, 3, 4, 5, 6, 7, 8, 9, 10));
-//        assertThat(using(conf).parse(NUMBER_SERIES).read("$.numbers.%foo()")).isEqualTo(numberSeries);
+//        assertThat(using(conf).parse(NUMBER_SERIES).read("$.numbers.foo()")).isEqualTo(numberSeries);
 //    }
 
 }

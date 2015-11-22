@@ -54,18 +54,18 @@ public class JSONEntityFunctionTest extends BaseFunctionTest {
     @Test
     public void testLengthOfTextArray() {
         // The length of JSONArray is an integer
-        verifyFunction(conf, "$['text'].%length()", TEXT_SERIES, 6);
+        verifyFunction(conf, "$['text'].length()", TEXT_SERIES, 6);
     }
     @Test
     public void testLengthOfNumberArray() {
         // The length of JSONArray is an integer
-        verifyFunction(conf, "$.numbers.%length()", NUMBER_SERIES, 10);
+        verifyFunction(conf, "$.numbers.length()", NUMBER_SERIES, 10);
     }
 
 
     @Test
     public void testLengthOfStructure() {
-        verifyFunction(conf, "$.batches.%length()", BATCH_JSON, 2);
+        verifyFunction(conf, "$.batches.length()", BATCH_JSON, 2);
     }
 
     /**
@@ -80,7 +80,7 @@ public class JSONEntityFunctionTest extends BaseFunctionTest {
      */
     @Test
     public void testPredicateWithFunctionCallSingleMatch() {
-        String path = "$.batches.results[?(@.values.%length() >= $.batches.minBatchSize)].values.%avg()";
+        String path = "$.batches.results[?(@.values.length() >= $.batches.minBatchSize)].values.avg()";
 
         // Its an array because in some use-cases the min size might match more than one batch and thus we'll get
         // the average out for each collection
@@ -91,7 +91,7 @@ public class JSONEntityFunctionTest extends BaseFunctionTest {
 
     @Test
     public void testPredicateWithFunctionCallTwoMatches() {
-        String path = "$.batches.results[?(@.values.%length() >= 3)].values.%avg()";
+        String path = "$.batches.results[?(@.values.length() >= 3)].values.avg()";
 
         // Its an array because in some use-cases the min size might match more than one batch and thus we'll get
         // the average out for each collection

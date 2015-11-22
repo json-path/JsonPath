@@ -13,14 +13,14 @@ public class FilterCompiler {
     private static final Logger logger = LoggerFactory.getLogger(FilterCompiler.class);
 
     private static final char DOC_CONTEXT = '$';
-    private static final char EVAL_CONTEXT = '@';
+    private static final char EVAL_CONTEXT = '@';        /**/
     private static final char OPEN_SQUARE_BRACKET = '[';
     private static final char OPEN_BRACKET = '(';
     private static final char CLOSE_BRACKET = ')';
     private static final char SPACE = ' ';
     private static final char MINUS = '-';
     private static final char TICK = '\'';
-    private static final char FUNCTION = '%';
+    private static final char PERIOD = '.';
     private static final char LT = '<';
     private static final char GT = '>';
     private static final char EQ = '=';
@@ -338,7 +338,7 @@ public class FilterCompiler {
         }
         idx--;
         while(filter.inBounds(idx) && idx > lowerBound){
-            if(filter.charAt(idx) == FUNCTION){
+            if(filter.charAt(idx) == PERIOD){
                 return true;
             }
             idx--;
@@ -349,6 +349,7 @@ public class FilterCompiler {
     private boolean isLogicalOperatorChar(char c) {
         return c == AND || c == OR;
     }
+
     private boolean isRelationalOperatorChar(char c) {
         return c == LT || c == GT || c == EQ || c == TILDE || c == BANG;
     }
