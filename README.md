@@ -394,9 +394,8 @@ Configuration.setDefaults(new Configuration.Defaults() {
 
 Note that the JacksonJsonProvider requires `com.fasterxml.jackson.core:jackson-databind:2.4.5` and the GsonJsonProvider requires `com.google.code.gson:gson:2.3.1` on your classpath. 
 
-
-
 ## Sponsored by:
 [![JAYWAY](http://www.arctiquator.com/oppenkallkod/assets/images/jayway_logo.png)](http://www.jayway.com/)
 
 [![Analytics](https://ga-beacon.appspot.com/UA-54945131-1/jsonpath/index)](https://github.com/igrigorik/ga-beacon)
+
