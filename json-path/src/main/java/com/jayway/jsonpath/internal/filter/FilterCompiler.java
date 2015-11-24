@@ -20,6 +20,7 @@ public class FilterCompiler {
     private static final char SPACE = ' ';
     private static final char MINUS = '-';
     private static final char TICK = '\'';
+    private static final char DOUBLE_QUOTE = '"';
     private static final char PERIOD = '.';
     private static final char LT = '<';
     private static final char GT = '>';
@@ -133,7 +134,8 @@ public class FilterCompiler {
 
     private ValueNode readLiteral(){
         switch (filter.skipBlanks().currentChar()){
-            case TICK:  return readStringLiteral();
+            case TICK:  return readStringLiteral(TICK);
+            case DOUBLE_QUOTE: return readStringLiteral(DOUBLE_QUOTE);
             case TRUE:  return readBooleanLiteral();
             case FALSE: return readBooleanLiteral();
             case MINUS: return readNumberLiteral();
@@ -245,12 +247,12 @@ public class FilterCompiler {
         return ValueNode.createPatternNode(pattern);
     }
 
-    private ValueNode.StringNode readStringLiteral() {
+    private ValueNode.StringNode readStringLiteral(char endChar) {
         int begin = filter.position();
 
-        int closingTickIndex = filter.nextIndexOfUnescaped(TICK);
+        int closingTickIndex = filter.nextIndexOfUnescaped(endChar);
         if (closingTickIndex == -1) {
-            throw new InvalidPathException("String not closed. Expected " + TICK + " in " + filter);
+            throw new InvalidPathException("String not closed. Expected " + endChar + " in " + filter);
         } else {
             filter.setPosition(closingTickIndex + 1);
         }

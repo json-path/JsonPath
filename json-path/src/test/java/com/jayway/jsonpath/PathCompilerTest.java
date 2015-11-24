@@ -109,6 +109,7 @@ public class PathCompilerTest {
     @Test
     public void an_inline_criteria_can_be_parsed() {
         assertThat(compile("$[?(@.foo == 'bar')]").toString()).isEqualTo("$[?]");
+        assertThat(compile("$[?(@.foo == \"bar\")]").toString()).isEqualTo("$[?]");
     }
 
     @Test
