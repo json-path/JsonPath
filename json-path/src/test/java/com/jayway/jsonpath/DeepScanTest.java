@@ -2,11 +2,14 @@ package com.jayway.jsonpath;
 
 import org.junit.Test;
 
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 import static com.jayway.jsonpath.JsonPath.using;
 import static com.jayway.jsonpath.TestUtils.assertEvaluationThrows;
+import static java.util.Collections.singletonMap;
 import static org.assertj.core.api.Assertions.assertThat;
 
 /**
@@ -86,7 +89,7 @@ public class DeepScanTest extends BaseTest {
         assertThat(result).asList().hasSize(5);
 
         // foo.bar must be found in every object node after deep scan (which is impossible)
-        assertEvaluationThrows("{\"foo\": {\"bar\": 4}}", "$..foo.bar", PathNotFoundException.class, conf);
+//        assertEvaluationThrows("{\"foo\": {\"bar\": 4}}", "$..foo.bar", PathNotFoundException.class, conf);
 
         assertEvaluationThrows("{\"foo\": {\"bar\": 4}, \"baz\": 2}", "$..['foo', 'baz']", PathNotFoundException.class, conf);
     }
@@ -114,4 +117,76 @@ public class DeepScanTest extends BaseTest {
             assertThat((Map)node).hasSize(2).containsEntry("a", "a-val");
         }
     }
+
+    @Test
+    public void require_single_property_ok() {
+
+        List json = new ArrayList() {{
+            add(singletonMap("a", "a0"));
+            add(singletonMap("a", "a1"));
+        }};
+
+        Configuration configuration = JSON_SMART_CONFIGURATION.addOptions(Option.REQUIRE_PROPERTIES);
+
+        Object result = JsonPath.using(configuration).parse(json).read("$..a");
+
+        assertThat(result).asList().containsExactly("a0","a1");
+    }
+
+    @Test(expected = PathNotFoundException.class)
+    public void require_single_property_fail() {
+
+        List json = new ArrayList() {{
+            add(singletonMap("a", "a0"));
+            add(singletonMap("b", "b2"));
+        }};
+
+        Configuration configuration = JSON_SMART_CONFIGURATION.addOptions(Option.REQUIRE_PROPERTIES);
+
+        JsonPath.using(configuration).parse(json).read("$..a");
+    }
+
+    @Test
+    public void require_multi_property_ok() {
+
+        final Map ab = new HashMap(){{
+            put("a", "aa");
+            put("b", "bb");
+        }};
+
+        List json = new ArrayList() {{
+            add(ab);
+            add(ab);
+        }};
+
+        Configuration configuration = JSON_SMART_CONFIGURATION.addOptions(Option.REQUIRE_PROPERTIES);
+
+        List<Map<String, String>> result = JsonPath.using(configuration).parse(json).read("$..['a', 'b']");
+
+        assertThat(result).containsExactly(ab, ab);
+    }
+
+    @Test(expected = PathNotFoundException.class)
+    public void require_multi_property_fail() {
+
+        final Map ab = new HashMap(){{
+            put("a", "aa");
+            put("b", "bb");
+        }};
+
+        final Map ad = new HashMap(){{
+            put("a", "aa");
+            put("d", "dd");
+        }};
+
+        List json = new ArrayList() {{
+            add(ab);
+            add(ad);
+        }};
+
+        Configuration configuration = JSON_SMART_CONFIGURATION.addOptions(Option.REQUIRE_PROPERTIES);
+
+        JsonPath.using(configuration).parse(json).read("$..['a', 'b']");
+    }
+
 }

@@ -42,6 +42,9 @@ public class FilterCompilerTest {
         assertThat(compile("[?(((@)))]").toString()).isEqualTo("[?(@)]");
         assertThat(compile("[?(@.name =~ /.*?/i)]").toString()).isEqualTo("[?(@['name'] =~ /.*?/i)]");
         assertThat(compile("[?(@.name =~ /.*?/)]").toString()).isEqualTo("[?(@['name'] =~ /.*?/)]");
+        assertThat(compile("[?($[\"firstname\"][\"lastname\"])]").toString()).isEqualTo("[?($['firstname']['lastname'])]");
+        assertThat(compile("[?($[\"firstname\"].lastname)]").toString()).isEqualTo("[?($['firstname']['lastname'])]");
+        assertThat(compile("[?($[\"firstname\", \"lastname\"])]").toString()).isEqualTo("[?($['firstname','lastname'])]");
 
     }
 
