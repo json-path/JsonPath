@@ -29,6 +29,7 @@ public class PathCompiler {
     private static final char SPLIT = ':';
     private static final char MINUS = '-';
     private static final char TICK = '\'';
+    private static final char DOUBLE_QUOTE = '"';
 
     private final LinkedList<Predicate> filterStack;
     private final CharacterIndex path;
@@ -345,8 +346,12 @@ public class PathCompiler {
     // ['foo']
     //
     private boolean readBracketPropertyToken(PathTokenAppender appender) {
-        if (!path.currentCharIs(OPEN_SQUARE_BRACKET) || !path.nextSignificantCharIs(TICK)) {
+        if (!path.currentCharIs(OPEN_SQUARE_BRACKET)) {
             return false;
+        }
+        char potentialStringDelimiter = path.nextSignificantChar();
+        if (potentialStringDelimiter != TICK && potentialStringDelimiter != DOUBLE_QUOTE) {
+          return false;
         }
 
         List<String> properties = new ArrayList<String>();
@@ -361,7 +366,7 @@ public class PathCompiler {
 
             if (c == CLOSE_SQUARE_BRACKET && !inProperty) {
                 break;
-            } else if (c == TICK) {
+            } else if (c == potentialStringDelimiter) {
                 if (inProperty) {
                     endPosition = readPosition;
                     properties.add(path.subSequence(startPosition, endPosition).toString());
