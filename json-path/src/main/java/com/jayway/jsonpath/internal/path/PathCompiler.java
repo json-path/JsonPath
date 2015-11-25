@@ -172,7 +172,7 @@ public class PathCompiler {
         if(property.endsWith("()")){
             appender.appendPathToken(PathTokenFactory.createFunctionPathToken(property));
         } else {
-            appender.appendPathToken(PathTokenFactory.createSinglePropertyPathToken(property));
+            appender.appendPathToken(PathTokenFactory.createSinglePropertyPathToken(property, SINGLE_QUOTE));
         }
 
         return path.currentIsTail() || readNextToken(appender);
@@ -385,7 +385,7 @@ public class PathCompiler {
 
         path.setPosition(endBracketIndex);
 
-        appender.appendPathToken(PathTokenFactory.createPropertyPathToken(properties));
+        appender.appendPathToken(PathTokenFactory.createPropertyPathToken(properties, potentialStringDelimiter));
 
         return path.currentIsTail() || readNextToken(appender);
     }

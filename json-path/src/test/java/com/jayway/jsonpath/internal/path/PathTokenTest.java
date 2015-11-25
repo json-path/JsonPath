@@ -33,7 +33,7 @@ public class PathTokenTest extends BaseTest {
 
 
     private PathToken makePPT(final String ... properties) {
-        return new PropertyPathToken(Arrays.asList(properties));
+        return new PropertyPathToken(Arrays.asList(properties), '\'');
     }
 
     private PathToken makePathReturningTail(final PathToken ... tokens) {

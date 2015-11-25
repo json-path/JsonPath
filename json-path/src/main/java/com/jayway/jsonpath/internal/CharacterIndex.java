@@ -10,6 +10,7 @@ public class CharacterIndex {
     private static final char SPACE = ' ';
     private static final char ESCAPE = '\\';
     private static final char SINGLE_QUOTE = '\'';
+    private static final char DOUBLE_QUOTE = '"';
     private static final char MINUS = '-';
     private static final char PERIOD = '.';
     private static final char REGEX = '/';
@@ -88,6 +89,23 @@ public class CharacterIndex {
                             continue;
                         }
                         if (charAt(readPosition) == SINGLE_QUOTE) {
+                            readPosition++;
+                            break;
+                        }
+                    }
+                } else if (charAt(readPosition) == DOUBLE_QUOTE) {
+                    boolean escaped = false;
+                    while (inBounds(readPosition)) {
+                        readPosition++;
+                        if (escaped) {
+                            escaped = false;
+                            continue;
+                        }
+                        if (charAt(readPosition) == ESCAPE) {
+                            escaped = true;
+                            continue;
+                        }
+                        if (charAt(readPosition) == DOUBLE_QUOTE) {
                             readPosition++;
                             break;
                         }

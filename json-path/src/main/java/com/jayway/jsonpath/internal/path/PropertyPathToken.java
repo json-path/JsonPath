@@ -30,12 +30,14 @@ import static com.jayway.jsonpath.internal.Utils.onlyOneIsTrueNonThrow;
 class PropertyPathToken extends PathToken {
 
     private final List<String> properties;
+    private final String stringDelimiter;
 
-    public PropertyPathToken(List<String> properties) {
+    public PropertyPathToken(List<String> properties, char stringDelimiter) {
         if (properties.isEmpty()) {
             throw new InvalidPathException("Empty properties");
         }
         this.properties = properties;
+        this.stringDelimiter = Character.toString(stringDelimiter);
     }
 
     public List<String> getProperties() {
@@ -97,7 +99,7 @@ class PropertyPathToken extends PathToken {
     public String getPathFragment() {
         return new StringBuilder()
                 .append("[")
-                .append(Utils.join(",", "'", properties))
+                .append(Utils.join(",", stringDelimiter, properties))
                 .append("]").toString();
     }
 }

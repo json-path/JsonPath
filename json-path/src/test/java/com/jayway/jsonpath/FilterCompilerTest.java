@@ -42,16 +42,22 @@ public class FilterCompilerTest {
         assertThat(compile("[?(((@)))]").toString()).isEqualTo("[?(@)]");
         assertThat(compile("[?(@.name =~ /.*?/i)]").toString()).isEqualTo("[?(@['name'] =~ /.*?/i)]");
         assertThat(compile("[?(@.name =~ /.*?/)]").toString()).isEqualTo("[?(@['name'] =~ /.*?/)]");
-        assertThat(compile("[?($[\"firstname\"][\"lastname\"])]").toString()).isEqualTo("[?($['firstname']['lastname'])]");
-        assertThat(compile("[?($[\"firstname\"].lastname)]").toString()).isEqualTo("[?($['firstname']['lastname'])]");
-        assertThat(compile("[?($[\"firstname\", \"lastname\"])]").toString()).isEqualTo("[?($['firstname','lastname'])]");
+        assertThat(compile("[?($[\"firstname\"][\"lastname\"])]").toString()).isEqualTo("[?($[\"firstname\"][\"lastname\"])]");
+        assertThat(compile("[?($[\"firstname\"].lastname)]").toString()).isEqualTo("[?($[\"firstname\"]['lastname'])]");
+        assertThat(compile("[?($[\"firstname\", \"lastname\"])]").toString()).isEqualTo("[?($[\"firstname\",\"lastname\"])]");
 
     }
 
     @Test
-    public void string_quoute_style_is_serialized() {
+    public void string_quote_style_is_serialized() {
         assertThat(compile("[?('apa' == 'apa')]").toString()).isEqualTo("[?('apa' == 'apa')]");
         assertThat(compile("[?('apa' == \"apa\")]").toString()).isEqualTo("[?('apa' == \"apa\")]");
+    }
+
+    @Test
+    public void string_can_contain_path_chars() {
+        assertThat(compile("[?(@[')]@$)]'] == ')]@$)]')]").toString()).isEqualTo("[?(@[')]@$)]'] == ')]@$)]')]");
+        assertThat(compile("[?(@[\")]@$)]\"] == \")]@$)]\")]").toString()).isEqualTo("[?(@[\")]@$)]\"] == \")]@$)]\")]");
     }
 
 

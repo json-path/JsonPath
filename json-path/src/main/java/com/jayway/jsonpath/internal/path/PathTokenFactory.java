@@ -13,12 +13,12 @@ public class PathTokenFactory {
         return new RootPathToken(token);
     }
 
-    public static PathToken createSinglePropertyPathToken(String property) {
-        return new PropertyPathToken(singletonList(property));
+    public static PathToken createSinglePropertyPathToken(String property, char stringDelimiter) {
+        return new PropertyPathToken(singletonList(property), stringDelimiter);
     }
 
-    public static PathToken createPropertyPathToken(List<String> properties) {
-        return new PropertyPathToken(properties);
+    public static PathToken createPropertyPathToken(List<String> properties, char stringDelimiter) {
+        return new PropertyPathToken(properties, stringDelimiter);
     }
 
     public static PathToken createSliceArrayPathToken(final ArraySliceOperation arraySliceOperation) {
