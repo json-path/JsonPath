@@ -82,7 +82,7 @@ The function output is dictated by the function itself.
 Filter Operators
 -----------------
 
-Filters are logical expressions used to filter arrays. A typical filter would be `[?(@.age > 18)]` where `@` represents the current item being processed. More complex filters can be created with logical operators `&&` and `||`. String literals must be enclosed by single quotes `[?(@.color == 'blue')]`.   
+Filters are logical expressions used to filter arrays. A typical filter would be `[?(@.age > 18)]` where `@` represents the current item being processed. More complex filters can be created with logical operators `&&` and `||`. String literals must be enclosed by single or double quotes (`[?(@.color == 'blue')]` or `[?(@.color == "blue")]`).   
 
 | Operator                 | Description                                                       |
 | :----------------------- | :---------------------------------------------------------------- |
