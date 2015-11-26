@@ -67,6 +67,7 @@ public class CharacterIndex {
         }
         return -1;
     }
+
     public int indexOfMatchingCloseChar(int startPosition, char openChar, char closeChar, boolean skipStrings, boolean skipRegex) {
         if(charAt(startPosition) != openChar){
             throw new InvalidPathException("Expected " + openChar + " but found " + charAt(startPosition));
@@ -136,6 +137,7 @@ public class CharacterIndex {
         }
         return -1;
     }
+
     public int indexOfClosingBracket(int startPosition, boolean skipStrings, boolean skipRegex) {
         return indexOfMatchingCloseChar(startPosition, OPEN_PARENTHESIS, CLOSE_PARENTHESIS, skipStrings, skipRegex);
     }

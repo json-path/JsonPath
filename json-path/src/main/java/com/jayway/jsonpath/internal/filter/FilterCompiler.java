@@ -41,18 +41,15 @@ public class FilterCompiler {
     private static final char TRUE = 't';
     private static final char FALSE = 'f';
     private static final char NULL = 'n';
-    private static final char BANG = '!';
+    private static final char NOT = '!';
     private static final char PATTERN = '/';
+    private static final char IGNORE_CASE = 'i';
 
     private CharacterIndex filter;
 
     public static Filter compile(String filterString) {
-        try {
-            FilterCompiler compiler = new FilterCompiler(filterString);
-            return new CompiledFilter(compiler.compile());
-        } catch (Exception e){
-            throw new InvalidPathException("Could not compile inline filter : " + filterString, e);
-        }
+        FilterCompiler compiler = new FilterCompiler(filterString);
+        return new CompiledFilter(compiler.compile());
     }
 
     private FilterCompiler(String filterString) {
@@ -73,61 +70,67 @@ public class FilterCompiler {
     }
 
     public Predicate compile() {
+        try {
+            Stack<LogicalOperator> opsStack = new Stack<LogicalOperator>();
+            Stack<ExpressionNode> expStack = new Stack<ExpressionNode>();
 
-        Stack<LogicalOperator> opsStack  = new Stack<LogicalOperator>();
-        Stack<ExpressionNode> expStack = new Stack<ExpressionNode>();
+            int unbalancedParenthesis = 0;
 
-        int unbalancedBrackets = 0;
+            while (filter.skipBlanks().inBounds()) {
+                int pos = filter.position();
 
-        while (filter.skipBlanks().inBounds()) {
-            int pos = filter.position();
-
-            switch (filter.currentChar()) {
-                case OPEN_PARENTHESIS:
-                    unbalancedBrackets++;
-                    filter.incrementPosition(1);
-                    break;
-                case CLOSE_PARENTHESIS:
-                    unbalancedBrackets--;
-                    filter.incrementPosition(1);
-                    ExpressionNode expressionNode = expStack.pop();
-                    if(!opsStack.isEmpty()){
-                        if(expStack.isEmpty()){
-                            throw new InvalidPathException("Expected expression on right hand side of operator");
+                switch (filter.currentChar()) {
+                    case OPEN_PARENTHESIS:
+                        unbalancedParenthesis++;
+                        filter.incrementPosition(1);
+                        break;
+                    case CLOSE_PARENTHESIS:
+                        unbalancedParenthesis--;
+                        filter.incrementPosition(1);
+                        ExpressionNode expressionNode = expStack.pop();
+                        if (!opsStack.isEmpty()) {
+                            if (expStack.isEmpty()) {
+                                throw new InvalidPathException("Expected expression on right hand side of operator " + opsStack.peek().getOperatorString() + " in filter " + filter);
+                            }
+                            ExpressionNode right = expStack.pop();
+                            expressionNode = ExpressionNode.createExpressionNode(expressionNode, opsStack.pop(), right);
+                            while (!opsStack.isEmpty()) {
+                                expressionNode = ExpressionNode.createExpressionNode(expressionNode, opsStack.pop(), expStack.pop());
+                            }
                         }
-                        ExpressionNode right = expStack.pop();
-                        expressionNode = ExpressionNode.createExpressionNode(expressionNode, opsStack.pop(), right);
-                        while(!opsStack.isEmpty()){
-                            expressionNode = ExpressionNode.createExpressionNode(expressionNode, opsStack.pop(), expStack.pop());
-                        }
-                    }
-                    expStack.push(expressionNode);
-                    break;
-                case BANG:
-                    filter.incrementPosition(1);
-                    break;
-                case OR:
-                case AND:
-                    LogicalOperator operatorNode = readLogicalOperator();
-                    opsStack.push(operatorNode);
-                    break;
-                default:
-                    RelationalExpressionNode relationalExpressionNode = readExpression();
-                    expStack.push(relationalExpressionNode);
-                    break;
+                        expStack.push(expressionNode);
+                        break;
+                    case NOT:
+                        filter.incrementPosition(1);
+                        break;
+                    case OR:
+                    case AND:
+                        LogicalOperator operatorNode = readLogicalOperator();
+                        opsStack.push(operatorNode);
+                        break;
+                    default:
+                        RelationalExpressionNode relationalExpressionNode = readExpression();
+                        expStack.push(relationalExpressionNode);
+                        break;
+                }
+                if (pos >= filter.position()) {
+                    throw new InvalidPathException("Failed to parse filter " + filter.toString());
+                }
             }
-            if(pos >= filter.position()){
-                throw new InvalidPathException("Failed to parse filter " + filter.toString());
+            if (unbalancedParenthesis != 0) {
+                throw new InvalidPathException("Failed to parse filter. Parenthesis are not balanced. " + filter.toString());
             }
-        }
-        if(unbalancedBrackets != 0){
-            throw new InvalidPathException("Failed to parse filter. Brackets are not balanced. " + filter.toString());
-        }
 
-        Predicate predicate = expStack.pop();
-        logger.trace(predicate.toString());
+            Predicate predicate = expStack.pop();
 
-        return predicate;
+            if (logger.isTraceEnabled()) logger.trace(predicate.toString());
+
+            return predicate;
+        } catch (InvalidPathException e){
+            throw e;
+        } catch (Exception e) {
+            throw new InvalidPathException("Failed to parse filter: " + filter + ", error on position: " + filter.position() + ", char: " + filter.currentChar());
+        }
     }
 
     private ValueNode readValueNode() {
@@ -205,7 +208,7 @@ public class FilterCompiler {
 
     private ValueNode.NullNode readNullLiteral() {
         int begin = filter.position();
-        if(filter.currentChar() == 'n' && filter.inBounds(filter.position() + 3)){
+        if(filter.currentChar() == NULL && filter.inBounds(filter.position() + 3)){
             CharSequence nullValue = filter.subSequence(filter.position(), filter.position() + 4);
             if("null".equals(nullValue.toString())){
                 logger.trace("NullLiteral from {} to {} -> [{}]", begin, filter.position()+3, nullValue);
@@ -243,7 +246,7 @@ public class FilterCompiler {
         if (closingIndex == -1) {
             throw new InvalidPathException("Pattern not closed. Expected " + PATTERN + " in " + filter);
         } else {
-            if(filter.inBounds(closingIndex+1) && filter.charAt(closingIndex+1) == 'i'){
+            if(filter.inBounds(closingIndex+1) && filter.charAt(closingIndex+1) == IGNORE_CASE){
                 closingIndex++;
             }
             filter.setPosition(closingIndex + 1);
@@ -258,7 +261,7 @@ public class FilterCompiler {
 
         int closingSingleQuoteIndex = filter.nextIndexOfUnescaped(endChar);
         if (closingSingleQuoteIndex == -1) {
-            throw new InvalidPathException("String not closed. Expected " + endChar + " in " + filter);
+            throw new InvalidPathException("String literal does not have matching quotes. Expected " + endChar + " in " + filter);
         } else {
             filter.setPosition(closingSingleQuoteIndex + 1);
         }
@@ -280,7 +283,7 @@ public class FilterCompiler {
 
     private ValueNode.BooleanNode readBooleanLiteral() {
         int begin = filter.position();
-        int end = filter.currentChar() == 't' ? filter.position() + 3 : filter.position() + 4;
+        int end = filter.currentChar() == TRUE ? filter.position() + 3 : filter.position() + 4;
 
         if(!filter.inBounds(end)){
             throw new InvalidPathException("Expected boolean literal");
@@ -319,7 +322,7 @@ public class FilterCompiler {
             }
         }
 
-        boolean shouldExists = !(previousSignificantChar == BANG);
+        boolean shouldExists = !(previousSignificantChar == NOT);
         CharSequence path = filter.subSequence(begin, filter.position());
         return ValueNode.createPathNode(path, false, shouldExists);
     }
@@ -359,7 +362,7 @@ public class FilterCompiler {
     }
 
     private boolean isRelationalOperatorChar(char c) {
-        return c == LT || c == GT || c == EQ || c == TILDE || c == BANG;
+        return c == LT || c == GT || c == EQ || c == TILDE || c == NOT;
     }
 
     private static final class CompiledFilter extends Filter {

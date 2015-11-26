@@ -7,7 +7,6 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 public class FilterCompilerTest {
 
-
     @Test
     public void valid_filters_compile() {
         assertThat(compile("[?(@)]").toString()).isEqualTo("[?(@)]");
@@ -60,6 +59,10 @@ public class FilterCompilerTest {
         assertThat(compile("[?(@[\")]@$)]\"] == \")]@$)]\")]").toString()).isEqualTo("[?(@[\")]@$)]\"] == \")]@$)]\")]");
     }
 
+    @Test(expected = InvalidPathException.class)
+    public void invalid_path_when_string_literal_is_unquoted() {
+        compile("[?(@.foo == x)]");
+    }
 
     @Test
     public void invalid_filters_does_not_compile() {
