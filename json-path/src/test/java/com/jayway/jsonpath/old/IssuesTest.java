@@ -44,6 +44,18 @@ public class IssuesTest extends BaseTest {
     private static final JsonProvider jp = Configuration.defaultConfiguration().jsonProvider();
 
     @Test
+    public void issue_143() {
+        String json = "{ \"foo\": { \"bar\" : \"val\" }, \"moo\": { \"cow\" : \"val\" } }";
+
+        Configuration configuration = Configuration.builder().options( Option.AS_PATH_LIST ).build();
+
+        List<String> pathList = JsonPath.using(configuration).parse(json).read(JsonPath.compile("$.*.bar"));
+
+        assertThat(pathList).containsExactly("$['foo']['bar']");
+    }
+
+
+    @Test
     public void issue_114_a() {
         String json = "{ \"p\":{\n" +
                 "\"s\": { \"u\": \"su\" }, \n" +
