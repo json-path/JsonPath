@@ -1,4 +1,4 @@
-package com.jayway.jsonpath.functions;
+package com.jayway.jsonpath.internal.function;
 
 import com.jayway.jsonpath.Configuration;
 import com.jayway.jsonpath.Configurations;

@@ -26,7 +26,7 @@ public class PathCompiler {
     private static final char WILDCARD = '*';
     private static final char PERIOD = '.';
     private static final char SPACE = ' ';
-    private static final char QUESTIONMARK = '?';
+    private static final char BEGIN_FILTER = '?';
     private static final char COMMA = ',';
     private static final char SPLIT = ':';
     private static final char MINUS = '-';
@@ -50,11 +50,11 @@ public class PathCompiler {
         try {
             path = path.trim();
 
-            if(!path.startsWith("$") && !path.startsWith("@")){
+            if(!(path.charAt(0) == DOC_CONTEXT)  && !(path.charAt(0) == EVAL_CONTEXT)){
                 path = "$." + path;
             }
-            if(path.endsWith("..")){
-                fail("Path must not end wid a scan operation '..'");
+            if(path.endsWith(".")){
+                fail("Path must not end with a '.' or '..'");
             }
             LinkedList filterStack = new LinkedList<Predicate>(asList(filters));
             Path p = new PathCompiler(path.trim(), filterStack).compile();
@@ -186,7 +186,7 @@ public class PathCompiler {
         if (!path.currentCharIs(OPEN_SQUARE_BRACKET)) {
             return false;
         }
-        int questionmarkIndex = path.indexOfNextSignificantChar(QUESTIONMARK);
+        int questionmarkIndex = path.indexOfNextSignificantChar(BEGIN_FILTER);
         if (questionmarkIndex == -1) {
             return false;
         }
@@ -230,12 +230,12 @@ public class PathCompiler {
     // [?(...)]
     //
     private boolean readFilterToken(PathTokenAppender appender) {
-        if (!path.currentCharIs(OPEN_SQUARE_BRACKET) && !path.nextSignificantCharIs(QUESTIONMARK)) {
+        if (!path.currentCharIs(OPEN_SQUARE_BRACKET) && !path.nextSignificantCharIs(BEGIN_FILTER)) {
             return false;
         }
 
         int openStatementBracketIndex = path.position();
-        int questionMarkIndex = path.indexOfNextSignificantChar(QUESTIONMARK);
+        int questionMarkIndex = path.indexOfNextSignificantChar(BEGIN_FILTER);
         if (questionMarkIndex == -1) {
             return false;
         }

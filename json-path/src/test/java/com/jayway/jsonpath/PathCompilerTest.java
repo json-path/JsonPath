@@ -36,14 +36,22 @@ public class PathCompilerTest {
 
     @Test(expected = InvalidPathException.class)
     public void a_path_may_not_end_with_period() {
-        assertThat(compile("$.").toString());
-        assertThat(compile("$.prop.").toString());
+        compile("$.");
+    }
+
+    @Test(expected = InvalidPathException.class)
+    public void a_path_may_not_end_with_period_2() {
+        compile("$.prop.");
     }
 
     @Test(expected = InvalidPathException.class)
     public void a_path_may_not_end_with_scan() {
-        assertThat(compile("$..").toString());
-        assertThat(compile("$.prop..").toString());
+        compile("$..");
+    }
+
+    @Test(expected = InvalidPathException.class)
+    public void a_path_may_not_end_with_scan_2() {
+        compile("$.prop..");
     }
 
     @Test

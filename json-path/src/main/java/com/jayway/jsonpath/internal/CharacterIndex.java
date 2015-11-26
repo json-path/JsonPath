@@ -255,7 +255,7 @@ public class CharacterIndex {
     }
 
     public boolean currentIsTail() {
-        return isOutOfBounds(position + 1);
+        return position >= charSequence.length()-1;
     }
 
     public boolean hasMoreCharacters() {
