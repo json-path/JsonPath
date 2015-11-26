@@ -37,13 +37,13 @@ public class PathFunctionFactory {
 
         // JSON Entity Functions
         map.put("length", Length.class);
+        map.put("size", Length.class);
 
         FUNCTIONS = Collections.unmodifiableMap(map);
     }
 
     /**
-     * Either provides a pass thru function when the function cannot be properly mapped or otherwise returns the function
-     * implementation based on the name using the internal FUNCTION map
+     * Returns the function by name or throws InvalidPathException if function not found.
      *
      * @see #FUNCTIONS
      * @see PathFunction
@@ -57,18 +57,15 @@ public class PathFunctionFactory {
      * @throws InvalidPathException
      */
     public static PathFunction newFunction(String name) throws InvalidPathException {
-        PathFunction result = new PassthruPathFunction();
-
-        if (null != name && FUNCTIONS.containsKey(name) && PathFunction.class.isAssignableFrom(FUNCTIONS.get(name))) {
+        Class functionClazz = FUNCTIONS.get(name);
+        if(functionClazz == null){
+            throw new InvalidPathException("Function with name: " + name + " does not exists.");
+        } else {
             try {
-                result = (PathFunction)FUNCTIONS.get(name).newInstance();
-            } catch (InstantiationException e) {
-                throw new InvalidPathException("Function of name: " + name + " cannot be created", e);
-            } catch (IllegalAccessException e) {
+                return (PathFunction)functionClazz.newInstance();
+            } catch (Exception e) {
                 throw new InvalidPathException("Function of name: " + name + " cannot be created", e);
             }
         }
-        return result;
-
     }
 }

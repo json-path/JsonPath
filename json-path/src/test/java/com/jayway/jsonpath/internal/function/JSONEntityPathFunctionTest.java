@@ -49,17 +49,22 @@ public class JSONEntityPathFunctionTest extends BaseFunctionTest {
             "  }\n" +
             "}";
 
+
+
+
     private Configuration conf = Configurations.JSON_SMART_CONFIGURATION;
 
     @Test
     public void testLengthOfTextArray() {
         // The length of JSONArray is an integer
         verifyFunction(conf, "$['text'].length()", TEXT_SERIES, 6);
+        verifyFunction(conf, "$['text'].size()", TEXT_SERIES, 6);
     }
     @Test
     public void testLengthOfNumberArray() {
         // The length of JSONArray is an integer
         verifyFunction(conf, "$.numbers.length()", NUMBER_SERIES, 10);
+        verifyFunction(conf, "$.numbers.size()", NUMBER_SERIES, 10);
     }
 
 
