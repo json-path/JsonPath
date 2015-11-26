@@ -7,6 +7,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import static com.jayway.jsonpath.JsonPath.parse;
 import static com.jayway.jsonpath.JsonPath.using;
 import static com.jayway.jsonpath.TestUtils.assertEvaluationThrows;
 import static java.util.Collections.singletonMap;
@@ -81,17 +82,25 @@ public class DeepScanTest extends BaseTest {
     }
 
     @Test
-    public void when_deep_scanning_require_properties_still_counts() {
+    public void when_deep_scanning_require_properties_is_ignored_on_scan_target() {
         final Configuration conf = Configuration.defaultConfiguration().addOptions(Option.REQUIRE_PROPERTIES);
 
         Object result = JsonPath.parse("[{\"x\": {\"foo\": {\"x\": 4}, \"x\": null}, \"y\": {\"x\": 1}}, {\"x\": []}]").read(
                 "$..x");
         assertThat(result).asList().hasSize(5);
 
-        // foo.bar must be found in every object node after deep scan (which is impossible)
-//        assertEvaluationThrows("{\"foo\": {\"bar\": 4}}", "$..foo.bar", PathNotFoundException.class, conf);
 
-        assertEvaluationThrows("{\"foo\": {\"bar\": 4}, \"baz\": 2}", "$..['foo', 'baz']", PathNotFoundException.class, conf);
+        List<Integer> result1 = JsonPath.using(conf).parse("{\"foo\": {\"bar\": 4}}").read("$..foo.bar");
+        assertThat(result1).containsExactly(4);
+
+        assertEvaluationThrows("{\"foo\": {\"baz\": 4}}", "$..foo.bar", PathNotFoundException.class, conf);
+    }
+
+    @Test
+    public void when_deep_scanning_require_properties_is_ignored_on_scan_target_but_not_on_children() {
+        final Configuration conf = Configuration.defaultConfiguration().addOptions(Option.REQUIRE_PROPERTIES);
+
+        assertEvaluationThrows("{\"foo\": {\"baz\": 4}}", "$..foo.bar", PathNotFoundException.class, conf);
     }
 
     @Test
@@ -133,8 +142,8 @@ public class DeepScanTest extends BaseTest {
         assertThat(result).asList().containsExactly("a0","a1");
     }
 
-    @Test(expected = PathNotFoundException.class)
-    public void require_single_property_fail() {
+    @Test
+    public void require_single_property() {
 
         List json = new ArrayList() {{
             add(singletonMap("a", "a0"));
@@ -143,11 +152,13 @@ public class DeepScanTest extends BaseTest {
 
         Configuration configuration = JSON_SMART_CONFIGURATION.addOptions(Option.REQUIRE_PROPERTIES);
 
-        JsonPath.using(configuration).parse(json).read("$..a");
+        Object result = JsonPath.using(configuration).parse(json).read("$..a");
+
+        assertThat(result).asList().containsExactly("a0");
     }
 
     @Test
-    public void require_multi_property_ok() {
+    public void require_multi_property_all_match() {
 
         final Map ab = new HashMap(){{
             put("a", "aa");
@@ -166,8 +177,8 @@ public class DeepScanTest extends BaseTest {
         assertThat(result).containsExactly(ab, ab);
     }
 
-    @Test(expected = PathNotFoundException.class)
-    public void require_multi_property_fail() {
+    @Test
+    public void require_multi_property_some_match() {
 
         final Map ab = new HashMap(){{
             put("a", "aa");
@@ -186,7 +197,105 @@ public class DeepScanTest extends BaseTest {
 
         Configuration configuration = JSON_SMART_CONFIGURATION.addOptions(Option.REQUIRE_PROPERTIES);
 
-        JsonPath.using(configuration).parse(json).read("$..['a', 'b']");
+        List<Map<String, String>>  result = JsonPath.using(configuration).parse(json).read("$..['a', 'b']");
+
+        assertThat(result).containsExactly(ab);
+    }
+
+    @Test
+    public void scan_for_single_property() {
+        final Map a = new HashMap(){{
+            put("a", "aa");
+        }};
+        final Map b = new HashMap(){{
+            put("b", "bb");
+        }};
+        final Map ab = new HashMap(){{
+            put("a", a);
+            put("b", b);
+        }};
+        final Map b_ab = new HashMap(){{
+            put("b", b);
+            put("ab", ab);
+        }};
+        List json = new ArrayList() {{
+            add(a);
+            add(b);
+            add(b_ab);
+        }};
+        assertThat(parse(json).read("$..['a']", List.class)).containsExactly("aa", a, "aa");
+    }
+
+    @Test
+    public void scan_for_property_path() {
+        final Map a = new HashMap(){{
+            put("a", "aa");
+        }};
+        final Map x = new HashMap(){{
+            put("x", "xx");
+        }};
+        final Map y = new HashMap(){{
+            put("a", x);
+        }};
+        final Map z = new HashMap(){{
+            put("z", y);
+        }};
+        List json = new ArrayList() {{
+            add(a);
+            add(x);
+            add(y);
+            add(z);
+        }};
+        assertThat(parse(json).read("$..['a'].x", List.class)).containsExactly("xx", "xx");
+    }
+
+    @Test
+    public void scan_for_property_path_missing_required_property() {
+        final Map a = new HashMap(){{
+            put("a", "aa");
+        }};
+        final Map x = new HashMap(){{
+            put("x", "xx");
+        }};
+        final Map y = new HashMap(){{
+            put("a", x);
+        }};
+        final Map z = new HashMap(){{
+            put("z", y);
+        }};
+        List json = new ArrayList() {{
+            add(a);
+            add(x);
+            add(y);
+            add(z);
+        }};
+        assertThat(using(JSON_SMART_CONFIGURATION.addOptions(Option.REQUIRE_PROPERTIES)).parse(json).read("$..['a'].x", List.class)).containsExactly("xx", "xx");
+    }
+
+
+    @Test
+    public void scans_can_be_filtered() {
+
+        final Map brown = singletonMap("val", "brown");
+        final Map white = singletonMap("val", "white");
+
+        final Map cow = new HashMap(){{
+            put("mammal", true);
+            put("color", brown);
+        }};
+        final Map dog = new HashMap(){{
+            put("mammal", true);
+            put("color", white);
+        }};
+        final Map frog = new HashMap(){{
+            put("mammal", false);
+        }};
+        List animals = new ArrayList() {{
+            add(cow);
+            add(dog);
+            add(frog);
+        }};
+        assertThat(using(JSON_SMART_CONFIGURATION.addOptions(Option.REQUIRE_PROPERTIES)).parse(animals).read("$..[?(@.mammal == true)].color", List.class)).containsExactly(brown, white);
     }
 
 }
