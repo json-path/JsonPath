@@ -19,6 +19,7 @@ dependencies {
     compile libs.jacksonDatabind, optional
     compile libs.gson, optional
     compile libs.jsonOrg, optional
+    compile libs.tapestryJson, optional
 
     testCompile libs.test
 }
@@ -51,6 +52,10 @@ task distZip(type: Zip, dependsOn: assemble) {
         into 'lib-optional/jsonOrg'
         include { it.file.name.contains('json-2') }
     }
+    from(project.configurations.compile) {
+        into 'lib-optional/jsonOrg'
+        include { it.file.name.contains('tapestry') }
+    }
 }
 
 task distTar(type: Tar, dependsOn: assemble) {
@@ -82,6 +87,10 @@ task distTar(type: Tar, dependsOn: assemble) {
     from(project.configurations.compile) {
         into 'lib-optional/jsonOrg'
         include { it.file.name.contains('json-2') }
+    }
+    from(project.configurations.compile) {
+        into 'lib-optional/jsonOrg'
+        include { it.file.name.contains('tapestry') }
     }
 }
 
