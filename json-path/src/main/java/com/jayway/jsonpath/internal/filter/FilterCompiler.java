@@ -109,6 +109,9 @@ public class FilterCompiler {
                         opsStack.push(operatorNode);
                         break;
                     default:
+                        if(expStack.size() > 0 && opsStack.isEmpty()){
+                            throw new InvalidPathException("Expected logical operator (&&, ||) to follow expression " + expStack.peek().toString());
+                        }
                         RelationalExpressionNode relationalExpressionNode = readExpression();
                         expStack.push(relationalExpressionNode);
                         break;
