@@ -7,7 +7,17 @@ public enum RelationalOperator {
     GTE(">="),
     LTE("<="),
     EQ("=="),
+
+    /**
+     * Type safe equals
+     */
+    TSEQ("==="),
     NE("!="),
+
+    /**
+     * Type safe not equals
+     */
+    TSNE("!=="),
     LT("<"),
     GT(">"),
     REGEX("=~"),

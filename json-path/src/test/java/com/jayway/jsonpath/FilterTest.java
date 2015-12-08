@@ -43,6 +43,21 @@ public class FilterTest extends BaseTest {
     }
 
     @Test
+    public void int_eq_string_evals() {
+        assertThat(filter(where("int-key").eq("1")).apply(createPredicateContext(json))).isEqualTo(true);
+        assertThat(filter(where("int-key").eq("666")).apply(createPredicateContext(json))).isEqualTo(false);
+
+
+        assertThat(Filter.parse("[?(1 == '1')]").apply(createPredicateContext(json))).isEqualTo(true);
+        assertThat(Filter.parse("[?('1' == 1)]").apply(createPredicateContext(json))).isEqualTo(true);
+
+        assertThat(Filter.parse("[?(1 === '1')]").apply(createPredicateContext(json))).isEqualTo(false);
+        assertThat(Filter.parse("[?('1' === 1)]").apply(createPredicateContext(json))).isEqualTo(false);
+
+        assertThat(Filter.parse("[?(1 === 1)]").apply(createPredicateContext(json))).isEqualTo(true);
+    }
+
+    @Test
     public void long_eq_evals() {
         assertThat(filter(where("long-key").eq(3000000000L)).apply(createPredicateContext(json))).isEqualTo(true);
         assertThat(filter(where("long-key").eq(666L)).apply(createPredicateContext(json))).isEqualTo(false);

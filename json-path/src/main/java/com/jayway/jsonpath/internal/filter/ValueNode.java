@@ -412,6 +412,17 @@ public abstract class ValueNode {
             string = escape ? Utils.unescape(charSequence.toString()) : charSequence.toString();
         }
 
+        @Override
+        public NumberNode asNumberNode() {
+            BigDecimal number = null;
+            try {
+                number = new BigDecimal(string);
+            } catch (NumberFormatException nfe){
+                return NumberNode.NAN;
+            }
+            return new NumberNode(number);
+        }
+
         public String getString() {
             return string;
         }
@@ -450,20 +461,31 @@ public abstract class ValueNode {
         @Override
         public boolean equals(Object o) {
             if (this == o) return true;
-            if (!(o instanceof StringNode)) return false;
+            if (!(o instanceof StringNode) && !(o instanceof NumberNode)) return false;
 
-            StringNode that = (StringNode) o;
+            StringNode that = ((ValueNode) o).asStringNode();
 
-            return !(string != null ? !string.equals(that.string) : that.string != null);
+            return !(string != null ? !string.equals(that.getString()) : that.getString() != null);
 
         }
     }
 
     public static class NumberNode extends ValueNode {
+
+        public static NumberNode NAN = new NumberNode((BigDecimal)null);
+
         private final BigDecimal number;
 
+        private NumberNode(BigDecimal number) {
+            this.number = number;
+        }
         private NumberNode(CharSequence num) {
             number = new BigDecimal(num.toString());
+        }
+
+        @Override
+        public StringNode asStringNode() {
+            return new StringNode(number.toString(), false);
         }
 
         public BigDecimal getNumber() {
@@ -491,14 +513,14 @@ public abstract class ValueNode {
         @Override
         public boolean equals(Object o) {
             if (this == o) return true;
-            if (!(o instanceof NumberNode)) return false;
+            if (!(o instanceof NumberNode) && !(o instanceof StringNode)) return false;
 
-            ValueNode that = (ValueNode) o;
+            NumberNode that = ((ValueNode)o).asNumberNode();
 
-            if(!that.isNumberNode()){
+            if(that == NumberNode.NAN){
                 return false;
             } else {
-                return number.compareTo(that.asNumberNode().number) == 0;
+                return number.compareTo(that.number) == 0;
             }
         }
     }
