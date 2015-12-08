@@ -303,7 +303,7 @@ List<Map<String, Object>> books =
 
 Path vs Value
 -------------
-In the Goessner implementation a JsonPath can return either `Path` or `Value`. `Value` is the default and what all the exaples above are reuturning. If you rather have the path of the elements our query is hitting this can be acheived with an option.
+In the Goessner implementation a JsonPath can return either `Path` or `Value`. `Value` is the default and what all the examples above are returning. If you rather have the path of the elements our query is hitting this can be acheived with an option.
 
 ```java
 Configuration conf = Configuration.builder()
