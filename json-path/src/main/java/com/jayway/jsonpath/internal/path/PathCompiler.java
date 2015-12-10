@@ -22,6 +22,9 @@ public class PathCompiler {
     private static final char OPEN_SQUARE_BRACKET = '[';
     private static final char CLOSE_SQUARE_BRACKET = ']';
     private static final char OPEN_PARENTHESIS = '(';
+    private static final char CLOSE_PARENTHESIS = ')';
+    private static final char OPEN_BRACE = '{';
+    private static final char CLOSE_BRACE = '}';
 
     private static final char WILDCARD = '*';
     private static final char PERIOD = '.';
@@ -151,13 +154,20 @@ public class PathCompiler {
         int readPosition = startPosition;
         int endPosition = 0;
 
+        boolean isFunction = false;
+
         while (path.inBounds(readPosition)) {
             char c = path.charAt(readPosition);
             if (c == SPACE) {
                 throw new InvalidPathException("Use bracket notion ['my prop'] if your property contains blank characters. position: " + path.position());
             }
-            if (c == PERIOD || c == OPEN_SQUARE_BRACKET) {
+            else if (c == PERIOD || c == OPEN_SQUARE_BRACKET) {
                 endPosition = readPosition;
+                break;
+            }
+            else if (c == OPEN_PARENTHESIS) {
+                isFunction = true;
+                endPosition = readPosition++;
                 break;
             }
             readPosition++;
@@ -166,16 +176,74 @@ public class PathCompiler {
             endPosition = path.length();
         }
 
-        path.setPosition(endPosition);
+
+        List<Path> functionParameters = null;
+        if (isFunction) {
+            // read the next token to determine if we have a simple no-args function call
+            char c = path.charAt(readPosition++);
+            if (c != CLOSE_PARENTHESIS) {
+                // parse the arguments of the function - arguments that are inner queries will be single quoted parameters
+                functionParameters = parseFunctionParameters(readPosition);
+            }
+            else {
+                path.setPosition(readPosition);
+            }
+        }
+        else {
+            path.setPosition(endPosition);
+        }
 
         String property = path.subSequence(startPosition, endPosition).toString();
-        if(property.endsWith("()")){
-            appender.appendPathToken(PathTokenFactory.createFunctionPathToken(property));
+        if(isFunction){
+            appender.appendPathToken(PathTokenFactory.createFunctionPathToken(property, functionParameters));
         } else {
             appender.appendPathToken(PathTokenFactory.createSinglePropertyPathToken(property, SINGLE_QUOTE));
         }
 
         return path.currentIsTail() || readNextToken(appender);
+    }
+
+    private List<Path> parseFunctionParameters(int readPosition) {
+        PathToken currentToken;
+        List<Path> parameters = new ArrayList<Path>();
+        StringBuffer parameter = new StringBuffer();
+        Boolean insideParameter = false;
+        int braceCount = 0, parenCount = 1;
+        while (path.inBounds(readPosition)) {
+            char c = path.charAt(readPosition);
+
+            if (c == OPEN_BRACE) {
+                braceCount++;
+            }
+            else if (c == CLOSE_BRACE) {
+                braceCount--;
+                if (0 == braceCount && parameter.length() > 0) {
+                    // inner parse the parameter expression to pass along to the function
+                    LinkedList<Predicate> predicates = new LinkedList<Predicate>();
+                    PathCompiler compiler = new PathCompiler(parameter.toString(), predicates);
+                    parameters.add(compiler.compile());
+                }
+            }
+            else if (c == COMMA && braceCount == 0) {
+                parameter.delete(0, parameter.length());
+            }
+            else {
+                parameter.append(c);
+                if (c == CLOSE_PARENTHESIS) {
+                    parenCount--;
+                    if (parenCount == 0) {
+                        break;
+                    }
+                }
+                else if (c == OPEN_PARENTHESIS) {
+                    parenCount++;
+                }
+
+            }
+            readPosition++;
+        }
+        path.setPosition(readPosition);
+        return parameters;
     }
 
     //

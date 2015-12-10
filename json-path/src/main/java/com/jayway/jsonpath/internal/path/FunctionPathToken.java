@@ -1,8 +1,11 @@
 package com.jayway.jsonpath.internal.path;
 
+import com.jayway.jsonpath.internal.Path;
 import com.jayway.jsonpath.internal.PathRef;
 import com.jayway.jsonpath.internal.function.PathFunction;
 import com.jayway.jsonpath.internal.function.PathFunctionFactory;
+
+import java.util.List;
 
 /**
  * Token representing a Function call to one of the functions produced via the FunctionFactory
@@ -15,13 +18,16 @@ public class FunctionPathToken extends PathToken {
 
     private final String functionName;
     private final String pathFragment;
+    private final List<Path> functionParams;
 
-    public FunctionPathToken(String pathFragment) {
+    public FunctionPathToken(String pathFragment, List<Path> parameters) {
         this.pathFragment = pathFragment;
-        if(pathFragment.endsWith("()")){
-            functionName = pathFragment.substring(0, pathFragment.length()-2);
+        if(null != pathFragment){
+            functionName = pathFragment;
+            functionParams = parameters;
         } else {
             functionName = null;
+            functionParams = null;
         }
     }
 
