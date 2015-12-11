@@ -5,6 +5,7 @@ import com.jayway.jsonpath.Predicate;
 import com.jayway.jsonpath.internal.CharacterIndex;
 import com.jayway.jsonpath.internal.Path;
 import com.jayway.jsonpath.internal.filter.FilterCompiler;
+import com.jayway.jsonpath.internal.function.Parameter;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -29,6 +30,9 @@ public class PathCompiler {
     private static final char WILDCARD = '*';
     private static final char PERIOD = '.';
     private static final char SPACE = ' ';
+    private static final char TAB = '\t';
+    private static final char CR = '\r';
+    private static final char LF = '\r';
     private static final char BEGIN_FILTER = '?';
     private static final char COMMA = ',';
     private static final char SPLIT = ':';
@@ -73,8 +77,20 @@ public class PathCompiler {
         }
     }
 
+    private void readWhitespace() {
+        while (path.inBounds()) {
+            char c = path.currentChar();
+            if (c != SPACE && c != TAB && c != LF && c != CR) {
+                break;
+            }
+            path.incrementPosition(1);
+        }
+    }
+
     //[$ | @]
     private RootPathToken readContextToken() {
+
+        readWhitespace();
 
         if (!path.currentCharIs(DOC_CONTEXT) && !path.currentCharIs(EVAL_CONTEXT)) {
             throw new InvalidPathException("Path must start with '$' or '@'");
@@ -177,13 +193,17 @@ public class PathCompiler {
         }
 
 
-        List<Path> functionParameters = null;
+        List<Parameter> functionParameters = null;
         if (isFunction) {
-            // read the next token to determine if we have a simple no-args function call
-            char c = path.charAt(readPosition++);
-            if (c != CLOSE_PARENTHESIS) {
-                // parse the arguments of the function - arguments that are inner queries will be single quoted parameters
-                functionParameters = parseFunctionParameters(readPosition);
+            if (path.inBounds(readPosition+1)) {
+                // read the next token to determine if we have a simple no-args function call
+                char c = path.charAt(readPosition + 1);
+                if (c != CLOSE_PARENTHESIS) {
+                    // parse the arguments of the function - arguments that are inner queries will be single quoted parameters
+                    functionParameters = parseFunctionParameters(readPosition);
+                } else {
+                    path.setPosition(readPosition + 1);
+                }
             }
             else {
                 path.setPosition(readPosition);
@@ -203,9 +223,9 @@ public class PathCompiler {
         return path.currentIsTail() || readNextToken(appender);
     }
 
-    private List<Path> parseFunctionParameters(int readPosition) {
+    private List<Parameter> parseFunctionParameters(int readPosition) {
         PathToken currentToken;
-        List<Path> parameters = new ArrayList<Path>();
+        List<Parameter> parameters = new ArrayList<Parameter>();
         StringBuffer parameter = new StringBuffer();
         Boolean insideParameter = false;
         int braceCount = 0, parenCount = 1;
@@ -221,24 +241,37 @@ public class PathCompiler {
                     // inner parse the parameter expression to pass along to the function
                     LinkedList<Predicate> predicates = new LinkedList<Predicate>();
                     PathCompiler compiler = new PathCompiler(parameter.toString(), predicates);
-                    parameters.add(compiler.compile());
+                    Path path = compiler.compile();
+                    parameters.add(new Parameter(path));
+                    parameter.delete(0, parameter.length());
                 }
             }
             else if (c == COMMA && braceCount == 0) {
                 parameter.delete(0, parameter.length());
             }
             else {
-                parameter.append(c);
                 if (c == CLOSE_PARENTHESIS) {
                     parenCount--;
                     if (parenCount == 0) {
+                        if (parameter.length() > 0) {
+                            // inner parse the parameter expression to pass along to the function
+                            LinkedList<Predicate> predicates = new LinkedList<Predicate>();
+                            PathCompiler compiler = new PathCompiler(parameter.toString(), predicates);
+                            parameters.add(new Parameter(compiler.compile()));
+                        }
                         break;
+                    }
+                    else {
+                        parameter.append(c);
                     }
                 }
                 else if (c == OPEN_PARENTHESIS) {
                     parenCount++;
+                    parameter.append(c);
                 }
-
+                else {
+                    parameter.append(c);
+                }
             }
             readPosition++;
         }

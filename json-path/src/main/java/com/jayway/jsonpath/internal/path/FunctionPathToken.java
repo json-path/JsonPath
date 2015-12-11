@@ -1,7 +1,7 @@
 package com.jayway.jsonpath.internal.path;
 
-import com.jayway.jsonpath.internal.Path;
 import com.jayway.jsonpath.internal.PathRef;
+import com.jayway.jsonpath.internal.function.Parameter;
 import com.jayway.jsonpath.internal.function.PathFunction;
 import com.jayway.jsonpath.internal.function.PathFunctionFactory;
 
@@ -18,9 +18,9 @@ public class FunctionPathToken extends PathToken {
 
     private final String functionName;
     private final String pathFragment;
-    private final List<Path> functionParams;
+    private final List<Parameter> functionParams;
 
-    public FunctionPathToken(String pathFragment, List<Path> parameters) {
+    public FunctionPathToken(String pathFragment, List<Parameter> parameters) {
         this.pathFragment = pathFragment;
         if(null != pathFragment){
             functionName = pathFragment;
@@ -34,8 +34,20 @@ public class FunctionPathToken extends PathToken {
     @Override
     public void evaluate(String currentPath, PathRef parent, Object model, EvaluationContextImpl ctx) {
         PathFunction pathFunction = PathFunctionFactory.newFunction(functionName);
-        Object result = pathFunction.invoke(currentPath, parent, model, ctx);
+        evaluateParameters(currentPath, parent, model, ctx);
+        Object result = pathFunction.invoke(currentPath, parent, model, ctx, functionParams);
         ctx.addResult(currentPath, parent, result);
+    }
+
+    private void evaluateParameters(String currentPath, PathRef parent, Object model, EvaluationContextImpl ctx) {
+
+        if (null != functionParams) {
+            for (Parameter param : functionParams) {
+                if (!param.hasEvaluated()) {
+                    param.setCachedValue(param.getPath().evaluate(ctx.rootDocument(), ctx.rootDocument(), ctx.configuration()).getValue());
+                }
+            }
+        }
     }
 
     /**

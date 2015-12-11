@@ -29,6 +29,6 @@ public class NestedFunctionTest extends BaseFunctionTest {
 
     @Test
     public void testAverageOfDoubles() {
-        verifyMathFunction(conf, "$.sum({$.numbers.min()}, {$.numbers.max()})", 5.5);
+        verifyMathFunction(conf, "$.avg({$.numbers.min()}, {$.numbers.max()})", 5.5);
     }
 }
