@@ -304,4 +304,34 @@ public class DeepScanTest extends BaseTest {
         assertThat(result).hasSize(1);
     }
 
+    @Test
+    public void deepScanPathDefault() {
+        executeScanPath();
+    }
+
+    @Test
+    public void deepScanPathRequireProperties() {
+        executeScanPath(Option.REQUIRE_PROPERTIES);
+    }
+
+    private void executeScanPath(Option... options) {
+        String json = "{'index': 'index', 'data': {'array': [{ 'object1': { 'name': 'robert'} }]}}";
+        Map<String, Object> expected = new HashMap<String, Object>() {{
+            put("object1", new HashMap<String, String>() {{
+                put("name", "robert");
+            }});
+        }};
+
+        Configuration configuration = Configuration
+                .builder()
+                .options(options)
+                .build();
+
+        List<Map<String, Object>> result = JsonPath
+                .using(configuration)
+                .parse(json)
+                .read("$..array[0]");
+        assertThat(result.get(0)).isEqualTo(expected);
+    }
+
 }

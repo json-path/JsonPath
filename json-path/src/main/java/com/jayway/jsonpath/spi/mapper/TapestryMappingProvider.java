@@ -14,10 +14,10 @@
  */
 package com.jayway.jsonpath.spi.mapper;
 
-import java.util.ArrayList;
-
 import com.jayway.jsonpath.Configuration;
 import com.jayway.jsonpath.TypeRef;
+
+import java.util.ArrayList;
 
 public class TapestryMappingProvider implements MappingProvider {
 

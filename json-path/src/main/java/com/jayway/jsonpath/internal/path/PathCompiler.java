@@ -256,7 +256,6 @@ public class PathCompiler {
 
 
         Predicate predicate = FilterCompiler.compile(criteria);
-        //Predicate predicate = Filter.parse(criteria);
         appender.appendPathToken(PathTokenFactory.createPredicatePathToken(predicate));
 
         path.setPosition(closeStatementBracketIndex + 1);

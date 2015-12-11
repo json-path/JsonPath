@@ -77,51 +77,22 @@ public class CharacterIndex {
         int readPosition = startPosition + 1;
         while (inBounds(readPosition)) {
             if (skipStrings) {
-                if (charAt(readPosition) == SINGLE_QUOTE) {
-                    boolean escaped = false;
-                    while (inBounds(readPosition)) {
-                        readPosition++;
-                        if (escaped) {
-                            escaped = false;
-                            continue;
-                        }
-                        if (charAt(readPosition) == ESCAPE) {
-                            escaped = true;
-                            continue;
-                        }
-                        if (charAt(readPosition) == SINGLE_QUOTE) {
-                            readPosition++;
-                            break;
-                        }
+                char quoteChar = charAt(readPosition);
+                if (quoteChar == SINGLE_QUOTE || quoteChar == DOUBLE_QUOTE){
+                    readPosition = nextIndexOfUnescaped(readPosition, quoteChar);
+                    if(readPosition == -1){
+                        throw new InvalidPathException("Could not find matching close quote for " + quoteChar + " when parsing : " + charSequence);
                     }
-                } else if (charAt(readPosition) == DOUBLE_QUOTE) {
-                    boolean escaped = false;
-                    while (inBounds(readPosition)) {
-                        readPosition++;
-                        if (escaped) {
-                            escaped = false;
-                            continue;
-                        }
-                        if (charAt(readPosition) == ESCAPE) {
-                            escaped = true;
-                            continue;
-                        }
-                        if (charAt(readPosition) == DOUBLE_QUOTE) {
-                            readPosition++;
-                            break;
-                        }
-                    }
+                    readPosition++;
                 }
             }
             if (skipRegex) {
                 if (charAt(readPosition) == REGEX) {
-                    while (inBounds(readPosition)) {
-                        readPosition++;
-                        if (charAt(readPosition) == REGEX) {
-                            readPosition++;
-                            break;
-                        }
+                    readPosition = nextIndexOfUnescaped(readPosition, REGEX);
+                    if(readPosition == -1){
+                        throw new InvalidPathException("Could not find matching close for " + REGEX + " when parsing regex in : " + charSequence);
                     }
+                    readPosition++;
                 }
             }
             if (charAt(readPosition) == openChar) {
@@ -174,23 +145,22 @@ public class CharacterIndex {
     }
 
     public int nextIndexOfUnescaped(char c) {
-        return nextIndexOfUnescaped(position + 1, c);
+        return nextIndexOfUnescaped(position, c);
     }
 
     public int nextIndexOfUnescaped(int startPosition, char c) {
-        int readPosition = startPosition;
-        char prev1;
-        char prev2;
-        while (!isOutOfBounds(readPosition)) {
-            prev1 = charAtOr(readPosition - 1, ' ');
-            prev2 = charAtOr(readPosition - 2, ' ');
-            boolean ignore = (prev1 == '\\' && prev2 == '\\');
-            boolean escaped = (prev1 == '\\' && !ignore);
 
-            if (charAt(readPosition) == c && !escaped) {
+        int readPosition = startPosition + 1;
+        boolean inEscape = false;
+        while (!isOutOfBounds(readPosition)) {
+            if(inEscape){
+                inEscape = false;
+            } else if('\\' == charAt(readPosition)){
+                inEscape = true;
+            } else if (c == charAt(readPosition) && !inEscape){
                 return readPosition;
             }
-            readPosition++;
+            readPosition ++;
         }
         return -1;
     }
