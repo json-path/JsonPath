@@ -5,6 +5,7 @@ import com.jayway.jsonpath.Predicate;
 import com.jayway.jsonpath.internal.CharacterIndex;
 import com.jayway.jsonpath.internal.Path;
 import com.jayway.jsonpath.internal.filter.FilterCompiler;
+import com.jayway.jsonpath.internal.function.ParamType;
 import com.jayway.jsonpath.internal.function.Parameter;
 
 import java.util.ArrayList;
@@ -80,11 +81,15 @@ public class PathCompiler {
     private void readWhitespace() {
         while (path.inBounds()) {
             char c = path.currentChar();
-            if (c != SPACE && c != TAB && c != LF && c != CR) {
+            if (!isWhitespace(c)) {
                 break;
             }
             path.incrementPosition(1);
         }
+    }
+
+    private Boolean isPathContext(char c) {
+        return (c == DOC_CONTEXT || c == EVAL_CONTEXT);
     }
 
     //[$ | @]
@@ -92,7 +97,7 @@ public class PathCompiler {
 
         readWhitespace();
 
-        if (!path.currentCharIs(DOC_CONTEXT) && !path.currentCharIs(EVAL_CONTEXT)) {
+        if (!isPathContext(path.currentChar())) {
             throw new InvalidPathException("Path must start with '$' or '@'");
         }
 
@@ -199,7 +204,7 @@ public class PathCompiler {
                 // read the next token to determine if we have a simple no-args function call
                 char c = path.charAt(readPosition + 1);
                 if (c != CLOSE_PARENTHESIS) {
-                    // parse the arguments of the function - arguments that are inner queries will be single quoted parameters
+                    // parse the arguments of the function - arguments that are inner queries or JSON document(s)
                     functionParameters = parseFunctionParameters(readPosition);
                 } else {
                     path.setPosition(readPosition + 1);
@@ -230,6 +235,23 @@ public class PathCompiler {
      * set if the parameter is an expression.  If the parameter is a JSON document then the value of the cachedValue is
      * set on the object.
      *
+     * Sequence for parsing out the parameters:
+     *
+     * This code has its own tokenizer - it does some rudimentary level of lexing in that it can distinguish between JSON block parameters
+     * and sub-JSON blocks - it effectively regex's out the parameters into string blocks that can then be passed along to the appropriate parser.
+     * Since sub-jsonpath expressions can themselves contain other function calls this routine needs to be sensitive to token counting to
+     * determine the boundaries.  Since the Path parser isn't aware of JSON processing this uber routine is needed.
+     *
+     * Parameters are separated by COMMAs ','
+     *
+     * <pre>
+     * doc = {"numbers": [1,2,3,4,5,6,7,8,9,10]}
+     *
+     * $.sum({10}, $.numbers.avg())
+     * </pre>
+     *
+     * The above is a valid function call, we're first summing 10 + avg of 1...10 (5.5) so the total should be 15.5
+     *
      * @param readPosition
      *      The current position within the stream we've advanced - TODO remove the need for this...
      * @return
@@ -239,57 +261,91 @@ public class PathCompiler {
      */
     private List<Parameter> parseFunctionParameters(int readPosition) {
         PathToken currentToken;
+        ParamType type = null;
+
+        // Parenthesis starts at 1 since we're marking the start of a function call, the close paren will denote the
+        // last parameter boundary
+        Integer groupParen = 1, groupBracket = 0, groupBrace = 0;
+        Boolean endOfStream = false;
         List<Parameter> parameters = new ArrayList<Parameter>();
         StringBuffer parameter = new StringBuffer();
-        Boolean insideParameter = false;
-        int braceCount = 0, parenCount = 1;
-        while (path.inBounds(readPosition)) {
+        while (path.inBounds(readPosition) && !endOfStream) {
             char c = path.charAt(readPosition++);
 
-            if (c == OPEN_BRACE) {
-                braceCount++;
-            }
-            else if (c == CLOSE_BRACE) {
-                braceCount--;
-                if (0 == braceCount && parameter.length() > 0) {
-                    // inner parse the parameter expression to pass along to the function
-                    LinkedList<Predicate> predicates = new LinkedList<Predicate>();
-                    PathCompiler compiler = new PathCompiler(parameter.toString(), predicates);
-                    Path path = compiler.compile();
-                    parameters.add(new Parameter(path));
-                    parameter.delete(0, parameter.length());
+            // we're at the start of the stream, and don't know what type of parameter we have
+            if (type == null) {
+                if (isWhitespace(c)) {
+                    continue;
+                }
+
+                if (c == OPEN_BRACE) {
+                    type = ParamType.JSON;
+                }
+                else if (isPathContext(c)) {
+                    type = ParamType.PATH; // read until we reach a terminating comma and we've reset grouping to zero
                 }
             }
-            else if (c == COMMA && braceCount == 0) {
-                parameter.delete(0, parameter.length());
-            }
-            else {
-                if (c == CLOSE_PARENTHESIS) {
-                    parenCount--;
-                    if (parenCount == 0) {
-                        if (parameter.length() > 0) {
-                            // inner parse the parameter expression to pass along to the function
-                            LinkedList<Predicate> predicates = new LinkedList<Predicate>();
-                            PathCompiler compiler = new PathCompiler(parameter.toString(), predicates);
-                            parameters.add(new Parameter(compiler.compile()));
-                        }
-                        break;
-                    }
-                    else {
+
+            switch (c) {
+                case OPEN_PARENTHESIS:
+                    groupParen++;
+                    break;
+                case OPEN_BRACE:
+                    groupBrace++;
+                    break;
+                case OPEN_SQUARE_BRACKET:
+                    groupBracket++;
+                    break;
+
+                case CLOSE_BRACE:
+                    groupBrace--;
+                    break;
+                case CLOSE_SQUARE_BRACKET:
+                    groupBracket--;
+                    break;
+
+                // In either the close paren case where we have zero paren groups left, capture the parameter, or where
+                // we've encountered a COMMA do the same
+                case CLOSE_PARENTHESIS:
+                    groupParen--;
+                    if (0 != groupParen) {
                         parameter.append(c);
                     }
-                }
-                else if (c == OPEN_PARENTHESIS) {
-                    parenCount++;
-                    parameter.append(c);
-                }
-                else {
-                    parameter.append(c);
-                }
+                case COMMA:
+                    // In this state we've reach the end of a function parameter and we can pass along the parameter string
+                    // to the parser
+                    if (null != type && (0 == groupBrace && 0 == groupBracket && ((0 == groupParen && CLOSE_PARENTHESIS == c) || 1 == groupParen))) {
+                        Parameter param = new Parameter();
+                        param.setType(type);
+                        if (type == ParamType.JSON) {
+                            // parse the json and set the value
+                            param.setCachedValue(parameter.toString());
+                            param.setEvaluated(true);
+                        }
+                        else if (type == ParamType.PATH) {
+                            LinkedList<Predicate> predicates = new LinkedList<Predicate>();
+                            PathCompiler compiler = new PathCompiler(parameter.toString(), predicates);
+                            param.setPath(compiler.compile());
+                        }
+                        parameters.add(param);
+                        parameter.delete(0, parameter.length());
+
+                        type = null;
+                        endOfStream = (0 == groupParen);
+                    }
+                    break;
+            }
+
+            if (type != null && !(c == COMMA && 0 == groupBrace && 0 == groupBracket && 1 == groupParen)) {
+                parameter.append(c);
             }
         }
         path.setPosition(readPosition);
         return parameters;
+    }
+
+    private boolean isWhitespace(char c) {
+        return (c == SPACE || c == TAB || c == LF || c == CR);
     }
 
     //

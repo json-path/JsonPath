@@ -6,9 +6,12 @@ import com.jayway.jsonpath.internal.Path;
  * Created by matt@mjgreenwood.net on 12/10/15.
  */
 public class Parameter {
-    private final Path path;
+    private ParamType type;
+    private Path path;
     private Object cachedValue;
     private Boolean evaluated = false;
+
+    public Parameter() {}
 
     public Parameter(Path path) {
         this.path = path;
@@ -32,5 +35,17 @@ public class Parameter {
 
     public boolean hasEvaluated() {
         return evaluated;
+    }
+
+    public ParamType getType() {
+        return type;
+    }
+
+    public void setType(ParamType type) {
+        this.type = type;
+    }
+
+    public void setPath(Path path) {
+        this.path = path;
     }
 }
