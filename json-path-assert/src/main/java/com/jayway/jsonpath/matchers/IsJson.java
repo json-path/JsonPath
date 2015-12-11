@@ -13,12 +13,8 @@ import java.io.IOException;
 public class IsJson<T> extends TypeSafeMatcher<T> {
     private final Matcher<? super ReadContext> jsonMatcher;
 
-    protected IsJson(Matcher<? super ReadContext> jsonMatcher) {
+    public IsJson(Matcher<? super ReadContext> jsonMatcher) {
         this.jsonMatcher = jsonMatcher;
-    }
-
-    public static Matcher<Object> isJson(final Matcher<? super ReadContext> matcher) {
-        return new IsJson(matcher);
     }
 
     @Override

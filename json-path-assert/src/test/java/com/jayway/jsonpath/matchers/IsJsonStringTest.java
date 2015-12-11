@@ -9,7 +9,7 @@ import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
-import static com.jayway.jsonpath.matchers.IsJsonString.isJsonString;
+import static com.jayway.jsonpath.matchers.JsonPathMatchers.isJsonString;
 import static com.jayway.jsonpath.matchers.helpers.ResourceHelpers.resource;
 import static com.jayway.jsonpath.matchers.helpers.TestingMatchers.*;
 import static org.hamcrest.Matchers.*;

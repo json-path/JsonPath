@@ -11,7 +11,7 @@ import org.junit.Test;
 import java.util.Collection;
 
 import static com.jayway.jsonpath.JsonPath.compile;
-import static com.jayway.jsonpath.matchers.WithJsonPath.withJsonPath;
+import static com.jayway.jsonpath.matchers.JsonPathMatchers.withJsonPath;
 import static com.jayway.jsonpath.matchers.helpers.ResourceHelpers.resource;
 import static org.hamcrest.Matchers.*;
 import static org.junit.Assert.assertThat;

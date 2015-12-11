@@ -11,7 +11,7 @@ import org.junit.Test;
 
 import java.io.File;
 
-import static com.jayway.jsonpath.matchers.IsJsonFile.isJsonFile;
+import static com.jayway.jsonpath.matchers.JsonPathMatchers.isJsonFile;
 import static com.jayway.jsonpath.matchers.helpers.ResourceHelpers.resourceAsFile;
 import static com.jayway.jsonpath.matchers.helpers.TestingMatchers.*;
 import static org.hamcrest.Matchers.*;

@@ -12,7 +12,7 @@ import org.junit.Test;
 
 import java.io.File;
 
-import static com.jayway.jsonpath.matchers.IsJson.isJson;
+import static com.jayway.jsonpath.matchers.JsonPathMatchers.isJson;
 import static com.jayway.jsonpath.matchers.helpers.ResourceHelpers.resource;
 import static com.jayway.jsonpath.matchers.helpers.ResourceHelpers.resourceAsFile;
 import static com.jayway.jsonpath.matchers.helpers.TestingMatchers.withPathEvaluatedTo;

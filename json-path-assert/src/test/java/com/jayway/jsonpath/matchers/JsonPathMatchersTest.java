@@ -10,9 +10,7 @@ import java.io.File;
 import java.nio.file.Paths;
 import java.util.Collection;
 
-import static com.jayway.jsonpath.matchers.JsonPathMatchers.hasJsonPath;
-import static com.jayway.jsonpath.matchers.JsonPathMatchers.isJson;
-import static com.jayway.jsonpath.matchers.WithJsonPath.withJsonPath;
+import static com.jayway.jsonpath.matchers.JsonPathMatchers.*;
 import static com.jayway.jsonpath.matchers.helpers.ResourceHelpers.resource;
 import static com.jayway.jsonpath.matchers.helpers.ResourceHelpers.resourceAsFile;
 import static org.hamcrest.Matchers.*;
@@ -126,5 +124,11 @@ public class JsonPathMatchersTest {
     public void shouldNotMatchJsonPathOnNonExistingFile() {
         File nonExistingFile = Paths.get("missing-file").toFile();
         assertThat(nonExistingFile, not(hasJsonPath("$..*", anything())));
+    }
+
+    @Test
+    public void shouldMatchJsonPathOnParsedJsonObject() {
+        Object json = Configuration.defaultConfiguration().jsonProvider().parse(BOOKS_JSON);
+        assertThat(json, hasJsonPath("$.store.name", equalTo("Little Shop")));
     }
 }

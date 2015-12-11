@@ -5,10 +5,7 @@ import org.junit.Test;
 
 import java.io.File;
 
-import static com.jayway.jsonpath.matchers.IsJsonFile.isJsonFile;
-import static com.jayway.jsonpath.matchers.IsJsonString.isJsonString;
-import static com.jayway.jsonpath.matchers.JsonPathMatchers.isJson;
-import static com.jayway.jsonpath.matchers.WithJsonPath.withJsonPath;
+import static com.jayway.jsonpath.matchers.JsonPathMatchers.*;
 import static com.jayway.jsonpath.matchers.helpers.ResourceHelpers.resource;
 import static com.jayway.jsonpath.matchers.helpers.ResourceHelpers.resourceAsFile;
 import static org.hamcrest.Matchers.equalTo;
