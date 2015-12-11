@@ -57,7 +57,7 @@ public class NumericPathFunctionTest extends BaseFunctionTest {
 
     @Test
     public void testMinOfDouble() {
-        verifyMathFunction(conf, "$.numbers.min(foobar)", 1d);
+        verifyMathFunction(conf, "$.numbers.min()", 1d);
     }
 
     @Test

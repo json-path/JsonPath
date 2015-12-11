@@ -28,7 +28,25 @@ public class NestedFunctionTest extends BaseFunctionTest {
     }
 
     @Test
-    public void testAverageOfDoubles() {
-        verifyMathFunction(conf, "$.avg({$.numbers.min()}, {$.numbers.max()})", 5.5);
+    public void testParameterAverageFunctionCall() {
+        verifyMathFunction(conf, "$avg({$.numbers.min()}, {$.numbers.max()})", 5.5);
+    }
+
+    @Test
+    public void testArrayAverageFunctionCall() {
+        verifyMathFunction(conf, "$.numbers.avg()", 5.5);
+    }
+
+    /**
+     * This test calculates the following:
+     *
+     * For each number in $.numbers 1 -> 10 add each number up,
+     * then add 1 (min), 10 (max)
+     *
+     * Alternatively 1+2+3+4+5+6+7+8+9+10+1+10 == 66
+     */
+    @Test
+    public void testArrayAverageFunctionCallWithParameters() {
+        verifyMathFunction(conf, "$.numbers.sum({$.numbers.min()}, {$.numbers.max()})", 66.0);
     }
 }

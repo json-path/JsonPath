@@ -223,6 +223,20 @@ public class PathCompiler {
         return path.currentIsTail() || readNextToken(appender);
     }
 
+    /**
+     * Parse the parameters of a function call, either the caller has supplied JSON data, or the caller has supplied
+     * another path expression which must be evaluated and in turn invoked against the root document.  In this tokenizer
+     * we're only concerned with parsing the path thus the output of this function is a list of parameters with the Path
+     * set if the parameter is an expression.  If the parameter is a JSON document then the value of the cachedValue is
+     * set on the object.
+     *
+     * @param readPosition
+     *      The current position within the stream we've advanced - TODO remove the need for this...
+     * @return
+     *      An ordered list of parameters that are to processed via the function.  Typically functions either process
+     *      an array of values and/or can consume parameters in addition to the values provided from the consumption of
+     *      an array.
+     */
     private List<Parameter> parseFunctionParameters(int readPosition) {
         PathToken currentToken;
         List<Parameter> parameters = new ArrayList<Parameter>();
@@ -230,7 +244,7 @@ public class PathCompiler {
         Boolean insideParameter = false;
         int braceCount = 0, parenCount = 1;
         while (path.inBounds(readPosition)) {
-            char c = path.charAt(readPosition);
+            char c = path.charAt(readPosition++);
 
             if (c == OPEN_BRACE) {
                 braceCount++;
@@ -273,7 +287,6 @@ public class PathCompiler {
                     parameter.append(c);
                 }
             }
-            readPosition++;
         }
         path.setPosition(readPosition);
         return parameters;

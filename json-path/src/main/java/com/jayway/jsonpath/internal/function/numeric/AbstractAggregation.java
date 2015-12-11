@@ -43,17 +43,15 @@ public abstract class AbstractAggregation implements PathFunction {
                     next(value);
                 }
             }
-            return getValue();
         }
-        else if (parameters != null) {
+        if (parameters != null) {
             for (Parameter param : parameters) {
                 if (param.getCachedValue() instanceof Number) {
                     Number value = (Number)param.getCachedValue();
                     next(value);
                 }
             }
-            return getValue();
         }
-        return null;
+        return getValue();
     }
 }
