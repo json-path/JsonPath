@@ -29,7 +29,7 @@ public class NestedFunctionTest extends BaseFunctionTest {
 
     @Test
     public void testParameterAverageFunctionCall() {
-        verifyMathFunction(conf, "$avg({$.numbers.min()}, {$.numbers.max()})", 5.5);
+        verifyMathFunction(conf, "$.avg({$.numbers.min()}, {$.numbers.max()})", 5.5);
     }
 
     @Test
