@@ -265,8 +265,9 @@ public class PathCompiler {
 
         // Parenthesis starts at 1 since we're marking the start of a function call, the close paren will denote the
         // last parameter boundary
-        Integer groupParen = 1, groupBracket = 0, groupBrace = 0;
+        Integer groupParen = 1, groupBracket = 0, groupBrace = 0, groupQuote = 0;
         Boolean endOfStream = false;
+        char priorChar = 0;
         List<Parameter> parameters = new ArrayList<Parameter>();
         StringBuffer parameter = new StringBuffer();
         while (path.inBounds(readPosition) && !endOfStream) {
@@ -278,7 +279,7 @@ public class PathCompiler {
                     continue;
                 }
 
-                if (c == OPEN_BRACE) {
+                if (c == OPEN_BRACE || isDigit(c) || DOUBLE_QUOTE == c) {
                     type = ParamType.JSON;
                 }
                 else if (isPathContext(c)) {
@@ -287,6 +288,14 @@ public class PathCompiler {
             }
 
             switch (c) {
+                case DOUBLE_QUOTE:
+                    if (priorChar != '\\' && groupQuote > 0) {
+                        groupQuote--;
+                    }
+                    else {
+                        groupQuote++;
+                    }
+                    break;
                 case OPEN_PARENTHESIS:
                     groupParen++;
                     break;
@@ -314,24 +323,28 @@ public class PathCompiler {
                 case COMMA:
                     // In this state we've reach the end of a function parameter and we can pass along the parameter string
                     // to the parser
-                    if (null != type && (0 == groupBrace && 0 == groupBracket && ((0 == groupParen && CLOSE_PARENTHESIS == c) || 1 == groupParen))) {
-                        Parameter param = new Parameter();
-                        param.setType(type);
-                        if (type == ParamType.JSON) {
-                            // parse the json and set the value
-                            param.setCachedValue(parameter.toString());
-                            param.setEvaluated(true);
-                        }
-                        else if (type == ParamType.PATH) {
-                            LinkedList<Predicate> predicates = new LinkedList<Predicate>();
-                            PathCompiler compiler = new PathCompiler(parameter.toString(), predicates);
-                            param.setPath(compiler.compile());
-                        }
-                        parameters.add(param);
-                        parameter.delete(0, parameter.length());
-
-                        type = null;
+                    if ((0 == groupQuote && 0 == groupBrace && 0 == groupBracket && ((0 == groupParen && CLOSE_PARENTHESIS == c) || 1 == groupParen))) {
                         endOfStream = (0 == groupParen);
+
+                        if (null != type) {
+                            Parameter param = null;
+                            if (type == ParamType.JSON) {
+                                // parse the json and set the value
+                                param = new Parameter(parameter.toString());
+                            } else if (type == ParamType.PATH) {
+                                LinkedList<Predicate> predicates = new LinkedList<Predicate>();
+                                PathCompiler compiler = new PathCompiler(parameter.toString(), predicates);
+                                param = new Parameter(compiler.compile());
+                            }
+                            if (null != param) {
+                                parameters.add(param);
+                            } else {
+                                // TODO: raise error...
+                            }
+                            parameter.delete(0, parameter.length());
+
+                            type = null;
+                        }
                     }
                     break;
             }
@@ -339,6 +352,7 @@ public class PathCompiler {
             if (type != null && !(c == COMMA && 0 == groupBrace && 0 == groupBracket && 1 == groupParen)) {
                 parameter.append(c);
             }
+            priorChar = c;
         }
         path.setPosition(readPosition);
         return parameters;

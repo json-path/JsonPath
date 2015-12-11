@@ -10,11 +10,18 @@ public class Parameter {
     private Path path;
     private Object cachedValue;
     private Boolean evaluated = false;
+    private String json;
 
     public Parameter() {}
 
+    public Parameter(String json) {
+        this.json = json;
+        this.type = ParamType.JSON;
+    }
+
     public Parameter(Path path) {
         this.path = path;
+        this.type = ParamType.PATH;
     }
 
     public Object getCachedValue() {
@@ -47,5 +54,13 @@ public class Parameter {
 
     public void setPath(Path path) {
         this.path = path;
+    }
+
+    public String getJson() {
+        return json;
+    }
+
+    public void setJson(String json) {
+        this.json = json;
     }
 }

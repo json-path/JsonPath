@@ -49,4 +49,9 @@ public class NestedFunctionTest extends BaseFunctionTest {
     public void testArrayAverageFunctionCallWithParameters() {
         verifyMathFunction(conf, "$.numbers.sum($.numbers.min(), $.numbers.max())", 66.0);
     }
+
+    @Test
+    public void testJsonInnerArgumentArray() {
+        verifyMathFunction(conf, "$.sum(5, 3, $.numbers.max(), 2)", 20.0);
+    }
 }

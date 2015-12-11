@@ -44,7 +44,16 @@ public class FunctionPathToken extends PathToken {
         if (null != functionParams) {
             for (Parameter param : functionParams) {
                 if (!param.hasEvaluated()) {
-                    param.setCachedValue(param.getPath().evaluate(ctx.rootDocument(), ctx.rootDocument(), ctx.configuration()).getValue());
+                    switch (param.getType()) {
+                        case PATH:
+                            param.setCachedValue(param.getPath().evaluate(ctx.rootDocument(), ctx.rootDocument(), ctx.configuration()).getValue());
+                            param.setEvaluated(true);
+                            break;
+                        case JSON:
+                            param.setCachedValue(ctx.configuration().jsonProvider().parse(param.getJson()));
+                            param.setEvaluated(true);
+                            break;
+                    }
                 }
             }
         }
