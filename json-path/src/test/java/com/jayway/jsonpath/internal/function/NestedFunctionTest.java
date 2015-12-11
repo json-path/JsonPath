@@ -54,4 +54,14 @@ public class NestedFunctionTest extends BaseFunctionTest {
     public void testJsonInnerArgumentArray() {
         verifyMathFunction(conf, "$.sum(5, 3, $.numbers.max(), 2)", 20.0);
     }
+
+    @Test
+    public void testStringConcat() {
+        verifyTextFunction(conf, "$.text.concat()", "abcdef");
+    }
+
+    @Test
+    public void testStringConcatWithJSONParameter() {
+        verifyTextFunction(conf, "$.text.concat(\"-\", \"ghijk\")", "abcdef-ghijk");
+    }
 }

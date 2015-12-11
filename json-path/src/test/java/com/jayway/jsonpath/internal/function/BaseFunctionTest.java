@@ -39,6 +39,10 @@ public class BaseFunctionTest {
         verifyFunction(conf, pathExpr, NUMBER_SERIES, expectedValue);
     }
 
+    protected void verifyTextFunction(Configuration conf, String pathExpr, Object expectedValue) {
+        verifyFunction(conf, pathExpr, TEXT_SERIES, expectedValue);
+    }
+
     protected String getResourceAsText(String resourceName) throws IOException {
         return new Scanner(BaseFunctionTest.class.getResourceAsStream(resourceName), "UTF-8").useDelimiter("\\A").next();
     }
