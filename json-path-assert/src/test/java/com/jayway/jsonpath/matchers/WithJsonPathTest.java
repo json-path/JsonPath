@@ -12,6 +12,7 @@ import java.util.Collection;
 
 import static com.jayway.jsonpath.JsonPath.compile;
 import static com.jayway.jsonpath.matchers.JsonPathMatchers.withJsonPath;
+import static com.jayway.jsonpath.matchers.JsonPathMatchers.withoutJsonPath;
 import static com.jayway.jsonpath.matchers.helpers.ResourceHelpers.resource;
 import static org.hamcrest.Matchers.*;
 import static org.junit.Assert.assertThat;
@@ -47,6 +48,26 @@ public class WithJsonPathTest {
         assertThat(BOOKS_JSON, not(withJsonPath("$.not_there")));
         assertThat(BOOKS_JSON, not(withJsonPath("$.store.book[5].title")));
         assertThat(BOOKS_JSON, not(withJsonPath("$.store.book[*].not_there")));
+    }
+
+    @Test
+    public void shouldMatchNonExistingJsonPath() {
+        assertThat(BOOKS_JSON, withoutJsonPath(compile("$.not_there")));
+    }
+
+    @Test
+    public void shouldMatchNonExistingStringJsonPath() {
+        assertThat(BOOKS_JSON, withoutJsonPath("$.not_there"));
+    }
+
+    @Test
+    public void shouldNotMatchExistingCompiledJsonPath() {
+        assertThat(BOOKS_JSON, not(withoutJsonPath(compile("$.store.name"))));
+    }
+
+    @Test
+    public void shouldNotMatchExistingStringJsonPath() {
+        assertThat(BOOKS_JSON, not(withoutJsonPath("$.store.name")));
     }
 
     @Test

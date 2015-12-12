@@ -131,4 +131,14 @@ public class JsonPathMatchersTest {
         Object json = Configuration.defaultConfiguration().jsonProvider().parse(BOOKS_JSON);
         assertThat(json, hasJsonPath("$.store.name", equalTo("Little Shop")));
     }
+
+    @Test
+    public void shouldMatchMissingJsonPath() {
+        assertThat(BOOKS_JSON, hasNoJsonPath("$.not_there"));
+    }
+
+    @Test
+    public void shouldNotMatchExistingJsonPath() {
+        assertThat(BOOKS_JSON, not(hasNoJsonPath("$.store.name")));
+    }
 }

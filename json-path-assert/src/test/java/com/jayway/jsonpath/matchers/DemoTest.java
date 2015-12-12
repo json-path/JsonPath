@@ -60,4 +60,22 @@ public class DemoTest {
         File json = resourceAsFile("invalid.json");
         assertThat(json, isJsonFile(withJsonPath("$.store.name", equalTo("The Shop"))));
     }
+
+    @Test
+    public void shouldFailOnNonExistingJsonPath() {
+        String json = resource("books.json");
+        assertThat(json, hasJsonPath("$.not-here"));
+    }
+
+    @Test
+    public void shouldFailOnExistingJsonPath() {
+        String json = resource("books.json");
+        assertThat(json, hasNoJsonPath("$.store.name"));
+    }
+
+    @Test
+    public void shouldFailOnExistingJsonPathAlternative() {
+        String json = resource("books.json");
+        assertThat(json, isJson(withoutJsonPath("$.store.name")));
+    }
 }

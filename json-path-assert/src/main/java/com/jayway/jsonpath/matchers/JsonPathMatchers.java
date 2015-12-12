@@ -16,11 +16,17 @@ public class JsonPathMatchers {
     }
 
     public static Matcher<? super Object> hasJsonPath(String jsonPath) {
-        return hasJsonPath(jsonPath, not(anyOf(nullValue(), empty())));
+        return describedAs("has json path %0",
+                hasJsonPath(jsonPath, not(anyOf(nullValue(), empty()))),
+                jsonPath);
     }
 
     public static <T> Matcher<? super Object> hasJsonPath(final String jsonPath, final Matcher<T> resultMatcher) {
         return isJson(withJsonPath(jsonPath, resultMatcher));
+    }
+
+    public static Matcher<? super Object> hasNoJsonPath(String jsonPath) {
+        return isJson(withoutJsonPath(jsonPath));
     }
 
     public static Matcher<Object> isJson() {
@@ -44,7 +50,17 @@ public class JsonPathMatchers {
     }
 
     public static Matcher<? super ReadContext> withJsonPath(JsonPath jsonPath) {
-        return withJsonPath(jsonPath, not(anyOf(nullValue(), empty())));
+        return describedAs("with json path %0",
+                withJsonPath(jsonPath, not(anyOf(nullValue(), empty()))),
+                jsonPath.getPath());
+    }
+
+    public static Matcher<? super ReadContext> withoutJsonPath(String jsonPath, Predicate... filters) {
+        return withoutJsonPath(JsonPath.compile(jsonPath, filters));
+    }
+
+    public static Matcher<? super ReadContext> withoutJsonPath(JsonPath jsonPath) {
+        return new WithoutJsonPath(jsonPath);
     }
 
     public static <T> Matcher<? super ReadContext> withJsonPath(String jsonPath, Matcher<T> resultMatcher) {
