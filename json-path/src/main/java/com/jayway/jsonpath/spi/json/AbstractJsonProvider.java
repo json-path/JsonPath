@@ -43,6 +43,20 @@ public abstract class AbstractJsonProvider implements JsonProvider {
         return ((List) obj).get(idx);
     }
 
+    /**
+     * Extracts the last value from an array
+     *
+     * @param obj an array
+     * @return the entry at the given index
+     */
+    public Object getLastElement(Object obj) {
+        if (null != obj) {
+            int len = this.length(obj);
+            return unwrap(getArrayIndex(obj, len-1));
+        }
+        return null;
+    }
+
     public final Object getArrayIndex(Object obj, int idx, boolean unwrap){
         return getArrayIndex(obj, idx);
     }

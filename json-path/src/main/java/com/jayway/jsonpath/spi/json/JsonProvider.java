@@ -165,4 +165,11 @@ public interface JsonProvider {
     Object unwrap(Object obj);
 
 
+    /**
+     * Get the last element of the array
+     *
+     * @param obj an array
+     * @return the unwrapped value
+     */
+    Object getLastElement(Object obj);
 }

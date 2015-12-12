@@ -64,4 +64,9 @@ public class NestedFunctionTest extends BaseFunctionTest {
     public void testStringConcatWithJSONParameter() {
         verifyTextFunction(conf, "$.text.concat(\"-\", \"ghijk\")", "abcdef-ghijk");
     }
+
+    @Test
+    public void testLoadFunction() {
+        verifyTextFunction(conf, "$.getjson($.urls[0])[0].total", 264);
+    }
 }
