@@ -15,9 +15,6 @@ public class BaseFunctionTest {
     protected static final String NUMBER_SERIES = "{\"empty\": [], \"numbers\" : [ 1, 2, 3, 4, 5, 6, 7, 8, 9, 10]}";
     protected static final String TEXT_SERIES = "{\"urls\": [\"http://api.worldbank.org/countries/all/?format=json\", \"http://api.worldbank.org/countries/all/?format=json\"], \"text\" : [ \"a\", \"b\", \"c\", \"d\", \"e\", \"f\" ]}";
 
-
-
-
     /**
      * Verify the function returns the correct result based on the input expectedValue
      *
@@ -32,7 +29,7 @@ public class BaseFunctionTest {
      */
     protected void verifyFunction(Configuration conf, String pathExpr, String json, Object expectedValue) {
         Object result = using(conf).parse(json).read(pathExpr);
-        assertThat(result).isEqualTo(expectedValue);
+        assertThat(conf.jsonProvider().unwrap(result)).isEqualTo(expectedValue);
     }
 
     protected void verifyMathFunction(Configuration conf, String pathExpr, Object expectedValue) {

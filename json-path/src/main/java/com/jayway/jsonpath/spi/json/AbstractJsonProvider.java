@@ -52,7 +52,7 @@ public abstract class AbstractJsonProvider implements JsonProvider {
     public Object getLastElement(Object obj) {
         if (null != obj) {
             int len = this.length(obj);
-            return unwrap(getArrayIndex(obj, len-1));
+            return getArrayIndex(obj, len-1);
         }
         return null;
     }

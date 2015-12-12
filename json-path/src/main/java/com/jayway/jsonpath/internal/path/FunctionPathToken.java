@@ -21,7 +21,7 @@ public class FunctionPathToken extends PathToken {
     private final List<Parameter> functionParams;
 
     public FunctionPathToken(String pathFragment, List<Parameter> parameters) {
-        this.pathFragment = pathFragment;
+        this.pathFragment = pathFragment + ((parameters != null && parameters.size() > 0) ? "(...)" : "()");
         if(null != pathFragment){
             functionName = pathFragment;
             functionParams = parameters;
