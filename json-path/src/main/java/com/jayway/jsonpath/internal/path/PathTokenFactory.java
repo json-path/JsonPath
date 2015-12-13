@@ -1,6 +1,9 @@
 package com.jayway.jsonpath.internal.path;
 
 import com.jayway.jsonpath.Predicate;
+import com.jayway.jsonpath.internal.path.operation.ArrayIndexOperation;
+import com.jayway.jsonpath.internal.path.operation.ArraySliceOperation;
+import com.jayway.jsonpath.internal.path.token.*;
 
 import java.util.Collection;
 import java.util.List;
@@ -22,11 +25,11 @@ public class PathTokenFactory {
     }
 
     public static PathToken createSliceArrayPathToken(final ArraySliceOperation arraySliceOperation) {
-        return new ArrayPathToken(arraySliceOperation);
+        return new SliceArrayPathToken(arraySliceOperation);
     }
 
     public static PathToken createIndexArrayPathToken(final ArrayIndexOperation arrayIndexOperation) {
-        return new ArrayPathToken(arrayIndexOperation);
+        return new IndexArrayPathToken(arrayIndexOperation);
     }
 
     public static PathToken createWildCardPathToken() {

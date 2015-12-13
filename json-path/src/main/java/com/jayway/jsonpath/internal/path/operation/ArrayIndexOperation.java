@@ -1,4 +1,4 @@
-package com.jayway.jsonpath.internal.path;
+package com.jayway.jsonpath.internal.path.operation;
 
 import com.jayway.jsonpath.InvalidPathException;
 import com.jayway.jsonpath.internal.Utils;
