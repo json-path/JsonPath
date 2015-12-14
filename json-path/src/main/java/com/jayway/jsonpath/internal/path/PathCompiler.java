@@ -4,6 +4,7 @@ import com.jayway.jsonpath.InvalidPathException;
 import com.jayway.jsonpath.Predicate;
 import com.jayway.jsonpath.internal.CharacterIndex;
 import com.jayway.jsonpath.internal.Path;
+import com.jayway.jsonpath.internal.Utils;
 import com.jayway.jsonpath.internal.filter.FilterCompiler;
 
 import java.util.ArrayList;
@@ -361,16 +362,22 @@ public class PathCompiler {
         int readPosition = startPosition;
         int endPosition = 0;
         boolean inProperty = false;
+        boolean inEscape = false;
 
         while (path.inBounds(readPosition)) {
             char c = path.charAt(readPosition);
 
-            if (c == CLOSE_SQUARE_BRACKET && !inProperty) {
+            if(inEscape){
+                inEscape = false;
+            } else if('\\' == c){
+                inEscape = true;
+            } else if (c == CLOSE_SQUARE_BRACKET && !inProperty) {
                 break;
             } else if (c == potentialStringDelimiter) {
-                if (inProperty) {
+                if (inProperty && !inEscape) {
                     endPosition = readPosition;
-                    properties.add(path.subSequence(startPosition, endPosition).toString());
+                    String prop = path.subSequence(startPosition, endPosition).toString();
+                    properties.add(Utils.unescape(prop));
                     inProperty = false;
                 } else {
                     startPosition = readPosition + 1;

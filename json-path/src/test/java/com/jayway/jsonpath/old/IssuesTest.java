@@ -1,5 +1,6 @@
 package com.jayway.jsonpath.old;
 
+import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.google.gson.JsonObject;
 import com.jayway.jsonpath.BaseTest;
 import com.jayway.jsonpath.Configuration;
@@ -979,5 +980,23 @@ public class IssuesTest extends BaseTest {
 
         assertThat(list).containsExactly(null, 1, null);
 
+    }
+
+    @Test
+    public void issue_171() {
+
+        String json = "{\n" +
+                "  \"can delete\": \"this\",\n" +
+                "  \"can't delete\": \"this\"\n" +
+                "}";
+
+        DocumentContext context = using(JACKSON_JSON_NODE_CONFIGURATION).parse(json);
+        context.set("$.['can delete']", null);
+        context.set("$.['can\\'t delete']", null);
+
+        ObjectNode objectNode = context.read("$");
+
+        assertThat(objectNode.get("can delete").isNull());
+        assertThat(objectNode.get("can't delete").isNull());
     }
 }
