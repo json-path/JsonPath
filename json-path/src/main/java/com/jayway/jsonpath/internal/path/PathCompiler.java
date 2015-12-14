@@ -204,8 +204,10 @@ public class PathCompiler {
                 // read the next token to determine if we have a simple no-args function call
                 char c = path.charAt(readPosition + 1);
                 if (c != CLOSE_PARENTHESIS) {
+                    path.setPosition(endPosition+1);
                     // parse the arguments of the function - arguments that are inner queries or JSON document(s)
-                    functionParameters = parseFunctionParameters(readPosition);
+                    String functionName = path.subSequence(startPosition, endPosition).toString();
+                    functionParameters = parseFunctionParameters(functionName);
                 } else {
                     path.setPosition(readPosition + 1);
                 }
@@ -252,14 +254,12 @@ public class PathCompiler {
      *
      * The above is a valid function call, we're first summing 10 + avg of 1...10 (5.5) so the total should be 15.5
      *
-     * @param readPosition
-     *      The current position within the stream we've advanced - TODO remove the need for this...
      * @return
      *      An ordered list of parameters that are to processed via the function.  Typically functions either process
      *      an array of values and/or can consume parameters in addition to the values provided from the consumption of
      *      an array.
      */
-    private List<Parameter> parseFunctionParameters(int readPosition) {
+    private List<Parameter> parseFunctionParameters(String funcName) {
         PathToken currentToken;
         ParamType type = null;
 
@@ -270,8 +270,9 @@ public class PathCompiler {
         char priorChar = 0;
         List<Parameter> parameters = new ArrayList<Parameter>();
         StringBuffer parameter = new StringBuffer();
-        while (path.inBounds(readPosition) && !endOfStream) {
-            char c = path.charAt(readPosition++);
+        while (path.inBounds() && !endOfStream) {
+            char c = path.currentChar();
+            path.incrementPosition(1);
 
             // we're at the start of the stream, and don't know what type of parameter we have
             if (type == null) {
@@ -290,6 +291,9 @@ public class PathCompiler {
             switch (c) {
                 case DOUBLE_QUOTE:
                     if (priorChar != '\\' && groupQuote > 0) {
+                        if (groupQuote == 0) {
+                            throw new InvalidPathException("Unexpected quote '\"' at character position: " + path.position());
+                        }
                         groupQuote--;
                     }
                     else {
@@ -307,9 +311,15 @@ public class PathCompiler {
                     break;
 
                 case CLOSE_BRACE:
+                    if (0 == groupBrace) {
+                        throw new InvalidPathException("Unexpected close brace '}' at character position: " + path.position());
+                    }
                     groupBrace--;
                     break;
                 case CLOSE_SQUARE_BRACKET:
+                    if (0 == groupBracket) {
+                        throw new InvalidPathException("Unexpected close bracket ']' at character position: " + path.position());
+                    }
                     groupBracket--;
                     break;
 
@@ -323,26 +333,27 @@ public class PathCompiler {
                 case COMMA:
                     // In this state we've reach the end of a function parameter and we can pass along the parameter string
                     // to the parser
-                    if ((0 == groupQuote && 0 == groupBrace && 0 == groupBracket && ((0 == groupParen && CLOSE_PARENTHESIS == c) || 1 == groupParen))) {
+                    if ((0 == groupQuote && 0 == groupBrace && 0 == groupBracket
+                            && ((0 == groupParen && CLOSE_PARENTHESIS == c) || 1 == groupParen))) {
                         endOfStream = (0 == groupParen);
 
                         if (null != type) {
                             Parameter param = null;
-                            if (type == ParamType.JSON) {
-                                // parse the json and set the value
-                                param = new Parameter(parameter.toString());
-                            } else if (type == ParamType.PATH) {
-                                LinkedList<Predicate> predicates = new LinkedList<Predicate>();
-                                PathCompiler compiler = new PathCompiler(parameter.toString(), predicates);
-                                param = new Parameter(compiler.compile());
+                            switch (type) {
+                                case JSON:
+                                    // parse the json and set the value
+                                    param = new Parameter(parameter.toString());
+                                    break;
+                                case PATH:
+                                    LinkedList<Predicate> predicates = new LinkedList<Predicate>();
+                                    PathCompiler compiler = new PathCompiler(parameter.toString(), predicates);
+                                    param = new Parameter(compiler.compile());
+                                    break;
                             }
                             if (null != param) {
                                 parameters.add(param);
-                            } else {
-                                // TODO: raise error...
                             }
                             parameter.delete(0, parameter.length());
-
                             type = null;
                         }
                     }
@@ -354,7 +365,9 @@ public class PathCompiler {
             }
             priorChar = c;
         }
-        path.setPosition(readPosition);
+        if (0 != groupBrace || 0 != groupParen || 0 != groupBracket) {
+            throw new InvalidPathException("Arguments to function: '" + funcName + "' are not closed properly.");
+        }
         return parameters;
     }
 

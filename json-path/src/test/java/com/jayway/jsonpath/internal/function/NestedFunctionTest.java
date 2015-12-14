@@ -8,6 +8,9 @@ import org.junit.runners.Parameterized;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import static com.jayway.jsonpath.JsonPath.using;
+import static org.junit.Assert.assertTrue;
+
 /**
  * Created by matt@mjgreenwood.net on 12/10/15.
  */
@@ -74,4 +77,46 @@ public class NestedFunctionTest extends BaseFunctionTest {
     public void testAppendNumber() {
         verifyMathFunction(conf, "$.numbers.append(11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 0).avg()", 10.0);
     }
+
+    /**
+     * Aggregation function should ignore text values
+     */
+    @Test
+    public void testAppendTextAndNumberThenSum() {
+        verifyMathFunction(conf, "$.numbers.append(\"0\", \"11\").sum()", 55.0);
+    }
+
+    @Test
+    public void testErrantCloseBraceNegative() {
+        try {
+            using(conf).parse(this.NUMBER_SERIES).read("$.numbers.append(0, 1, 2}).avg()");
+            assert(false);
+        }
+        catch (Exception e) {
+            assertTrue(e.getMessage().startsWith("Unexpected close brace"));
+        }
+    }
+
+    @Test
+    public void testErrantCloseBracketNegative() {
+        try {
+            using(conf).parse(this.NUMBER_SERIES).read("$.numbers.append(0, 1, 2]).avg()");
+            assert(false);
+        }
+        catch (Exception e) {
+            assertTrue(e.getMessage().startsWith("Unexpected close bracket"));
+        }
+    }
+
+    @Test
+    public void testUnclosedFunctionCallNegative() {
+        try {
+            using(conf).parse(this.NUMBER_SERIES).read("$.numbers.append(0, 1, 2");
+            assert(false);
+        }
+        catch (Exception e) {
+            assertTrue(e.getMessage().startsWith("Arguments to function: 'append'"));
+        }
+    }
+
 }
