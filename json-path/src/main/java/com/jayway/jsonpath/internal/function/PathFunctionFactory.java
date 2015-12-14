@@ -1,11 +1,15 @@
 package com.jayway.jsonpath.internal.function;
 
 import com.jayway.jsonpath.InvalidPathException;
+import com.jayway.jsonpath.internal.function.http.HttpLoader;
+import com.jayway.jsonpath.internal.function.json.Append;
 import com.jayway.jsonpath.internal.function.numeric.Average;
 import com.jayway.jsonpath.internal.function.numeric.Max;
 import com.jayway.jsonpath.internal.function.numeric.Min;
 import com.jayway.jsonpath.internal.function.numeric.StandardDeviation;
 import com.jayway.jsonpath.internal.function.numeric.Sum;
+import com.jayway.jsonpath.internal.function.text.Concatenate;
+import com.jayway.jsonpath.internal.function.text.Length;
 
 import java.util.Collections;
 import java.util.HashMap;
@@ -35,9 +39,17 @@ public class PathFunctionFactory {
         map.put("min", Min.class);
         map.put("max", Max.class);
 
+        // Text Functions
+        map.put("concat", Concatenate.class);
+
+        // Network functions
+        map.put("getjson", HttpLoader.class);
+
         // JSON Entity Functions
         map.put("length", Length.class);
         map.put("size", Length.class);
+        map.put("append", Append.class);
+
 
         FUNCTIONS = Collections.unmodifiableMap(map);
     }

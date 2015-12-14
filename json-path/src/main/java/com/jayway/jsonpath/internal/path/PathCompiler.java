@@ -6,6 +6,8 @@ import com.jayway.jsonpath.internal.CharacterIndex;
 import com.jayway.jsonpath.internal.Path;
 import com.jayway.jsonpath.internal.Utils;
 import com.jayway.jsonpath.internal.filter.FilterCompiler;
+import com.jayway.jsonpath.internal.function.ParamType;
+import com.jayway.jsonpath.internal.function.Parameter;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -23,10 +25,16 @@ public class PathCompiler {
     private static final char OPEN_SQUARE_BRACKET = '[';
     private static final char CLOSE_SQUARE_BRACKET = ']';
     private static final char OPEN_PARENTHESIS = '(';
+    private static final char CLOSE_PARENTHESIS = ')';
+    private static final char OPEN_BRACE = '{';
+    private static final char CLOSE_BRACE = '}';
 
     private static final char WILDCARD = '*';
     private static final char PERIOD = '.';
     private static final char SPACE = ' ';
+    private static final char TAB = '\t';
+    private static final char CR = '\r';
+    private static final char LF = '\r';
     private static final char BEGIN_FILTER = '?';
     private static final char COMMA = ',';
     private static final char SPLIT = ':';
@@ -71,10 +79,26 @@ public class PathCompiler {
         }
     }
 
+    private void readWhitespace() {
+        while (path.inBounds()) {
+            char c = path.currentChar();
+            if (!isWhitespace(c)) {
+                break;
+            }
+            path.incrementPosition(1);
+        }
+    }
+
+    private Boolean isPathContext(char c) {
+        return (c == DOC_CONTEXT || c == EVAL_CONTEXT);
+    }
+
     //[$ | @]
     private RootPathToken readContextToken() {
 
-        if (!path.currentCharIs(DOC_CONTEXT) && !path.currentCharIs(EVAL_CONTEXT)) {
+        readWhitespace();
+
+        if (!isPathContext(path.currentChar())) {
             throw new InvalidPathException("Path must start with '$' or '@'");
         }
 
@@ -152,13 +176,20 @@ public class PathCompiler {
         int readPosition = startPosition;
         int endPosition = 0;
 
+        boolean isFunction = false;
+
         while (path.inBounds(readPosition)) {
             char c = path.charAt(readPosition);
             if (c == SPACE) {
                 throw new InvalidPathException("Use bracket notion ['my prop'] if your property contains blank characters. position: " + path.position());
             }
-            if (c == PERIOD || c == OPEN_SQUARE_BRACKET) {
+            else if (c == PERIOD || c == OPEN_SQUARE_BRACKET) {
                 endPosition = readPosition;
+                break;
+            }
+            else if (c == OPEN_PARENTHESIS) {
+                isFunction = true;
+                endPosition = readPosition++;
                 break;
             }
             readPosition++;
@@ -167,16 +198,182 @@ public class PathCompiler {
             endPosition = path.length();
         }
 
-        path.setPosition(endPosition);
+
+        List<Parameter> functionParameters = null;
+        if (isFunction) {
+            if (path.inBounds(readPosition+1)) {
+                // read the next token to determine if we have a simple no-args function call
+                char c = path.charAt(readPosition + 1);
+                if (c != CLOSE_PARENTHESIS) {
+                    path.setPosition(endPosition+1);
+                    // parse the arguments of the function - arguments that are inner queries or JSON document(s)
+                    String functionName = path.subSequence(startPosition, endPosition).toString();
+                    functionParameters = parseFunctionParameters(functionName);
+                } else {
+                    path.setPosition(readPosition + 1);
+                }
+            }
+            else {
+                path.setPosition(readPosition);
+            }
+        }
+        else {
+            path.setPosition(endPosition);
+        }
 
         String property = path.subSequence(startPosition, endPosition).toString();
-        if(property.endsWith("()")){
-            appender.appendPathToken(PathTokenFactory.createFunctionPathToken(property));
+        if(isFunction){
+            appender.appendPathToken(PathTokenFactory.createFunctionPathToken(property, functionParameters));
         } else {
             appender.appendPathToken(PathTokenFactory.createSinglePropertyPathToken(property, SINGLE_QUOTE));
         }
 
         return path.currentIsTail() || readNextToken(appender);
+    }
+
+    /**
+     * Parse the parameters of a function call, either the caller has supplied JSON data, or the caller has supplied
+     * another path expression which must be evaluated and in turn invoked against the root document.  In this tokenizer
+     * we're only concerned with parsing the path thus the output of this function is a list of parameters with the Path
+     * set if the parameter is an expression.  If the parameter is a JSON document then the value of the cachedValue is
+     * set on the object.
+     *
+     * Sequence for parsing out the parameters:
+     *
+     * This code has its own tokenizer - it does some rudimentary level of lexing in that it can distinguish between JSON block parameters
+     * and sub-JSON blocks - it effectively regex's out the parameters into string blocks that can then be passed along to the appropriate parser.
+     * Since sub-jsonpath expressions can themselves contain other function calls this routine needs to be sensitive to token counting to
+     * determine the boundaries.  Since the Path parser isn't aware of JSON processing this uber routine is needed.
+     *
+     * Parameters are separated by COMMAs ','
+     *
+     * <pre>
+     * doc = {"numbers": [1,2,3,4,5,6,7,8,9,10]}
+     *
+     * $.sum({10}, $.numbers.avg())
+     * </pre>
+     *
+     * The above is a valid function call, we're first summing 10 + avg of 1...10 (5.5) so the total should be 15.5
+     *
+     * @return
+     *      An ordered list of parameters that are to processed via the function.  Typically functions either process
+     *      an array of values and/or can consume parameters in addition to the values provided from the consumption of
+     *      an array.
+     */
+    private List<Parameter> parseFunctionParameters(String funcName) {
+        PathToken currentToken;
+        ParamType type = null;
+
+        // Parenthesis starts at 1 since we're marking the start of a function call, the close paren will denote the
+        // last parameter boundary
+        Integer groupParen = 1, groupBracket = 0, groupBrace = 0, groupQuote = 0;
+        Boolean endOfStream = false;
+        char priorChar = 0;
+        List<Parameter> parameters = new ArrayList<Parameter>();
+        StringBuffer parameter = new StringBuffer();
+        while (path.inBounds() && !endOfStream) {
+            char c = path.currentChar();
+            path.incrementPosition(1);
+
+            // we're at the start of the stream, and don't know what type of parameter we have
+            if (type == null) {
+                if (isWhitespace(c)) {
+                    continue;
+                }
+
+                if (c == OPEN_BRACE || isDigit(c) || DOUBLE_QUOTE == c) {
+                    type = ParamType.JSON;
+                }
+                else if (isPathContext(c)) {
+                    type = ParamType.PATH; // read until we reach a terminating comma and we've reset grouping to zero
+                }
+            }
+
+            switch (c) {
+                case DOUBLE_QUOTE:
+                    if (priorChar != '\\' && groupQuote > 0) {
+                        if (groupQuote == 0) {
+                            throw new InvalidPathException("Unexpected quote '\"' at character position: " + path.position());
+                        }
+                        groupQuote--;
+                    }
+                    else {
+                        groupQuote++;
+                    }
+                    break;
+                case OPEN_PARENTHESIS:
+                    groupParen++;
+                    break;
+                case OPEN_BRACE:
+                    groupBrace++;
+                    break;
+                case OPEN_SQUARE_BRACKET:
+                    groupBracket++;
+                    break;
+
+                case CLOSE_BRACE:
+                    if (0 == groupBrace) {
+                        throw new InvalidPathException("Unexpected close brace '}' at character position: " + path.position());
+                    }
+                    groupBrace--;
+                    break;
+                case CLOSE_SQUARE_BRACKET:
+                    if (0 == groupBracket) {
+                        throw new InvalidPathException("Unexpected close bracket ']' at character position: " + path.position());
+                    }
+                    groupBracket--;
+                    break;
+
+                // In either the close paren case where we have zero paren groups left, capture the parameter, or where
+                // we've encountered a COMMA do the same
+                case CLOSE_PARENTHESIS:
+                    groupParen--;
+                    if (0 != groupParen) {
+                        parameter.append(c);
+                    }
+                case COMMA:
+                    // In this state we've reach the end of a function parameter and we can pass along the parameter string
+                    // to the parser
+                    if ((0 == groupQuote && 0 == groupBrace && 0 == groupBracket
+                            && ((0 == groupParen && CLOSE_PARENTHESIS == c) || 1 == groupParen))) {
+                        endOfStream = (0 == groupParen);
+
+                        if (null != type) {
+                            Parameter param = null;
+                            switch (type) {
+                                case JSON:
+                                    // parse the json and set the value
+                                    param = new Parameter(parameter.toString());
+                                    break;
+                                case PATH:
+                                    LinkedList<Predicate> predicates = new LinkedList<Predicate>();
+                                    PathCompiler compiler = new PathCompiler(parameter.toString(), predicates);
+                                    param = new Parameter(compiler.compile());
+                                    break;
+                            }
+                            if (null != param) {
+                                parameters.add(param);
+                            }
+                            parameter.delete(0, parameter.length());
+                            type = null;
+                        }
+                    }
+                    break;
+            }
+
+            if (type != null && !(c == COMMA && 0 == groupBrace && 0 == groupBracket && 1 == groupParen)) {
+                parameter.append(c);
+            }
+            priorChar = c;
+        }
+        if (0 != groupBrace || 0 != groupParen || 0 != groupBracket) {
+            throw new InvalidPathException("Arguments to function: '" + funcName + "' are not closed properly.");
+        }
+        return parameters;
+    }
+
+    private boolean isWhitespace(char c) {
+        return (c == SPACE || c == TAB || c == LF || c == CR);
     }
 
     //
