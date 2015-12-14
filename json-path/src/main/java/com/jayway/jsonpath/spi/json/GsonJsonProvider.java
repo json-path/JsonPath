@@ -130,11 +130,15 @@ public class GsonJsonProvider extends AbstractJsonProvider {
 
     @Override
     public void setArrayIndex(Object array, int index, Object newValue) {
-        JsonArray a = toJsonArray(array);
-        if (index == a.size()) {
-            a.add(createJsonElement(newValue));
+        if (!isArray(array)) {
+            throw new UnsupportedOperationException();
         } else {
-            a.set(index, createJsonElement(newValue));
+            JsonArray arr = toJsonArray(array);
+            if (index == arr.size()){
+                arr.add(createJsonElement(newValue));
+            }else {
+                arr.set(index, createJsonElement(newValue));
+            }
         }
     }
 
