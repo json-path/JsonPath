@@ -19,6 +19,8 @@ import com.jayway.jsonpath.internal.EvaluationAbortException;
 import com.jayway.jsonpath.internal.EvaluationContext;
 import com.jayway.jsonpath.internal.Path;
 import com.jayway.jsonpath.internal.PathRef;
+import com.jayway.jsonpath.internal.path.eval.DefaultEvaluator;
+import com.jayway.jsonpath.internal.path.token.RootPathToken;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -30,6 +32,7 @@ public class CompiledPath implements Path {
 
     private final boolean isRootPath;
 
+    protected EvaluatorDispatcher evaluator;
 
     public CompiledPath(RootPathToken root, boolean isRootPath) {
         this.root = root;
@@ -41,6 +44,15 @@ public class CompiledPath implements Path {
         return isRootPath;
     }
 
+    public EvaluatorDispatcher getEvaluator() {
+        if (evaluator == null) evaluator = new DefaultEvaluator();
+        return evaluator;
+    }
+
+    public void setEvaluator(final EvaluatorDispatcher evaluator) {
+        this.evaluator = evaluator;
+    }
+
     @Override
     public EvaluationContext evaluate(Object document, Object rootDocument, Configuration configuration, boolean forUpdate) {
         if (logger.isDebugEnabled()) {
@@ -50,7 +62,7 @@ public class CompiledPath implements Path {
         EvaluationContextImpl ctx = new EvaluationContextImpl(this, rootDocument, configuration, forUpdate);
         try {
             PathRef op = ctx.forUpdate() ?  PathRef.createRoot(rootDocument) : PathRef.NO_OP;
-            root.evaluate("", op, document, ctx);
+            getEvaluator().evaluate(root, "", op, document, ctx);
         } catch (EvaluationAbortException abort){};
 
         return ctx;
@@ -74,5 +86,9 @@ public class CompiledPath implements Path {
     @Override
     public String toString() {
         return root.toString();
+    }
+
+    public RootPathToken getRoot() {
+        return root;
     }
 }

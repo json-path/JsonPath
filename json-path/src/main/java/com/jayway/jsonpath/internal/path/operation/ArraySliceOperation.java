@@ -1,10 +1,10 @@
-package com.jayway.jsonpath.internal.path;
+package com.jayway.jsonpath.internal.path.operation;
 
 import com.jayway.jsonpath.InvalidPathException;
 
 import static java.lang.Character.isDigit;
 
-public class ArraySliceOperation {
+public abstract class ArraySliceOperation {
 
     public enum Operation {
         SLICE_FROM,
@@ -14,12 +14,10 @@ public class ArraySliceOperation {
 
     private final Integer from;
     private final Integer to;
-    private final Operation operation;
 
-    private ArraySliceOperation(Integer from, Integer to, Operation operation) {
+    protected ArraySliceOperation(Integer from, Integer to) {
         this.from = from;
         this.to = to;
-        this.operation = operation;
     }
 
     public Integer from() {
@@ -30,9 +28,7 @@ public class ArraySliceOperation {
         return to;
     }
 
-    public Operation operation() {
-        return operation;
-    }
+    public abstract Operation operation();
 
     @Override
     public String toString() {
@@ -58,19 +54,15 @@ public class ArraySliceOperation {
 
         Integer tempFrom = tryRead(tokens, 0);
         Integer tempTo = tryRead(tokens, 1);
-        Operation tempOperpation;
 
         if(tempFrom != null && tempTo == null){
-            tempOperpation  = Operation.SLICE_FROM;
-        } else if(tempFrom != null && tempTo != null){
-            tempOperpation  = Operation.SLICE_BETWEEN;
-        } else if(tempFrom == null && tempTo != null){
-            tempOperpation  = Operation.SLICE_TO;
-        } else {
-            throw new InvalidPathException("Failed to parse SliceOperation: " + operation);
+            return new SliceFromOperation(tempFrom);
+        } else if(tempFrom != null){
+            return new SliceBetweenOperation(tempFrom, tempTo);
+        } else if(tempTo != null){
+            return new SliceToOperation(tempTo);
         }
-
-        return new ArraySliceOperation(tempFrom, tempTo, tempOperpation);
+        throw new InvalidPathException("Failed to parse SliceOperation: " + operation);
     }
 
     private static Integer tryRead(String[] tokens, int idx){

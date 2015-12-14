@@ -1,6 +1,10 @@
 package com.jayway.jsonpath.internal.path;
 
 import com.jayway.jsonpath.BaseTest;
+import com.jayway.jsonpath.internal.path.token.PathToken;
+import com.jayway.jsonpath.internal.path.token.PropertyPathToken;
+import com.jayway.jsonpath.internal.path.token.ScanPathToken;
+import com.jayway.jsonpath.internal.path.token.WildcardPathToken;
 import org.junit.Test;
 
 import java.util.Arrays;

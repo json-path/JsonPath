@@ -5,6 +5,9 @@ import com.jayway.jsonpath.Predicate;
 import com.jayway.jsonpath.internal.CharacterIndex;
 import com.jayway.jsonpath.internal.Path;
 import com.jayway.jsonpath.internal.filter.FilterCompiler;
+import com.jayway.jsonpath.internal.path.operation.ArrayIndexOperation;
+import com.jayway.jsonpath.internal.path.operation.ArraySliceOperation;
+import com.jayway.jsonpath.internal.path.token.RootPathToken;
 
 import java.util.ArrayList;
 import java.util.Collection;

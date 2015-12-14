@@ -12,9 +12,9 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.jayway.jsonpath.internal.path;
+package com.jayway.jsonpath.internal.path.token;
 
-import com.jayway.jsonpath.internal.PathRef;
+import com.jayway.jsonpath.internal.path.PathTokenAppender;
 
 /**
  *
@@ -26,7 +26,7 @@ public class RootPathToken extends PathToken {
     private final String rootToken;
 
 
-    RootPathToken(char rootToken) {
+    public RootPathToken(char rootToken) {
         this.rootToken = Character.toString(rootToken);;
         this.tail = this;
         this.tokenCount = 1;
@@ -51,16 +51,6 @@ public class RootPathToken extends PathToken {
                 return this;
             }
         };
-    }
-
-    @Override
-    public void evaluate(String currentPath, PathRef pathRef, Object model, EvaluationContextImpl ctx) {
-        if (isLeaf()) {
-            PathRef op = ctx.forUpdate() ?  pathRef : PathRef.NO_OP;
-            ctx.addResult(rootToken, op, model);
-        } else {
-            next().evaluate(rootToken, pathRef, model, ctx);
-        }
     }
 
     @Override

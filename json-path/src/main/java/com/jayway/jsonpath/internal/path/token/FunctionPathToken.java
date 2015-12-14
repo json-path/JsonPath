@@ -1,7 +1,5 @@
-package com.jayway.jsonpath.internal.path;
+package com.jayway.jsonpath.internal.path.token;
 
-import com.jayway.jsonpath.internal.PathRef;
-import com.jayway.jsonpath.internal.function.PathFunction;
 import com.jayway.jsonpath.internal.function.PathFunctionFactory;
 
 /**
@@ -25,13 +23,6 @@ public class FunctionPathToken extends PathToken {
         }
     }
 
-    @Override
-    public void evaluate(String currentPath, PathRef parent, Object model, EvaluationContextImpl ctx) {
-        PathFunction pathFunction = PathFunctionFactory.newFunction(functionName);
-        Object result = pathFunction.invoke(currentPath, parent, model, ctx);
-        ctx.addResult(currentPath, parent, result);
-    }
-
     /**
      * Return the actual value by indicating true. If this return was false then we'd return the value in an array which
      * isn't what is desired - true indicates the raw value is returned.
@@ -48,5 +39,7 @@ public class FunctionPathToken extends PathToken {
         return "." + pathFragment;
     }
 
-
+    public String getFunctionName() {
+        return functionName;
+    }
 }
