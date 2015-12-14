@@ -130,7 +130,8 @@ public class EvaluationContextImpl implements EvaluationContext {
             if(resultIndex == 0){
                 throw new PathNotFoundException("No results for path: " + path.toString());
             }
-            Object value = jsonProvider().getLastElement(valueResult);
+            int len = jsonProvider().length(valueResult);
+            Object value = (len > 0) ? jsonProvider().getArrayIndex(valueResult, len-1) : null;
             if (value != null && unwrap){
               value = jsonProvider().unwrap(value);
             }
