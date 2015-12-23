@@ -7,7 +7,8 @@ import com.jayway.jsonpath.internal.CharacterIndex;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.Stack;
+import java.util.ArrayList;
+import java.util.List;
 
 public class FilterCompiler {
     private static final Logger logger = LoggerFactory.getLogger(FilterCompiler.class);
@@ -71,64 +72,14 @@ public class FilterCompiler {
 
     public Predicate compile() {
         try {
-            Stack<LogicalOperator> opsStack = new Stack<LogicalOperator>();
-            Stack<ExpressionNode> expStack = new Stack<ExpressionNode>();
+             final ExpressionNode result = readLogicalOR();
+             filter.skipBlanks();
+             if (filter.inBounds()) {
+                 throw new InvalidPathException(String.format("Expected end of filter expression instead of: %s",
+                         filter.subSequence(filter.position(), filter.length())));
+             }
 
-            int unbalancedParenthesis = 0;
-
-            while (filter.skipBlanks().inBounds()) {
-                int pos = filter.position();
-
-                switch (filter.currentChar()) {
-                    case OPEN_PARENTHESIS:
-                        unbalancedParenthesis++;
-                        filter.incrementPosition(1);
-                        break;
-                    case CLOSE_PARENTHESIS:
-                        unbalancedParenthesis--;
-                        filter.incrementPosition(1);
-                        ExpressionNode expressionNode = expStack.pop();
-                        if (!opsStack.isEmpty()) {
-                            if (expStack.isEmpty()) {
-                                throw new InvalidPathException("Expected expression on right hand side of operator " + opsStack.peek().getOperatorString() + " in filter " + filter);
-                            }
-                            ExpressionNode right = expStack.pop();
-                            expressionNode = ExpressionNode.createExpressionNode(expressionNode, opsStack.pop(), right);
-                            while (!opsStack.isEmpty()) {
-                                expressionNode = ExpressionNode.createExpressionNode(expressionNode, opsStack.pop(), expStack.pop());
-                            }
-                        }
-                        expStack.push(expressionNode);
-                        break;
-                    case NOT:
-                        filter.incrementPosition(1);
-                        break;
-                    case OR:
-                    case AND:
-                        LogicalOperator operatorNode = readLogicalOperator();
-                        opsStack.push(operatorNode);
-                        break;
-                    default:
-                        if(expStack.size() > 0 && opsStack.isEmpty()){
-                            throw new InvalidPathException("Expected logical operator (&&, ||) to follow expression " + expStack.peek().toString());
-                        }
-                        RelationalExpressionNode relationalExpressionNode = readExpression();
-                        expStack.push(relationalExpressionNode);
-                        break;
-                }
-                if (pos >= filter.position()) {
-                    throw new InvalidPathException("Failed to parse filter " + filter.toString());
-                }
-            }
-            if (unbalancedParenthesis != 0) {
-                throw new InvalidPathException("Failed to parse filter. Parenthesis are not balanced. " + filter.toString());
-            }
-
-            Predicate predicate = expStack.pop();
-
-            if (logger.isTraceEnabled()) logger.trace(predicate.toString());
-
-            return predicate;
+             return result;
         } catch (InvalidPathException e){
             throw e;
         } catch (Exception e) {
@@ -140,6 +91,13 @@ public class FilterCompiler {
         switch (filter.skipBlanks().currentChar()) {
             case DOC_CONTEXT  : return readPath();
             case EVAL_CONTEXT : return readPath();
+            case NOT:
+                filter.incrementPosition(1);
+                switch (filter.skipBlanks().currentChar()) {
+                    case DOC_CONTEXT  : return readPath();
+                    case EVAL_CONTEXT : return readPath();
+                    default: throw new InvalidPathException(String.format("Unexpected character: %c", NOT));
+                }
             default : return readLiteral();
         }
     }
@@ -159,19 +117,80 @@ public class FilterCompiler {
         }
     }
 
+    /*
+     *  LogicalOR               = LogicalAND { '||' LogicalAND }
+     *  LogicalAND              = LogicalANDOperand { '&&' LogicalANDOperand }
+     *  LogicalANDOperand       = RelationalExpression | '(' LogicalOR ')'
+     *  RelationalExpression    = Value [ RelationalOperator Value ]
+     */
+
+    private ExpressionNode readLogicalOR() {
+        final List<ExpressionNode> ops = new ArrayList<ExpressionNode>();
+        ops.add(readLogicalAND());
+
+        while (true) {
+            int savepoint = filter.position();
+            try {
+                filter.readSignificantSubSequence(LogicalOperator.OR.getOperatorString());
+                ops.add(readLogicalAND());
+            }
+            catch (InvalidPathException exc) {
+                filter.setPosition(savepoint);
+                break;
+            }
+        }
+
+        return 1 == ops.size() ? ops.get(0) : LogicalExpressionNode.createLogicalOr(ops);
+    }
+
+    private ExpressionNode readLogicalAND() {
+        /// @fixme copy-pasted
+        final List<ExpressionNode> ops = new ArrayList<ExpressionNode>();
+        ops.add(readLogicalANDOperand());
+
+        while (true) {
+            int savepoint = filter.position();
+            try {
+                filter.readSignificantSubSequence(LogicalOperator.AND.getOperatorString());
+                ops.add(readLogicalANDOperand());
+            }
+            catch (InvalidPathException exc) {
+                filter.setPosition(savepoint);
+                break;
+            }
+        }
+
+        return 1 == ops.size() ? ops.get(0) : LogicalExpressionNode.createLogicalAnd(ops);
+    }
+
+    private ExpressionNode readLogicalANDOperand() {
+        if (filter.skipBlanks().currentCharIs(OPEN_PARENTHESIS)) {
+            filter.readSignificantChar(OPEN_PARENTHESIS);
+            final ExpressionNode op = readLogicalOR();
+            filter.readSignificantChar(CLOSE_PARENTHESIS);
+            return op;
+        }
+
+        return readExpression();
+    }
+
     private RelationalExpressionNode readExpression() {
         ValueNode left = readValueNode();
-        if(expressionIsTerminated()) {
-            ValueNode.PathNode pathNode = left.asPathNode();
-            left = pathNode.asExistsCheck(pathNode.shouldExists());
-            RelationalOperator operator = RelationalOperator.EXISTS;
-            ValueNode right = left.asPathNode().shouldExists() ? ValueNode.TRUE : ValueNode.FALSE;
-            return new RelationalExpressionNode(left, operator, right);
-        } else {
+        int savepoint = filter.position();
+        try {
             RelationalOperator operator = readRelationalOperator();
             ValueNode right = readValueNode();
             return new RelationalExpressionNode(left, operator, right);
         }
+        catch (InvalidPathException exc) {
+            filter.setPosition(savepoint);
+        }
+
+        ValueNode.PathNode pathNode = left.asPathNode();
+        left = pathNode.asExistsCheck(pathNode.shouldExists());
+        RelationalOperator operator = RelationalOperator.EXISTS;
+        ValueNode right = left.asPathNode().shouldExists() ? ValueNode.TRUE : ValueNode.FALSE;
+        return new RelationalExpressionNode(left, operator, right);
     }
 
     private LogicalOperator readLogicalOperator(){

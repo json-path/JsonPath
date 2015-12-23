@@ -29,7 +29,7 @@ public class FilterCompilerTest {
         assertThat(compile("[?((@.firstname || @.lastname) && @.and)]").toString()).isEqualTo("[?((@['firstname'] || @['lastname']) && @['and'])]");
         assertThat(compile("[?((@.a || @.b || @.c) && @.x)]").toString()).isEqualTo("[?((@['a'] || @['b'] || @['c']) && @['x'])]");
         assertThat(compile("[?((@.a && @.b && @.c) || @.x)]").toString()).isEqualTo("[?((@['a'] && @['b'] && @['c']) || @['x'])]");
-        assertThat(compile("[?((@.a && @.b || @.c) || @.x)]").toString()).isEqualTo("[?((@['a'] && (@['b'] || @['c'])) || @['x'])]");
+        assertThat(compile("[?((@.a && @.b || @.c) || @.x)]").toString()).isEqualTo("[?(((@['a'] && @['b']) || @['c']) || @['x'])]");
         assertThat(compile("[?((@.a && @.b) || (@.c && @.d))]").toString()).isEqualTo("[?((@['a'] && @['b']) || (@['c'] && @['d']))]");
         assertThat(compile("[?(@.a IN [1,2,3])]").toString()).isEqualTo("[?(@['a'] IN [1,2,3])]");
         assertThat(compile("[?(@.a IN {'foo':'bar'})]").toString()).isEqualTo("[?(@['a'] IN {'foo':'bar'})]");
@@ -65,6 +65,12 @@ public class FilterCompilerTest {
     }
 
     @Test
+    public void or_has_lower_priority_than_and() {
+        assertThat(compile("[?(@.category == 'fiction' && @.author == 'Evelyn Waugh' || @.price > 15)]").toString())
+                .isEqualTo("[?((@['category'] == 'fiction' && @['author'] == 'Evelyn Waugh') || @['price'] > 15)]");
+    }
+
+    @Test
     public void invalid_filters_does_not_compile() {
         assertInvalidPathException("[?(@))]");
         assertInvalidPathException("[?(@ FOO 1)]");
@@ -73,6 +79,8 @@ public class FilterCompilerTest {
         assertInvalidPathException("[?(@ == 1' )]");
         assertInvalidPathException("[?(@.foo bar == 1)]");
         assertInvalidPathException("[?(@.i == 5 @.i == 8)]");
+        assertInvalidPathException("[?(!5)]");
+        assertInvalidPathException("[?(!'foo')]");
     }
 
 
