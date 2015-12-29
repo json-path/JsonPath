@@ -72,7 +72,11 @@ public class PredicatePathToken extends PathToken {
         Predicate.PredicateContext ctx = new PredicateContextImpl(obj, root, configuration, evaluationContext.documentEvalCache());
 
         for (Predicate predicate : predicates) {
-            if (!predicate.apply (ctx)) {
+            try {
+                if (!predicate.apply(ctx)) {
+                    return false;
+                }
+            } catch (InvalidPathException e) {
                 return false;
             }
         }

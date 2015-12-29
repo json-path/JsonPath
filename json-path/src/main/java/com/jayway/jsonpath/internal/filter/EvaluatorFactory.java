@@ -138,6 +138,9 @@ public class EvaluatorFactory {
     private static class SizeEvaluator implements Evaluator {
         @Override
         public boolean evaluate(ValueNode left, ValueNode right, Predicate.PredicateContext ctx) {
+            if (! right.isNumberNode()) {
+                return false;
+            }
             int expectedSize = right.asNumberNode().getNumber().intValue();
 
             if(left.isStringNode()){

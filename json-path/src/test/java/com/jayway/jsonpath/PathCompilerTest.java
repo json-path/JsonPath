@@ -223,6 +223,20 @@ public class PathCompilerTest {
     }
 
     @Test
+    public void issue_predicate_or_has_lower_priority_than_and() {
+        String json = "{\n"
+                + "    \"logs\": [\n"
+                + "        {\n"
+                + "            \"id\": 2\n"
+                + "        }\n"
+                + "    ]\n"
+                + "}";
+
+        List<String> result = JsonPath.read(json, "$.logs[?(@.x && @.y || @.id)]");
+        assertThat(result).hasSize(1);
+    }
+
+    @Test
     public void issue_predicate_can_have_square_bracket_in_prop() {
         String json = "{\n"
                 + "    \"logs\": [\n"

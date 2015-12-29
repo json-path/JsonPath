@@ -198,6 +198,25 @@ public class CharacterIndex {
         }
     }
 
+    public void readSignificantChar(char c) {
+        if (skipBlanks().currentChar() != c) {
+            throw new InvalidPathException(String.format("Expected character: %c", c));
+        }
+        incrementPosition(1);
+    }
+
+    public void readSignificantSubSequence(CharSequence s) {
+        skipBlanks();
+        if (! inBounds(position + s.length() - 1)) {
+            throw new InvalidPathException(String.format("End of string reached while expecting: %s", s));
+        }
+        if (! subSequence(position, position + s.length()).equals(s)) {
+            throw new InvalidPathException(String.format("Expected: %s", s));
+        }
+
+        incrementPosition(s.length());
+    }
+
     public int indexOfPreviousSignificantChar(int startPosition){
         int readPosition = startPosition - 1;
         while (!isOutOfBounds(readPosition) && charAt(readPosition) == SPACE) {
