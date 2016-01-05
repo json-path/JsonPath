@@ -240,13 +240,28 @@ public class EvaluatorFactory {
             if(!(left.isPatternNode() ^ right.isPatternNode())){
                 return false;
             }
-            if(!(left.isStringNode() ^ right.isStringNode())){
-                return false;
-            }
-            ValueNode.PatternNode patternNode = left.isPatternNode() ? left.asPatternNode() : right.asPatternNode();
-            ValueNode.StringNode stringNode = left.isStringNode() ? left.asStringNode() : right.asStringNode();
 
-            return patternNode.getCompiledPattern().matcher(stringNode.getString()).matches();
+            if (left.isPatternNode()) {
+                return matches(left.asPatternNode(), getInput(right));
+            } else {
+                return matches(right.asPatternNode(), getInput(left));
+            }
+        }
+
+        private boolean matches(ValueNode.PatternNode patternNode, String inputToMatch) {
+            return patternNode.getCompiledPattern().matcher(inputToMatch).matches();
+        }
+
+        private String getInput(ValueNode valueNode) {
+            String input = "";
+
+            if (valueNode.isStringNode() || valueNode.isNumberNode()) {
+                input = valueNode.asStringNode().getString();
+            } else if (valueNode.isBooleanNode()) {
+                input = valueNode.asBooleanNode().toString();
+            }
+
+            return input;
         }
     }
 }
