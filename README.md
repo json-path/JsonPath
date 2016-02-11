@@ -4,6 +4,8 @@ Jayway JsonPath 2.1.0
 **A Java DSL for reading JSON documents.**
 
 [![Build Status](https://travis-ci.org/jayway/JsonPath.svg?branch=master)](https://travis-ci.org/jayway/JsonPath)
+[![Maven Central](https://maven-badges.herokuapp.com/maven-central/com.jayway.jsonpath/json-path/badge.svg)](https://maven-badges.herokuapp.com/maven-central/com.jayway.jsonpath/json-path)
+[![Javadoc](https://javadoc-emblem.rhcloud.com/doc/com.jayway.jsonpath/json-path/badge.svg)](http://www.javadoc.io/doc/com.jayway.jsonpath/json-path)
 
 Jayway JsonPath is a Java port of [Stefan Goessner JsonPath implementation](http://goessner.net/articles/JsonPath/). 
 
