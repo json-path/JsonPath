@@ -16,7 +16,7 @@ ext {
             jacksonDatabind: 'com.fasterxml.jackson.core:jackson-databind:2.6.3',
             gson: 'com.google.code.gson:gson:2.3.1',
             jsonOrg: 'org.json:json:20140107',
-            tapestryJson: 'org.apache.tapestry:tapestry-json:5.4-rc-1',
+            tapestryJson: 'org.apache.tapestry:tapestry-json:5.4.0',
             hamcrestCore: 'org.hamcrest:hamcrest-core:1.3',
             hamcrestLibrary: 'org.hamcrest:hamcrest-library:1.3',
 
