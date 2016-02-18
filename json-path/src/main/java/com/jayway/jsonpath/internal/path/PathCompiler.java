@@ -570,6 +570,9 @@ public class PathCompiler {
             } else if('\\' == c){
                 inEscape = true;
             } else if (c == CLOSE_SQUARE_BRACKET && !inProperty) {
+                if (lastSignificantWasComma){
+                  fail("Found empty property at index "+readPosition);
+                }
                 break;
             } else if (c == potentialStringDelimiter) {
                 if (inProperty && !inEscape) {
