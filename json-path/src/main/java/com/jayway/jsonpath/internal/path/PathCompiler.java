@@ -512,7 +512,7 @@ public class PathCompiler {
             return false;
         }
 
-        String expression = path.subSequence(expressionBeginIndex, expressionEndIndex).toString().replace(" ", "");
+        String expression = path.subSequence(expressionBeginIndex, expressionEndIndex).toString().trim();
 
         if ("*".equals(expression)) {
             return false;
@@ -521,7 +521,7 @@ public class PathCompiler {
         //check valid chars
         for (int i = 0; i < expression.length(); i++) {
             char c = expression.charAt(i);
-            if (!isDigit(c) && c != COMMA && c != MINUS && c != SPLIT) {
+            if (!isDigit(c) && c != COMMA && c != MINUS && c != SPLIT && c != SPACE) {
                 return false;
             }
         }
