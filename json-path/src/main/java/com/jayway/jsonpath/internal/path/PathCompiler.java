@@ -560,6 +560,7 @@ public class PathCompiler {
         int endPosition = 0;
         boolean inProperty = false;
         boolean inEscape = false;
+        boolean lastSignificantWasComma = false;
 
         while (path.inBounds(readPosition)) {
             char c = path.charAt(readPosition);
@@ -579,7 +580,13 @@ public class PathCompiler {
                 } else {
                     startPosition = readPosition + 1;
                     inProperty = true;
+                    lastSignificantWasComma = false;
                 }
+            } else if (c == COMMA){
+                if (lastSignificantWasComma){
+                    fail("Found empty property at index "+readPosition);
+                }
+                lastSignificantWasComma = true;
             }
             readPosition++;
         }
