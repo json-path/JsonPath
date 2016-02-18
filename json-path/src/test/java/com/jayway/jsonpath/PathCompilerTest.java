@@ -251,4 +251,19 @@ public class PathCompilerTest {
 
         assertThat(result).containsExactly("] it");
     }
+
+    @Test(expected = InvalidPathException.class)
+    public void array_indexes_must_be_separated_by_commas() {
+        compile("$[0, 1, 2 4]");
+    }
+
+    @Test(expected = InvalidPathException.class)
+    public void trailing_comma_after_list_is_not_accepted() {
+        compile("$['1','2',]");
+    }
+
+    @Test(expected = InvalidPathException.class)
+    public void accept_only_a_single_comma_between_indexes() {
+        compile("$['1', ,'3']");
+    }
 }

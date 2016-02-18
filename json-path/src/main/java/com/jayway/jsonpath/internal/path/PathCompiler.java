@@ -512,7 +512,7 @@ public class PathCompiler {
             return false;
         }
 
-        String expression = path.subSequence(expressionBeginIndex, expressionEndIndex).toString().replace(" ", "");
+        String expression = path.subSequence(expressionBeginIndex, expressionEndIndex).toString().trim();
 
         if ("*".equals(expression)) {
             return false;
@@ -521,7 +521,7 @@ public class PathCompiler {
         //check valid chars
         for (int i = 0; i < expression.length(); i++) {
             char c = expression.charAt(i);
-            if (!isDigit(c) && c != COMMA && c != MINUS && c != SPLIT) {
+            if (!isDigit(c) && c != COMMA && c != MINUS && c != SPLIT && c != SPACE) {
                 return false;
             }
         }
@@ -560,6 +560,7 @@ public class PathCompiler {
         int endPosition = 0;
         boolean inProperty = false;
         boolean inEscape = false;
+        boolean lastSignificantWasComma = false;
 
         while (path.inBounds(readPosition)) {
             char c = path.charAt(readPosition);
@@ -569,6 +570,9 @@ public class PathCompiler {
             } else if('\\' == c){
                 inEscape = true;
             } else if (c == CLOSE_SQUARE_BRACKET && !inProperty) {
+                if (lastSignificantWasComma){
+                  fail("Found empty property at index "+readPosition);
+                }
                 break;
             } else if (c == potentialStringDelimiter) {
                 if (inProperty && !inEscape) {
@@ -579,7 +583,13 @@ public class PathCompiler {
                 } else {
                     startPosition = readPosition + 1;
                     inProperty = true;
+                    lastSignificantWasComma = false;
                 }
+            } else if (c == COMMA){
+                if (lastSignificantWasComma){
+                    fail("Found empty property at index "+readPosition);
+                }
+                lastSignificantWasComma = true;
             }
             readPosition++;
         }
