@@ -69,11 +69,6 @@ public class NestedFunctionTest extends BaseFunctionTest {
     }
 
     @Test
-    public void testLoadFunction() {
-        verifyTextFunction(conf, "$.getjson($.urls[0])[0].total", 264);
-    }
-
-    @Test
     public void testAppendNumber() {
         verifyMathFunction(conf, "$.numbers.append(11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 0).avg()", 10.0);
     }
