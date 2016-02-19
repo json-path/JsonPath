@@ -218,8 +218,6 @@ public abstract class PathRef implements Comparable<PathRef>  {
         }
     }
 
-
-
     private static class ObjectPropertyPathRef extends PathRef {
 
         private String property;

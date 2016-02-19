@@ -3,6 +3,8 @@ package com.jayway.jsonpath.internal.function;
 import com.jayway.jsonpath.internal.EvaluationContext;
 import com.jayway.jsonpath.internal.PathRef;
 
+import java.util.List;
+
 /**
  * Defines the pattern by which a function can be executed over the result set in the particular path
  * being grabbed.  The Function's input is the content of the data from the json path selector and its output
@@ -27,7 +29,8 @@ public interface PathFunction {
      * @param ctx
      *      Eval context, state bag used as the path is traversed, maintains the result of executing
      *
+     * @param parameters
      * @return
      */
-    Object invoke(String currentPath, PathRef parent, Object model, EvaluationContext ctx);
+    Object invoke(String currentPath, PathRef parent, Object model, EvaluationContext ctx, List<Parameter> parameters);
 }

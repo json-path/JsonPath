@@ -3,6 +3,7 @@ package com.jayway.jsonpath.internal.filter;
 import com.jayway.jsonpath.internal.Utils;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 
 public class LogicalExpressionNode extends ExpressionNode {
@@ -13,13 +14,26 @@ public class LogicalExpressionNode extends ExpressionNode {
         return new LogicalExpressionNode(left, LogicalOperator.OR, right);
     }
 
+    public static LogicalExpressionNode createLogicalOr(Collection<ExpressionNode> operands){
+        return new LogicalExpressionNode(LogicalOperator.OR, operands);
+    }
+
     public static LogicalExpressionNode createLogicalAnd(ExpressionNode left,ExpressionNode right){
         return new LogicalExpressionNode(left, LogicalOperator.AND, right);
+    }
+
+    public static LogicalExpressionNode createLogicalAnd(Collection<ExpressionNode> operands){
+        return new LogicalExpressionNode(LogicalOperator.AND, operands);
     }
 
     private LogicalExpressionNode(ExpressionNode left, LogicalOperator operator, ExpressionNode right) {
         chain.add(left);
         chain.add(right);
+        this.operator = operator;
+    }
+
+    private LogicalExpressionNode(LogicalOperator operator, Collection<ExpressionNode> operands) {
+        chain.addAll(operands);
         this.operator = operator;
     }
 

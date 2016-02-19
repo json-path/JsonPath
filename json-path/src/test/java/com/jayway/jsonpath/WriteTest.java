@@ -317,5 +317,4 @@ public class WriteTest extends BaseTest {
             return currentValue.toString()+"converted";
         }
     }
-
 }

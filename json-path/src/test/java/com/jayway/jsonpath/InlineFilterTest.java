@@ -186,6 +186,32 @@ public class InlineFilterTest extends BaseTest {
 
         assertHasOneResult("[{\"value\":5.1}]", "$[?(@.value<7)]", conf);
         assertHasNoResults("[{\"value\":7.1}]", "$[?(@.value<5)]", conf);
+    }
 
+    @Test
+    public void escaped_literals() {
+        if(conf.jsonProvider().getClass().getSimpleName().startsWith("Jackson")){
+            return;
+        }
+        assertHasOneResult("[\"\\'foo\"]", "$[?(@ == '\\'foo')]", conf);
+    }
+
+    @Test
+    public void escaped_literals2() {
+        if(conf.jsonProvider().getClass().getSimpleName().startsWith("Jackson")){
+            return;
+        }
+        assertHasOneResult("[\"\\\\'foo\"]", "$[?(@ == \"\\\\'foo\")]", conf);
+    }
+
+
+    @Test
+    public void escape_pattern() {
+        assertHasOneResult("[\"x\"]", "$[?(@ =~ /\\/|x/)]", conf);
+    }
+
+    @Test
+    public void filter_evaluation_does_not_break_path_evaluation() {
+        assertHasOneResult("[{\"s\": \"fo\", \"expected_size\": \"m\"}, {\"s\": \"lo\", \"expected_size\": 2}]", "$[?(@.s size @.expected_size)]", conf);
     }
 }

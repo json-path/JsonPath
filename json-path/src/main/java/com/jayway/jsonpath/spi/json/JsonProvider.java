@@ -163,6 +163,4 @@ public interface JsonProvider {
      * @return the unwrapped value.
      */
     Object unwrap(Object obj);
-
-
 }

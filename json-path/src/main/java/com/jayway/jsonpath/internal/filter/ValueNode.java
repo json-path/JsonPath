@@ -174,8 +174,8 @@ public abstract class ValueNode {
         if(o instanceof ValueNode) return (ValueNode)o;
         if(o instanceof Class) return createClassNode((Class)o);
         else if(isPath(o)) return new PathNode(o.toString(), false, false);
-        else if(isJson(o)) return createStringNode(o.toString(), false);
-        else if(o instanceof String) return createStringNode(o.toString(), false);
+        else if(isJson(o)) return createJsonNode(o.toString());
+        else if(o instanceof String) return createStringNode(o.toString(), true);
         else if(o instanceof Character) return createStringNode(o.toString(), false);
         else if(o instanceof Number) return createNumberNode(o.toString());
         else if(o instanceof Boolean) return createBooleanNode(o.toString());
@@ -395,14 +395,32 @@ public abstract class ValueNode {
 
     public static class StringNode extends ValueNode {
         private final String string;
+        private boolean useSingleQuote = true;
 
         private StringNode(CharSequence charSequence, boolean escape) {
             if(charSequence.length() > 1){
-                if(charSequence.charAt(0) == '\'' && charSequence.charAt(charSequence.length()-1) == '\''){
+                char open = charSequence.charAt(0);
+                char close = charSequence.charAt(charSequence.length()-1);
+
+                if(open == '\'' && close == '\''){
                     charSequence = charSequence.subSequence(1, charSequence.length()-1);
+                } else if(open == '"' && close == '"'){
+                    charSequence = charSequence.subSequence(1, charSequence.length()-1);
+                    useSingleQuote = false;
                 }
             }
             string = escape ? Utils.unescape(charSequence.toString()) : charSequence.toString();
+        }
+
+        @Override
+        public NumberNode asNumberNode() {
+            BigDecimal number = null;
+            try {
+                number = new BigDecimal(string);
+            } catch (NumberFormatException nfe){
+                return NumberNode.NAN;
+            }
+            return new NumberNode(number);
         }
 
         public String getString() {
@@ -436,26 +454,38 @@ public abstract class ValueNode {
 
         @Override
         public String toString() {
-            return "'" + Utils.escape(string, true) + "'";
+            String quote = useSingleQuote ? "'" : "\"";
+            return quote + Utils.escape(string, true) + quote;
         }
 
         @Override
         public boolean equals(Object o) {
             if (this == o) return true;
-            if (!(o instanceof StringNode)) return false;
+            if (!(o instanceof StringNode) && !(o instanceof NumberNode)) return false;
 
-            StringNode that = (StringNode) o;
+            StringNode that = ((ValueNode) o).asStringNode();
 
-            return !(string != null ? !string.equals(that.string) : that.string != null);
+            return !(string != null ? !string.equals(that.getString()) : that.getString() != null);
 
         }
     }
 
     public static class NumberNode extends ValueNode {
+
+        public static NumberNode NAN = new NumberNode((BigDecimal)null);
+
         private final BigDecimal number;
 
+        private NumberNode(BigDecimal number) {
+            this.number = number;
+        }
         private NumberNode(CharSequence num) {
             number = new BigDecimal(num.toString());
+        }
+
+        @Override
+        public StringNode asStringNode() {
+            return new StringNode(number.toString(), false);
         }
 
         public BigDecimal getNumber() {
@@ -483,14 +513,14 @@ public abstract class ValueNode {
         @Override
         public boolean equals(Object o) {
             if (this == o) return true;
-            if (!(o instanceof NumberNode)) return false;
+            if (!(o instanceof NumberNode) && !(o instanceof StringNode)) return false;
 
-            ValueNode that = (ValueNode) o;
+            NumberNode that = ((ValueNode)o).asNumberNode();
 
-            if(!that.isNumberNode()){
+            if(that == NumberNode.NAN){
                 return false;
             } else {
-                return number.compareTo(that.asNumberNode().number) == 0;
+                return number.compareTo(that.number) == 0;
             }
         }
     }

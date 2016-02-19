@@ -150,4 +150,15 @@ public class OptionsTest extends BaseTest {
 
         assertThat(using(conf).parse("{\"aoo\" : {}, \"foo\" : {\"foo2\": [5]}, \"zoo\" : {}}").read("$[*].foo2[0]")).asList().containsOnly(5);
     }
+
+    @Test
+    public void isbn_is_defaulted_when_option_is_provided() {
+        List<String> result1 = JsonPath.using(JSON_SMART_CONFIGURATION).parse(JSON_DOCUMENT).read("$.store.book.*.isbn");
+
+        assertThat(result1).containsExactly("0-553-21311-3","0-395-19395-8");
+
+        List<String> result2 = JsonPath.using(JSON_SMART_CONFIGURATION.addOptions(Option.DEFAULT_PATH_LEAF_TO_NULL)).parse(JSON_DOCUMENT).read("$.store.book.*.isbn");
+
+        assertThat(result2).containsExactly(null, null, "0-553-21311-3", "0-395-19395-8");
+    }
 }

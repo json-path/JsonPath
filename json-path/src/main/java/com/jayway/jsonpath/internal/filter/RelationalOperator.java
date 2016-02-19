@@ -7,7 +7,17 @@ public enum RelationalOperator {
     GTE(">="),
     LTE("<="),
     EQ("=="),
+
+    /**
+     * Type safe equals
+     */
+    TSEQ("==="),
     NE("!="),
+
+    /**
+     * Type safe not equals
+     */
+    TSNE("!=="),
     LT("<"),
     GT(">"),
     REGEX("=~"),
@@ -33,7 +43,7 @@ public enum RelationalOperator {
                 return operator;
             }
         }
-        throw new InvalidPathException("Operator " + operatorString + " not supported ");
+        throw new InvalidPathException("Filter operator " + operatorString + " is not supported!");
     }
 
     @Override

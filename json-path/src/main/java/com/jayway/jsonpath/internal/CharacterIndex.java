@@ -4,12 +4,13 @@ import com.jayway.jsonpath.InvalidPathException;
 
 public class CharacterIndex {
 
-    private static final char OPEN_BRACKET = '(';
-    private static final char CLOSE_BRACKET = ')';
+    private static final char OPEN_PARENTHESIS = '(';
+    private static final char CLOSE_PARENTHESIS = ')';
     private static final char CLOSE_SQUARE_BRACKET = ']';
     private static final char SPACE = ' ';
     private static final char ESCAPE = '\\';
-    private static final char TICK = '\'';
+    private static final char SINGLE_QUOTE = '\'';
+    private static final char DOUBLE_QUOTE = '"';
     private static final char MINUS = '-';
     private static final char PERIOD = '.';
     private static final char REGEX = '/';
@@ -66,6 +67,7 @@ public class CharacterIndex {
         }
         return -1;
     }
+
     public int indexOfMatchingCloseChar(int startPosition, char openChar, char closeChar, boolean skipStrings, boolean skipRegex) {
         if(charAt(startPosition) != openChar){
             throw new InvalidPathException("Expected " + openChar + " but found " + charAt(startPosition));
@@ -75,34 +77,22 @@ public class CharacterIndex {
         int readPosition = startPosition + 1;
         while (inBounds(readPosition)) {
             if (skipStrings) {
-                if (charAt(readPosition) == TICK) {
-                    boolean escaped = false;
-                    while (inBounds(readPosition)) {
-                        readPosition++;
-                        if (escaped) {
-                            escaped = false;
-                            continue;
-                        }
-                        if (charAt(readPosition) == ESCAPE) {
-                            escaped = true;
-                            continue;
-                        }
-                        if (charAt(readPosition) == TICK) {
-                            readPosition++;
-                            break;
-                        }
+                char quoteChar = charAt(readPosition);
+                if (quoteChar == SINGLE_QUOTE || quoteChar == DOUBLE_QUOTE){
+                    readPosition = nextIndexOfUnescaped(readPosition, quoteChar);
+                    if(readPosition == -1){
+                        throw new InvalidPathException("Could not find matching close quote for " + quoteChar + " when parsing : " + charSequence);
                     }
+                    readPosition++;
                 }
             }
             if (skipRegex) {
                 if (charAt(readPosition) == REGEX) {
-                    while (inBounds(readPosition)) {
-                        readPosition++;
-                        if (charAt(readPosition) == REGEX) {
-                            readPosition++;
-                            break;
-                        }
+                    readPosition = nextIndexOfUnescaped(readPosition, REGEX);
+                    if(readPosition == -1){
+                        throw new InvalidPathException("Could not find matching close for " + REGEX + " when parsing regex in : " + charSequence);
                     }
+                    readPosition++;
                 }
             }
             if (charAt(readPosition) == openChar) {
@@ -118,8 +108,9 @@ public class CharacterIndex {
         }
         return -1;
     }
+
     public int indexOfClosingBracket(int startPosition, boolean skipStrings, boolean skipRegex) {
-        return indexOfMatchingCloseChar(startPosition, OPEN_BRACKET, CLOSE_BRACKET, skipStrings, skipRegex);
+        return indexOfMatchingCloseChar(startPosition, OPEN_PARENTHESIS, CLOSE_PARENTHESIS, skipStrings, skipRegex);
     }
 
     public int indexOfNextSignificantChar(char c) {
@@ -154,23 +145,22 @@ public class CharacterIndex {
     }
 
     public int nextIndexOfUnescaped(char c) {
-        return nextIndexOfUnescaped(position + 1, c);
+        return nextIndexOfUnescaped(position, c);
     }
 
     public int nextIndexOfUnescaped(int startPosition, char c) {
-        int readPosition = startPosition;
-        char prev1;
-        char prev2;
-        while (!isOutOfBounds(readPosition)) {
-            prev1 = charAtOr(readPosition - 1, ' ');
-            prev2 = charAtOr(readPosition - 2, ' ');
-            boolean ignore = (prev1 == '\\' && prev2 == '\\');
-            boolean escaped = (prev1 == '\\' && !ignore);
 
-            if (charAt(readPosition) == c && !escaped) {
+        int readPosition = startPosition + 1;
+        boolean inEscape = false;
+        while (!isOutOfBounds(readPosition)) {
+            if(inEscape){
+                inEscape = false;
+            } else if('\\' == charAt(readPosition)){
+                inEscape = true;
+            } else if (c == charAt(readPosition) && !inEscape){
                 return readPosition;
             }
-            readPosition++;
+            readPosition ++;
         }
         return -1;
     }
@@ -208,6 +198,25 @@ public class CharacterIndex {
         }
     }
 
+    public void readSignificantChar(char c) {
+        if (skipBlanks().currentChar() != c) {
+            throw new InvalidPathException(String.format("Expected character: %c", c));
+        }
+        incrementPosition(1);
+    }
+
+    public void readSignificantSubSequence(CharSequence s) {
+        skipBlanks();
+        if (! inBounds(position + s.length() - 1)) {
+            throw new InvalidPathException(String.format("End of string reached while expecting: %s", s));
+        }
+        if (! subSequence(position, position + s.length()).equals(s)) {
+            throw new InvalidPathException(String.format("Expected: %s", s));
+        }
+
+        incrementPosition(s.length());
+    }
+
     public int indexOfPreviousSignificantChar(int startPosition){
         int readPosition = startPosition - 1;
         while (!isOutOfBounds(readPosition) && charAt(readPosition) == SPACE) {
@@ -235,7 +244,7 @@ public class CharacterIndex {
     }
 
     public boolean currentIsTail() {
-        return isOutOfBounds(position + 1);
+        return position >= charSequence.length()-1;
     }
 
     public boolean hasMoreCharacters() {

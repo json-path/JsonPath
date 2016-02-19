@@ -131,7 +131,12 @@ public class JacksonJsonNodeJsonProvider extends AbstractJsonProvider {
         if (!isArray(array)) {
             throw new UnsupportedOperationException();
         } else {
-            toJsonArray(array).insert( index, createJsonElement(newValue));
+            ArrayNode arrayNode = toJsonArray(array);
+            if (index == arrayNode.size()){
+                arrayNode.add(createJsonElement(newValue));
+            }else {
+                arrayNode.set(index, createJsonElement(newValue));
+            }
         }
     }
 

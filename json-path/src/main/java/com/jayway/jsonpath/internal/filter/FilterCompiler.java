@@ -7,20 +7,34 @@ import com.jayway.jsonpath.internal.CharacterIndex;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.Stack;
+import java.util.ArrayList;
+import java.util.List;
 
 public class FilterCompiler {
     private static final Logger logger = LoggerFactory.getLogger(FilterCompiler.class);
 
     private static final char DOC_CONTEXT = '$';
-    private static final char EVAL_CONTEXT = '@';        /**/
+    private static final char EVAL_CONTEXT = '@';
+
     private static final char OPEN_SQUARE_BRACKET = '[';
-    private static final char OPEN_BRACKET = '(';
-    private static final char CLOSE_BRACKET = ')';
+    private static final char CLOSE_SQUARE_BRACKET = ']';
+    private static final char OPEN_PARENTHESIS = '(';
+    private static final char CLOSE_PARENTHESIS = ')';
+    private static final char OPEN_OBJECT = '{';
+    private static final char CLOSE_OBJECT = '}';
+    private static final char OPEN_ARRAY = '[';
+    private static final char CLOSE_ARRAY = ']';
+
+    private static final char SINGLE_QUOTE = '\'';
+    private static final char DOUBLE_QUOTE = '"';
+
     private static final char SPACE = ' ';
-    private static final char MINUS = '-';
-    private static final char TICK = '\'';
     private static final char PERIOD = '.';
+
+    private static final char AND = '&';
+    private static final char OR = '|';
+
+    private static final char MINUS = '-';
     private static final char LT = '<';
     private static final char GT = '>';
     private static final char EQ = '=';
@@ -28,24 +42,15 @@ public class FilterCompiler {
     private static final char TRUE = 't';
     private static final char FALSE = 'f';
     private static final char NULL = 'n';
-    private static final char AND = '&';
-    private static final char OR = '|';
-    private static final char OBJECT_OPEN = '{';
-    private static final char OBJECT_CLOSE = '}';
-    private static final char ARRAY_OPEN = '[';
-    private static final char ARRAY_CLOSE = ']';
-    private static final char BANG = '!';
+    private static final char NOT = '!';
     private static final char PATTERN = '/';
+    private static final char IGNORE_CASE = 'i';
 
     private CharacterIndex filter;
 
     public static Filter compile(String filterString) {
-        try {
-            FilterCompiler compiler = new FilterCompiler(filterString);
-            return new CompiledFilter(compiler.compile());
-        } catch (Exception e){
-            throw new InvalidPathException("Could not compile inline filter : " + filterString, e);
-        }
+        FilterCompiler compiler = new FilterCompiler(filterString);
+        return new CompiledFilter(compiler.compile());
     }
 
     private FilterCompiler(String filterString) {
@@ -66,98 +71,126 @@ public class FilterCompiler {
     }
 
     public Predicate compile() {
+        try {
+             final ExpressionNode result = readLogicalOR();
+             filter.skipBlanks();
+             if (filter.inBounds()) {
+                 throw new InvalidPathException(String.format("Expected end of filter expression instead of: %s",
+                         filter.subSequence(filter.position(), filter.length())));
+             }
 
-        Stack<LogicalOperator> opsStack  = new Stack<LogicalOperator>();
-        Stack<ExpressionNode> expStack = new Stack<ExpressionNode>();
-
-        int unbalancedBrackets = 0;
-
-        while (filter.skipBlanks().inBounds()) {
-            int pos = filter.position();
-
-            switch (filter.currentChar()) {
-                case OPEN_BRACKET:
-                    unbalancedBrackets++;
-                    filter.incrementPosition(1);
-                    break;
-                case CLOSE_BRACKET:
-                    unbalancedBrackets--;
-                    filter.incrementPosition(1);
-                    ExpressionNode expressionNode = expStack.pop();
-                    if(!opsStack.isEmpty()){
-                        if(expStack.isEmpty()){
-                            throw new InvalidPathException("Expected expression on right hand side of operator");
-                        }
-                        ExpressionNode right = expStack.pop();
-                        expressionNode = ExpressionNode.createExpressionNode(expressionNode, opsStack.pop(), right);
-                        while(!opsStack.isEmpty()){
-                            expressionNode = ExpressionNode.createExpressionNode(expressionNode, opsStack.pop(), expStack.pop());
-                        }
-                    }
-                    expStack.push(expressionNode);
-                    break;
-                case BANG:
-                    filter.incrementPosition(1);
-                    break;
-                case OR:
-                case AND:
-                    LogicalOperator operatorNode = readLogicalOperator();
-                    opsStack.push(operatorNode);
-                    break;
-                default:
-                    RelationalExpressionNode relationalExpressionNode = readExpression();
-                    expStack.push(relationalExpressionNode);
-                    break;
-            }
-            if(pos >= filter.position()){
-                throw new InvalidPathException("Failed to parse filter " + filter.toString());
-            }
+             return result;
+        } catch (InvalidPathException e){
+            throw e;
+        } catch (Exception e) {
+            throw new InvalidPathException("Failed to parse filter: " + filter + ", error on position: " + filter.position() + ", char: " + filter.currentChar());
         }
-        if(unbalancedBrackets != 0){
-            throw new InvalidPathException("Failed to parse filter. Brackets are not balanced. " + filter.toString());
-        }
-
-        Predicate predicate = expStack.pop();
-        logger.trace(predicate.toString());
-
-        return predicate;
     }
 
     private ValueNode readValueNode() {
         switch (filter.skipBlanks().currentChar()) {
             case DOC_CONTEXT  : return readPath();
             case EVAL_CONTEXT : return readPath();
+            case NOT:
+                filter.incrementPosition(1);
+                switch (filter.skipBlanks().currentChar()) {
+                    case DOC_CONTEXT  : return readPath();
+                    case EVAL_CONTEXT : return readPath();
+                    default: throw new InvalidPathException(String.format("Unexpected character: %c", NOT));
+                }
             default : return readLiteral();
         }
     }
 
     private ValueNode readLiteral(){
         switch (filter.skipBlanks().currentChar()){
-            case TICK:  return readStringLiteral();
+            case SINGLE_QUOTE:  return readStringLiteral(SINGLE_QUOTE);
+            case DOUBLE_QUOTE: return readStringLiteral(DOUBLE_QUOTE);
             case TRUE:  return readBooleanLiteral();
             case FALSE: return readBooleanLiteral();
             case MINUS: return readNumberLiteral();
             case NULL:  return readNullLiteral();
-            case OBJECT_OPEN: return readJsonLiteral();
-            case ARRAY_OPEN: return readJsonLiteral();
+            case OPEN_OBJECT: return readJsonLiteral();
+            case OPEN_ARRAY: return readJsonLiteral();
             case PATTERN: return readPattern();
             default:    return readNumberLiteral();
         }
     }
 
+    /*
+     *  LogicalOR               = LogicalAND { '||' LogicalAND }
+     *  LogicalAND              = LogicalANDOperand { '&&' LogicalANDOperand }
+     *  LogicalANDOperand       = RelationalExpression | '(' LogicalOR ')'
+     *  RelationalExpression    = Value [ RelationalOperator Value ]
+     */
+
+    private ExpressionNode readLogicalOR() {
+        final List<ExpressionNode> ops = new ArrayList<ExpressionNode>();
+        ops.add(readLogicalAND());
+
+        while (true) {
+            int savepoint = filter.position();
+            try {
+                filter.readSignificantSubSequence(LogicalOperator.OR.getOperatorString());
+                ops.add(readLogicalAND());
+            }
+            catch (InvalidPathException exc) {
+                filter.setPosition(savepoint);
+                break;
+            }
+        }
+
+        return 1 == ops.size() ? ops.get(0) : LogicalExpressionNode.createLogicalOr(ops);
+    }
+
+    private ExpressionNode readLogicalAND() {
+        /// @fixme copy-pasted
+        final List<ExpressionNode> ops = new ArrayList<ExpressionNode>();
+        ops.add(readLogicalANDOperand());
+
+        while (true) {
+            int savepoint = filter.position();
+            try {
+                filter.readSignificantSubSequence(LogicalOperator.AND.getOperatorString());
+                ops.add(readLogicalANDOperand());
+            }
+            catch (InvalidPathException exc) {
+                filter.setPosition(savepoint);
+                break;
+            }
+        }
+
+        return 1 == ops.size() ? ops.get(0) : LogicalExpressionNode.createLogicalAnd(ops);
+    }
+
+    private ExpressionNode readLogicalANDOperand() {
+        if (filter.skipBlanks().currentCharIs(OPEN_PARENTHESIS)) {
+            filter.readSignificantChar(OPEN_PARENTHESIS);
+            final ExpressionNode op = readLogicalOR();
+            filter.readSignificantChar(CLOSE_PARENTHESIS);
+            return op;
+        }
+
+        return readExpression();
+    }
+
     private RelationalExpressionNode readExpression() {
         ValueNode left = readValueNode();
-        if(expressionIsTerminated()) {
-            ValueNode.PathNode pathNode = left.asPathNode();
-            left = pathNode.asExistsCheck(pathNode.shouldExists());
-            RelationalOperator operator = RelationalOperator.EXISTS;
-            ValueNode right = left.asPathNode().shouldExists() ? ValueNode.TRUE : ValueNode.FALSE;
-            return new RelationalExpressionNode(left, operator, right);
-        } else {
+        int savepoint = filter.position();
+        try {
             RelationalOperator operator = readRelationalOperator();
             ValueNode right = readValueNode();
             return new RelationalExpressionNode(left, operator, right);
         }
+        catch (InvalidPathException exc) {
+            filter.setPosition(savepoint);
+        }
+
+        ValueNode.PathNode pathNode = left.asPathNode();
+        left = pathNode.asExistsCheck(pathNode.shouldExists());
+        RelationalOperator operator = RelationalOperator.EXISTS;
+        ValueNode right = left.asPathNode().shouldExists() ? ValueNode.TRUE : ValueNode.FALSE;
+        return new RelationalExpressionNode(left, operator, right);
     }
 
     private LogicalOperator readLogicalOperator(){
@@ -197,7 +230,7 @@ public class FilterCompiler {
 
     private ValueNode.NullNode readNullLiteral() {
         int begin = filter.position();
-        if(filter.currentChar() == 'n' && filter.inBounds(filter.position() + 3)){
+        if(filter.currentChar() == NULL && filter.inBounds(filter.position() + 3)){
             CharSequence nullValue = filter.subSequence(filter.position(), filter.position() + 4);
             if("null".equals(nullValue.toString())){
                 logger.trace("NullLiteral from {} to {} -> [{}]", begin, filter.position()+3, nullValue);
@@ -213,13 +246,13 @@ public class FilterCompiler {
 
         char openChar = filter.currentChar();
 
-        assert openChar == ARRAY_OPEN || openChar == OBJECT_OPEN;
+        assert openChar == OPEN_ARRAY || openChar == OPEN_OBJECT;
 
-        char closeChar = openChar == ARRAY_OPEN ? ARRAY_CLOSE : OBJECT_CLOSE;
+        char closeChar = openChar == OPEN_ARRAY ? CLOSE_ARRAY : CLOSE_OBJECT;
 
         int closingIndex = filter.indexOfMatchingCloseChar(filter.position(), openChar, closeChar, true, false);
         if (closingIndex == -1) {
-            throw new InvalidPathException("String not closed. Expected " + TICK + " in " + filter);
+            throw new InvalidPathException("String not closed. Expected " + SINGLE_QUOTE + " in " + filter);
         } else {
             filter.setPosition(closingIndex + 1);
         }
@@ -235,7 +268,7 @@ public class FilterCompiler {
         if (closingIndex == -1) {
             throw new InvalidPathException("Pattern not closed. Expected " + PATTERN + " in " + filter);
         } else {
-            if(filter.inBounds(closingIndex+1) && filter.charAt(closingIndex+1) == 'i'){
+            if(filter.inBounds(closingIndex+1) && filter.charAt(closingIndex+1) == IGNORE_CASE){
                 closingIndex++;
             }
             filter.setPosition(closingIndex + 1);
@@ -245,14 +278,14 @@ public class FilterCompiler {
         return ValueNode.createPatternNode(pattern);
     }
 
-    private ValueNode.StringNode readStringLiteral() {
+    private ValueNode.StringNode readStringLiteral(char endChar) {
         int begin = filter.position();
 
-        int closingTickIndex = filter.nextIndexOfUnescaped(TICK);
-        if (closingTickIndex == -1) {
-            throw new InvalidPathException("String not closed. Expected " + TICK + " in " + filter);
+        int closingSingleQuoteIndex = filter.nextIndexOfUnescaped(endChar);
+        if (closingSingleQuoteIndex == -1) {
+            throw new InvalidPathException("String literal does not have matching quotes. Expected " + endChar + " in " + filter);
         } else {
-            filter.setPosition(closingTickIndex + 1);
+            filter.setPosition(closingSingleQuoteIndex + 1);
         }
         CharSequence stringLiteral = filter.subSequence(begin, filter.position());
         logger.trace("StringLiteral from {} to {} -> [{}]", begin, filter.position(), stringLiteral);
@@ -272,7 +305,7 @@ public class FilterCompiler {
 
     private ValueNode.BooleanNode readBooleanLiteral() {
         int begin = filter.position();
-        int end = filter.currentChar() == 't' ? filter.position() + 3 : filter.position() + 4;
+        int end = filter.currentChar() == TRUE ? filter.position() + 3 : filter.position() + 4;
 
         if(!filter.inBounds(end)){
             throw new InvalidPathException("Expected boolean literal");
@@ -294,15 +327,15 @@ public class FilterCompiler {
         filter.incrementPosition(1); //skip $ and @
         while (filter.inBounds()) {
             if (filter.currentChar() == OPEN_SQUARE_BRACKET) {
-                int closingSquareBracketIndex = filter.indexOfClosingSquareBracket(filter.position());
+                int closingSquareBracketIndex = filter.indexOfMatchingCloseChar(filter.position(), OPEN_SQUARE_BRACKET, CLOSE_SQUARE_BRACKET, true, false);
                 if (closingSquareBracketIndex == -1) {
                     throw new InvalidPathException("Square brackets does not match in filter " + filter);
                 } else {
                     filter.setPosition(closingSquareBracketIndex + 1);
                 }
             }
-            boolean closingFunctionBracket = (filter.currentChar() == CLOSE_BRACKET && currentCharIsClosingFunctionBracket(begin));
-            boolean closingLogicalBracket  = (filter.currentChar() == CLOSE_BRACKET && !closingFunctionBracket);
+            boolean closingFunctionBracket = (filter.currentChar() == CLOSE_PARENTHESIS && currentCharIsClosingFunctionBracket(begin));
+            boolean closingLogicalBracket  = (filter.currentChar() == CLOSE_PARENTHESIS && !closingFunctionBracket);
 
             if (!filter.inBounds() || isRelationalOperatorChar(filter.currentChar()) || filter.currentChar() == SPACE || closingLogicalBracket) {
                 break;
@@ -311,29 +344,29 @@ public class FilterCompiler {
             }
         }
 
-        boolean shouldExists = !(previousSignificantChar == BANG);
+        boolean shouldExists = !(previousSignificantChar == NOT);
         CharSequence path = filter.subSequence(begin, filter.position());
         return ValueNode.createPathNode(path, false, shouldExists);
     }
 
     private boolean expressionIsTerminated(){
         char c = filter.currentChar();
-        if(c == CLOSE_BRACKET || isLogicalOperatorChar(c)){
+        if(c == CLOSE_PARENTHESIS || isLogicalOperatorChar(c)){
             return true;
         }
         c = filter.nextSignificantChar();
-        if(c == CLOSE_BRACKET || isLogicalOperatorChar(c)){
+        if(c == CLOSE_PARENTHESIS || isLogicalOperatorChar(c)){
             return true;
         }
         return false;
     }
 
     private boolean currentCharIsClosingFunctionBracket(int lowerBound){
-        if(filter.currentChar() != CLOSE_BRACKET){
+        if(filter.currentChar() != CLOSE_PARENTHESIS){
             return false;
         }
         int idx = filter.indexOfPreviousSignificantChar();
-        if(idx == -1 || filter.charAt(idx) != OPEN_BRACKET){
+        if(idx == -1 || filter.charAt(idx) != OPEN_PARENTHESIS){
             return false;
         }
         idx--;
@@ -351,7 +384,7 @@ public class FilterCompiler {
     }
 
     private boolean isRelationalOperatorChar(char c) {
-        return c == LT || c == GT || c == EQ || c == TILDE || c == BANG;
+        return c == LT || c == GT || c == EQ || c == TILDE || c == NOT;
     }
 
     private static final class CompiledFilter extends Filter {

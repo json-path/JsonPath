@@ -1,5 +1,14 @@
-In the Pipe
+2.1.0 (2015-11-22)
 ===========
+* Upgraded dependency versions
+* Introduced Cache SPI
+* Introduced path functions
+* Introduced JsonOrgJsonProvider
+* OSGI improvements
+* Inline filters supports same operators as Filter builders
+* Improved filter evaluation
+* Internal makeovers
+* New write operations : map(...) and renameKey(...)
 
 2.0.0 (2015-03-19)
 =================

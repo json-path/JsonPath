@@ -1,5 +1,6 @@
 package com.jayway.jsonpath.old;
 
+import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.google.gson.JsonObject;
 import com.jayway.jsonpath.BaseTest;
 import com.jayway.jsonpath.Configuration;
@@ -31,6 +32,7 @@ import static com.jayway.jsonpath.Criteria.PredicateContext;
 import static com.jayway.jsonpath.Criteria.where;
 import static com.jayway.jsonpath.Filter.filter;
 import static com.jayway.jsonpath.JsonPath.read;
+import static com.jayway.jsonpath.JsonPath.using;
 import static junit.framework.Assert.assertNull;
 import static junit.framework.Assert.assertTrue;
 import static org.assertj.core.api.Assertions.assertThat;
@@ -42,6 +44,18 @@ import static org.junit.Assert.assertThat;
 public class IssuesTest extends BaseTest {
 
     private static final JsonProvider jp = Configuration.defaultConfiguration().jsonProvider();
+
+    @Test
+    public void issue_143() {
+        String json = "{ \"foo\": { \"bar\" : \"val\" }, \"moo\": { \"cow\" : \"val\" } }";
+
+        Configuration configuration = Configuration.builder().options( Option.AS_PATH_LIST ).build();
+
+        List<String> pathList = JsonPath.using(configuration).parse(json).read(JsonPath.compile("$.*.bar"));
+
+        assertThat(pathList).containsExactly("$['foo']['bar']");
+    }
+
 
     @Test
     public void issue_114_a() {
@@ -944,5 +958,45 @@ public class IssuesTest extends BaseTest {
         JsonPath path = JsonPath.compile("$.foo");
         String object = path.read(json);
 
+    }
+
+    @Test
+    public void issue_170() {
+
+        String json = "{\n" +
+                "  \"array\": [\n" +
+                "    0,\n" +
+                "    1,\n" +
+                "    2\n" +
+                "  ]\n" +
+                "}";
+
+
+        DocumentContext context = using(JACKSON_JSON_NODE_CONFIGURATION).parse(json);
+        context = context.set("$.array[0]", null);
+        context = context.set("$.array[2]", null);
+
+        List<Integer> list = context.read("$.array", List.class);
+
+        assertThat(list).containsExactly(null, 1, null);
+
+    }
+
+    @Test
+    public void issue_171() {
+
+        String json = "{\n" +
+                "  \"can delete\": \"this\",\n" +
+                "  \"can't delete\": \"this\"\n" +
+                "}";
+
+        DocumentContext context = using(JACKSON_JSON_NODE_CONFIGURATION).parse(json);
+        context.set("$.['can delete']", null);
+        context.set("$.['can\\'t delete']", null);
+
+        ObjectNode objectNode = context.read("$");
+
+        assertThat(objectNode.get("can delete").isNull());
+        assertThat(objectNode.get("can't delete").isNull());
     }
 }

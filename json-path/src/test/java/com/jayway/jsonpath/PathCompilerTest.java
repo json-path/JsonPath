@@ -36,14 +36,22 @@ public class PathCompilerTest {
 
     @Test(expected = InvalidPathException.class)
     public void a_path_may_not_end_with_period() {
-        assertThat(compile("$.").toString());
-        assertThat(compile("$.prop.").toString());
+        compile("$.");
+    }
+
+    @Test(expected = InvalidPathException.class)
+    public void a_path_may_not_end_with_period_2() {
+        compile("$.prop.");
     }
 
     @Test(expected = InvalidPathException.class)
     public void a_path_may_not_end_with_scan() {
-        assertThat(compile("$..").toString());
-        assertThat(compile("$.prop..").toString());
+        compile("$..");
+    }
+
+    @Test(expected = InvalidPathException.class)
+    public void a_path_may_not_end_with_scan_2() {
+        compile("$.prop..");
     }
 
     @Test
@@ -59,6 +67,7 @@ public class PathCompilerTest {
         assertThat(compile("$['1prop']").toString()).isEqualTo("$['1prop']");
         assertThat(compile("$['@prop']").toString()).isEqualTo("$['@prop']");
         assertThat(compile("$[  '@prop'  ]").toString()).isEqualTo("$['@prop']");
+        assertThat(compile("$[\"prop\"]").toString()).isEqualTo("$[\"prop\"]");
     }
 
     @Test
@@ -109,6 +118,7 @@ public class PathCompilerTest {
     @Test
     public void an_inline_criteria_can_be_parsed() {
         assertThat(compile("$[?(@.foo == 'bar')]").toString()).isEqualTo("$[?]");
+        assertThat(compile("$[?(@.foo == \"bar\")]").toString()).isEqualTo("$[?]");
     }
 
     @Test
@@ -213,6 +223,20 @@ public class PathCompilerTest {
     }
 
     @Test
+    public void issue_predicate_or_has_lower_priority_than_and() {
+        String json = "{\n"
+                + "    \"logs\": [\n"
+                + "        {\n"
+                + "            \"id\": 2\n"
+                + "        }\n"
+                + "    ]\n"
+                + "}";
+
+        List<String> result = JsonPath.read(json, "$.logs[?(@.x && @.y || @.id)]");
+        assertThat(result).hasSize(1);
+    }
+
+    @Test
     public void issue_predicate_can_have_square_bracket_in_prop() {
         String json = "{\n"
                 + "    \"logs\": [\n"
@@ -226,5 +250,20 @@ public class PathCompilerTest {
         List<String> result = JsonPath.read(json, "$.logs[?(@.message == '] it')].message");
 
         assertThat(result).containsExactly("] it");
+    }
+
+    @Test(expected = InvalidPathException.class)
+    public void array_indexes_must_be_separated_by_commas() {
+        compile("$[0, 1, 2 4]");
+    }
+
+    @Test(expected = InvalidPathException.class)
+    public void trailing_comma_after_list_is_not_accepted() {
+        compile("$['1','2',]");
+    }
+
+    @Test(expected = InvalidPathException.class)
+    public void accept_only_a_single_comma_between_indexes() {
+        compile("$['1', ,'3']");
     }
 }

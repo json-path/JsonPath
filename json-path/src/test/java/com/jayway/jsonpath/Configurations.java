@@ -54,7 +54,6 @@ public class Configurations {
         );
     }
 
-
     public static Iterable<Configuration> objectMappingConfigurations() {
         return Arrays.asList(
                  GSON_CONFIGURATION
