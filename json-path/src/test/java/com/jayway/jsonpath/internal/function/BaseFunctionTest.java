@@ -14,6 +14,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 public class BaseFunctionTest {
     protected static final String NUMBER_SERIES = "{\"empty\": [], \"numbers\" : [ 1, 2, 3, 4, 5, 6, 7, 8, 9, 10]}";
     protected static final String TEXT_SERIES = "{\"urls\": [\"http://api.worldbank.org/countries/all/?format=json\", \"http://api.worldbank.org/countries/all/?format=json\"], \"text\" : [ \"a\", \"b\", \"c\", \"d\", \"e\", \"f\" ]}";
+    protected static final String EXAMPLE_SERIES = "{\"store\":{\"book\":[{\"category\":\"reference\",\"author\":\"Nigel Rees\",\"title\":\"Sayings of the Century\",\"price\":8.95},{\"category\":\"fiction\",\"author\":\"Evelyn Waugh\",\"title\":\"Sword of Honour\",\"price\":12.99},{\"category\":\"fiction\",\"author\":\"Herman Melville\",\"title\":\"Moby Dick\",\"isbn\":\"0-553-21311-3\",\"price\":8.99},{\"category\":\"fiction\",\"author\":\"J. R. R. Tolkien\",\"title\":\"The Lord of the Rings\",\"isbn\":\"0-395-19395-8\",\"price\":22.99}],\"bicycle\":{\"color\":\"red\",\"price\":19.95}},\"expensive\":10}";
 
     /**
      * Verify the function returns the correct result based on the input expectedValue
@@ -38,6 +39,10 @@ public class BaseFunctionTest {
 
     protected void verifyTextFunction(Configuration conf, String pathExpr, Object expectedValue) {
         verifyFunction(conf, pathExpr, TEXT_SERIES, expectedValue);
+    }
+
+    protected void verifyExampleFunction(Configuration conf, String pathExpr, Object expectedValue) {
+        verifyFunction(conf, pathExpr, EXAMPLE_SERIES, expectedValue);
     }
 
     protected String getResourceAsText(String resourceName) throws IOException {

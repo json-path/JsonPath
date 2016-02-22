@@ -50,7 +50,25 @@ public class CompiledPath implements Path {
         EvaluationContextImpl ctx = new EvaluationContextImpl(this, rootDocument, configuration, forUpdate);
         try {
             PathRef op = ctx.forUpdate() ?  PathRef.createRoot(rootDocument) : PathRef.NO_OP;
-            root.evaluate("", op, document, ctx);
+
+            if (root.isFunctionPath()) {
+                // Remove the functionPath and evaluate the resulting path.
+                PathToken funcToken = root.chop();
+                root.evaluate("", op, document, ctx);
+                // Get the value of the evaluation to use as model when evaluating the function.
+                Object arrayModel = ctx.getValue(false);
+
+                // Evaluate the function on the model from the first evaluation.
+                RootPathToken newRoot = new RootPathToken('x');
+                newRoot.append(funcToken);
+                CompiledPath newCPath = new CompiledPath(newRoot, true);
+                EvaluationContextImpl newCtx = new EvaluationContextImpl(newCPath, arrayModel, configuration, false);
+                funcToken.evaluate("", op, arrayModel, newCtx);
+                return newCtx;
+            } else {
+                root.evaluate("", op, document, ctx);
+                return ctx;
+            }
         } catch (EvaluationAbortException abort){};
 
         return ctx;

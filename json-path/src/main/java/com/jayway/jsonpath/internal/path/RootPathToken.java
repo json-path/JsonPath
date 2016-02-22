@@ -43,6 +43,13 @@ public class RootPathToken extends PathToken {
         return this;
     }
 
+    public PathToken chop() {
+        // Remove tail.
+        PathToken oldTail = tail;
+        tail = tail.remove();
+        return oldTail;
+    }
+
     public PathTokenAppender getPathTokenAppender(){
         return new PathTokenAppender(){
             @Override
