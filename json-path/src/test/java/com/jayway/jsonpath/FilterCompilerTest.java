@@ -84,6 +84,15 @@ public class FilterCompilerTest {
         assertInvalidPathException("[?(!'foo')]");
     }
 
+    @Test
+    // issue #178
+    public void compile_and_serialize_not_exists_filter(){
+        Filter compiled = compile("[?(!@.foo)]");
+        String serialized = compiled.toString();
+        assertThat(serialized).isEqualTo("[?(!@['foo'])]");
+    }
+
+
 
     private void assertInvalidPathException(String filter){
         try {
