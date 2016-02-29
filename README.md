@@ -1,4 +1,4 @@
-Jayway JsonPath 2.1.0
+Jayway JsonPath 2.2.0
 =====================
 
 **A Java DSL for reading JSON documents.**
@@ -11,6 +11,8 @@ Jayway JsonPath is a Java port of [Stefan Goessner JsonPath implementation](http
 
 News
 ----
+29 Feb 2016 - Released JsonPath 2.2.0
+
 22 Nov 2015 - Released JsonPath 2.1.0
 
 19 Mar 2015 - Released JsonPath 2.0.0

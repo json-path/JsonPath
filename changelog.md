@@ -1,3 +1,9 @@
+2.2.0 (2016-02-29)
+===========
+* Upgraded dependency versions
+* Hamcrest-matcher support in json-path-assert
+* Bug fixes and improvements
+
 2.1.0 (2015-11-22)
 ===========
 * Upgraded dependency versions
