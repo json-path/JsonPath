@@ -21,6 +21,7 @@ import net.minidev.json.writer.JsonReader;
 import net.minidev.json.writer.JsonReaderI;
 
 import java.math.BigDecimal;
+import java.math.BigInteger;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.util.Date;
@@ -42,6 +43,7 @@ public class JsonSmartMappingProvider implements MappingProvider {
         DEFAULT.registerReader(BigDecimal.class, new BigDecimalReader());
         DEFAULT.registerReader(String.class, new StringReader());
         DEFAULT.registerReader(Date.class, new DateReader());
+        DEFAULT.registerReader(BigInteger.class, new BigIntegerReader());
     }
 
 
@@ -150,6 +152,7 @@ public class JsonSmartMappingProvider implements MappingProvider {
             throw new MappingException("can not map a " + src.getClass() + " to " + Long.class.getName());
         }
     }
+
     private static class DoubleReader extends JsonReaderI<Double> {
         public DoubleReader() {
             super(null);
@@ -207,6 +210,17 @@ public class JsonSmartMappingProvider implements MappingProvider {
                 return null;
             }
             return new BigDecimal(src.toString());
+        }
+    }
+    private static class BigIntegerReader extends JsonReaderI<BigInteger> {
+        public BigIntegerReader() {
+            super(null);
+        }
+        public BigInteger convert(Object src) {
+            if(src == null){
+                return null;
+            }
+            return new BigInteger(src.toString());
         }
     }
     private static class DateReader extends JsonReaderI<Date> {
