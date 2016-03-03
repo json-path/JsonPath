@@ -2,6 +2,8 @@ package com.jayway.jsonpath;
 
 import org.junit.Test;
 
+import java.math.BigDecimal;
+import java.math.BigInteger;
 import java.util.Date;
 
 import static com.jayway.jsonpath.JsonPath.parse;
@@ -41,5 +43,13 @@ public class MapperTest extends BaseTest {
         assertThat(parse("{\"val\": "+now.getTime()+"}").read("val", Date.class)).isEqualTo(now);
     }
 
+    @Test
+    public void a_String_can_be_converted_to_a_BigInteger() {
+        assertThat(parse("{\"val\": \"1\"}").read("val", BigInteger.class)).isEqualTo(BigInteger.valueOf(1));
+    }
 
+    @Test
+    public void a_String_can_be_converted_to_a_BigDecimal() {
+        assertThat(parse("{\"val\": \"1.5\"}").read("val", BigDecimal.class)).isEqualTo(BigDecimal.valueOf(1.5d));
+    }
 }
