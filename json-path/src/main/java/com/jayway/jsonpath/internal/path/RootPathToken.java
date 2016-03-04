@@ -83,4 +83,8 @@ public class RootPathToken extends PathToken {
     public boolean isFunctionPath() {
         return (tail instanceof FunctionPathToken);
     }
+
+    public char getRootToken() {
+        return rootToken.charAt(0);
+    }
 }
