@@ -2,6 +2,7 @@ package com.jayway.jsonpath;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.ArrayNode;
+import com.fasterxml.jackson.databind.node.JsonNodeFactory;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.jayway.jsonpath.spi.mapper.MappingException;
 import org.junit.Test;
@@ -40,6 +41,20 @@ public class JacksonJsonNodeJsonProviderTest extends BaseTest {
     public void json_can_be_parsed() {
         ObjectNode node = using(JACKSON_JSON_NODE_CONFIGURATION).parse(JSON_DOCUMENT).read("$");
         assertThat(node.get("string-property").asText()).isEqualTo("string-value");
+    }
+
+    @Test
+    public void always_return_same_object() { // Test because of Bug #211
+    	DocumentContext context = using(JACKSON_JSON_NODE_CONFIGURATION).parse(JSON_DOCUMENT);
+        ObjectNode node1 = context.read("$");
+        ObjectNode child1 = new ObjectNode(JsonNodeFactory.instance);
+        child1.put("name", "test");
+        context.put("$", "child", child1);
+        ObjectNode node2 = context.read("$");
+        ObjectNode child2 = context.read("$.child");
+        
+        assertThat(node1).isSameAs(node2);
+        assertThat(child1).isSameAs(child2);
     }
 
     @Test
