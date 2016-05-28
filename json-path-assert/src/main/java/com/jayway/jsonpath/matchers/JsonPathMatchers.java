@@ -6,6 +6,8 @@ import com.jayway.jsonpath.ReadContext;
 import org.hamcrest.Matcher;
 
 import java.io.File;
+import java.util.List;
+import java.util.Map;
 
 import static org.hamcrest.Matchers.*;
 
@@ -30,7 +32,7 @@ public class JsonPathMatchers {
     }
 
     public static Matcher<Object> isJson() {
-        return isJson(withJsonPath("$..*"));
+        return isJson(withJsonPath("$", anyOf(instanceOf(Map.class), instanceOf(List.class))));
     }
 
     public static Matcher<Object> isJson(final Matcher<? super ReadContext> matcher) {

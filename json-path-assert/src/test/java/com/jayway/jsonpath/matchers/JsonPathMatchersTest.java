@@ -7,7 +7,6 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 
 import java.io.File;
-import java.nio.file.Paths;
 import java.util.Collection;
 
 import static com.jayway.jsonpath.matchers.JsonPathMatchers.*;
@@ -35,6 +34,26 @@ public class JsonPathMatchersTest {
     }
 
     @Test
+    public void shouldMatchOnEmptyJsonObject() {
+        assertThat("{}", isJson());
+    }
+
+    @Test
+    public void shouldMatchOnJsonObject() {
+        assertThat("{ \"hi\" : \"there\" }", isJson());
+    }
+
+    @Test
+    public void shouldMatchOnEmptyJsonArray() {
+        assertThat("[]", isJson());
+    }
+
+    @Test
+    public void shouldMatchOnJsonArray() {
+        assertThat("[\"hi\", \"there\"]", isJson());
+    }
+
+    @Test
     public void shouldMatchValidJson() {
         assertThat(VALID_JSON, isJson());
         assertThat(BOOKS_JSON, isJson());
@@ -44,7 +63,11 @@ public class JsonPathMatchersTest {
     public void shouldNotMatchInvalidJson() {
         assertThat(INVALID_JSON, not(isJson()));
         assertThat(new Object(), not(isJson()));
-        assertThat("{}", not(isJson()));
+        assertThat(new Object[]{}, not(isJson()));
+        assertThat("hi there", not(isJson()));
+        assertThat(new Integer(42), not(isJson()));
+        assertThat(Boolean.TRUE, not(isJson()));
+        assertThat(false, not(isJson()));
         assertThat(null, not(isJson()));
     }
 
@@ -122,7 +145,7 @@ public class JsonPathMatchersTest {
 
     @Test
     public void shouldNotMatchJsonPathOnNonExistingFile() {
-        File nonExistingFile = Paths.get("missing-file").toFile();
+        File nonExistingFile = new File("missing-file");
         assertThat(nonExistingFile, not(hasJsonPath("$..*", anything())));
     }
 
