@@ -9,6 +9,7 @@ import org.hamcrest.StringDescription;
 import org.junit.Test;
 
 import java.util.Collection;
+import java.util.List;
 
 import static com.jayway.jsonpath.JsonPath.compile;
 import static com.jayway.jsonpath.matchers.JsonPathMatchers.withJsonPath;
@@ -40,14 +41,14 @@ public class WithJsonPathTest {
     public void shouldNotMatchNonExistingJsonPath() {
         assertThat(BOOKS_JSON, not(withJsonPath(compile("$.not_there"))));
         assertThat(BOOKS_JSON, not(withJsonPath(compile("$.store.book[5].title"))));
-        assertThat(BOOKS_JSON, not(withJsonPath(compile("$.store.book[*].not_there"))));
+        assertThat(BOOKS_JSON, not(withJsonPath(compile("$.store.book[1].not_there"))));
     }
 
     @Test
     public void shouldNotMatchNonExistingStringJsonPath() {
         assertThat(BOOKS_JSON, not(withJsonPath("$.not_there")));
         assertThat(BOOKS_JSON, not(withJsonPath("$.store.book[5].title")));
-        assertThat(BOOKS_JSON, not(withJsonPath("$.store.book[*].not_there")));
+        assertThat(BOOKS_JSON, not(withJsonPath("$.store.book[1].not_there")));
     }
 
     @Test
@@ -92,7 +93,7 @@ public class WithJsonPathTest {
 
     @Test
     public void shouldMatchJsonPathEvaluatedToCollectionValue() {
-        assertThat(BOOKS_JSON, withJsonPath(compile("$.store.book[*].author"), instanceOf(Collection.class)));
+        assertThat(BOOKS_JSON, withJsonPath(compile("$.store.book[*].author"), instanceOf(List.class)));
         assertThat(BOOKS_JSON, withJsonPath(compile("$.store.book[*].author"), hasSize(4)));
         assertThat(BOOKS_JSON, withJsonPath(compile("$.store.book[*].author"), hasItem("Evelyn Waugh")));
         assertThat(BOOKS_JSON, withJsonPath(compile("$..book[2].title"), hasItem("Moby Dick")));

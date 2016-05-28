@@ -73,16 +73,45 @@ public class JsonPathMatchersTest {
 
     @Test
     public void shouldMatchExistingJsonPath() {
-        assertThat(BOOKS_JSON, hasJsonPath("$.store.name"));
-        assertThat(BOOKS_JSON, hasJsonPath("$.store.book[2].title"));
-        assertThat(BOOKS_JSON, hasJsonPath("$.store.book[*].author"));
+        assertThat(BOOKS_JSON, hasJsonPath("$.store.name"));        // string
+        assertThat(BOOKS_JSON, hasJsonPath("$.store.switch"));      // boolean
+        assertThat(BOOKS_JSON, hasJsonPath("$.expensive"));         // number
+        assertThat(BOOKS_JSON, hasJsonPath("$.store.bicycle"));     // object
+        assertThat(BOOKS_JSON, hasJsonPath("$.store.truck"));       // empty object
+        assertThat(BOOKS_JSON, hasJsonPath("$.store.book"));        // non-empty array
+        assertThat(BOOKS_JSON, hasJsonPath("$.store.book[*]"));     // non-empty array
+        assertThat(BOOKS_JSON, hasJsonPath("$.store.magazine"));    // empty array
+        assertThat(BOOKS_JSON, hasJsonPath("$.store.magazine[*]")); // empty array
     }
 
     @Test
     public void shouldMatchExistingJsonPathAlternative() {
-        assertThat(BOOKS_JSON, isJson(withJsonPath("$.store.name")));
-        assertThat(BOOKS_JSON, isJson(withJsonPath("$.store.book[2].title")));
-        assertThat(BOOKS_JSON, isJson(withJsonPath("$.store.book[*].author")));
+        assertThat(BOOKS_JSON, isJson(withJsonPath("$.store.name")));        // string
+        assertThat(BOOKS_JSON, isJson(withJsonPath("$.store.switch")));      // boolean
+        assertThat(BOOKS_JSON, isJson(withJsonPath("$.expensive")));         // number
+        assertThat(BOOKS_JSON, isJson(withJsonPath("$.store.bicycle")));     // object
+        assertThat(BOOKS_JSON, isJson(withJsonPath("$.store.truck")));       // empty object
+        assertThat(BOOKS_JSON, isJson(withJsonPath("$.store.book")));        // non-empty array
+        assertThat(BOOKS_JSON, isJson(withJsonPath("$.store.book[*]")));     // non-empty array
+        assertThat(BOOKS_JSON, isJson(withJsonPath("$.store.magazine")));    // empty array
+        assertThat(BOOKS_JSON, isJson(withJsonPath("$.store.magazine[*]"))); // empty array
+    }
+
+    @Test
+    public void shouldNotMatchNonExistentArrays() {
+        assertThat(BOOKS_JSON, not(hasJsonPath("$.store.not_here[*]")));
+    }
+
+    @Test
+    public void willMatchIndefiniteJsonPathsEvaluatedToEmptyLists() {
+        // This is just a test to demonstrate that wildcard paths
+        // will always match, regardless of result. This is because
+        // the evaluation of these expressions will at least return
+        // an empty list.
+        String json = "{\"items\": []}";
+        assertThat(json, hasJsonPath("$.items[*]"));
+        assertThat(json, hasJsonPath("$.items[*].name"));
+        assertThat(json, hasJsonPath("$.items[*]", hasSize(0)));
     }
 
     @Test
@@ -103,15 +132,17 @@ public class JsonPathMatchersTest {
     @Test
     public void shouldNotMatchNonExistingJsonPath() {
         assertThat(BOOKS_JSON, not(hasJsonPath("$.not_there")));
+        assertThat(BOOKS_JSON, not(hasJsonPath("$.store.not_there")));
+        assertThat(BOOKS_JSON, not(hasJsonPath("$.store.book[1].isbn")));
         assertThat(BOOKS_JSON, not(hasJsonPath("$.store.book[5].title")));
-        assertThat(BOOKS_JSON, not(hasJsonPath("$.store.book[*].not_there")));
     }
 
     @Test
     public void shouldNotMatchNonExistingJsonPathAlternative() {
         assertThat(BOOKS_JSON, not(isJson(withJsonPath("$.not_there"))));
+        assertThat(BOOKS_JSON, not(isJson(withJsonPath(("$.store.not_there")))));
+        assertThat(BOOKS_JSON, not(isJson(withJsonPath(("$.store.book[1].isbn")))));
         assertThat(BOOKS_JSON, not(isJson(withJsonPath("$.store.book[5].title"))));
-        assertThat(BOOKS_JSON, not(isJson(withJsonPath("$.store.book[*].not_there"))));
     }
 
     @Test
