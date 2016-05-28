@@ -1,6 +1,7 @@
 {
   "store": {
     "name": "Little Shop",
+    "none": null,
     "switch": true,
     "magazine": [],
     "truck": {},

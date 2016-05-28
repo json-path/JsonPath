@@ -83,7 +83,7 @@ Use typed matchers for specific JSON representations, if needed
 
 ---
 
-CAUTION: regarding the use of indefinite paths
+### Regarding the use of indefinite paths
 
 When using indefinite path expressions (e.g with wildcards '*'), the result will yield a list. Possibly an _empty_ list if no matching entries were found. If you want to assert that the list will actually contain something, make sure to express this explicitly, e.g checking for the size of the list.
 
@@ -101,3 +101,25 @@ When using indefinite path expressions (e.g with wildcards '*'), the result will
     
     // However, checking for the existence of an array works fine, as is
     assertThat(json, hasJsonPath("$.not_here[*]"));
+
+---
+
+### Regarding the use of null in JSON
+
+'null' is a valid JSON value. If such a value exist, the path is still considered to be a valid path.
+
+    // Given a JSON like this:
+    { "none": null }
+    
+    // All of these will succeed, since '$.none' is a valid path
+    assertThat(json, hasJsonPath("$.none"));
+    assertThat(json, isJson(withJsonPath("$.none")));
+    assertThat(json, hasJsonPath("$.none", nullValue()));
+    assertThat(json, isJson(withJsonPath("$.none", nullValue())));
+    
+    // But all of these will fail, since '$.not_there' is not a valid path
+    assertThat(json, hasJsonPath("$.not_there"));
+    assertThat(json, isJson(withJsonPath("$.not_there")));
+    assertThat(json, hasJsonPath("$.not_there", anything()));
+    assertThat(json, isJson(withJsonPath("$.not_there", anything())));
+

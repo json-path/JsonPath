@@ -19,7 +19,7 @@ public class JsonPathMatchers {
 
     public static Matcher<? super Object> hasJsonPath(String jsonPath) {
         return describedAs("has json path %0",
-                hasJsonPath(jsonPath, not(nullValue())),
+                isJson(withJsonPath(jsonPath)),
                 jsonPath);
     }
 
@@ -53,7 +53,7 @@ public class JsonPathMatchers {
 
     public static Matcher<? super ReadContext> withJsonPath(JsonPath jsonPath) {
         return describedAs("with json path %0",
-                withJsonPath(jsonPath, not(nullValue())),
+                withJsonPath(jsonPath, anything()),
                 jsonPath.getPath());
     }
 
