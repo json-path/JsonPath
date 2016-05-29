@@ -23,7 +23,7 @@ public class JsonPathMatchers {
                 jsonPath);
     }
 
-    public static <T> Matcher<? super Object> hasJsonPath(final String jsonPath, final Matcher<T> resultMatcher) {
+    public static <T> Matcher<? super Object> hasJsonPath(String jsonPath, Matcher<T> resultMatcher) {
         return isJson(withJsonPath(jsonPath, resultMatcher));
     }
 
@@ -35,15 +35,15 @@ public class JsonPathMatchers {
         return isJson(withJsonPath("$", anyOf(instanceOf(Map.class), instanceOf(List.class))));
     }
 
-    public static Matcher<Object> isJson(final Matcher<? super ReadContext> matcher) {
+    public static Matcher<Object> isJson(Matcher<? super ReadContext> matcher) {
         return new IsJson<Object>(matcher);
     }
 
-    public static Matcher<String> isJsonString(final Matcher<? super ReadContext> matcher) {
+    public static Matcher<String> isJsonString(Matcher<? super ReadContext> matcher) {
         return new IsJson<String>(matcher);
     }
 
-    public static Matcher<File> isJsonFile(final Matcher<? super ReadContext> matcher) {
+    public static Matcher<File> isJsonFile(Matcher<? super ReadContext> matcher) {
         return new IsJson<File>(matcher);
     }
 
@@ -69,7 +69,7 @@ public class JsonPathMatchers {
         return withJsonPath(JsonPath.compile(jsonPath), resultMatcher);
     }
 
-    public static <T> Matcher<? super ReadContext> withJsonPath(final JsonPath jsonPath, final Matcher<T> resultMatcher) {
+    public static <T> Matcher<? super ReadContext> withJsonPath(JsonPath jsonPath, Matcher<T> resultMatcher) {
         return new WithJsonPath<T>(jsonPath, resultMatcher);
     }
 }
