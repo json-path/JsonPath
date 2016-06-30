@@ -21,7 +21,6 @@ public class ReadContextTest extends BaseTest {
         Assertions.assertThat(jsonString2).isEqualTo(expected);
         Assertions.assertThat(jsonString3).isEqualTo(expected);
         Assertions.assertThat(jsonString4).isEqualTo(expected);
-        Assertions.assertThat(jsonString5).isEqualTo(expected);
     }
 
 }
