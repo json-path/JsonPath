@@ -14,6 +14,7 @@
  */
 package com.jayway.jsonpath.spi.json;
 
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
@@ -23,9 +24,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.NoSuchElementException;
 
-import org.apache.commons.io.IOUtils;
 import org.codehaus.jettison.json.JSONException;
-
 import com.jayway.jsonpath.InvalidJsonException;
 
 public class JettisonProvider extends AbstractJsonProvider
@@ -219,7 +218,14 @@ public class JettisonProvider extends AbstractJsonProvider
 	{
 		try
 		{
-			return parse(new JettisonTokener(IOUtils.toString(jsonStream, charset)));
+			ByteArrayOutputStream stream = new ByteArrayOutputStream();
+			byte[] buffer = new byte[1024];
+			int size;
+			while( (size=jsonStream.read(buffer))>0 )
+			{
+				stream.write(buffer, 0, size);
+			}
+			return parse(new JettisonTokener(new String(stream.toByteArray(), charset)));
 		}
 		catch( IOException ioe )
 		{
@@ -241,6 +247,7 @@ public class JettisonProvider extends AbstractJsonProvider
 				return ((org.codehaus.jettison.json.JSONObject)obj).toString(2);
 			}
 			return String.valueOf(obj);
+			//return "\"" + String.valueOf(obj).replaceAll("\"", "\\\"") + "\"";
 		}
 		catch( org.codehaus.jettison.json.JSONException jsonException )
 		{
