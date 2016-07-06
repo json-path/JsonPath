@@ -7,8 +7,8 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 
 import java.io.File;
-import java.nio.file.Paths;
-import java.util.Collection;
+import java.util.List;
+import java.util.Map;
 
 import static com.jayway.jsonpath.matchers.JsonPathMatchers.*;
 import static com.jayway.jsonpath.matchers.helpers.ResourceHelpers.resource;
@@ -17,8 +17,6 @@ import static org.hamcrest.Matchers.*;
 import static org.junit.Assert.assertThat;
 
 public class JsonPathMatchersTest {
-
-    private static final String VALID_JSON = resource("example.json");
     private static final String BOOKS_JSON = resource("books.json");
     private static final String INVALID_JSON = "{ invalid-json }";
     private static final File BOOKS_JSON_FILE = resourceAsFile("books.json");
@@ -35,38 +33,156 @@ public class JsonPathMatchersTest {
     }
 
     @Test
-    public void shouldMatchValidJson() {
-        assertThat(VALID_JSON, isJson());
-        assertThat(BOOKS_JSON, isJson());
+    public void shouldMatchJsonPathToStringValue() {
+        final String json = "{\"name\": \"Jessie\"}";
+
+        assertThat(json, hasJsonPath("$.name"));
+        assertThat(json, isJson(withJsonPath("$.name")));
+        assertThat(json, hasJsonPath("$.name", equalTo("Jessie")));
+        assertThat(json, isJson(withJsonPath("$.name", equalTo("Jessie"))));
+
+        assertThat(json, not(hasJsonPath("$.name", equalTo("John"))));
+        assertThat(json, not(isJson(withJsonPath("$.name", equalTo("John")))));
     }
 
     @Test
-    public void shouldNotMatchInvalidJson() {
-        assertThat(INVALID_JSON, not(isJson()));
-        assertThat(new Object(), not(isJson()));
-        assertThat("{}", not(isJson()));
-        assertThat(null, not(isJson()));
+    public void shouldMatchJsonPathToIntegerValue() {
+        final String json = "{\"number\": 10}";
+
+        assertThat(json, hasJsonPath("$.number"));
+        assertThat(json, isJson(withJsonPath("$.number")));
+        assertThat(json, hasJsonPath("$.number", equalTo(10)));
+        assertThat(json, isJson(withJsonPath("$.number", equalTo(10))));
+
+        assertThat(json, not(hasJsonPath("$.number", equalTo(3))));
+        assertThat(json, not(isJson(withJsonPath("$.number", equalTo(3)))));
     }
 
     @Test
-    public void shouldMatchExistingJsonPath() {
-        assertThat(BOOKS_JSON, hasJsonPath("$.store.name"));
-        assertThat(BOOKS_JSON, hasJsonPath("$.store.book[2].title"));
-        assertThat(BOOKS_JSON, hasJsonPath("$.store.book[*].author"));
+    public void shouldMatchJsonPathToDoubleValue() {
+        final String json = "{\"price\": 19.95}";
+
+        assertThat(json, hasJsonPath("$.price"));
+        assertThat(json, isJson(withJsonPath("$.price")));
+        assertThat(json, hasJsonPath("$.price", equalTo(19.95)));
+        assertThat(json, isJson(withJsonPath("$.price", equalTo(19.95))));
+
+        assertThat(json, not(hasJsonPath("$.price", equalTo(3.3))));
+        assertThat(json, not(isJson(withJsonPath("$.price", equalTo(42)))));
     }
 
     @Test
-    public void shouldMatchExistingJsonPathAlternative() {
-        assertThat(BOOKS_JSON, isJson(withJsonPath("$.store.name")));
-        assertThat(BOOKS_JSON, isJson(withJsonPath("$.store.book[2].title")));
-        assertThat(BOOKS_JSON, isJson(withJsonPath("$.store.book[*].author")));
+    public void shouldMatchJsonPathToBooleanValue() {
+        final String json = "{\"flag\": false}";
+
+        assertThat(json, hasJsonPath("$.flag"));
+        assertThat(json, isJson(withJsonPath("$.flag")));
+        assertThat(json, hasJsonPath("$.flag", equalTo(false)));
+        assertThat(json, isJson(withJsonPath("$.flag", equalTo(false))));
+
+        assertThat(json, not(hasJsonPath("$.flag", equalTo(true))));
+        assertThat(json, not(isJson(withJsonPath("$.flag", equalTo(true)))));
+    }
+
+    @Test
+    public void shouldMatchJsonPathToJsonObject() {
+        final String json = "{\"object\": { \"name\":\"Oscar\"}}";
+
+        assertThat(json, hasJsonPath("$.object"));
+        assertThat(json, isJson(withJsonPath("$.object")));
+        assertThat(json, hasJsonPath("$.object", instanceOf(Map.class)));
+        assertThat(json, isJson(withJsonPath("$.object", instanceOf(Map.class))));
+
+        assertThat(json, not(hasJsonPath("$.object", instanceOf(List.class))));
+        assertThat(json, not(isJson(withJsonPath("$.object", instanceOf(List.class)))));
+    }
+
+    @Test
+    public void shouldMatchJsonPathToEmptyJsonObject() {
+        final String json = "{\"empty_object\": {}}";
+
+        assertThat(json, hasJsonPath("$.empty_object"));
+        assertThat(json, isJson(withJsonPath("$.empty_object")));
+        assertThat(json, hasJsonPath("$.empty_object", instanceOf(Map.class)));
+        assertThat(json, isJson(withJsonPath("$.empty_object", instanceOf(Map.class))));
+
+        assertThat(json, not(hasJsonPath("$.empty_object", instanceOf(List.class))));
+        assertThat(json, not(isJson(withJsonPath("$.empty_object", instanceOf(List.class)))));
+    }
+
+    @Test
+    public void shouldMatchJsonPathToJsonArray() {
+        final String json = "{\"list\": [ \"one\",\"two\",\"three\"]}";
+
+        assertThat(json, hasJsonPath("$.list"));
+        assertThat(json, hasJsonPath("$.list[*]"));
+        assertThat(json, isJson(withJsonPath("$.list")));
+        assertThat(json, isJson(withJsonPath("$.list[*]")));
+        assertThat(json, hasJsonPath("$.list", contains("one", "two", "three")));
+        assertThat(json, isJson(withJsonPath("$.list", hasItem("two"))));
+
+        assertThat(json, not(hasJsonPath("$.list", hasSize(2))));
+        assertThat(json, not(isJson(withJsonPath("$.list", contains("four")))));
+    }
+
+    @Test
+    public void shouldMatchJsonPathToEmptyJsonArray() {
+        final String json = "{\"empty_list\": []}";
+
+        assertThat(json, hasJsonPath("$.empty_list"));
+        assertThat(json, hasJsonPath("$.empty_list[*]"));
+        assertThat(json, isJson(withJsonPath("$.empty_list")));
+        assertThat(json, isJson(withJsonPath("$.empty_list[*]")));
+        assertThat(json, hasJsonPath("$.empty_list", empty()));
+        assertThat(json, isJson(withJsonPath("$.empty_list", hasSize(0))));
+
+        assertThat(json, not(hasJsonPath("$.empty_list", hasSize(2))));
+        assertThat(json, not(isJson(withJsonPath("$.empty_list", contains("four")))));
+    }
+
+    @Test
+    public void willMatchIndefiniteJsonPathsEvaluatedToEmptyLists() {
+        // This is just a test to demonstrate that indefinite paths
+        // will always match, regardless of result. This is because
+        // the evaluation of these expressions will return lists,
+        // even though they may be empty.
+        String json = "{\"items\": []}";
+        assertThat(json, hasJsonPath("$.items[*].name"));
+        assertThat(json, hasJsonPath("$.items[*]"));
+        assertThat(json, hasJsonPath("$.items[*]", hasSize(0)));
+    }
+
+    @Test
+    public void shouldMatchJsonPathToNullValue() {
+        final String json = "{\"none\": null}";
+
+        assertThat(json, hasJsonPath("$.none"));
+        assertThat(json, isJson(withJsonPath("$.none")));
+        assertThat(json, hasJsonPath("$.none", nullValue()));
+        assertThat(json, isJson(withJsonPath("$.none", nullValue())));
+
+        assertThat(json, not(hasJsonPath("$.none", equalTo("something"))));
+        assertThat(json, not(isJson(withJsonPath("$.none", empty()))));
+    }
+
+    @Test
+    public void shouldNotMatchNonExistingJsonPath() {
+        final String json = "{}";
+
+        assertThat(json, not(hasJsonPath("$.not_there")));
+        assertThat(json, not(hasJsonPath("$.not_there", anything())));
+        assertThat(json, not(hasJsonPath("$.not_there[*]")));
+        assertThat(json, not(hasJsonPath("$.not_there[*]", anything())));
+        assertThat(json, not(isJson(withJsonPath("$.not_there"))));
+        assertThat(json, not(isJson(withJsonPath("$.not_there", anything()))));
+        assertThat(json, not(isJson(withJsonPath("$.not_there[*]"))));
+        assertThat(json, not(isJson(withJsonPath("$.not_there[*]", anything()))));
     }
 
     @Test
     public void shouldNotMatchInvalidJsonWithPath() {
         assertThat(INVALID_JSON, not(hasJsonPath("$.path")));
         assertThat(new Object(), not(hasJsonPath("$.path")));
-        assertThat("{}", not(hasJsonPath("$.path")));
         assertThat(null, not(hasJsonPath("$.path")));
     }
 
@@ -78,51 +194,13 @@ public class JsonPathMatchersTest {
     }
 
     @Test
-    public void shouldNotMatchNonExistingJsonPath() {
-        assertThat(BOOKS_JSON, not(hasJsonPath("$.not_there")));
-        assertThat(BOOKS_JSON, not(hasJsonPath("$.store.book[5].title")));
-        assertThat(BOOKS_JSON, not(hasJsonPath("$.store.book[*].not_there")));
-    }
-
-    @Test
-    public void shouldNotMatchNonExistingJsonPathAlternative() {
-        assertThat(BOOKS_JSON, not(isJson(withJsonPath("$.not_there"))));
-        assertThat(BOOKS_JSON, not(isJson(withJsonPath("$.store.book[5].title"))));
-        assertThat(BOOKS_JSON, not(isJson(withJsonPath("$.store.book[*].not_there"))));
-    }
-
-    @Test
-    public void shouldMatchJsonPathWithStringValue() {
-        assertThat(BOOKS_JSON, hasJsonPath("$.store.name", equalTo("Little Shop")));
-        assertThat(BOOKS_JSON, hasJsonPath("$.store.book[2].title", equalTo("Moby Dick")));
-    }
-
-    @Test
-    public void shouldMatchJsonPathWithIntegerValue() {
-        assertThat(BOOKS_JSON, hasJsonPath("$.expensive", equalTo(10)));
-    }
-
-    @Test
-    public void shouldMatchJsonPathWithDoubleValue() {
-        assertThat(BOOKS_JSON, hasJsonPath("$.store.bicycle.price", equalTo(19.95)));
-    }
-
-    @Test
-    public void shouldMatchJsonPathWithCollectionValue() {
-        assertThat(BOOKS_JSON, hasJsonPath("$.store.book[*].author", instanceOf(Collection.class)));
-        assertThat(BOOKS_JSON, hasJsonPath("$.store.book[*].author", hasSize(4)));
-        assertThat(BOOKS_JSON, hasJsonPath("$.store.book[*].author", hasItem("Evelyn Waugh")));
-        assertThat(BOOKS_JSON, hasJsonPath("$..book[2].title", hasItem("Moby Dick")));
-    }
-
-    @Test
     public void shouldMatchJsonPathOnFile() {
         assertThat(BOOKS_JSON_FILE, hasJsonPath("$.store.name", equalTo("Little Shop")));
     }
 
     @Test
     public void shouldNotMatchJsonPathOnNonExistingFile() {
-        File nonExistingFile = Paths.get("missing-file").toFile();
+        File nonExistingFile = new File("missing-file");
         assertThat(nonExistingFile, not(hasJsonPath("$..*", anything())));
     }
 
@@ -130,15 +208,5 @@ public class JsonPathMatchersTest {
     public void shouldMatchJsonPathOnParsedJsonObject() {
         Object json = Configuration.defaultConfiguration().jsonProvider().parse(BOOKS_JSON);
         assertThat(json, hasJsonPath("$.store.name", equalTo("Little Shop")));
-    }
-
-    @Test
-    public void shouldMatchMissingJsonPath() {
-        assertThat(BOOKS_JSON, hasNoJsonPath("$.not_there"));
-    }
-
-    @Test
-    public void shouldNotMatchExistingJsonPath() {
-        assertThat(BOOKS_JSON, not(hasNoJsonPath("$.store.name")));
     }
 }
