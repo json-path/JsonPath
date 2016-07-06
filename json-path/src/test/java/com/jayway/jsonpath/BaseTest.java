@@ -5,6 +5,7 @@ import com.jayway.jsonpath.internal.path.PredicateContextImpl;
 import com.jayway.jsonpath.spi.json.GsonJsonProvider;
 import com.jayway.jsonpath.spi.json.JacksonJsonNodeJsonProvider;
 import com.jayway.jsonpath.spi.json.JacksonJsonProvider;
+import com.jayway.jsonpath.spi.json.JettisonProvider;
 import com.jayway.jsonpath.spi.json.JsonOrgJsonProvider;
 import com.jayway.jsonpath.spi.json.JsonSmartJsonProvider;
 import com.jayway.jsonpath.spi.json.TapestryJsonProvider;
@@ -40,6 +41,11 @@ public class BaseTest {
             .builder()
             .mappingProvider(new JacksonMappingProvider())
             .jsonProvider(new JacksonJsonNodeJsonProvider())
+            .build();
+
+    public static final Configuration JETTISON_CONFIGURATION = Configuration
+            .builder()
+            .jsonProvider(new JettisonProvider())
             .build();
 
     public static final Configuration JSON_SMART_CONFIGURATION = Configuration

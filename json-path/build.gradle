@@ -20,6 +20,7 @@ dependencies {
     compile libs.gson, optional
     compile libs.jsonOrg, optional
     compile libs.tapestryJson, optional
+    compile libs.jettison, optional
 
     testCompile libs.test
 }
@@ -38,7 +39,7 @@ task distZip(type: Zip, dependsOn: assemble) {
     }
     from(project.configurations.compile) {
         into 'lib'
-        exclude { it.file.name.contains('gson') || it.file.name.contains('jackson') || it.file.name.contains('json-2') }
+        exclude { it.file.name.contains('gson') || it.file.name.contains('jackson') || it.file.name.contains('json-2') || it.file.name.contains('jettison') }
     }
     from(project.configurations.compile) {
         into 'lib-optional/jackson'
@@ -47,6 +48,10 @@ task distZip(type: Zip, dependsOn: assemble) {
     from(project.configurations.compile) {
         into 'lib-optional/gson'
         include { it.file.name.contains('gson') }
+    }
+    from(project.configurations.compile) {
+        into 'lib-optional/jettison'
+        include { it.file.name.contains('jettison') }
     }
     from(project.configurations.compile) {
         into 'lib-optional/jsonOrg'
@@ -74,7 +79,7 @@ task distTar(type: Tar, dependsOn: assemble) {
     }
     from(project.configurations.compile) {
         into 'lib'
-        exclude { it.file.name.contains('gson') || it.file.name.contains('jackson') || it.file.name.contains('json-2')}
+        exclude { it.file.name.contains('gson') || it.file.name.contains('jackson') || it.file.name.contains('json-2') || it.file.name.contains('jettison') }
     }
     from(project.configurations.compile) {
         into 'lib-optional/jackson'
@@ -83,6 +88,10 @@ task distTar(type: Tar, dependsOn: assemble) {
     from(project.configurations.compile) {
         into 'lib-optional/gson'
         include { it.file.name.contains('gson') }
+    }
+    from(project.configurations.compile) {
+        into 'lib-optional/jettison'
+        include { it.file.name.contains('jettison') }
     }
     from(project.configurations.compile) {
         into 'lib-optional/jsonOrg'
