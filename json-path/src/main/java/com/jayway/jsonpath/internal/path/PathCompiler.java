@@ -576,6 +576,9 @@ public class PathCompiler {
                 break;
             } else if (c == potentialStringDelimiter) {
                 if (inProperty && !inEscape) {
+                    if (!path.nextSignificantCharIs(readPosition, COMMA) && !path.nextSignificantCharIs(readPosition, CLOSE_SQUARE_BRACKET)) {
+                        fail("Property must be separated by comma or Property must be terminated close square bracket at index "+readPosition);
+                    }
                     endPosition = readPosition;
                     String prop = path.subSequence(startPosition, endPosition).toString();
                     properties.add(Utils.unescape(prop));
