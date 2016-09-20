@@ -58,6 +58,8 @@ public class IsJson<T> extends TypeSafeMatcher<T> {
             return JsonPath.parse((String) object);
         } else if (object instanceof File) {
             return JsonPath.parse((File) object);
+        } else if (object instanceof ReadContext) {
+            return (ReadContext) object;
         } else {
             return JsonPath.parse(object);
         }
