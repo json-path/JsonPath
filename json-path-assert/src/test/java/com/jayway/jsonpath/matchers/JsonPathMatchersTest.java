@@ -1,6 +1,8 @@
 package com.jayway.jsonpath.matchers;
 
 import com.jayway.jsonpath.Configuration;
+import com.jayway.jsonpath.JsonPath;
+import com.jayway.jsonpath.ReadContext;
 import com.jayway.jsonpath.matchers.helpers.StrictParsingConfiguration;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
@@ -208,5 +210,14 @@ public class JsonPathMatchersTest {
     public void shouldMatchJsonPathOnParsedJsonObject() {
         Object json = Configuration.defaultConfiguration().jsonProvider().parse(BOOKS_JSON);
         assertThat(json, hasJsonPath("$.store.name", equalTo("Little Shop")));
+    }
+
+    @Test
+    public void shouldMatchJsonPathOnReadContext() {
+        String test = "{\"foo\":\"bar\"}";
+        ReadContext context = JsonPath.parse(test);
+        assertThat(context, hasJsonPath("$.foo"));
+        assertThat(context, hasJsonPath("$.foo", equalTo("bar")));
+        assertThat(context, hasNoJsonPath("$.zoo"));
     }
 }
