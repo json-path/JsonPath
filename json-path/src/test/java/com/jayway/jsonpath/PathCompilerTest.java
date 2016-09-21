@@ -266,4 +266,9 @@ public class PathCompilerTest {
     public void accept_only_a_single_comma_between_indexes() {
         compile("$['1', ,'3']");
     }
+
+    @Test(expected = InvalidPathException.class)
+    public void property_must_be_separated_by_commas() {
+        compile("$['aaa'}'bbb']");
+    }
 }
