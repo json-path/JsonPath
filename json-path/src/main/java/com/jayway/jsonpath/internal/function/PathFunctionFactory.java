@@ -25,11 +25,11 @@ import java.util.Map;
  */
 public class PathFunctionFactory {
 
-    public static final Map<String, Class> FUNCTIONS;
+    public static final Map<String, Class<? extends PathFunction>> FUNCTIONS;
 
     static {
         // New functions should be added here and ensure the name is not overridden
-        Map<String, Class> map = new HashMap<String, Class>();
+        Map<String, Class<? extends PathFunction>> map = new HashMap<String, Class<? extends PathFunction>>();
 
         // Math Functions
         map.put("avg", Average.class);
@@ -64,16 +64,8 @@ public class PathFunctionFactory {
      *
      * @throws InvalidPathException
      */
+    @Deprecated
     public static PathFunction newFunction(String name) throws InvalidPathException {
-        Class functionClazz = FUNCTIONS.get(name);
-        if(functionClazz == null){
-            throw new InvalidPathException("Function with name: " + name + " does not exists.");
-        } else {
-            try {
-                return (PathFunction)functionClazz.newInstance();
-            } catch (Exception e) {
-                throw new InvalidPathException("Function of name: " + name + " cannot be created", e);
-            }
-        }
+        return new MapJsonPathFunctionFactory(FUNCTIONS).newFunction(name);
     }
 }

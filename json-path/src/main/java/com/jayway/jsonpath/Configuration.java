@@ -15,6 +15,10 @@
 package com.jayway.jsonpath;
 
 import com.jayway.jsonpath.internal.DefaultsImpl;
+import com.jayway.jsonpath.internal.function.JsonPathFunctionFactory;
+import com.jayway.jsonpath.internal.function.MapJsonPathFunctionFactory;
+import com.jayway.jsonpath.internal.function.PathFunction;
+import com.jayway.jsonpath.internal.function.PathFunctionFactory;
 import com.jayway.jsonpath.spi.json.JsonProvider;
 import com.jayway.jsonpath.spi.mapper.MappingProvider;
 
@@ -23,6 +27,8 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.EnumSet;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Set;
 
 import static com.jayway.jsonpath.internal.Utils.notNull;
@@ -55,16 +61,24 @@ public class Configuration {
     private final MappingProvider mappingProvider;
     private final Set<Option> options;
     private final Collection<EvaluationListener> evaluationListeners;
+    private final JsonPathFunctionFactory jsonPathFunctionFactory;
 
-    private Configuration(JsonProvider jsonProvider, MappingProvider mappingProvider, EnumSet<Option> options, Collection<EvaluationListener> evaluationListeners) {
+    private Configuration(
+            JsonProvider jsonProvider,
+            MappingProvider mappingProvider,
+            EnumSet<Option> options,
+            Collection<EvaluationListener> evaluationListeners,
+            final JsonPathFunctionFactory jsonPathFunctionFactory) {
         notNull(jsonProvider, "jsonProvider can not be null");
         notNull(mappingProvider, "mappingProvider can not be null");
         notNull(options, "setOptions can not be null");
         notNull(evaluationListeners, "evaluationListeners can not be null");
+        notNull(jsonPathFunctionFactory, "jsonPathFunctionFactory can not be null");
         this.jsonProvider = jsonProvider;
         this.mappingProvider = mappingProvider;
         this.options = Collections.unmodifiableSet(options);
         this.evaluationListeners = Collections.unmodifiableCollection(evaluationListeners);
+        this.jsonPathFunctionFactory = jsonPathFunctionFactory;
     }
 
     /**
@@ -128,6 +142,14 @@ public class Configuration {
     }
 
     /**
+     * Returns {@link com.jayway.jsonpath.internal.function.JsonPathFunctionFactory} used by this configuration
+     * @return pathFunctionFactory used
+     */
+    public JsonPathFunctionFactory pathFunctionFactory() {
+        return this.jsonPathFunctionFactory;
+    }
+
+    /**
      * Creates a new configuration by adding the new options to the options used in this configuration.
      * @param options options to add
      * @return a new configuration
@@ -187,10 +209,15 @@ public class Configuration {
      */
     public static class ConfigurationBuilder {
 
+        private static final JsonPathFunctionFactory DEFAULT_FUNCTION_FACTORY =
+                new MapJsonPathFunctionFactory(PathFunctionFactory.FUNCTIONS);
+
         private JsonProvider jsonProvider;
         private MappingProvider mappingProvider;
         private EnumSet<Option> options = EnumSet.noneOf(Option.class);
         private Collection<EvaluationListener> evaluationListener = new ArrayList<EvaluationListener>();
+
+        private JsonPathFunctionFactory jsonPathFunctionFactory = DEFAULT_FUNCTION_FACTORY;
 
         public ConfigurationBuilder jsonProvider(JsonProvider provider) {
             this.jsonProvider = provider;
@@ -224,6 +251,28 @@ public class Configuration {
             return this;
         }
 
+        public ConfigurationBuilder pathFunctionFactory(final JsonPathFunctionFactory jsonPathFunctionFactory) {
+            if(jsonPathFunctionFactory == null) {
+                this.jsonPathFunctionFactory = DEFAULT_FUNCTION_FACTORY;
+            }
+            else {
+                this.jsonPathFunctionFactory = jsonPathFunctionFactory;
+            }
+            return this;
+        }
+
+        public ConfigurationBuilder pathFunctions(final Map<String, Class<? extends PathFunction>> functions) {
+            if(functions == null) {
+                this.jsonPathFunctionFactory = DEFAULT_FUNCTION_FACTORY;
+            }
+            else {
+                this.jsonPathFunctionFactory = new MapJsonPathFunctionFactory(
+                        new HashMap<String, Class<? extends PathFunction>>(functions)
+                );
+            }
+            return this;
+        }
+
         public Configuration build() {
             if (jsonProvider == null || mappingProvider == null) {
                 final Defaults defaults = getEffectiveDefaults();
@@ -234,7 +283,7 @@ public class Configuration {
                     mappingProvider = defaults.mappingProvider();
                 }
             }
-            return new Configuration(jsonProvider, mappingProvider, options, evaluationListener);
+            return new Configuration(jsonProvider, mappingProvider, options, evaluationListener, jsonPathFunctionFactory);
         }
     }
 
