@@ -52,4 +52,10 @@ public class MapperTest extends BaseTest {
     public void a_String_can_be_converted_to_a_BigDecimal() {
         assertThat(parse("{\"val\": \"1.5\"}").read("val", BigDecimal.class)).isEqualTo(BigDecimal.valueOf(1.5d));
     }
+
+    @Test
+    public void a_Boolean_can_be_converted_to_a_primitive_boolean() {
+        assertThat(parse("{\"val\": true}").read("val", boolean.class)).isTrue();
+        assertThat(parse("{\"val\": false}").read("val", boolean.class)).isFalse();
+    }
 }
