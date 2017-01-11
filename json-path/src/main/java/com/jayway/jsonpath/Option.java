@@ -83,6 +83,11 @@ public enum Option {
      * If REQUIRE_PROPERTIES option is present PathNotFoundException is thrown.
      * If REQUIRE_PROPERTIES option is not present ["b-val"] is returned.
      */
-    REQUIRE_PROPERTIES
+    REQUIRE_PROPERTIES,
 
+    /**
+     * Configures JsonPath to implicitly convert strings to numbers for comparisons in filters,
+     * mimicking behavior in javascript, e.g. 9 < "73"
+     */
+    IMPLICIT_NUMERIC_CONVERSIONS
 }

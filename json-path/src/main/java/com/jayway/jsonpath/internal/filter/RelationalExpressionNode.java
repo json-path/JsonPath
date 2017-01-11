@@ -39,8 +39,9 @@ public class RelationalExpressionNode extends ExpressionNode {
         if(right.isPathNode()){
             r = right.asPathNode().evaluate(ctx);
         }
-        Evaluator evaluator = EvaluatorFactory.createEvaluator(relationalOperator);
-        if(evaluator != null){
+
+        Evaluator evaluator = ctx.evaluatorFactory().createEvaluator(relationalOperator);
+        if(evaluator != null) {
             return evaluator.evaluate(l, r, ctx);
         }
         return false;
