@@ -15,6 +15,7 @@
 package com.jayway.jsonpath.spi.json;
 
 import com.fasterxml.jackson.core.JsonGenerator;
+import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.ObjectReader;
 import com.jayway.jsonpath.InvalidJsonException;
@@ -29,7 +30,14 @@ import java.util.List;
 
 public class JacksonJsonProvider extends AbstractJsonProvider {
 
-    private static final ObjectMapper defaultObjectMapper = new ObjectMapper();
+    private static final ObjectMapper defaultObjectMapper = createDefaultObjectMapper();
+
+    private static ObjectMapper createDefaultObjectMapper() {
+        final ObjectMapper mapper = new ObjectMapper();
+        mapper.configure(JsonParser.Feature.ALLOW_SINGLE_QUOTES, true);
+        return mapper;
+    }
+
     private static final ObjectReader defaultObjectReader = defaultObjectMapper.reader().withType(Object.class);
 
     protected ObjectMapper objectMapper;

@@ -52,7 +52,7 @@ public class JacksonJsonNodeJsonProviderTest extends BaseTest {
         context.put("$", "child", child1);
         ObjectNode node2 = context.read("$");
         ObjectNode child2 = context.read("$.child");
-        
+
         assertThat(node1).isSameAs(node2);
         assertThat(child1).isSameAs(child2);
     }
@@ -108,6 +108,15 @@ public class JacksonJsonNodeJsonProviderTest extends BaseTest {
         TypeRef<List<FooBarBaz<Integer>>> typeRef = new TypeRef<List<FooBarBaz<Integer>>>() {};
 
         using(JACKSON_JSON_NODE_CONFIGURATION).parse(JSON).read("$", typeRef);
+    }
+
+    @Test
+    public void jackson_json_allows_single_quotes() {
+        final String jsonArray = "[{\"foo\": \"bar\"}, {\"foo\": \"baz\"}]";
+        final Object readFromSingleQuote = using(JACKSON_JSON_NODE_CONFIGURATION).parse(jsonArray).read("$.[?(@.foo in ['bar'])].foo");
+        final Object readFromDoubleQuote = using(JACKSON_JSON_NODE_CONFIGURATION).parse(jsonArray).read("$.[?(@.foo in [\"bar\"])].foo");
+        assertThat(readFromSingleQuote).isEqualTo(readFromDoubleQuote);
+
     }
 
     public static class FooBarBaz<T> {

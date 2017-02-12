@@ -45,4 +45,12 @@ public class JacksonTest extends BaseTest {
         assertThat(date).isEqualTo(now);
     }
 
+    @Test
+    public void jackson_allows_single_quotes() {
+        final String jsonArray = "[{\"foo\": \"bar\"}, {\"foo\": \"baz\"}]";
+        final Object readFromSingleQuote = JsonPath.using(JACKSON_CONFIGURATION).parse(jsonArray).read("$.[?(@.foo in ['bar'])].foo");
+        final Object readFromDoubleQuote = JsonPath.using(JACKSON_CONFIGURATION).parse(jsonArray).read("$.[?(@.foo in [\"bar\"])].foo");
+        assertThat(readFromSingleQuote).isEqualTo(readFromDoubleQuote);
+
+    }
 }
