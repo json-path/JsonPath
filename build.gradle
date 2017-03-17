@@ -11,7 +11,7 @@ buildscript {
 
 ext {
     libs = [
-            slf4jApi: 'org.slf4j:slf4j-api:1.7.16',
+            slf4jApi: 'org.slf4j:slf4j-api:1.7.25',
             jsonSmart: 'net.minidev:json-smart:2.2.1',
             jacksonDatabind: 'com.fasterxml.jackson.core:jackson-databind:2.6.3',
             gson: 'com.google.code.gson:gson:2.3.1',
