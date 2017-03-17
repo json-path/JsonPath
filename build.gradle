@@ -73,7 +73,7 @@ subprojects {
 }
 
 task wrapper(type: Wrapper) {
-    gradleVersion = '2.11'
+    gradleVersion = '3.4.1'
 }
 
 //Task used by Heroku for staging
