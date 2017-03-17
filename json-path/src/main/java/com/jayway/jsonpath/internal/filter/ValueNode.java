@@ -11,6 +11,10 @@ import com.jayway.jsonpath.internal.Utils;
 import com.jayway.jsonpath.internal.path.PathCompiler;
 import com.jayway.jsonpath.internal.path.PredicateContextImpl;
 import com.jayway.jsonpath.spi.json.JsonProvider;
+
+import net.minidev.json.parser.JSONParser;
+import net.minidev.json.parser.ParseException;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -343,7 +347,11 @@ public abstract class ValueNode {
         }
 
         public Object parse(Predicate.PredicateContext ctx){
-            return parsed ? json : ctx.configuration().jsonProvider().parse(json.toString());
+            try {
+              return parsed ? json : new JSONParser(JSONParser.MODE_PERMISSIVE).parse(json.toString());
+            } catch (ParseException e) {
+              throw new IllegalArgumentException(e);
+            }
         }
 
         public boolean isParsed() {
