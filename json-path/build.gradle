@@ -14,7 +14,10 @@ jar {
 }
 
 dependencies {
-    compile libs.jsonSmart
+    compile (libs.jsonSmart){
+      // see https://github.com/jayway/JsonPath/issues/228, https://github.com/netplex/json-smart-v2/issues/20
+      exclude group: 'org.ow2.asm', module: 'asm' 
+    }
     compile libs.slf4jApi
     compile libs.jacksonDatabind, optional
     compile libs.gson, optional
