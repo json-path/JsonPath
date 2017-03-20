@@ -1,7 +1,5 @@
 apply from: "$rootDir/gradle/publishMaven.gradle"
 
-displayName = "JsonPath Assert"
-
 description = "Assertions on Json using JsonPath"
 
 jar {

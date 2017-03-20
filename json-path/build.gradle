@@ -1,8 +1,5 @@
 apply from: "$rootDir/gradle/publishMaven.gradle"
 
-
-displayName = "Json Path"
-
 description = "Java port of Stefan Goessner JsonPath."
 
 jar {
