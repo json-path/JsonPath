@@ -120,7 +120,7 @@ public class FilterCompiler {
     /*
      *  LogicalOR               = LogicalAND { '||' LogicalAND }
      *  LogicalAND              = LogicalANDOperand { '&&' LogicalANDOperand }
-     *  LogicalANDOperand       = RelationalExpression | '(' LogicalOR ')'
+     *  LogicalANDOperand       = RelationalExpression | '(' LogicalOR ')' | '!' LogicalANDOperand
      *  RelationalExpression    = Value [ RelationalOperator Value ]
      */
 
@@ -164,6 +164,19 @@ public class FilterCompiler {
     }
 
     private ExpressionNode readLogicalANDOperand() {
+        int savepoint = filter.skipBlanks().position();
+        if (filter.skipBlanks().currentCharIs(NOT)) {
+            filter.readSignificantChar(NOT);
+            switch (filter.skipBlanks().currentChar()) {
+                case DOC_CONTEXT:
+                case EVAL_CONTEXT:
+                    filter.setPosition(savepoint);
+                    break;
+            default:
+                final ExpressionNode op = readLogicalANDOperand();
+                return LogicalExpressionNode.createLogicalNot(op);
+            }
+        }
         if (filter.skipBlanks().currentCharIs(OPEN_PARENTHESIS)) {
             filter.readSignificantChar(OPEN_PARENTHESIS);
             final ExpressionNode op = readLogicalOR();
