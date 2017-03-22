@@ -805,9 +805,9 @@ public abstract class ValueNode {
         }
 
         public ValueNode evaluate(Predicate.PredicateContext ctx) {
-            Configuration c = Configuration.builder().jsonProvider(ctx.configuration().jsonProvider()).options(Option.REQUIRE_PROPERTIES).build();
             if (isExistsCheck()) {
                 try {
+                    Configuration c = Configuration.builder().jsonProvider(ctx.configuration().jsonProvider()).options(Option.REQUIRE_PROPERTIES).build();
                     Object result = path.evaluate(ctx.item(), ctx.root(), c).getValue(false);
                     return result == JsonProvider.UNDEFINED ? ValueNode.FALSE : ValueNode.TRUE;
                 } catch (PathNotFoundException e) {
