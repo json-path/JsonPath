@@ -39,7 +39,7 @@ task distZip(type: Zip, dependsOn: assemble) {
     }
     from(project.configurations.compile) {
         into 'lib'
-        exclude { it.file.name.contains('gson') || it.file.name.contains('jackson') || it.file.name.contains('json-2') || it.file.name.contains('jettison') }
+        exclude { it.file.name.contains('gson') || it.file.name.contains('jackson') || it.file.name.contains('json-2') || it.file.name.contains('jettison') || it.file.name.contains('tapestry') }
     }
     from(project.configurations.compile) {
         into 'lib-optional/jackson'
@@ -58,7 +58,7 @@ task distZip(type: Zip, dependsOn: assemble) {
         include { it.file.name.contains('json-2') }
     }
     from(project.configurations.compile) {
-        into 'lib-optional/jsonOrg'
+        into 'lib-optional/tapestry'
         include { it.file.name.contains('tapestry') }
     }
 }
