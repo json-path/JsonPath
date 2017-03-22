@@ -6,7 +6,7 @@ jar {
     baseName 'json-path'
     manifest {
         attributes 'Implementation-Title': 'json-path', 'Implementation-Version': version
-        instruction 'Import-Package', 'org.json.*;resolution:=optional', 'com.google.gson.*;resolution:=optional', 'com.fasterxml.jackson.*;resolution:=optional', 'net.minidev.json.*;resolution:=optional', 'org.apache.tapestry5.json.*;resolution:=optional', '*'
+        instruction 'Import-Package', 'org.json.*;resolution:=optional', 'com.google.gson.*;resolution:=optional', 'com.fasterxml.jackson.*;resolution:=optional', 'net.minidev.json.*;resolution:=optional', 'org.apache.tapestry5.json.*;resolution:=optional', 'org.codehaus.jettison.*;resolution:=optional', '*'
     }
 }
 
