@@ -163,7 +163,7 @@ public class EvaluationContextImpl implements EvaluationContext {
         return res;
     }
 
-    private class FoundResultImpl implements EvaluationListener.FoundResult {
+    private static class FoundResultImpl implements EvaluationListener.FoundResult {
 
         private final int index;
         private final String path;
