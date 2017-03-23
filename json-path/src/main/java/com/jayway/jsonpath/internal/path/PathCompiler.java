@@ -45,9 +45,13 @@ public class PathCompiler {
     private final LinkedList<Predicate> filterStack;
     private final CharacterIndex path;
 
-    private PathCompiler(String path, LinkedList<Predicate> filterStack) {
+    private PathCompiler(String path, LinkedList<Predicate> filterStack){
+        this(new CharacterIndex(path), filterStack);
+    }
+
+    private PathCompiler(CharacterIndex path, LinkedList<Predicate> filterStack){
         this.filterStack = filterStack;
-        this.path = new CharacterIndex(path);
+        this.path = path;
     }
 
     private Path compile() {
@@ -57,16 +61,18 @@ public class PathCompiler {
 
     public static Path compile(String path, final Predicate... filters) {
         try {
-            path = path.trim();
+            CharacterIndex ci = new CharacterIndex(path);
+            ci.trim();
 
-            if(!(path.charAt(0) == DOC_CONTEXT)  && !(path.charAt(0) == EVAL_CONTEXT)){
-                path = "$." + path;
+            if(!( ci.charAt(0) == DOC_CONTEXT)  && !( ci.charAt(0) == EVAL_CONTEXT)){
+                ci = new CharacterIndex("$." + path);
+                ci.trim();
             }
-            if(path.endsWith(".")){
+            if(ci.lastCharIs('.')){
                 fail("Path must not end with a '.' or '..'");
             }
-            LinkedList filterStack = new LinkedList<Predicate>(asList(filters));
-            Path p = new PathCompiler(path.trim(), filterStack).compile();
+            LinkedList<Predicate> filterStack = new LinkedList<Predicate>(asList(filters));
+            Path p = new PathCompiler(ci, filterStack).compile();
             return p;
         } catch (Exception e) {
             InvalidPathException ipe;
