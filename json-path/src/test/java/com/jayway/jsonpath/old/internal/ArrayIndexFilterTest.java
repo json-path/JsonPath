@@ -1,6 +1,9 @@
 package com.jayway.jsonpath.old.internal;
 
 import com.jayway.jsonpath.JsonPath;
+
+import org.junit.Assert;
+
 import org.hamcrest.Matchers;
 import org.junit.Test;
 
@@ -41,6 +44,12 @@ public class ArrayIndexFilterTest {
     public void head_tail_grabs_correct() {
         List<Integer> result = JsonPath.parse(JSON).read("$[0:3]");
         assertThat(result, Matchers.contains(1, 3, 5));
+    }
+
+    @Test
+    public void can_access_items_from_end_with_negative_index() {
+        int result = JsonPath.parse(JSON).read("$[-3]");
+        Assert.assertEquals(8, result);
     }
 
 }
