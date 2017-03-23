@@ -89,6 +89,13 @@ public class FilterTest extends BaseTest {
         assertThat(filter(where("string-key").eq(null)).apply(createPredicateContext(json))).isEqualTo(false);
     }
 
+    @Test
+    public void arr_eq_evals() {
+        assertThat(filter(where("arr-empty").eq("[]")).apply(createPredicateContext(json))).isEqualTo(true);
+        assertThat(filter(where("int-arr").eq("[0,1,2,3,4]")).apply(createPredicateContext(json))).isEqualTo(true);
+        assertThat(filter(where("int-arr").eq("[0,1,2,3]")).apply(createPredicateContext(json))).isEqualTo(false);
+        assertThat(filter(where("int-arr").eq("[0,1,2,3,4,5]")).apply(createPredicateContext(json))).isEqualTo(false);
+    }
     //----------------------------------------------------------------------------
     //
     // NE
