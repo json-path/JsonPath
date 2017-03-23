@@ -1,4 +1,4 @@
-Jayway JsonPath 2.2.0
+Jayway JsonPath
 =====================
 
 **A Java DSL for reading JSON documents.**
@@ -34,11 +34,11 @@ JsonPath is available at the Central Maven Repository. Maven users add this to y
 <dependency>
     <groupId>com.jayway.jsonpath</groupId>
     <artifactId>json-path</artifactId>
-    <version>2.1.0</version>
+    <version>2.2.0</version>
 </dependency>
 ```
 
-If you need help ask questions at the [google group](https://groups.google.com/forum/#!forum/jsonpath). 
+If you need help ask questions at [Stack Overflow](http://stackoverflow.com/questions/tagged/jsonpath). Tag the question 'jsonpath' and 'java'.
 
 JsonPath expressions always refer to a JSON structure in the same way as XPath expression are used in combination 
 with an XML document. The "root member object" in JsonPath is always referred to as `$` regardless if it is an 
@@ -256,6 +256,8 @@ List<Map<String, Object>> books =  JsonPath.parse(json)
 You can use `&&` and `||` to combine multiple predicates `[?(@.price < 10 && @.category == 'fiction')]` , 
 `[?(@.category == 'reference' || @.price > 10)]`.
  
+You can use `!` to negate a predicate `[?(!(@.price < 10 && @.category == 'fiction'))]`.
+
 ###Filter Predicates
  
 Predicates can be built using the Filter API as shown below:

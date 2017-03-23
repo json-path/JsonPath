@@ -106,7 +106,7 @@ public class JsonAsserterImpl implements JsonAsserter {
 
     @Override
     public <T> JsonAsserter assertEquals(String path, T expected, String message) {
-        return null;  //To change body of implemented methods use File | Settings | File Templates.
+        return assertThat(path, equalTo(expected),message);
     }
 
     /**
