@@ -109,7 +109,6 @@ public class PathCompiler {
         }
 
         RootPathToken pathToken = PathTokenFactory.createRootPathToken(path.currentChar());
-        PathTokenAppender appender = pathToken.getPathTokenAppender();
 
         if (path.currentIsTail()) {
             return pathToken;
@@ -121,6 +120,7 @@ public class PathCompiler {
             fail("Illegal character at position " + path.position() + " expected '.' or '[");
         }
 
+        PathTokenAppender appender = pathToken.getPathTokenAppender();
         readNextToken(appender);
 
         return pathToken;
@@ -267,7 +267,6 @@ public class PathCompiler {
      *      an array.
      */
     private List<Parameter> parseFunctionParameters(String funcName) {
-        PathToken currentToken;
         ParamType type = null;
 
         // Parenthesis starts at 1 since we're marking the start of a function call, the close paren will denote the
