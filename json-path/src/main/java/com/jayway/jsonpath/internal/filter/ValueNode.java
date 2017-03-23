@@ -30,7 +30,6 @@ import java.util.regex.Pattern;
 public abstract class ValueNode {
 
     public static final NullNode NULL_NODE = new NullNode();
-    public static final BooleanNode TRUE = new BooleanNode("true");
     public static final BooleanNode FALSE = new BooleanNode("false");
     public static final UndefinedNode UNDEFINED = new UndefinedNode();
 
@@ -157,7 +156,7 @@ public abstract class ValueNode {
         char c1 = str.charAt(str.length() - 1);
         if ((c0 == '[' && c1 == ']') || (c0 == '{' && c1 == '}')){
             try {
-                Configuration.defaultConfiguration().jsonProvider().parse(str);
+                new JSONParser(JSONParser.MODE_PERMISSIVE).parse(str);
                 return false;
             } catch(Exception e){
                 return false;
