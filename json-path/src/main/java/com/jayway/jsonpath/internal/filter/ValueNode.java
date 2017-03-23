@@ -30,6 +30,7 @@ import java.util.regex.Pattern;
 public abstract class ValueNode {
 
     public static final NullNode NULL_NODE = new NullNode();
+    public static final BooleanNode TRUE = new BooleanNode("true");
     public static final BooleanNode FALSE = new BooleanNode("false");
     public static final UndefinedNode UNDEFINED = new UndefinedNode();
 
