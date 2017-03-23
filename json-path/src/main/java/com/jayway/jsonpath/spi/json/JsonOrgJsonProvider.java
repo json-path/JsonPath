@@ -96,10 +96,11 @@ public class JsonOrgJsonProvider extends AbstractJsonProvider {
     public Object getMapValue(Object obj, String key) {
         try {
             JSONObject jsonObject = toJsonObject(obj);
-            if (!jsonObject.has(key)) {
+            Object o = jsonObject.opt(key);
+            if (o == null) {
                 return UNDEFINED;
             } else {
-                return unwrap(jsonObject.get(key));
+                return unwrap(o);
             }
         } catch (JSONException e) {
             throw new JsonPathException(e);
