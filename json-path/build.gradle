@@ -1,20 +1,20 @@
 apply from: "$rootDir/gradle/publishMaven.gradle"
 
-
-displayName = "Json Path"
-
 description = "Java port of Stefan Goessner JsonPath."
 
 jar {
     baseName 'json-path'
     manifest {
         attributes 'Implementation-Title': 'json-path', 'Implementation-Version': version
-        instruction 'Import-Package', 'org.json.*;resolution:=optional', 'com.google.gson.*;resolution:=optional', 'com.fasterxml.jackson.*;resolution:=optional', 'org.apache.tapestry5.json.*;resolution:=optional', '*'
+        instruction 'Import-Package', 'org.json.*;resolution:=optional', 'com.google.gson.*;resolution:=optional', 'com.fasterxml.jackson.*;resolution:=optional', 'org.apache.tapestry5.json.*;resolution:=optional', 'org.codehaus.jettison.*;resolution:=optional', '*'
     }
 }
 
 dependencies {
-    compile libs.jsonSmart
+    compile (libs.jsonSmart){
+      // see https://github.com/jayway/JsonPath/issues/228, https://github.com/netplex/json-smart-v2/issues/20
+      exclude group: 'org.ow2.asm', module: 'asm' 
+    }
     compile libs.slf4jApi
     compile libs.jacksonDatabind, optional
     compile libs.gson, optional
@@ -39,7 +39,7 @@ task distZip(type: Zip, dependsOn: assemble) {
     }
     from(project.configurations.compile) {
         into 'lib'
-        exclude { it.file.name.contains('gson') || it.file.name.contains('jackson') || it.file.name.contains('json-2') || it.file.name.contains('jettison') }
+        exclude { it.file.name.contains('gson') || it.file.name.contains('jackson') || it.file.name.contains('json-2') || it.file.name.contains('jettison') || it.file.name.contains('tapestry') }
     }
     from(project.configurations.compile) {
         into 'lib-optional/jackson'
@@ -58,7 +58,7 @@ task distZip(type: Zip, dependsOn: assemble) {
         include { it.file.name.contains('json-2') }
     }
     from(project.configurations.compile) {
-        into 'lib-optional/jsonOrg'
+        into 'lib-optional/tapestry'
         include { it.file.name.contains('tapestry') }
     }
 }
@@ -79,7 +79,7 @@ task distTar(type: Tar, dependsOn: assemble) {
     }
     from(project.configurations.compile) {
         into 'lib'
-        exclude { it.file.name.contains('gson') || it.file.name.contains('jackson') || it.file.name.contains('json-2') || it.file.name.contains('jettison') }
+        exclude { it.file.name.contains('gson') || it.file.name.contains('jackson') || it.file.name.contains('json-2') || it.file.name.contains('jettison') || it.file.name.contains('tapestry') }
     }
     from(project.configurations.compile) {
         into 'lib-optional/jackson'
@@ -98,7 +98,7 @@ task distTar(type: Tar, dependsOn: assemble) {
         include { it.file.name.contains('json-2') }
     }
     from(project.configurations.compile) {
-        into 'lib-optional/jsonOrg'
+        into 'lib-optional/tapestry'
         include { it.file.name.contains('tapestry') }
     }
 }

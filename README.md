@@ -256,6 +256,8 @@ List<Map<String, Object>> books =  JsonPath.parse(json)
 You can use `&&` and `||` to combine multiple predicates `[?(@.price < 10 && @.category == 'fiction')]` , 
 `[?(@.category == 'reference' || @.price > 10)]`.
  
+You can use `!` to negate a predicate `[?(!(@.price < 10 && @.category == 'fiction'))]`.
+
 ###Filter Predicates
  
 Predicates can be built using the Filter API as shown below:
