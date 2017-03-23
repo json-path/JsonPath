@@ -125,8 +125,9 @@ public abstract class PathToken {
     protected void handleArrayIndex(int index, String currentPath, Object model, EvaluationContextImpl ctx) {
         String evalPath = Utils.concat(currentPath, "[", String.valueOf(index), "]");
         PathRef pathRef = ctx.forUpdate() ? PathRef.create(model, index) : PathRef.NO_OP;
+        int effectiveIndex = index < 0 ? ctx.jsonProvider().length(model) + index : index;
         try {
-            Object evalHit = ctx.jsonProvider().getArrayIndex(model, index);
+            Object evalHit = ctx.jsonProvider().getArrayIndex(model, effectiveIndex);
             if (isLeaf()) {
                 ctx.addResult(evalPath, pathRef, evalHit);
             } else {

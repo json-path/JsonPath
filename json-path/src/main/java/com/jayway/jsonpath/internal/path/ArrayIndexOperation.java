@@ -42,7 +42,7 @@ public class ArrayIndexOperation {
         //check valid chars
         for (int i = 0; i < operation.length(); i++) {
             char c = operation.charAt(i);
-            if (!isDigit(c) && c != ',' && c != ' ') {
+            if (!isDigit(c) && c != ',' && c != ' ' && c != '-') {
                 throw new InvalidPathException("Failed to parse ArrayIndexOperation: " + operation);
             }
         }
