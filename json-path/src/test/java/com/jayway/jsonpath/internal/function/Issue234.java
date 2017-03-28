@@ -22,7 +22,6 @@ import static org.assertj.core.api.Assertions.assertThat;
  *
  * @see NestedFunctionTest for examples of where that is performed.
  *
- * Created by mattg on 3/27/17.
  */
 public class Issue234 {
 
