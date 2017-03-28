@@ -158,7 +158,7 @@ public abstract class ValueNode {
         if ((c0 == '[' && c1 == ']') || (c0 == '{' && c1 == '}')){
             try {
                 new JSONParser(JSONParser.MODE_PERMISSIVE).parse(str);
-                return false;
+                return true;
             } catch(Exception e){
                 return false;
             }
