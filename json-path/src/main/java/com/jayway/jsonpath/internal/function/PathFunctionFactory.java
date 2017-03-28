@@ -67,7 +67,7 @@ public class PathFunctionFactory {
     public static PathFunction newFunction(String name) throws InvalidPathException {
         Class functionClazz = FUNCTIONS.get(name);
         if(functionClazz == null){
-            throw new InvalidPathException("Function with name: " + name + " does not exists.");
+            throw new InvalidPathException("Function with name: " + name + " does not exist.");
         } else {
             try {
                 return (PathFunction)functionClazz.newInstance();
