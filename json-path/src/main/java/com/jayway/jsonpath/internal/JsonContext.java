@@ -33,6 +33,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.URL;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -106,6 +107,19 @@ public class JsonContext implements ParseContext, DocumentContext {
         FileInputStream fis = null;
         try {
             fis = new FileInputStream(json);
+            parse(fis);
+        } finally {
+            Utils.closeQuietly(fis);
+        }
+        return this;
+    }
+
+    @Override
+    public DocumentContext parse(URL url) throws IOException {
+        notNull(url, "url can not be null");
+        InputStream fis = null;
+        try {
+            fis = url.openStream();
             parse(fis);
         } finally {
             Utils.closeQuietly(fis);
