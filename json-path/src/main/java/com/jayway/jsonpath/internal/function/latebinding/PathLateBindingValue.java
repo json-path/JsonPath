@@ -24,7 +24,8 @@ public class PathLateBindingValue implements ILateBindingValue {
     }
 
     /**
-     * Evaluate the field type
+     * Evaluate the expression at the point of need for Path type expressions
+     *
      * @return
      */
     public Object get() {
