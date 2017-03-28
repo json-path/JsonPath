@@ -333,5 +333,4 @@ public class DeepScanTest extends BaseTest {
                 .read("$..array[0]");
         assertThat(result.get(0)).isEqualTo(expected);
     }
-
 }

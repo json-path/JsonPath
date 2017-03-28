@@ -174,36 +174,36 @@ public class JsonPath {
         boolean optSuppressExceptions = configuration.containsOption(Option.SUPPRESS_EXCEPTIONS);
 
         try {
-            if(path.isFunctionPath()){
-                if(optAsPathList || optAlwaysReturnList){
+            if (path.isFunctionPath()) {
+                if (optAsPathList || optAlwaysReturnList) {
                     throw new JsonPathException("Options " + AS_PATH_LIST + " and " + ALWAYS_RETURN_LIST + " are not allowed when using path functions!");
                 }
                 return path.evaluate(jsonObject, jsonObject, configuration).getValue(true);
 
-            } else if(optAsPathList){
-                return  (T)path.evaluate(jsonObject, jsonObject, configuration).getPath();
+            } else if (optAsPathList) {
+                return (T) path.evaluate(jsonObject, jsonObject, configuration).getPath();
 
             } else {
                 Object res = path.evaluate(jsonObject, jsonObject, configuration).getValue(false);
-                if(optAlwaysReturnList && path.isDefinite()){
+                if (optAlwaysReturnList && path.isDefinite()) {
                     Object array = configuration.jsonProvider().createArray();
                     configuration.jsonProvider().setArrayIndex(array, 0, res);
-                    return (T)array;
+                    return (T) array;
                 } else {
-                    return (T)res;
+                    return (T) res;
                 }
             }
-        } catch (RuntimeException e){
-            if(!optSuppressExceptions){
+        } catch (RuntimeException e) {
+            if (!optSuppressExceptions) {
                 throw e;
             } else {
-                if(optAsPathList){
-                    return (T)configuration.jsonProvider().createArray();
+                if (optAsPathList) {
+                    return (T) configuration.jsonProvider().createArray();
                 } else {
-                    if(optAlwaysReturnList){
-                        return (T)configuration.jsonProvider().createArray();
+                    if (optAlwaysReturnList) {
+                        return (T) configuration.jsonProvider().createArray();
                     } else {
-                        return (T)(path.isDefinite() ? null : configuration.jsonProvider().createArray());
+                        return (T) (path.isDefinite() ? null : configuration.jsonProvider().createArray());
                     }
                 }
             }
@@ -232,9 +232,9 @@ public class JsonPath {
     /**
      * Replaces the value on the given path with the result of the {@link MapFunction}.
      *
-     * @param jsonObject        a json object
-     * @param mapFunction       Converter object to be invoked
-     * @param configuration     configuration to use
+     * @param jsonObject    a json object
+     * @param mapFunction   Converter object to be invoked
+     * @param configuration configuration to use
      * @return the updated jsonObject or the path list to updated objects if option AS_PATH_LIST is set.
      */
     public <T> T map(Object jsonObject, MapFunction mapFunction, Configuration configuration) {
@@ -306,7 +306,7 @@ public class JsonPath {
         return resultByConfiguration(jsonObject, configuration, evaluationContext);
     }
 
-    public <T> T renameKey(Object jsonObject, String oldKeyName, String newKeyName, Configuration configuration){
+    public <T> T renameKey(Object jsonObject, String oldKeyName, String newKeyName, Configuration configuration) {
         notNull(jsonObject, "json can not be null");
         notEmpty(newKeyName, "newKeyName can not be null or empty");
         notNull(configuration, "configuration can not be null");
@@ -513,6 +513,7 @@ public class JsonPath {
      * @return list of objects matched by the given path
      */
     @SuppressWarnings({"unchecked"})
+    @Deprecated
     public static <T> T read(URL jsonURL, String jsonPath, Predicate... filters) throws IOException {
         return new JsonContext().parse(jsonURL).read(jsonPath, filters);
     }
