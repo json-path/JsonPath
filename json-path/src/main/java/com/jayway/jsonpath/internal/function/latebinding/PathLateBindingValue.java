@@ -17,7 +17,7 @@ public class PathLateBindingValue implements ILateBindingValue {
     private final Object rootDocument;
     private final Configuration configuration;
 
-    public PathLateBindingValue(ParamType type, Path path, Object rootDocument, Configuration configuration) {
+    public PathLateBindingValue(final Path path, final Object rootDocument, final Configuration configuration) {
         this.path = path;
         this.rootDocument = rootDocument;
         this.configuration = configuration;
