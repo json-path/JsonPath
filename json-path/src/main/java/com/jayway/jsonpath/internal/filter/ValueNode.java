@@ -714,6 +714,15 @@ public abstract class ValueNode {
             return nodes.contains(node);
         }
 
+        public boolean subset(ValueListNode right) {
+            for (ValueNode leftNode : nodes) {
+                if (!right.nodes.contains(leftNode)) {
+                    return false;
+                }
+            }
+            return true;
+        }
+
         public List<ValueNode> getNodes() {
             return Collections.unmodifiableList(nodes);
         }
