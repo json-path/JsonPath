@@ -26,6 +26,7 @@ import com.jayway.jsonpath.ReadContext;
 import com.jayway.jsonpath.TypeRef;
 import com.jayway.jsonpath.spi.cache.Cache;
 import com.jayway.jsonpath.spi.cache.CacheProvider;
+import com.jayway.jsonpath.spi.cache.LRUCache;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -146,8 +147,8 @@ public class JsonContext implements ParseContext, DocumentContext {
         if(jsonPath != null){
         	return read(jsonPath);
         } else {
-        	jsonPath = compile(path, filters);
-        	cache.put(cacheKey, jsonPath);
+            jsonPath = compile(path, filters);
+            cache.put(cacheKey, jsonPath);
         	return read(jsonPath);
         }
 
