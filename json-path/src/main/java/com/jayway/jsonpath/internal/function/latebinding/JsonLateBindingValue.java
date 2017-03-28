@@ -15,6 +15,12 @@ public class JsonLateBindingValue implements ILateBindingValue {
         this.jsonParameter = jsonParameter;
     }
 
+    /**
+     * Evaluate the JSON document at the point of need using the JSON parameter and associated document model which may
+     * itself originate from yet another function thus recursively invoking late binding methods.
+     * 
+     * @return
+     */
     @Override
     public Object get() {
         return jsonProvider.parse(jsonParameter.getJson());
