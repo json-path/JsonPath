@@ -26,7 +26,6 @@ import com.jayway.jsonpath.ReadContext;
 import com.jayway.jsonpath.TypeRef;
 import com.jayway.jsonpath.spi.cache.Cache;
 import com.jayway.jsonpath.spi.cache.CacheProvider;
-import com.jayway.jsonpath.spi.cache.LRUCache;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
