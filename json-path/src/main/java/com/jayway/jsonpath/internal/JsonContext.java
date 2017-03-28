@@ -146,8 +146,8 @@ public class JsonContext implements ParseContext, DocumentContext {
         if(jsonPath != null){
         	return read(jsonPath);
         } else {
-        	jsonPath = compile(path, filters);
-        	cache.put(cacheKey, jsonPath);
+		jsonPath = compile(path, filters);
+		cache.put(cacheKey, jsonPath);
         	return read(jsonPath);
         }
 
