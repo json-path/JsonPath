@@ -17,14 +17,16 @@ public class CharacterIndex {
 
     private final CharSequence charSequence;
     private int position;
+    private int endPosition;
 
     public CharacterIndex(CharSequence charSequence) {
         this.charSequence = charSequence;
         this.position = 0;
+        this.endPosition = charSequence.length() - 1;
     }
 
     public int length() {
-        return charSequence.length();
+        return endPosition + 1;
     }
 
     public char charAt(int idx) {
@@ -39,6 +41,10 @@ public class CharacterIndex {
         return (charSequence.charAt(position) == c);
     }
 
+    public boolean lastCharIs(char c) {
+      return charSequence.charAt(endPosition) == c;
+    }
+
     public boolean nextCharIs(char c) {
         return inBounds(position + 1) && (charSequence.charAt(position + 1) == c);
     }
@@ -47,10 +53,19 @@ public class CharacterIndex {
         return setPosition(position + charCount);
     }
 
+    public int decrementEndPosition(int charCount) {
+        return setEndPosition(endPosition - charCount);
+    }
+
     public int setPosition(int newPosition) {
         //position = min(newPosition, charSequence.length() - 1);
         position = newPosition;
         return position;
+    }
+
+    private int setEndPosition(int newPosition) {
+        endPosition = newPosition;
+        return endPosition;
     }
 
     public int position(){
@@ -244,7 +259,7 @@ public class CharacterIndex {
     }
 
     public boolean currentIsTail() {
-        return position >= charSequence.length()-1;
+        return position >= endPosition;
     }
 
     public boolean hasMoreCharacters() {
@@ -252,7 +267,7 @@ public class CharacterIndex {
     }
 
     public boolean inBounds(int idx) {
-        return (idx >= 0) && (idx < charSequence.length());
+        return (idx >= 0) && (idx <= endPosition);
     }
     public boolean inBounds() {
         return inBounds(position);
@@ -281,9 +296,22 @@ public class CharacterIndex {
     }
 
     public CharacterIndex skipBlanks() {
-        while (inBounds() && currentChar() == SPACE){
+        while (inBounds() && position < endPosition  && currentChar() == SPACE){
             incrementPosition(1);
         }
+        return this;
+    }
+
+    private CharacterIndex skipBlanksAtEnd() {
+        while (inBounds() && position < endPosition && lastCharIs(SPACE)){
+            decrementEndPosition(1);
+        }
+        return this;
+    }
+
+    public CharacterIndex trim() {
+        skipBlanks();
+        skipBlanksAtEnd();
         return this;
     }
 }

@@ -154,7 +154,7 @@ public abstract class ValueNode {
         if ((c0 == '[' && c1 == ']') || (c0 == '{' && c1 == '}')){
             try {
                 Configuration.defaultConfiguration().jsonProvider().parse(str);
-                return false;
+                return true;
             } catch(Exception e){
                 return false;
             }
@@ -805,9 +805,9 @@ public abstract class ValueNode {
         }
 
         public ValueNode evaluate(Predicate.PredicateContext ctx) {
-            Configuration c = Configuration.builder().jsonProvider(ctx.configuration().jsonProvider()).options(Option.REQUIRE_PROPERTIES).build();
             if (isExistsCheck()) {
                 try {
+                    Configuration c = Configuration.builder().jsonProvider(ctx.configuration().jsonProvider()).options(Option.REQUIRE_PROPERTIES).build();
                     Object result = path.evaluate(ctx.item(), ctx.root(), c).getValue(false);
                     return result == JsonProvider.UNDEFINED ? ValueNode.FALSE : ValueNode.TRUE;
                 } catch (PathNotFoundException e) {
