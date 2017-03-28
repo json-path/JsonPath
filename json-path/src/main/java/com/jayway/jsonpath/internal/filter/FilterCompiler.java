@@ -54,20 +54,22 @@ public class FilterCompiler {
     }
 
     private FilterCompiler(String filterString) {
-        filterString = filterString.trim();
-        if (!filterString.startsWith("[") || !filterString.endsWith("]")) {
+        filter = new CharacterIndex(filterString);
+        filter.trim();
+        if (!filter.currentCharIs('[') || !filter.lastCharIs(']')) {
             throw new InvalidPathException("Filter must start with '[' and end with ']'. " + filterString);
         }
-        filterString = filterString.substring(1, filterString.length() - 1).trim();
-        if (!filterString.startsWith("?")) {
+        filter.incrementPosition(1);
+        filter.decrementEndPosition(1);
+        filter.trim();
+        if (!filter.currentCharIs('?')) {
             throw new InvalidPathException("Filter must start with '[?' and end with ']'. " + filterString);
         }
-        filterString = filterString.substring(1).trim();
-        if (!filterString.startsWith("(") || !filterString.endsWith(")")) {
+        filter.incrementPosition(1);
+        filter.trim();
+        if (!filter.currentCharIs('(') || !filter.lastCharIs(')')) {
             throw new InvalidPathException("Filter must start with '[?(' and end with ')]'. " + filterString);
         }
-
-        filter = new CharacterIndex(filterString);
     }
 
     public Predicate compile() {
