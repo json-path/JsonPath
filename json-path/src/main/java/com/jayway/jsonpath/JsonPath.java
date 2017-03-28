@@ -21,7 +21,6 @@ import com.jayway.jsonpath.internal.Path;
 import com.jayway.jsonpath.internal.PathRef;
 import com.jayway.jsonpath.internal.Utils;
 import com.jayway.jsonpath.internal.path.PathCompiler;
-import com.jayway.jsonpath.spi.cache.Cache;
 import com.jayway.jsonpath.spi.json.JsonProvider;
 
 import java.io.File;
