@@ -1,6 +1,8 @@
 package com.jayway.jsonpath.internal.function;
 
 import com.jayway.jsonpath.internal.Path;
+import com.jayway.jsonpath.internal.function.latebinding.ILateBindingValue;
+import com.jayway.jsonpath.internal.function.latebinding.PathLateBindingValue;
 
 /**
  * Created by matt@mjgreenwood.net on 12/10/15.
@@ -8,7 +10,7 @@ import com.jayway.jsonpath.internal.Path;
 public class Parameter {
     private ParamType type;
     private Path path;
-    private Object cachedValue;
+    private ILateBindingValue lateBinding;
     private Boolean evaluated = false;
     private String json;
 
@@ -24,12 +26,12 @@ public class Parameter {
         this.type = ParamType.PATH;
     }
 
-    public Object getCachedValue() {
-        return cachedValue;
+    public Object getValue() {
+        return lateBinding.get();
     }
 
-    public void setCachedValue(Object cachedValue) {
-        this.cachedValue = cachedValue;
+    public void setLateBinding(ILateBindingValue lateBinding) {
+        this.lateBinding = lateBinding;
     }
 
     public Path getPath() {

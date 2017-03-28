@@ -22,7 +22,7 @@ public class Append implements PathFunction {
             for (Parameter param : parameters) {
                 if (jsonProvider.isArray(model)) {
                     int len = jsonProvider.length(model);
-                    jsonProvider.setArrayIndex(model, len, param.getCachedValue());
+                    jsonProvider.setArrayIndex(model, len, param.getValue());
                 }
             }
         }
