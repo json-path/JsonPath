@@ -1,5 +1,6 @@
 package com.jayway.jsonpath.spi.json;
 
+import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ArrayNode;
@@ -20,7 +21,13 @@ import java.util.List;
 
 public class JacksonJsonNodeJsonProvider extends AbstractJsonProvider {
 
-    private static final ObjectMapper defaultObjectMapper = new ObjectMapper();
+    private static final ObjectMapper defaultObjectMapper = createDefaultObjectMapper();
+
+    private static ObjectMapper createDefaultObjectMapper() {
+        final ObjectMapper mapper = new ObjectMapper();
+        mapper.configure(JsonParser.Feature.ALLOW_SINGLE_QUOTES, true);
+        return mapper;
+    }
 
     protected ObjectMapper objectMapper;
 
