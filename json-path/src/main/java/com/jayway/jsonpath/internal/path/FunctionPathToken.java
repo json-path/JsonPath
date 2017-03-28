@@ -49,7 +49,7 @@ public class FunctionPathToken extends PathToken {
                 if (!param.hasEvaluated()) {
                     switch (param.getType()) {
                         case PATH:
-                            param.setCachedValue(param.getPath().evaluate(ctx.rootDocument(), ctx.rootDocument(), ctx.configuration()).getValue());
+                            param.setCachedValue(param.getPath().evaluate(ctx.paramsRootDocument(), ctx.paramsRootDocument(), ctx.configuration()).getValue());
                             param.setEvaluated(true);
                             break;
                         case JSON:

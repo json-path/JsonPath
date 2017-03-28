@@ -36,6 +36,15 @@ public abstract class PathToken {
         return next;
     }
 
+    PathToken remove() {
+        prev.next = next;
+        if (next == null) {
+            return prev;
+        }
+        next.prev = prev;
+        return next;
+    }
+
     void handleObjectProperty(String currentPath, Object model, EvaluationContextImpl ctx, List<String> properties) {
 
         if(properties.size() == 1) {
