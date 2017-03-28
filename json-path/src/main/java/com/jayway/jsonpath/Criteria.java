@@ -268,6 +268,33 @@ public class Criteria implements Predicate {
     }
 
     /**
+     * The <code>subset</code> operator selects objects for which the specified field is
+     * an array whose elements comprise a subset of the set comprised by the elements of
+     * the specified array.
+     *
+     * @param o the values to match against
+     * @return the criteria
+     */
+    public Criteria subset(Object... o) {
+        return subset(Arrays.asList(o));
+    }
+
+    /**
+     * The <code>subset</code> operator selects objects for which the specified field is
+     * an array whose elements comprise a subset of the set comprised by the elements of
+     * the specified array.
+     *
+     * @param c the values to match against
+     * @return the criteria
+     */
+    public Criteria subset(Collection<?> c) {
+        notNull(c, "collection can not be null");
+        this.criteriaType = RelationalOperator.SUBSET;
+        this.right = new ValueNode.ValueListNode(c);
+        return this;
+    }
+
+    /**
      * The <code>all</code> operator is similar to $in, but instead of matching any value
      * in the specified array all values in the array must be matched.
      *
