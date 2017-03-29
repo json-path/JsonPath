@@ -12,9 +12,7 @@ import com.jayway.jsonpath.spi.mapper.JacksonMappingProvider;
 import com.jayway.jsonpath.spi.mapper.JsonOrgMappingProvider;
 import com.jayway.jsonpath.spi.mapper.JsonSmartMappingProvider;
 import org.assertj.core.util.Lists;
-import org.junit.Rule;
 import org.junit.Test;
-import org.junit.rules.ExpectedException;
 
 import java.util.List;
 
@@ -32,9 +30,6 @@ public class ProviderInTest {
     private final String SINGLE_QUOTES_IN_FILTER = String.format(IN_FILTER, SINGLE_QUOTES);
 
 
-    @Rule
-    public final ExpectedException exception = ExpectedException.none();
-
     @Test
     public void testJsonPathQuotesJackson() throws Exception {
         final Configuration jackson = Configuration.builder().jsonProvider(new JacksonJsonProvider()).mappingProvider(new JacksonMappingProvider()).build();
@@ -49,8 +44,8 @@ public class ProviderInTest {
         final List<String> doubleQuoteInResult = ctx.read(DOUBLE_QUOTES_IN_FILTER);
         assertEquals(doubleQuoteInResult, doubleQuoteEqualsResult);
 
-        exception.expect(InvalidJsonException.class);
-        ctx.read(SINGLE_QUOTES_IN_FILTER);
+        final List<String> singleQuoteInResult = ctx.read(SINGLE_QUOTES_IN_FILTER);
+        assertEquals(doubleQuoteInResult, singleQuoteInResult);
     }
 
 
@@ -68,8 +63,8 @@ public class ProviderInTest {
         final ArrayNode doubleQuoteInResult = ctx.read(DOUBLE_QUOTES_IN_FILTER);
         assertEquals(doubleQuoteInResult, doubleQuoteEqualsResult);
 
-        exception.expect(InvalidJsonException.class);
-        ctx.read(SINGLE_QUOTES_IN_FILTER);
+        final ArrayNode singleQuoteInResult = ctx.read(SINGLE_QUOTES_IN_FILTER);
+        assertEquals(doubleQuoteInResult, singleQuoteInResult);
     }
 
     @Test

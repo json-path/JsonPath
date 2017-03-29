@@ -11,6 +11,10 @@ import com.jayway.jsonpath.internal.Utils;
 import com.jayway.jsonpath.internal.path.PathCompiler;
 import com.jayway.jsonpath.internal.path.PredicateContextImpl;
 import com.jayway.jsonpath.spi.json.JsonProvider;
+
+import net.minidev.json.parser.JSONParser;
+import net.minidev.json.parser.ParseException;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -153,7 +157,7 @@ public abstract class ValueNode {
         char c1 = str.charAt(str.length() - 1);
         if ((c0 == '[' && c1 == ']') || (c0 == '{' && c1 == '}')){
             try {
-                Configuration.defaultConfiguration().jsonProvider().parse(str);
+                new JSONParser(JSONParser.MODE_PERMISSIVE).parse(str);
                 return true;
             } catch(Exception e){
                 return false;
@@ -314,11 +318,11 @@ public abstract class ValueNode {
 
         @Override
         public Class<?> type(Predicate.PredicateContext ctx) {
-            if(ctx.configuration().jsonProvider().isArray(parse(ctx))) return List.class;
-            else if(ctx.configuration().jsonProvider().isMap(parse(ctx))) return Map.class;
-            else if(ctx.configuration().jsonProvider().unwrap(parse(ctx)) instanceof Number) return Number.class;
-            else if(ctx.configuration().jsonProvider().unwrap(parse(ctx)) instanceof String) return String.class;
-            else if(ctx.configuration().jsonProvider().unwrap(parse(ctx)) instanceof Boolean) return Boolean.class;
+            if(isArray(ctx)) return List.class;
+            else if(isMap(ctx)) return Map.class;
+            else if(parse(ctx) instanceof Number) return Number.class;
+            else if(parse(ctx) instanceof String) return String.class;
+            else if(parse(ctx) instanceof Boolean) return Boolean.class;
             else return Void.class;
         }
 
@@ -334,16 +338,16 @@ public abstract class ValueNode {
             if(!isArray(ctx)){
                 return UNDEFINED;
             } else {
-                Collection nodes = new ArrayList();
-                for (Object value : ctx.configuration().jsonProvider().toIterable(parse(ctx))) {
-                    nodes.add(value);
-                }
-                return new ValueListNode(nodes);
+                return new ValueListNode(Collections.unmodifiableList((List) parse(ctx)));
             }
         }
 
         public Object parse(Predicate.PredicateContext ctx){
-            return parsed ? json : ctx.configuration().jsonProvider().parse(json.toString());
+            try {
+              return parsed ? json : new JSONParser(JSONParser.MODE_PERMISSIVE).parse(json.toString());
+            } catch (ParseException e) {
+              throw new IllegalArgumentException(e);
+            }
         }
 
         public boolean isParsed() {
@@ -355,19 +359,20 @@ public abstract class ValueNode {
         }
 
         public boolean isArray(Predicate.PredicateContext ctx) {
-            return ctx.configuration().jsonProvider().isArray(parse(ctx));
+            return parse(ctx) instanceof List;
         }
 
         public boolean isMap(Predicate.PredicateContext ctx) {
-            return ctx.configuration().jsonProvider().isArray(parse(ctx));
+            return parse(ctx) instanceof Map;
         }
 
         public int length(Predicate.PredicateContext ctx) {
-            return isArray(ctx) ? ctx.configuration().jsonProvider().length(parse(ctx)) : -1;
+            return isArray(ctx) ? ((List) parse(ctx)).size() : -1;
         }
 
         public boolean isEmpty(Predicate.PredicateContext ctx) {
-            if(isArray(ctx) || isMap(ctx)) return ctx.configuration().jsonProvider().length(parse(ctx)) == 0;
+            if (isArray(ctx)) return ((List) parse(ctx)).size() == 0;
+            else if (isMap(ctx)) return ((Map) parse(ctx)).size() == 0;
             else if((parse(ctx) instanceof String)) return ((String)parse(ctx)).length() == 0;
             return true;
         }
