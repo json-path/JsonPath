@@ -235,10 +235,18 @@ String json = "{\"date_as_long\" : 1411455611975}";
 Date date = JsonPath.parse(json).read("$['date_as_long']", Date.class);
 ```
 
-If you configure JsonPath to use the `JacksonMappingProvider` you can even map your JsonPath output directly into POJO's.
+If you configure JsonPath to use `JacksonMappingProvider` or GsonMappingProvider` you can even map your JsonPath output directly into POJO's.
 
 ```java
 Book book = JsonPath.parse(json).read("$.store.book[0]", Book.class);
+```
+
+To obtainin full generics type information, use TypeRef.
+
+```java
+TypeRef<List<String>> typeRef = new TypeRef<List<String>>() {};
+
+List<String> titles = JsonPath.parse(JSON_DOCUMENT).read("$.store.book[*].title", typeRef);
 ```
 
 Predicates
