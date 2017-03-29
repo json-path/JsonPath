@@ -19,6 +19,9 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
 
+/**
+ * Parses JSON as specified by the used {@link com.jayway.jsonpath.spi.json.JsonProvider}.
+ */
 public interface ParseContext {
 
     DocumentContext parse(String json);
