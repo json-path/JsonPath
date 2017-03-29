@@ -245,7 +245,7 @@ Predicates
 ----------
 There are three different ways to create filter predicates in JsonPath.
 
-###Inline Predicates
+### Inline Predicates
 
 Inline predicates are the ones defined in the path.
 
@@ -259,7 +259,7 @@ You can use `&&` and `||` to combine multiple predicates `[?(@.price < 10 && @.c
  
 You can use `!` to negate a predicate `[?(!(@.price < 10 && @.category == 'fiction'))]`.
 
-###Filter Predicates
+### Filter Predicates
  
 Predicates can be built using the Filter API as shown below:
 
@@ -292,7 +292,7 @@ Filter fooAndBar = filter(
 );
 ```
 
-###Roll Your Own
+### Roll Your Own
  
 Third option is to implement your own predicates
  
