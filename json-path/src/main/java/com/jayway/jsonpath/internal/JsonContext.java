@@ -20,7 +20,6 @@ import com.jayway.jsonpath.EvaluationListener;
 import com.jayway.jsonpath.JsonPath;
 import com.jayway.jsonpath.MapFunction;
 import com.jayway.jsonpath.Option;
-import com.jayway.jsonpath.ParseContext;
 import com.jayway.jsonpath.Predicate;
 import com.jayway.jsonpath.ReadContext;
 import com.jayway.jsonpath.TypeRef;
@@ -29,11 +28,6 @@ import com.jayway.jsonpath.spi.cache.CacheProvider;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.net.URL;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -42,90 +36,20 @@ import static com.jayway.jsonpath.internal.Utils.notEmpty;
 import static com.jayway.jsonpath.internal.Utils.notNull;
 import static java.util.Arrays.asList;
 
-public class JsonContext implements ParseContext, DocumentContext {
+public class JsonContext implements DocumentContext {
 
     private static final Logger logger = LoggerFactory.getLogger(JsonContext.class);
 
     private final Configuration configuration;
-    private Object json;
+    private final Object json;
 
-    public JsonContext() {
-        this(Configuration.defaultConfiguration());
-    }
-
-    public JsonContext(Configuration configuration) {
-        notNull(configuration, "configuration can not be null");
-        this.configuration = configuration;
-    }
-
-    private JsonContext(Object json, Configuration configuration) {
+    JsonContext(Object json, Configuration configuration) {
         notNull(json, "json can not be null");
         notNull(configuration, "configuration can not be null");
         this.configuration = configuration;
         this.json = json;
     }
 
-    //------------------------------------------------
-    //
-    // ParseContext impl
-    //
-    //------------------------------------------------
-    @Override
-    public DocumentContext parse(Object json) {
-        notNull(json, "json object can not be null");
-        this.json = json;
-        return this;
-    }
-
-    @Override
-    public DocumentContext parse(String json) {
-        notEmpty(json, "json string can not be null or empty");
-        this.json = configuration.jsonProvider().parse(json);
-        return this;
-    }
-
-    @Override
-    public DocumentContext parse(InputStream json) {
-        return parse(json, "UTF-8");
-    }
-
-    @Override
-    public DocumentContext parse(InputStream json, String charset) {
-        notNull(json, "json input stream can not be null");
-        notNull(json, "charset can not be null");
-        try {
-            this.json = configuration.jsonProvider().parse(json, charset);
-            return this;
-        } finally {
-            Utils.closeQuietly(json);
-        }
-    }
-
-    @Override
-    public DocumentContext parse(File json) throws IOException {
-        notNull(json, "json file can not be null");
-        FileInputStream fis = null;
-        try {
-            fis = new FileInputStream(json);
-            parse(fis);
-        } finally {
-            Utils.closeQuietly(fis);
-        }
-        return this;
-    }
-
-    @Override
-    public DocumentContext parse(URL url) throws IOException {
-        notNull(url, "url can not be null");
-        InputStream fis = null;
-        try {
-            fis = url.openStream();
-            parse(fis);
-        } finally {
-            Utils.closeQuietly(fis);
-        }
-        return this;
-    }
 
     @Override
     public Configuration configuration() {
