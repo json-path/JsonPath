@@ -337,7 +337,7 @@ assertThat(pathList).containsExactly(
 Tweaking Configuration
 ----------------------
 
-###Options
+### Options
 When creating your Configuration there are a few option flags that can alter the default behaviour.
 
 **DEFAULT_PATH_LEAF_TO_NULL**
@@ -392,7 +392,7 @@ This option makes sure no exceptions are propagated from path evaluation. It fol
 * If option `ALWAYS_RETURN_LIST` is **NOT** present null returned 
 
 
-###JsonProvider SPI
+### JsonProvider SPI
 
 JsonPath is shipped with three different JsonProviders:
 
