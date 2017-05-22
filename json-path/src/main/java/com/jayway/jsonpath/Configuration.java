@@ -15,7 +15,6 @@
 package com.jayway.jsonpath;
 
 import com.jayway.jsonpath.internal.DefaultsImpl;
-import com.jayway.jsonpath.internal.function.PathFunction;
 import com.jayway.jsonpath.spi.json.JsonProvider;
 import com.jayway.jsonpath.spi.mapper.MappingProvider;
 
