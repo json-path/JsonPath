@@ -15,6 +15,7 @@
 package com.jayway.jsonpath;
 
 import com.jayway.jsonpath.internal.DefaultsImpl;
+import com.jayway.jsonpath.internal.function.PathFunction;
 import com.jayway.jsonpath.spi.json.JsonProvider;
 import com.jayway.jsonpath.spi.mapper.MappingProvider;
 
@@ -23,6 +24,7 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.EnumSet;
+import java.util.Map;
 import java.util.Set;
 
 import static com.jayway.jsonpath.internal.Utils.notNull;
@@ -55,8 +57,10 @@ public class Configuration {
     private final MappingProvider mappingProvider;
     private final Set<Option> options;
     private final Collection<EvaluationListener> evaluationListeners;
+    private final Map<String, Class> functionMap;
 
-    private Configuration(JsonProvider jsonProvider, MappingProvider mappingProvider, EnumSet<Option> options, Collection<EvaluationListener> evaluationListeners) {
+    private Configuration(JsonProvider jsonProvider, MappingProvider mappingProvider, EnumSet<Option> options,
+                          Collection<EvaluationListener> evaluationListeners, Map<String, Class> functionMap) {
         notNull(jsonProvider, "jsonProvider can not be null");
         notNull(mappingProvider, "mappingProvider can not be null");
         notNull(options, "setOptions can not be null");
@@ -65,6 +69,7 @@ public class Configuration {
         this.mappingProvider = mappingProvider;
         this.options = Collections.unmodifiableSet(options);
         this.evaluationListeners = Collections.unmodifiableCollection(evaluationListeners);
+        this.functionMap = functionMap;
     }
 
     /**
@@ -125,6 +130,15 @@ public class Configuration {
      */
     public MappingProvider mappingProvider() {
         return mappingProvider;
+    }
+
+    /**
+     * Returns {@link com.jayway.jsonpath.internal.function.PathFunction} defined in functionMap.
+     * @param name
+     * @return null if there are no functionMap defined or the function is not defined.
+     */
+    public Map<String, Class> getFunctionMap() {
+        return functionMap;
     }
 
     /**
@@ -189,6 +203,8 @@ public class Configuration {
 
         private JsonProvider jsonProvider;
         private MappingProvider mappingProvider;
+        private Map<String, Class> functionMap;
+
         private EnumSet<Option> options = EnumSet.noneOf(Option.class);
         private Collection<EvaluationListener> evaluationListener = new ArrayList<EvaluationListener>();
 
@@ -199,6 +215,11 @@ public class Configuration {
 
         public ConfigurationBuilder mappingProvider(MappingProvider provider) {
             this.mappingProvider = provider;
+            return this;
+        }
+
+        public ConfigurationBuilder functionMap(Map<String, Class> functionMap) {
+            this.functionMap = functionMap;
             return this;
         }
 
@@ -234,7 +255,7 @@ public class Configuration {
                     mappingProvider = defaults.mappingProvider();
                 }
             }
-            return new Configuration(jsonProvider, mappingProvider, options, evaluationListener);
+            return new Configuration(jsonProvider, mappingProvider, options, evaluationListener, functionMap);
         }
     }
 

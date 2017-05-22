@@ -35,7 +35,7 @@ public class FunctionPathToken extends PathToken {
 
     @Override
     public void evaluate(String currentPath, PathRef parent, Object model, EvaluationContextImpl ctx) {
-        PathFunction pathFunction = PathFunctionFactory.newFunction(functionName);
+        PathFunction pathFunction = PathFunctionFactory.newFunction(functionName, ctx.configuration());
         evaluateParameters(currentPath, parent, model, ctx);
         Object result = pathFunction.invoke(currentPath, parent, model, ctx, functionParams);
         ctx.addResult(currentPath + "." + functionName, parent, result);
