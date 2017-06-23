@@ -116,7 +116,7 @@ public class JsonSmartMappingProvider implements MappingProvider {
             if(Integer.class.isAssignableFrom(src.getClass())){
                return (Integer) src;
             } else if (Long.class.isAssignableFrom(src.getClass())) {
-                return ((Integer) src).intValue();
+                return ((Long) src).intValue();
             } else if (Double.class.isAssignableFrom(src.getClass())) {
                 return ((Double) src).intValue();
             } else if (BigDecimal.class.isAssignableFrom(src.getClass())) {
