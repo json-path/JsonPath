@@ -34,7 +34,7 @@ public class PathCompiler {
     private static final char SPACE = ' ';
     private static final char TAB = '\t';
     private static final char CR = '\r';
-    private static final char LF = '\r';
+    private static final char LF = '\n';
     private static final char BEGIN_FILTER = '?';
     private static final char COMMA = ',';
     private static final char SPLIT = ':';
