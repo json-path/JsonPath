@@ -1,5 +1,7 @@
 package com.jayway.jsonpath;
 
+import java.util.ArrayList;
+import org.assertj.core.util.Lists;
 import org.junit.Test;
 
 import java.util.HashMap;
@@ -356,6 +358,24 @@ public class FilterTest extends BaseTest {
     @Test
     public void null_size_evals() {
         assertThat(filter(where("null-key").size(6)).apply(createPredicateContext(json))).isEqualTo(false);
+    }
+
+    //----------------------------------------------------------------------------
+    //
+    // SUBSETOF
+    //
+    //----------------------------------------------------------------------------
+    @Test
+    public void array_subsetof_evals() {
+        // list is a superset
+        List<String> list = Lists.newArrayList("a", "b", "c", "d", "e", "f", "g");
+        assertThat(filter(where("string-arr").subsetof(list)).apply(createPredicateContext(json))).isEqualTo(true);
+        // list is exactly the same set (but in a different order)
+        list = Lists.newArrayList("e", "d", "b", "c", "a");
+        assertThat(filter(where("string-arr").subsetof(list)).apply(createPredicateContext(json))).isEqualTo(true);
+        // list is missing one element
+        list = Lists.newArrayList("a", "b", "c", "d");
+        assertThat(filter(where("string-arr").subsetof(list)).apply(createPredicateContext(json))).isEqualTo(false);
     }
 
     //----------------------------------------------------------------------------
