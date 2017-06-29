@@ -3,6 +3,8 @@ package com.jayway.jsonpath;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
+import com.jayway.jsonpath.spi.json.GsonJsonProvider;
+import com.jayway.jsonpath.spi.mapper.GsonMappingProvider;
 import com.jayway.jsonpath.spi.mapper.MappingException;
 import org.junit.Test;
 
@@ -181,6 +183,25 @@ public class GsonJsonProviderTest extends BaseTest {
 
         using(GSON_CONFIGURATION).parse(JSON).read("$", typeRef);
     }
+    
+    @Test
+    // https://github.com/json-path/JsonPath/issues/351
+    public void no_error_when_mapping_null() throws IOException {
+      
+      Configuration configuration = Configuration
+          .builder()
+          .mappingProvider(new GsonMappingProvider())
+          .jsonProvider(new GsonJsonProvider())
+          .options(Option.DEFAULT_PATH_LEAF_TO_NULL, Option.SUPPRESS_EXCEPTIONS)
+          .build();
+      
+      String json = "{\"M\":[]}";
+
+      String result = JsonPath.using(configuration).parse(json).read("$.M[0].A[0]", String.class);
+
+      assertThat(result).isNull();
+    }
+
 
     public static class FooBarBaz<T> {
         public T gen;

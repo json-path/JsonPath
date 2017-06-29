@@ -359,20 +359,19 @@ public abstract class ValueNode {
         }
 
         public boolean isArray(Predicate.PredicateContext ctx) {
-            return parse(ctx) instanceof List;
+            return ctx.configuration().jsonProvider().isArray(parse(ctx));
         }
 
         public boolean isMap(Predicate.PredicateContext ctx) {
-            return parse(ctx) instanceof Map;
+            return ctx.configuration().jsonProvider().isMap(parse(ctx));
         }
 
         public int length(Predicate.PredicateContext ctx) {
-            return isArray(ctx) ? ((List) parse(ctx)).size() : -1;
+            return isArray(ctx) ? ctx.configuration().jsonProvider().length(parse(ctx)) : -1;
         }
 
         public boolean isEmpty(Predicate.PredicateContext ctx) {
-            if (isArray(ctx)) return ((List) parse(ctx)).size() == 0;
-            else if (isMap(ctx)) return ((Map) parse(ctx)).size() == 0;
+            if (isArray(ctx) || isMap(ctx)) return ctx.configuration().jsonProvider().length(parse(ctx)) == 0;
             else if((parse(ctx) instanceof String)) return ((String)parse(ctx)).length() == 0;
             return true;
         }
