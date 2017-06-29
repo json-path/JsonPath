@@ -122,6 +122,33 @@ public class JacksonJsonNodeJsonProviderTest extends BaseTest {
       String id = context.read("$.data.id", String.class);
       assertThat(id).isEqualTo(uuid.toString());
     }
+    // https://github.com/json-path/JsonPath/issues/366
+    public void empty_array_check_works() throws IOException {
+      String json = "[" +
+          "  {" +
+          "    \"name\": \"a\"," +
+          "    \"groups\": [{" +
+          "      \"type\": \"phase\"," +
+          "      \"name\": \"alpha\"" +
+          "    }, {" +
+          "      \"type\": \"not_phase\"," +
+          "      \"name\": \"beta\"" +
+          "    }]" +
+          "  }, {" +
+          "    \"name\": \"b\"," +
+          "    \"groups\": [{" +
+          "      \"type\": \"phase\"," +
+          "      \"name\": \"beta\"" +
+          "    }, {" +
+          "      \"type\": \"not_phase\"," +
+          "      \"name\": \"alpha\"" +
+          "    }]" +
+          "  }" +
+          "]";
+      ArrayNode node = using(JACKSON_JSON_NODE_CONFIGURATION).parse(json).read("$[?(@.groups[?(@.type == 'phase' && @.name == 'alpha')] empty false)]");
+      assertThat(node.size()).isEqualTo(1);
+      assertThat(node.get(0).get("name").asText()).isEqualTo("a");
+    }
 
     public static class FooBarBaz<T> {
         public T gen;
