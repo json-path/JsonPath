@@ -29,7 +29,8 @@ public enum RelationalOperator {
     EXISTS("EXISTS"),
     TYPE("TYPE"),
     MATCHES("MATCHES"),
-    EMPTY("EMPTY");
+    EMPTY("EMPTY"),
+    SUBSETOF("SUBSETOF");
 
     private final String operatorString;
 

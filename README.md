@@ -100,6 +100,7 @@ Filters are logical expressions used to filter arrays. A typical filter would be
 | =~                       | left matches regular expression  [?(@.name =~ /foo.*?/i)]         |
 | in                       | left exists in right [?(@.size in ['S', 'M'])]                    |
 | nin                      | left does not exists in right                                     |
+| subsetof                 | left is a subset of right [?(@.sizes subsetof ['S', 'M', 'L'])]     |
 | size                     | size of left (array or string) should match right                 |
 | empty                    | left (array or string) should be empty                            |
 
