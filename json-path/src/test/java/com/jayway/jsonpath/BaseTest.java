@@ -119,7 +119,10 @@ public class BaseTest {
             "}";
 
     public Predicate.PredicateContext createPredicateContext(final Object check) {
+        return createPredicateContext(check, Configuration.defaultConfiguration());
+    }
 
-        return new PredicateContextImpl(check, check, Configuration.defaultConfiguration(), new HashMap<Path, Object>());
+    public Predicate.PredicateContext createPredicateContext(final Object check, Configuration configuration) {
+        return new PredicateContextImpl(check, check, configuration, new HashMap<Path, Object>());
     }
 }

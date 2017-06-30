@@ -34,7 +34,7 @@ public class RegexpEvaluatorTest extends BaseTest {
     @Test
     public void should_evaluate_regular_expression() {
         //given
-        Evaluator evaluator = EvaluatorFactory.createEvaluator(RelationalOperator.REGEX);
+        Evaluator evaluator = new DefaultEvaluatorFactory().createEvaluator(RelationalOperator.REGEX);
         ValueNode patternNode = createPatternNode(regexp);
         Predicate.PredicateContext ctx = createPredicateContext();
 

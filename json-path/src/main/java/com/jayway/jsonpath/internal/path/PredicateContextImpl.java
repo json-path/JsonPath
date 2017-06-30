@@ -15,8 +15,11 @@
 package com.jayway.jsonpath.internal.path;
 
 import com.jayway.jsonpath.Configuration;
+import com.jayway.jsonpath.Option;
 import com.jayway.jsonpath.Predicate;
 import com.jayway.jsonpath.internal.Path;
+import com.jayway.jsonpath.internal.filter.EvaluatorFactory;
+import com.jayway.jsonpath.internal.filter.RelationalOperator;
 import com.jayway.jsonpath.spi.mapper.MappingException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -31,12 +34,15 @@ public class PredicateContextImpl implements Predicate.PredicateContext {
     private final Object rootDocument;
     private final Configuration configuration;
     private final HashMap<Path, Object> documentPathCache;
+    private final EvaluatorFactory evaluatorFactory;
 
     public PredicateContextImpl(Object contextDocument, Object rootDocument, Configuration configuration, HashMap<Path, Object> documentPathCache) {
         this.contextDocument = contextDocument;
         this.rootDocument = rootDocument;
         this.configuration = configuration;
         this.documentPathCache = documentPathCache;
+        this.evaluatorFactory = RelationalOperator.getEvaluatorFactory(
+            configuration.containsOption(Option.IMPLICIT_NUMERIC_CONVERSIONS));
     }
 
     public Object evaluate(Path path){
@@ -79,4 +85,8 @@ public class PredicateContextImpl implements Predicate.PredicateContext {
         return configuration;
     }
 
+    @Override
+    public EvaluatorFactory evaluatorFactory() {
+        return evaluatorFactory;
+    }
 }

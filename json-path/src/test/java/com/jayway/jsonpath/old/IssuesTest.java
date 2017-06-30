@@ -11,6 +11,8 @@ import com.jayway.jsonpath.JsonPath;
 import com.jayway.jsonpath.Option;
 import com.jayway.jsonpath.PathNotFoundException;
 import com.jayway.jsonpath.internal.Utils;
+import com.jayway.jsonpath.internal.filter.DefaultEvaluatorFactory;
+import com.jayway.jsonpath.internal.filter.EvaluatorFactory;
 import com.jayway.jsonpath.spi.cache.LRUCache;
 import com.jayway.jsonpath.spi.json.GsonJsonProvider;
 import com.jayway.jsonpath.spi.json.JsonProvider;
@@ -836,6 +838,11 @@ public class IssuesTest extends BaseTest {
             @Override
             public Configuration configuration() {
                 return Configuration.defaultConfiguration();
+            }
+
+            @Override
+            public EvaluatorFactory evaluatorFactory() {
+                return new DefaultEvaluatorFactory();
             }
         };
     }

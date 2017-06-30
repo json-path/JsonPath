@@ -14,6 +14,7 @@
  */
 package com.jayway.jsonpath;
 
+import com.jayway.jsonpath.internal.filter.EvaluatorFactory;
 import com.jayway.jsonpath.spi.mapper.MappingException;
 
 /**
@@ -49,5 +50,11 @@ public interface Predicate {
          * @return configuration
          */
         Configuration configuration();
+
+        /**
+         * Factory to use for creating evaluators for filtering.
+         * @return Factory to use for creating evaluators for filtering.
+         */
+        EvaluatorFactory evaluatorFactory();
     }
 }
