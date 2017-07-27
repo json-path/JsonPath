@@ -15,16 +15,24 @@ import static org.junit.Assert.assertEquals;
  * Shows aggregation across fields rather than within a single entity.
  *
  */
-public class Issue191 extends com.jayway.jsonpath.internal.function.BaseFunctionTest {
+public class Issue191 {
 
     private Configuration conf = Configurations.GSON_CONFIGURATION;
 
     @Test
     public void testResultSetNumericComputation() {
         InputStream stream = ClassLoader.getSystemResourceAsStream("issue_191.json");
-        Long value = JsonPath.parse(stream).read("$.max($..timestamp)", Long.class);
+        Long value = JsonPath.parse(stream).read("$.sum($..timestamp)", Long.class);
         assertEquals("Expected the max function to consume the aggregation parameters and calculate the max over the result set",
-                Long.valueOf(1427310341), value);
+                Long.valueOf(35679716813L), value);
+    }
+
+    @Test
+    public void testMultipleResultSetSums() {
+        InputStream stream = ClassLoader.getSystemResourceAsStream("issue_191.json");
+        Long value = JsonPath.parse(stream).read("$.sum($..timestamp, $..cpus)", Long.class);
+        assertEquals("Expected the max function to consume the aggregation parameters and calculate the max over the result set",
+                Long.valueOf(35679716835L), value);
     }
 
     @Test
