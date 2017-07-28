@@ -215,4 +215,7 @@ public abstract class PathToken {
 
     protected abstract String getPathFragment();
 
+    public void setNext(final PathToken next) {
+        this.next = next;
+    }
 }
