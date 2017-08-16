@@ -21,7 +21,6 @@ import java.util.Map;
  * Leverages the function's name in order to determine which function to execute which is maintained internally
  * here via a static map
  *
- * Created by mattg on 6/27/15.
  */
 public class PathFunctionFactory {
 

@@ -11,7 +11,6 @@ import java.util.List;
  * String function concat - simple takes a list of arguments and/or an array and concatenates them together to form a
  * single string
  *
- * Created by mgreenwood on 12/11/15.
  */
 public class Concatenate implements PathFunction {
     @Override
@@ -26,11 +25,8 @@ public class Concatenate implements PathFunction {
             }
         }
         if (parameters != null) {
-            for (Parameter param : parameters) {
-		Object value = param.getValue();
-                if (value != null) {
-                    result.append(value.toString());
-                }
+            for (String value : Parameter.toList(String.class, ctx, parameters)) {
+                result.append(value);
             }
         }
         return result.toString();
