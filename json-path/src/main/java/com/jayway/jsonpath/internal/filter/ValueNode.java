@@ -359,19 +359,19 @@ public abstract class ValueNode {
         }
 
         public boolean isArray(Predicate.PredicateContext ctx) {
-            return ctx.configuration().jsonProvider().isArray(parse(ctx));
+            return parse(ctx) instanceof List;
         }
 
         public boolean isMap(Predicate.PredicateContext ctx) {
-            return ctx.configuration().jsonProvider().isMap(parse(ctx));
+            return parse(ctx) instanceof Map;
         }
 
         public int length(Predicate.PredicateContext ctx) {
-            return isArray(ctx) ? ctx.configuration().jsonProvider().length(parse(ctx)) : -1;
+            return isArray(ctx) ? ((List<?>) parse(ctx)).size() : -1;
         }
 
         public boolean isEmpty(Predicate.PredicateContext ctx) {
-            if (isArray(ctx) || isMap(ctx)) return ctx.configuration().jsonProvider().length(parse(ctx)) == 0;
+            if (isArray(ctx) || isMap(ctx)) return ((Collection<?>) parse(ctx)).size() == 0;
             else if((parse(ctx) instanceof String)) return ((String)parse(ctx)).length() == 0;
             return true;
         }
@@ -844,8 +844,8 @@ public abstract class ValueNode {
                     else if (res instanceof String) return ValueNode.createStringNode(res.toString(), false);
                     else if (res instanceof Boolean) return ValueNode.createBooleanNode(res.toString());
                     else if (res == null) return ValueNode.NULL_NODE;
-                    else if (ctx.configuration().jsonProvider().isArray(res)) return ValueNode.createJsonNode(res);
-                    else if (ctx.configuration().jsonProvider().isMap(res)) return ValueNode.createJsonNode(res);
+                    else if (ctx.configuration().jsonProvider().isArray(res)) return ValueNode.createJsonNode(ctx.configuration().mappingProvider().map(res, List.class, ctx.configuration()));
+                    else if (ctx.configuration().jsonProvider().isMap(res)) return ValueNode.createJsonNode(ctx.configuration().mappingProvider().map(res, Map.class, ctx.configuration()));
                     else throw new JsonPathException("Could not convert " + res.toString() + " to a ValueNode");
                 } catch (PathNotFoundException e) {
                     return ValueNode.UNDEFINED;
