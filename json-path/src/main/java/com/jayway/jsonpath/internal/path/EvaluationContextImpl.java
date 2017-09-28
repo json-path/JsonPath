@@ -17,9 +17,9 @@ package com.jayway.jsonpath.internal.path;
 import com.jayway.jsonpath.Configuration;
 import com.jayway.jsonpath.EvaluationListener;
 import com.jayway.jsonpath.Option;
-import com.jayway.jsonpath.PathNotFoundException;
 import com.jayway.jsonpath.internal.EvaluationAbortException;
 import com.jayway.jsonpath.internal.EvaluationContext;
+import com.jayway.jsonpath.internal.FastPathNotFoundException;
 import com.jayway.jsonpath.internal.Path;
 import com.jayway.jsonpath.internal.PathRef;
 import com.jayway.jsonpath.spi.json.JsonProvider;
@@ -130,7 +130,7 @@ public class EvaluationContextImpl implements EvaluationContext {
     public <T> T getValue(boolean unwrap) {
         if (path.isDefinite()) {
             if(resultIndex == 0){
-                throw new PathNotFoundException("No results for path: " + path.toString());
+                throw new FastPathNotFoundException("No results for path: " + path.toString());
             }
             int len = jsonProvider().length(valueResult);
             Object value = (len > 0) ? jsonProvider().getArrayIndex(valueResult, len-1) : null;
@@ -146,7 +146,7 @@ public class EvaluationContextImpl implements EvaluationContext {
     @Override
     public <T> T getPath() {
         if(resultIndex == 0){
-            throw new PathNotFoundException("No results for path: " + path.toString());
+            throw new FastPathNotFoundException("No results for path: " + path.toString());
         }
         return (T)pathResult;
     }

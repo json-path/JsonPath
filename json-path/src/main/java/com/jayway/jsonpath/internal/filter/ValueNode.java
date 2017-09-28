@@ -6,6 +6,7 @@ import com.jayway.jsonpath.JsonPathException;
 import com.jayway.jsonpath.Option;
 import com.jayway.jsonpath.PathNotFoundException;
 import com.jayway.jsonpath.Predicate;
+import com.jayway.jsonpath.internal.FastPathNotFoundException;
 import com.jayway.jsonpath.internal.Path;
 import com.jayway.jsonpath.internal.Utils;
 import com.jayway.jsonpath.internal.path.PathCompiler;
@@ -825,6 +826,8 @@ public abstract class ValueNode {
                     return result == JsonProvider.UNDEFINED ? ValueNode.FALSE : ValueNode.TRUE;
                 } catch (PathNotFoundException e) {
                     return ValueNode.FALSE;
+                } catch (FastPathNotFoundException e) {
+                    return ValueListNode.FALSE;
                 }
             } else {
                 try {
