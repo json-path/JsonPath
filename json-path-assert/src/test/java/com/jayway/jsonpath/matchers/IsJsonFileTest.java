@@ -1,35 +1,25 @@
 package com.jayway.jsonpath.matchers;
 
-import com.jayway.jsonpath.Configuration;
-import com.jayway.jsonpath.matchers.helpers.StrictParsingConfiguration;
-import org.hamcrest.Description;
-import org.hamcrest.Matcher;
-import org.hamcrest.StringDescription;
-import org.junit.AfterClass;
-import org.junit.BeforeClass;
-import org.junit.Test;
+import static com.jayway.jsonpath.matchers.JsonPathMatchers.isJsonFile;
+import static com.jayway.jsonpath.matchers.helpers.ResourceHelpers.resourceAsFile;
+import static com.jayway.jsonpath.matchers.helpers.TestingMatchers.MATCH_TRUE_TEXT;
+import static com.jayway.jsonpath.matchers.helpers.TestingMatchers.MISMATCHED_TEXT;
+import static com.jayway.jsonpath.matchers.helpers.TestingMatchers.withPathEvaluatedTo;
+import static org.hamcrest.Matchers.containsString;
+import static org.hamcrest.Matchers.not;
+import static org.hamcrest.Matchers.startsWith;
+import static org.junit.Assert.assertThat;
 
 import java.io.File;
 
-import static com.jayway.jsonpath.matchers.JsonPathMatchers.isJsonFile;
-import static com.jayway.jsonpath.matchers.helpers.ResourceHelpers.resourceAsFile;
-import static com.jayway.jsonpath.matchers.helpers.TestingMatchers.*;
-import static org.hamcrest.Matchers.*;
-import static org.junit.Assert.assertThat;
+import org.hamcrest.Description;
+import org.hamcrest.Matcher;
+import org.hamcrest.StringDescription;
+import org.junit.Test;
 
 public class IsJsonFileTest {
     private static final File BOOKS_JSON = resourceAsFile("books.json");
     private static final File INVALID_JSON = resourceAsFile("invalid.json");
-
-    @BeforeClass
-    public static void setupStrictJsonParsing() {
-        Configuration.setDefaults(new StrictParsingConfiguration());
-    }
-
-    @AfterClass
-    public static void setupDefaultJsonParsing() {
-        Configuration.setDefaults(null);
-    }
 
     @Test
     public void shouldMatchJsonFileEvaluatedToTrue() {

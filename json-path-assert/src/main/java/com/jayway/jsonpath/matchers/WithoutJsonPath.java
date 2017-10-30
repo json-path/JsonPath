@@ -15,7 +15,7 @@ public class WithoutJsonPath extends TypeSafeDiagnosingMatcher<ReadContext> {
 
     @Override
     protected boolean matchesSafely(ReadContext actual, Description mismatchDescription) {
-        try {
+    	try {
             Object value = actual.read(jsonPath);
             mismatchDescription
                     .appendText(jsonPath.getPath())

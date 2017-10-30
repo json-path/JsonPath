@@ -16,4 +16,5 @@ dependencies {
     compile libs.slf4jApi
 
     testCompile libs.test
+    testCompile project(':json-provider') 
 }

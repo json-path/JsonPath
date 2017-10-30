@@ -26,7 +26,6 @@ public class JsonAsserterImpl implements JsonAsserter {
     /**
      * {@inheritDoc}
      */
-    @SuppressWarnings("unchecked")
     public <T> JsonAsserter assertThat(String path, Matcher<T> matcher) {
         T obj = null;
         
@@ -48,7 +47,6 @@ public class JsonAsserterImpl implements JsonAsserter {
     /**
      * {@inheritDoc}
      */
-    @SuppressWarnings("unchecked")
     public <T> JsonAsserter assertThat(String path, Matcher<T> matcher, String message) {
         T obj = JsonPath.<T>read(jsonObject, path);
         if (!matcher.matches(obj)) {
@@ -72,7 +70,7 @@ public class JsonAsserterImpl implements JsonAsserter {
         try {
             Configuration c = Configuration.defaultConfiguration();
 
-            JsonPath.using(c).parse(jsonObject).read(path);
+            JsonPath.using(c).parse(jsonObject, false).read(path);
             throw new AssertionError(format("Document contains the path <%s> but was expected not to.", path));
         } catch (PathNotFoundException e) {
         }
@@ -84,7 +82,7 @@ public class JsonAsserterImpl implements JsonAsserter {
         try {
             Configuration c = Configuration.defaultConfiguration();
 
-            JsonPath.using(c).parse(jsonObject).read(path);
+            JsonPath.using(c).parse(jsonObject, false).read(path);
 
             throw new AssertionError(format("Document contains the path <%s> but was expected not to.", path));
         } catch (PathNotFoundException e) {

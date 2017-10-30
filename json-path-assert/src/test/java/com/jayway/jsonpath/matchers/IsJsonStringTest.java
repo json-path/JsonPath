@@ -1,32 +1,24 @@
 package com.jayway.jsonpath.matchers;
 
-import com.jayway.jsonpath.Configuration;
-import com.jayway.jsonpath.matchers.helpers.StrictParsingConfiguration;
+import static com.jayway.jsonpath.matchers.JsonPathMatchers.isJsonString;
+import static com.jayway.jsonpath.matchers.helpers.ResourceHelpers.resource;
+import static com.jayway.jsonpath.matchers.helpers.TestingMatchers.MATCH_TRUE_TEXT;
+import static com.jayway.jsonpath.matchers.helpers.TestingMatchers.MISMATCHED_TEXT;
+import static com.jayway.jsonpath.matchers.helpers.TestingMatchers.withPathEvaluatedTo;
+import static org.hamcrest.Matchers.containsString;
+import static org.hamcrest.Matchers.not;
+import static org.hamcrest.Matchers.startsWith;
+import static org.junit.Assert.assertThat;
+
 import org.hamcrest.Description;
 import org.hamcrest.Matcher;
 import org.hamcrest.StringDescription;
-import org.junit.AfterClass;
-import org.junit.BeforeClass;
 import org.junit.Test;
 
-import static com.jayway.jsonpath.matchers.JsonPathMatchers.isJsonString;
-import static com.jayway.jsonpath.matchers.helpers.ResourceHelpers.resource;
-import static com.jayway.jsonpath.matchers.helpers.TestingMatchers.*;
-import static org.hamcrest.Matchers.*;
-import static org.junit.Assert.assertThat;
-
-public class IsJsonStringTest {
+public class IsJsonStringTest
+{
     private static final String BOOKS_JSON = resource("books.json");
 
-    @BeforeClass
-    public static void setupStrictJsonParsing() {
-        Configuration.setDefaults(new StrictParsingConfiguration());
-    }
-
-    @AfterClass
-    public static void setupDefaultJsonParsing() {
-        Configuration.setDefaults(null);
-    }
 
     @Test
     public void shouldMatchJsonStringEvaluatedToTrue() {

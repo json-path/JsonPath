@@ -62,7 +62,7 @@ public class Bench {
 
         long now = System.currentTimeMillis();
         try {
-            res = JsonPath.using(configuration).parse(json).read(path);
+            res = JsonPath.using(configuration).parse(json, false).read(path);
         } catch (Exception e) {
             error = getError(e);
         } finally {

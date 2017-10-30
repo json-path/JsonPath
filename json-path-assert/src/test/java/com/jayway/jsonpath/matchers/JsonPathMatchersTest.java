@@ -1,39 +1,37 @@
 package com.jayway.jsonpath.matchers;
 
-import com.jayway.jsonpath.Configuration;
-import com.jayway.jsonpath.JsonPath;
-import com.jayway.jsonpath.ReadContext;
-import com.jayway.jsonpath.matchers.helpers.StrictParsingConfiguration;
-import org.junit.AfterClass;
-import org.junit.BeforeClass;
-import org.junit.Test;
+import static com.jayway.jsonpath.matchers.JsonPathMatchers.hasJsonPath;
+import static com.jayway.jsonpath.matchers.JsonPathMatchers.hasNoJsonPath;
+import static com.jayway.jsonpath.matchers.JsonPathMatchers.isJson;
+import static com.jayway.jsonpath.matchers.JsonPathMatchers.withJsonPath;
+import static com.jayway.jsonpath.matchers.helpers.ResourceHelpers.resource;
+import static com.jayway.jsonpath.matchers.helpers.ResourceHelpers.resourceAsFile;
+import static org.hamcrest.Matchers.anything;
+import static org.hamcrest.Matchers.contains;
+import static org.hamcrest.Matchers.empty;
+import static org.hamcrest.Matchers.equalTo;
+import static org.hamcrest.Matchers.hasItem;
+import static org.hamcrest.Matchers.hasSize;
+import static org.hamcrest.Matchers.instanceOf;
+import static org.hamcrest.Matchers.not;
+import static org.hamcrest.Matchers.nullValue;
+import static org.junit.Assert.assertThat;
 
 import java.io.File;
 import java.util.List;
 import java.util.Map;
 
-import static com.jayway.jsonpath.matchers.JsonPathMatchers.*;
-import static com.jayway.jsonpath.matchers.helpers.ResourceHelpers.resource;
-import static com.jayway.jsonpath.matchers.helpers.ResourceHelpers.resourceAsFile;
-import static org.hamcrest.Matchers.*;
-import static org.junit.Assert.assertThat;
+import org.junit.Test;
+
+import com.jayway.jsonpath.Configuration;
+import com.jayway.jsonpath.JsonPath;
+import com.jayway.jsonpath.ReadContext;
 
 public class JsonPathMatchersTest {
     private static final String BOOKS_JSON = resource("books.json");
     private static final String INVALID_JSON = "{ invalid-json }";
     private static final File BOOKS_JSON_FILE = resourceAsFile("books.json");
-
-    @BeforeClass
-    public static void setupStrictJsonParsing() {
-        // NOTE: Evaluation depends on the default configuration of JsonPath
-        Configuration.setDefaults(new StrictParsingConfiguration());
-    }
-
-    @AfterClass
-    public static void setupDefaultJsonParsing() {
-        Configuration.setDefaults(null);
-    }
-
+    
     @Test
     public void shouldMatchJsonPathToStringValue() {
         final String json = "{\"name\": \"Jessie\"}";
@@ -208,7 +206,7 @@ public class JsonPathMatchersTest {
 
     @Test
     public void shouldMatchJsonPathOnParsedJsonObject() {
-        Object json = Configuration.defaultConfiguration().jsonProvider().parse(BOOKS_JSON);
+        Object json = Configuration.defaultConfiguration().jsonProvider().parse(BOOKS_JSON,false);
         assertThat(json, hasJsonPath("$.store.name", equalTo("Little Shop")));
     }
 

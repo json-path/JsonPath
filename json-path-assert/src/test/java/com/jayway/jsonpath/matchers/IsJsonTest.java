@@ -1,41 +1,37 @@
 package com.jayway.jsonpath.matchers;
 
-import com.jayway.jsonpath.Configuration;
-import com.jayway.jsonpath.matchers.helpers.StrictParsingConfiguration;
-import com.jayway.jsonpath.matchers.helpers.TestingMatchers;
-import org.hamcrest.Description;
-import org.hamcrest.Matcher;
-import org.hamcrest.StringDescription;
-import org.junit.AfterClass;
-import org.junit.BeforeClass;
-import org.junit.Test;
-
-import java.io.File;
-
 import static com.jayway.jsonpath.matchers.JsonPathMatchers.isJson;
+import static com.jayway.jsonpath.matchers.JsonPathMatchers.isJsonString;
 import static com.jayway.jsonpath.matchers.helpers.ResourceHelpers.resource;
 import static com.jayway.jsonpath.matchers.helpers.ResourceHelpers.resourceAsFile;
 import static com.jayway.jsonpath.matchers.helpers.TestingMatchers.withPathEvaluatedTo;
-import static org.hamcrest.Matchers.*;
+import static org.hamcrest.Matchers.containsString;
+import static org.hamcrest.Matchers.not;
+import static org.hamcrest.Matchers.startsWith;
 import static org.junit.Assert.assertThat;
 
-public class IsJsonTest {
+import java.io.File;
+
+import org.hamcrest.Description;
+import org.hamcrest.Matcher;
+import org.hamcrest.StringDescription;
+import org.junit.Test;
+
+import com.jayway.jsonpath.Configuration;
+import com.jayway.jsonpath.matchers.helpers.TestingMatchers;
+
+public class IsJsonTest 
+{
     private static final String VALID_JSON = resource("example.json");
     private static final String INVALID_JSON = "{ invalid-json }";
     private static final String BOOKS_JSON_STRING = resource("books.json");
     private static final File BOOKS_JSON_FILE = resourceAsFile("books.json");
-    private static final Object BOOKS_JSON_PARSED = parseJson(BOOKS_JSON_STRING);
-
-    @BeforeClass
-    public static void setupStrictJsonParsing() {
-        Configuration.setDefaults(new StrictParsingConfiguration());
+    
+    private static final Object BOOKS_JSON_PARSED;
+    static
+    {
+    	BOOKS_JSON_PARSED = Configuration.defaultConfiguration().jsonProvider().parse(BOOKS_JSON_STRING,true);
     }
-
-    @AfterClass
-    public static void setupDefaultJsonParsing() {
-        Configuration.setDefaults(null);
-    }
-
     @Test
     public void shouldMatchOnEmptyJsonObject() {
         assertThat("{}", isJson());
@@ -134,9 +130,4 @@ public class IsJsonTest {
         matcher.describeMismatch("invalid-json", description);
         assertThat(description.toString(), containsString("\"invalid-json\""));
     }
-
-    private static Object parseJson(String json) {
-        return Configuration.defaultConfiguration().jsonProvider().parse(json);
-    }
-
 }

@@ -28,6 +28,7 @@ jar {
 
 dependencies {
     compile project(':json-path')
+    compile project(':json-provider')
     compile 'commons-io:commons-io:2.4'
     compile libs.jacksonDatabind
     compile libs.jsonSmart
