@@ -22,12 +22,12 @@ public class MultiPropTest {
 
         Configuration conf = Configuration.defaultConfiguration();
 
-        assertThat(using(conf).parse(model).read("$['a', 'b']", Map.class))
+        assertThat(using(conf).parse(model, false).read("$['a', 'b']", Map.class))
                 .containsEntry("a", "a-val")
                 .containsEntry("b", "b-val");
 
         // current semantics: absent props are skipped
-        assertThat(using(conf).parse(model).read("$['a', 'd']", Map.class))
+        assertThat(using(conf).parse(model, false).read("$['a', 'd']", Map.class))
                 .hasSize(1).containsEntry("a", "a-val");
     }
 
@@ -42,7 +42,7 @@ public class MultiPropTest {
 
         Configuration conf = Configuration.defaultConfiguration().addOptions(Option.DEFAULT_PATH_LEAF_TO_NULL);
 
-        assertThat(using(conf).parse(model).read("$['a', 'd']", Map.class))
+        assertThat(using(conf).parse(model, false).read("$['a', 'd']", Map.class))
                 .containsEntry("a", "a-val")
                 .containsEntry("d", null);
     }
@@ -58,7 +58,7 @@ public class MultiPropTest {
 
         Configuration conf = Configuration.defaultConfiguration().addOptions(Option.REQUIRE_PROPERTIES);
 
-        using(conf).parse(model).read("$['a', 'x']", Map.class);
+        using(conf).parse(model, false).read("$['a', 'x']", Map.class);
     }
 
     @Test
@@ -114,7 +114,7 @@ public class MultiPropTest {
         final Configuration conf = Configuration.defaultConfiguration().addOptions(Option.REQUIRE_PROPERTIES);
         final String json = "{\"a\": {\"v\": 5}, \"b\": {\"v\": 4}, \"c\": {\"v\": 1}}";
 
-        assertThat(using(conf).parse(json).read("$['a', 'c'].v")).asList().containsOnly(5, 1);
+        assertThat(using(conf).parse(json,false).read("$['a', 'c'].v")).asList().containsOnly(5, 1);
         assertEvaluationThrows(json, "$['d', 'a', 'c', 'm'].v", PathNotFoundException.class, conf);
     }
 }

@@ -1,14 +1,18 @@
 package com.jayway.jsonpath.internal.filter;
 
+import com.jayway.jsonpath.Configuration;
 import com.jayway.jsonpath.Filter;
 import com.jayway.jsonpath.InvalidPathException;
 import com.jayway.jsonpath.Predicate;
 import com.jayway.jsonpath.internal.CharacterIndex;
+import com.jayway.jsonpath.spi.builder.NodeBuilder;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
 import java.util.List;
+
 
 public class FilterCompiler {
     private static final Logger logger = LoggerFactory.getLogger(FilterCompiler.class);
@@ -46,7 +50,8 @@ public class FilterCompiler {
     private static final char PATTERN = '/';
     private static final char IGNORE_CASE = 'i';
 
-    private CharacterIndex filter;
+    private CharacterIndex filter;    
+    private NodeBuilder builder;
 
     public static Filter compile(String filterString) {
         FilterCompiler compiler = new FilterCompiler(filterString);
@@ -70,6 +75,7 @@ public class FilterCompiler {
         if (!filter.currentCharIs('(') || !filter.lastCharIs(')')) {
             throw new InvalidPathException("Filter must start with '[?(' and end with ')]'. " + filterString);
         }
+        builder =  Configuration.defaultConfiguration().nodeBuilder();
     }
 
     public Predicate compile() {
@@ -141,7 +147,6 @@ public class FilterCompiler {
                 break;
             }
         }
-
         return 1 == ops.size() ? ops.get(0) : LogicalExpressionNode.createLogicalOr(ops);
     }
 
@@ -195,17 +200,17 @@ public class FilterCompiler {
         try {
             RelationalOperator operator = readRelationalOperator();
             ValueNode right = readValueNode();
-            return new RelationalExpressionNode(left, operator, right);
+            return builder.createRelationalExpressionNode(left, operator, right);
         }
         catch (InvalidPathException exc) {
             filter.setPosition(savepoint);
         }
 
-        ValueNode.PathNode pathNode = left.asPathNode();
+        PathNode pathNode = left.asPathNode();
         left = pathNode.asExistsCheck(pathNode.shouldExists());
         RelationalOperator operator = RelationalOperator.EXISTS;
         ValueNode right = left.asPathNode().shouldExists() ? ValueNode.TRUE : ValueNode.FALSE;
-        return new RelationalExpressionNode(left, operator, right);
+        return builder.createRelationalExpressionNode(left, operator, right);
     }
 
     private LogicalOperator readLogicalOperator(){
@@ -243,20 +248,20 @@ public class FilterCompiler {
         return RelationalOperator.fromString(operator.toString());
     }
 
-    private ValueNode.NullNode readNullLiteral() {
+    private NullNode readNullLiteral() {
         int begin = filter.position();
         if(filter.currentChar() == NULL && filter.inBounds(filter.position() + 3)){
             CharSequence nullValue = filter.subSequence(filter.position(), filter.position() + 4);
             if("null".equals(nullValue.toString())){
                 logger.trace("NullLiteral from {} to {} -> [{}]", begin, filter.position()+3, nullValue);
                 filter.incrementPosition(nullValue.length());
-                return ValueNode.createNullNode();
+                return this.builder.createNullNode();
             }
         }
         throw new InvalidPathException("Expected <null> value");
     }
 
-    private ValueNode.JsonNode readJsonLiteral(){
+    private JsonNode readJsonLiteral(){
         int begin = filter.position();
 
         char openChar = filter.currentChar();
@@ -273,11 +278,11 @@ public class FilterCompiler {
         }
         CharSequence json = filter.subSequence(begin, filter.position());
         logger.trace("JsonLiteral from {} to {} -> [{}]", begin, filter.position(), json);
-        return ValueNode.createJsonNode(json);
+        return this.builder.createJsonNode(json);
 
     }
 
-    private ValueNode.PatternNode readPattern() {
+    private PatternNode readPattern() {
         int begin = filter.position();
         int closingIndex = filter.nextIndexOfUnescaped(PATTERN);
         if (closingIndex == -1) {
@@ -290,10 +295,10 @@ public class FilterCompiler {
         }
         CharSequence pattern = filter.subSequence(begin, filter.position());
         logger.trace("PatternNode from {} to {} -> [{}]", begin, filter.position(), pattern);
-        return ValueNode.createPatternNode(pattern);
+        return this.builder.createPatternNode(pattern);
     }
 
-    private ValueNode.StringNode readStringLiteral(char endChar) {
+    private StringNode readStringLiteral(char endChar) {
         int begin = filter.position();
 
         int closingSingleQuoteIndex = filter.nextIndexOfUnescaped(endChar);
@@ -304,10 +309,10 @@ public class FilterCompiler {
         }
         CharSequence stringLiteral = filter.subSequence(begin, filter.position());
         logger.trace("StringLiteral from {} to {} -> [{}]", begin, filter.position(), stringLiteral);
-        return ValueNode.createStringNode(stringLiteral, true);
+        return this.builder.createStringNode(stringLiteral, true);
     }
 
-    private ValueNode.NumberNode readNumberLiteral() {
+    private NumberNode readNumberLiteral() {
         int begin = filter.position();
 
         while (filter.inBounds() && filter.isNumberCharacter(filter.position())) {
@@ -315,10 +320,10 @@ public class FilterCompiler {
         }
         CharSequence numberLiteral = filter.subSequence(begin, filter.position());
         logger.trace("NumberLiteral from {} to {} -> [{}]", begin, filter.position(), numberLiteral);
-        return ValueNode.createNumberNode(numberLiteral);
+        return this.builder.createNumberNode(numberLiteral);
     }
 
-    private ValueNode.BooleanNode readBooleanLiteral() {
+    private BooleanNode readBooleanLiteral() {
         int begin = filter.position();
         int end = filter.currentChar() == TRUE ? filter.position() + 3 : filter.position() + 4;
 
@@ -332,10 +337,10 @@ public class FilterCompiler {
         filter.incrementPosition(boolValue.length());
         logger.trace("BooleanLiteral from {} to {} -> [{}]", begin, end, boolValue);
 
-        return ValueNode.createBooleanNode(boolValue);
+        return this.builder.createBooleanNode(boolValue);
     }
 
-    private ValueNode.PathNode readPath() {
+    private PathNode readPath() {
         char previousSignificantChar = filter.previousSignificantChar();
         int begin = filter.position();
 
@@ -361,7 +366,7 @@ public class FilterCompiler {
 
         boolean shouldExists = !(previousSignificantChar == NOT);
         CharSequence path = filter.subSequence(begin, filter.position());
-        return ValueNode.createPathNode(path, false, shouldExists);
+        return this.builder.createPathNode(path, false, shouldExists);
     }
 
     private boolean expressionIsTerminated(){

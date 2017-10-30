@@ -59,7 +59,7 @@ public class ScanPathTokenTest {
                     "  }\n" +
                     " }\n" +
                     "}"
-    );
+    ,false);
 
     public final static Object DOCUMENT2 = Configuration.defaultConfiguration().jsonProvider().parse(
             "{\n" +
@@ -84,7 +84,7 @@ public class ScanPathTokenTest {
                     "         }\n" +
                     "     ]\n" +
                     " }"
-    );
+    ,false);
 
     @Test
     public void a_document_can_be_scanned_for_property() {

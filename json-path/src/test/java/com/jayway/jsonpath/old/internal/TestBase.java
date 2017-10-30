@@ -30,7 +30,7 @@ public class TestBase {
             "{\n" +
             "   \"foo\" : \"foo-val-6\"\n" +
             "}" +
-            "]");
+            "]", false);
 
     public final static Object DOC = Configuration.defaultConfiguration().jsonProvider().parse(
             "{ \"store\": {\n" +
@@ -66,7 +66,7 @@ public class TestBase {
                     "      \"dash-notation\": \"dashes\"\n" +
                     "    }\n" +
                     "  }\n" +
-                    "}");
+                    "}", false);
 
 
 

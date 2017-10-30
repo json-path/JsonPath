@@ -30,6 +30,15 @@ public interface JsonProvider {
      * @throws InvalidJsonException
      */
     Object parse(String json) throws InvalidJsonException;
+    
+    /**
+     * Parse the given json string
+     * @param json json string to parse
+     * @param strict strict json format compliancy 
+     * @return Object representation of json
+     * @throws InvalidJsonException
+     */
+    Object parse(String json, boolean strict) throws InvalidJsonException;
 
     /**
      * Parse the given json string
@@ -40,6 +49,16 @@ public interface JsonProvider {
      */
     Object parse(InputStream jsonStream, String charset) throws InvalidJsonException;
 
+    /**
+     * Parse the given json string
+     * @param jsonStream input stream to parse
+     * @param charset charset to use
+     * @param strict strict json format compliancy 
+     * @return Object representation of json
+     * @throws InvalidJsonException
+     */
+    Object parse(InputStream jsonStream, String charset, boolean strict) throws InvalidJsonException;
+    
     /**
      * Convert given json object to a json string
      * @param obj object to transform

@@ -152,7 +152,6 @@ public class JsonPath {
      * @param <T>        expected return type
      * @return object(s) matched by the given path
      */
-    @SuppressWarnings({"unchecked"})
     public <T> T read(Object jsonObject) {
         return read(jsonObject, Configuration.defaultConfiguration());
     }
@@ -324,7 +323,6 @@ public class JsonPath {
      * @param <T>  expected return type
      * @return list of objects matched by the given path
      */
-    @SuppressWarnings({"unchecked"})
     public <T> T read(String json) {
         return read(json, Configuration.defaultConfiguration());
     }
@@ -337,12 +335,11 @@ public class JsonPath {
      * @param <T>           expected return type
      * @return list of objects matched by the given path
      */
-    @SuppressWarnings({"unchecked"})
     public <T> T read(String json, Configuration configuration) {
         notEmpty(json, "json can not be null or empty");
         notNull(configuration, "jsonProvider can not be null");
 
-        return read(configuration.jsonProvider().parse(json), configuration);
+        return read(configuration.jsonProvider().parse(json, true), configuration);
     }
 
     /**
@@ -353,7 +350,6 @@ public class JsonPath {
      * @return list of objects matched by the given path
      * @throws IOException
      */
-    @SuppressWarnings({"unchecked"})
     public <T> T read(URL jsonURL) throws IOException {
         return read(jsonURL, Configuration.defaultConfiguration());
     }
@@ -366,7 +362,6 @@ public class JsonPath {
      * @return list of objects matched by the given path
      * @throws IOException
      */
-    @SuppressWarnings({"unchecked"})
     public <T> T read(File jsonFile) throws IOException {
         return read(jsonFile, Configuration.defaultConfiguration());
     }
@@ -381,7 +376,6 @@ public class JsonPath {
      * @return list of objects matched by the given path
      * @throws IOException
      */
-    @SuppressWarnings({"unchecked"})
     public <T> T read(File jsonFile, Configuration configuration) throws IOException {
         notNull(jsonFile, "json file can not be null");
         isTrue(jsonFile.exists(), "json file does not exist");
@@ -404,7 +398,6 @@ public class JsonPath {
      * @return list of objects matched by the given path
      * @throws IOException
      */
-    @SuppressWarnings({"unchecked"})
     public <T> T read(InputStream jsonInputStream) throws IOException {
         return read(jsonInputStream, Configuration.defaultConfiguration());
     }
@@ -418,7 +411,6 @@ public class JsonPath {
      * @return list of objects matched by the given path
      * @throws IOException
      */
-    @SuppressWarnings({"unchecked"})
     public <T> T read(InputStream jsonInputStream, Configuration configuration) throws IOException {
         notNull(jsonInputStream, "json input stream can not be null");
         notNull(configuration, "configuration can not be null");
@@ -435,14 +427,13 @@ public class JsonPath {
      * @return list of objects matched by the given path
      * @throws IOException
      */
-    @SuppressWarnings({"unchecked"})
     public <T> T read(InputStream jsonInputStream, String charset, Configuration configuration) throws IOException {
         notNull(jsonInputStream, "json input stream can not be null");
         notNull(charset, "charset can not be null");
         notNull(configuration, "configuration can not be null");
 
         try {
-            return read(configuration.jsonProvider().parse(jsonInputStream, charset), configuration);
+            return read(configuration.jsonProvider().parse(jsonInputStream, charset, true), configuration);
         } finally {
             Utils.closeQuietly(jsonInputStream);
         }
@@ -483,7 +474,6 @@ public class JsonPath {
      * @param <T>      expected return type
      * @return list of objects matched by the given path
      */
-    @SuppressWarnings({"unchecked"})
     public static <T> T read(Object json, String jsonPath, Predicate... filters) {
         return parse(json).read(jsonPath, filters);
     }
@@ -497,9 +487,8 @@ public class JsonPath {
      * @param <T>      expected return type
      * @return list of objects matched by the given path
      */
-    @SuppressWarnings({"unchecked"})
     public static <T> T read(String json, String jsonPath, Predicate... filters) {
-        return new ParseContextImpl().parse(json).read(jsonPath, filters);
+        return new ParseContextImpl().parse(json, true).read(jsonPath, filters);
     }
 
 
@@ -512,10 +501,9 @@ public class JsonPath {
      * @param <T>      expected return type
      * @return list of objects matched by the given path
      */
-    @SuppressWarnings({"unchecked"})
     @Deprecated
     public static <T> T read(URL jsonURL, String jsonPath, Predicate... filters) throws IOException {
-        return new ParseContextImpl().parse(jsonURL).read(jsonPath, filters);
+        return new ParseContextImpl().parse(jsonURL, true).read(jsonPath, filters);
     }
 
     /**
@@ -527,9 +515,8 @@ public class JsonPath {
      * @param <T>      expected return type
      * @return list of objects matched by the given path
      */
-    @SuppressWarnings({"unchecked"})
     public static <T> T read(File jsonFile, String jsonPath, Predicate... filters) throws IOException {
-        return new ParseContextImpl().parse(jsonFile).read(jsonPath, filters);
+        return new ParseContextImpl().parse(jsonFile, true).read(jsonPath, filters);
     }
 
     /**
@@ -541,9 +528,8 @@ public class JsonPath {
      * @param <T>             expected return type
      * @return list of objects matched by the given path
      */
-    @SuppressWarnings({"unchecked"})
     public static <T> T read(InputStream jsonInputStream, String jsonPath, Predicate... filters) throws IOException {
-        return new ParseContextImpl().parse(jsonInputStream).read(jsonPath, filters);
+        return new ParseContextImpl().parse(jsonInputStream, true).read(jsonPath, filters);
     }
 
 
@@ -596,7 +582,7 @@ public class JsonPath {
      * @return a read context
      */
     public static DocumentContext parse(String json) {
-        return new ParseContextImpl().parse(json);
+        return parse(json, false);
     }
 
     /**
@@ -607,7 +593,7 @@ public class JsonPath {
      * @return a read context
      */
     public static DocumentContext parse(InputStream json) {
-        return new ParseContextImpl().parse(json);
+        return parse(json, false);
     }
 
     /**
@@ -618,7 +604,7 @@ public class JsonPath {
      * @return a read context
      */
     public static DocumentContext parse(File json) throws IOException {
-        return new ParseContextImpl().parse(json);
+        return parse(json, false);
     }
 
     /**
@@ -629,7 +615,99 @@ public class JsonPath {
      * @return a read context
      */
     public static DocumentContext parse(URL json) throws IOException {
-        return new ParseContextImpl().parse(json);
+        return parse(json, false);
+    }
+
+    /**
+     * Parses the given JSON input using the provided {@link Configuration} and
+     * returns a {@link DocumentContext} for path evaluation
+     *
+     * @param json input
+     * @return a read context
+     */
+    public static DocumentContext parse(String json, Configuration configuration) {
+        return parse(json,configuration, false);
+    }
+
+    /**
+     * Parses the given JSON input using the provided {@link Configuration} and
+     * returns a {@link DocumentContext} for path evaluation
+     *
+     * @param json input
+     * @return a read context
+     */
+    public static DocumentContext parse(InputStream json, Configuration configuration) {
+        return parse(json, configuration, false);
+    }
+
+    /**
+     * Parses the given JSON input using the provided {@link Configuration} and
+     * returns a {@link DocumentContext} for path evaluation
+     *
+     * @param json input
+     * @return a read context
+     */
+    public static DocumentContext parse(File json, Configuration configuration) throws IOException {
+        return parse(json, configuration, false);
+    }
+
+    /**
+     * Parses the given JSON input using the provided {@link Configuration} and
+     * returns a {@link DocumentContext} for path evaluation
+     *
+     * @param json input
+     * @return a read context
+     */
+    public static DocumentContext parse(URL json, Configuration configuration) throws IOException {
+        return parse(json, configuration, false);
+    }
+
+    /**
+     * Parses the given JSON input using the default {@link Configuration} and
+     * returns a {@link DocumentContext} for path evaluation
+     *
+     * @param json string
+     * @param strict json parsing strict mode
+     * @return a read context
+     */
+    public static DocumentContext parse(String json, boolean strict) {
+        return new ParseContextImpl().parse(json, strict);
+    }
+
+    /**
+     * Parses the given JSON input using the default {@link Configuration} and
+     * returns a {@link DocumentContext} for path evaluation
+     *
+     * @param json stream
+     * @param strict json parsing strict mode
+     * @return a read context
+     */
+    public static DocumentContext parse(InputStream json, boolean strict) {
+        return new ParseContextImpl().parse(json, strict);
+    }
+
+    /**
+     * Parses the given JSON input using the default {@link Configuration} and
+     * returns a {@link DocumentContext} for path evaluation
+     *
+     * @param json file
+     * @param strict json parsing strict mode
+     * @return a read context
+     */
+    public static DocumentContext parse(File json, boolean strict) throws IOException {
+        return new ParseContextImpl().parse(json,strict);
+    }
+
+    /**
+     * Parses the given JSON input using the default {@link Configuration} and
+     * returns a {@link DocumentContext} for path evaluation
+     *
+     * @param json url
+     * @param strict json parsing strict mode
+     * @return a read context
+     */
+    public static DocumentContext parse(URL json, boolean strict) throws IOException {
+        return new ParseContextImpl().parse(json, strict);
     }
 
     /**
@@ -648,10 +726,11 @@ public class JsonPath {
      * returns a {@link DocumentContext} for path evaluation
      *
      * @param json input
+     * @param strict json parsing strict mode
      * @return a read context
      */
-    public static DocumentContext parse(String json, Configuration configuration) {
-        return new ParseContextImpl(configuration).parse(json);
+    public static DocumentContext parse(String json, Configuration configuration, boolean strict) {
+        return new ParseContextImpl(configuration).parse(json, strict);
     }
 
     /**
@@ -659,10 +738,11 @@ public class JsonPath {
      * returns a {@link DocumentContext} for path evaluation
      *
      * @param json input
+     * @param strict json parsing strict mode
      * @return a read context
      */
-    public static DocumentContext parse(InputStream json, Configuration configuration) {
-        return new ParseContextImpl(configuration).parse(json);
+    public static DocumentContext parse(InputStream json, Configuration configuration, boolean strict) {
+        return new ParseContextImpl(configuration).parse(json, strict);
     }
 
     /**
@@ -670,10 +750,11 @@ public class JsonPath {
      * returns a {@link DocumentContext} for path evaluation
      *
      * @param json input
+     * @param strict json parsing strict mode
      * @return a read context
      */
-    public static DocumentContext parse(File json, Configuration configuration) throws IOException {
-        return new ParseContextImpl(configuration).parse(json);
+    public static DocumentContext parse(File json, Configuration configuration, boolean strict) throws IOException {
+        return new ParseContextImpl(configuration).parse(json, strict);
     }
 
     /**
@@ -681,10 +762,11 @@ public class JsonPath {
      * returns a {@link DocumentContext} for path evaluation
      *
      * @param json input
+     * @param strict json parsing strict mode
      * @return a read context
      */
-    public static DocumentContext parse(URL json, Configuration configuration) throws IOException {
-        return new ParseContextImpl(configuration).parse(json);
+    public static DocumentContext parse(URL json, Configuration configuration, boolean strict) throws IOException {
+        return new ParseContextImpl(configuration).parse(json, strict);
     }
 
     private <T> T resultByConfiguration(Object jsonObject, Configuration configuration, EvaluationContext evaluationContext) {

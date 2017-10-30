@@ -43,7 +43,7 @@ public class JsonContext implements DocumentContext {
     private final Configuration configuration;
     private final Object json;
 
-    JsonContext(Object json, Configuration configuration) {
+    public JsonContext(Object json, Configuration configuration) {
         notNull(json, "json can not be null");
         notNull(configuration, "configuration can not be null");
         this.configuration = configuration;

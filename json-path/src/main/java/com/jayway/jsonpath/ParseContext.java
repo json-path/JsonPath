@@ -36,4 +36,17 @@ public interface ParseContext {
 
     @Deprecated
     DocumentContext parse(URL json) throws IOException;
+    
+    DocumentContext parse(String json, boolean strict);
+
+    DocumentContext parse(Object json, boolean strict);
+
+    DocumentContext parse(InputStream json, boolean strict);
+
+    DocumentContext parse(InputStream json, String charset, boolean strict);
+
+    DocumentContext parse(File json, boolean strict) throws IOException;
+
+    @Deprecated
+    DocumentContext parse(URL json, boolean strict) throws IOException;
 }

@@ -38,6 +38,6 @@ public class JsonLateBindingValue implements ILateBindingValue {
      */
     @Override
     public Object get() {
-        return jsonProvider.parse(jsonParameter.getJson());
+        return jsonProvider.parse(jsonParameter.getJson(), false);
     }
 }
