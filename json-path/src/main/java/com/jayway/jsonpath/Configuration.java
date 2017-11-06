@@ -52,7 +52,7 @@ public class Configuration {
     	if (DEFAULTS == null)
     	{
     		ServiceLoader<Defaults> loader = ServiceLoader.load(
-    			Defaults.class);
+    			Defaults.class, Configuration.class.getClassLoader());
     			
 			Iterator<Defaults> iterator = loader.iterator();
 			while(iterator.hasNext())

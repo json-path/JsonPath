@@ -1,11 +1,7 @@
 package com.jayway.jsonpath;
 
-/**
- *
- * @author <a href="mailto:christophe.munilla@cea.fr">Christophe Munilla</a>
- */
-public abstract class BaseTestJson
-{
+
+public abstract class BaseTestJson {
 
 	public static final String JSON_BOOK_DOCUMENT =
 	"{ " +
