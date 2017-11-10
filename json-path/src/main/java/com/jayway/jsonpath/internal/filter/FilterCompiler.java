@@ -132,11 +132,9 @@ public class FilterCompiler {
 
         while (true) {
             int savepoint = filter.position();
-            try {
-                filter.readSignificantSubSequence(LogicalOperator.OR.getOperatorString());
+            if (filter.hasSignificantSubSequence(LogicalOperator.OR.getOperatorString())) {
                 ops.add(readLogicalAND());
-            }
-            catch (InvalidPathException exc) {
+            } else {
                 filter.setPosition(savepoint);
                 break;
             }
@@ -152,11 +150,9 @@ public class FilterCompiler {
 
         while (true) {
             int savepoint = filter.position();
-            try {
-                filter.readSignificantSubSequence(LogicalOperator.AND.getOperatorString());
+            if (filter.hasSignificantSubSequence(LogicalOperator.AND.getOperatorString())) {
                 ops.add(readLogicalANDOperand());
-            }
-            catch (InvalidPathException exc) {
+            } else {
                 filter.setPosition(savepoint);
                 break;
             }

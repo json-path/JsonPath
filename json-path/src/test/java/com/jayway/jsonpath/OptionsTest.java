@@ -21,7 +21,7 @@ public class OptionsTest extends BaseTest {
 
         Configuration conf = Configuration.defaultConfiguration();
 
-        assertThat(using(conf).parse("{\"foo\" : \"bar\"}").read("$.baz")).isNull();
+        assertThat((String)using(conf).parse("{\"foo\" : \"bar\"}").read("$.baz")).isNull();
     }
 
     @Test
@@ -37,7 +37,7 @@ public class OptionsTest extends BaseTest {
 
         Configuration conf = Configuration.defaultConfiguration();
 
-        assertThat(using(conf).parse("{\"foo\" : \"bar\"}").read("$.foo")).isInstanceOf(String.class);
+        assertThat((String)using(conf).parse("{\"foo\" : \"bar\"}").read("$.foo")).isInstanceOf(String.class);
     }
 
     @Test
@@ -45,11 +45,11 @@ public class OptionsTest extends BaseTest {
 
         Configuration conf = Configuration.builder().options(ALWAYS_RETURN_LIST).build();
 
-        assertThat(using(conf).parse("{\"foo\" : \"bar\"}").read("$.foo")).isInstanceOf(List.class);
+        assertThat((List)using(conf).parse("{\"foo\" : \"bar\"}").read("$.foo")).isInstanceOf(List.class);
 
-        assertThat(using(conf).parse("{\"foo\": null}").read("$.foo")).isInstanceOf(List.class);
+        assertThat((List)using(conf).parse("{\"foo\": null}").read("$.foo")).isInstanceOf(List.class);
 
-        assertThat(using(conf).parse("{\"foo\": [1, 4, 8]}").read("$.foo")).asList()
+        assertThat((List)using(conf).parse("{\"foo\": [1, 4, 8]}").read("$.foo")).asList()
                 .containsExactly(Arrays.asList(1, 4, 8));
     }
 
@@ -61,7 +61,7 @@ public class OptionsTest extends BaseTest {
         assertThat(result).hasSize(1);
         assertThat(result.get(0)).isNull();
 
-        assertThat(using(conf).parse("{\"bar\": {\"foo\": [1, 4, 8]}}").read("$..foo")).asList()
+        assertThat((List)using(conf).parse("{\"bar\": {\"foo\": [1, 4, 8]}}").read("$..foo")).asList()
                 .containsExactly(Arrays.asList(1, 4, 8));
     }
 
@@ -69,7 +69,7 @@ public class OptionsTest extends BaseTest {
     public void a_path_evaluation_is_returned_as_VALUE_by_default() {
         Configuration conf = Configuration.defaultConfiguration();
 
-        assertThat(using(conf).parse("{\"foo\" : \"bar\"}").read("$.foo")).isEqualTo("bar");
+        assertThat((String)using(conf).parse("{\"foo\" : \"bar\"}").read("$.foo")).isEqualTo("bar");
     }
 
     @Test
@@ -142,13 +142,13 @@ public class OptionsTest extends BaseTest {
     public void issue_suppress_exceptions_does_not_break_indefinite_evaluation() {
         Configuration conf = Configuration.builder().options(SUPPRESS_EXCEPTIONS).build();
 
-        assertThat(using(conf).parse("{\"foo2\": [5]}").read("$..foo2[0]")).asList().containsOnly(5);
-        assertThat(using(conf).parse("{\"foo\" : {\"foo2\": [5]}}").read("$..foo2[0]")).asList().containsOnly(5);
-        assertThat(using(conf).parse("[null, [{\"foo\" : {\"foo2\": [5]}}]]").read("$..foo2[0]")).asList().containsOnly(5);
+        assertThat((List)using(conf).parse("{\"foo2\": [5]}").read("$..foo2[0]")).asList().containsOnly(5);
+        assertThat((List)using(conf).parse("{\"foo\" : {\"foo2\": [5]}}").read("$..foo2[0]")).asList().containsOnly(5);
+        assertThat((List)using(conf).parse("[null, [{\"foo\" : {\"foo2\": [5]}}]]").read("$..foo2[0]")).asList().containsOnly(5);
 
-        assertThat(using(conf).parse("[null, [{\"foo\" : {\"foo2\": [5]}}]]").read("$..foo.foo2[0]")).asList().containsOnly(5);
+        assertThat((List)using(conf).parse("[null, [{\"foo\" : {\"foo2\": [5]}}]]").read("$..foo.foo2[0]")).asList().containsOnly(5);
 
-        assertThat(using(conf).parse("{\"aoo\" : {}, \"foo\" : {\"foo2\": [5]}, \"zoo\" : {}}").read("$[*].foo2[0]")).asList().containsOnly(5);
+        assertThat((List)using(conf).parse("{\"aoo\" : {}, \"foo\" : {\"foo2\": [5]}, \"zoo\" : {}}").read("$[*].foo2[0]")).asList().containsOnly(5);
     }
 
     @Test

@@ -402,18 +402,19 @@ public abstract class ValueNode {
         private boolean useSingleQuote = true;
 
         private StringNode(CharSequence charSequence, boolean escape) {
-            if(charSequence.length() > 1){
+            if (escape && charSequence.length() > 1) {
                 char open = charSequence.charAt(0);
                 char close = charSequence.charAt(charSequence.length()-1);
-
-                if(open == '\'' && close == '\''){
+                if (open == '\'' && close == '\'') {
                     charSequence = charSequence.subSequence(1, charSequence.length()-1);
-                } else if(open == '"' && close == '"'){
+                } else if (open == '"' && close == '"') {
                     charSequence = charSequence.subSequence(1, charSequence.length()-1);
                     useSingleQuote = false;
                 }
+                string = Utils.unescape(charSequence.toString());
+            } else {
+                string = charSequence.toString();
             }
-            string = escape ? Utils.unescape(charSequence.toString()) : charSequence.toString();
         }
 
         @Override
