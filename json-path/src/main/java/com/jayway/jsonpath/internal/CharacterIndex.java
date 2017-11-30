@@ -172,7 +172,7 @@ public class CharacterIndex {
                 inEscape = false;
             } else if('\\' == charAt(readPosition)){
                 inEscape = true;
-            } else if (c == charAt(readPosition) && !inEscape){
+            } else if (c == charAt(readPosition)){
                 return readPosition;
             }
             readPosition ++;

@@ -162,7 +162,7 @@ public abstract class AbstractJsonProvider implements JsonProvider {
      * @return an Iterable that iterates over the entries of an array
      */
     @SuppressWarnings("unchecked")
-    public Iterable<? extends Object> toIterable(Object obj) {
+    public Iterable<?> toIterable(Object obj) {
         if (isArray(obj))
             return ((Iterable) obj);
         else

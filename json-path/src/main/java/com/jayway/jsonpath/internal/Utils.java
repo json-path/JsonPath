@@ -24,8 +24,8 @@ import java.util.Iterator;
 public final class Utils {
 
     // accept a collection of objects, since all objects have toString()
-    public static String join(String delimiter, String wrap, Iterable<? extends Object> objs) {
-        Iterator<? extends Object> iter = objs.iterator();
+    public static String join(String delimiter, String wrap, Iterable<?> objs) {
+        Iterator<?> iter = objs.iterator();
         if (!iter.hasNext()) {
             return "";
         }
@@ -38,7 +38,7 @@ public final class Utils {
     }
 
     // accept a collection of objects, since all objects have toString()
-    public static String join(String delimiter, Iterable<? extends Object> objs) {
+    public static String join(String delimiter, Iterable<?> objs) {
         return join(delimiter, "", objs);
     }
 
@@ -175,7 +175,7 @@ public final class Utils {
         }
         int len = str.length();
         StringWriter writer = new StringWriter(len);
-        StringBuffer unicode = new StringBuffer(4);
+        StringBuilder unicode = new StringBuilder(4);
         boolean hadSlash = false;
         boolean inUnicode = false;
         for (int i = 0; i < len; i++) {

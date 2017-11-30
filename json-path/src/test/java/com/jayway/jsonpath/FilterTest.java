@@ -279,7 +279,8 @@ public class FilterTest extends BaseTest {
         Filter farr = parse("[?(@.foo == " + arr + ")]");
         //Filter fobjF = parse("[?(@.foo == " + nest + ")]");
         //Filter fobjT = parse("[?(@.bar == " + nest + ")]");
-        assertThat(farr.apply(context)).isEqualTo(true);
+        boolean apply = farr.apply(context);
+        assertThat(apply).isEqualTo(true);
         //assertThat(fobjF.apply(context)).isEqualTo(false);
         //assertThat(fobjT.apply(context)).isEqualTo(true);
     }
