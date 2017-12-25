@@ -117,7 +117,7 @@ public class PathCompiler {
         path.incrementPosition(1);
 
         if(path.currentChar() != PERIOD && path.currentChar() != OPEN_SQUARE_BRACKET){
-            fail("Illegal character at position " + path.position() + " expected '.' or '[");
+            fail("Illegal character at position " + path.position() + " expected '.' or '['");
         }
 
         PathTokenAppender appender = pathToken.getPathTokenAppender();
