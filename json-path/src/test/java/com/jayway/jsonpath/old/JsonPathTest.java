@@ -322,5 +322,10 @@ public class JsonPathTest extends BaseTest {
         }
     }
 
+    @Test(expected = InvalidPathException.class)
+    //see https://github.com/json-path/JsonPath/issues/428
+    public void prevent_stack_overflow_error_when_unclosed_property() {
+        JsonPath.compile("$['boo','foo][?(@ =~ /bar/)]");
+    }
 
 }
