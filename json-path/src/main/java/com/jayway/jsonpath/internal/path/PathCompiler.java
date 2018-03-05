@@ -484,7 +484,8 @@ public class PathCompiler {
         if (inBracket) {
             int wildCardIndex = path.indexOfNextSignificantChar(WILDCARD);
             if (!path.nextSignificantCharIs(wildCardIndex, CLOSE_SQUARE_BRACKET)) {
-                throw new InvalidPathException("Expected wildcard token to end with ']' on position " + wildCardIndex + 1);
+                int offset = wildCardIndex + 1;
+                throw new InvalidPathException("Expected wildcard token to end with ']' on position " + offset);
             }
             int bracketCloseIndex = path.indexOfNextSignificantChar(wildCardIndex, CLOSE_SQUARE_BRACKET);
             path.setPosition(bracketCloseIndex + 1);
