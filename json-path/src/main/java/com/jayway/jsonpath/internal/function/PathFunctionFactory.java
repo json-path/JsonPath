@@ -1,5 +1,6 @@
 package com.jayway.jsonpath.internal.function;
 
+import com.jayway.jsonpath.Configuration;
 import com.jayway.jsonpath.InvalidPathException;
 import com.jayway.jsonpath.internal.function.json.Append;
 import com.jayway.jsonpath.internal.function.numeric.Average;
@@ -10,6 +11,7 @@ import com.jayway.jsonpath.internal.function.numeric.Sum;
 import com.jayway.jsonpath.internal.function.text.Concatenate;
 import com.jayway.jsonpath.internal.function.text.Length;
 
+import java.lang.reflect.Constructor;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
@@ -24,14 +26,14 @@ import java.util.Map;
  */
 public class PathFunctionFactory {
 
-    public static final Map<String, Class> FUNCTIONS;
+    public static final Map<String, Class<? extends PathFunction>> FUNCTIONS;
 
     static {
         // New functions should be added here and ensure the name is not overridden
-        Map<String, Class> map = new HashMap<String, Class>();
+        Map<String, Class<? extends PathFunction>> map = new HashMap<String, Class<? extends PathFunction>>();
 
         // Math Functions
-        map.put("avg", Average.class);
+        map.put("avg",  Average.class);
         map.put("stddev", StandardDeviation.class);
         map.put("sum", Sum.class);
         map.put("min", Min.class);
@@ -58,18 +60,22 @@ public class PathFunctionFactory {
      * @param name
      *      The name of the function
      *
+     * @param configuration
      * @return
      *      The implementation of a function
      *
      * @throws InvalidPathException
      */
-    public static PathFunction newFunction(String name) throws InvalidPathException {
-        Class functionClazz = FUNCTIONS.get(name);
+    public static PathFunction newFunction(
+        String name,
+        Configuration configuration) throws InvalidPathException {
+        Class<? extends PathFunction> functionClazz = configuration.getFunctions().get(name);
         if(functionClazz == null){
             throw new InvalidPathException("Function with name: " + name + " does not exist.");
         } else {
             try {
-                return (PathFunction)functionClazz.newInstance();
+                Constructor<? extends PathFunction> constructor = functionClazz.getConstructor();
+                return constructor.newInstance();
             } catch (Exception e) {
                 throw new InvalidPathException("Function of name: " + name + " cannot be created", e);
             }
