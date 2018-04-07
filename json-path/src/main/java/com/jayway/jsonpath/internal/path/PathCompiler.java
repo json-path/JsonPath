@@ -195,7 +195,7 @@ public class PathCompiler {
             }
             else if (c == OPEN_PARENTHESIS) {
                 isFunction = true;
-                endPosition = readPosition++;
+                endPosition = readPosition;
                 break;
             }
             readPosition++;
