@@ -132,6 +132,13 @@ public class FilterCompiler {
 
         while (true) {
             int savepoint = filter.position();
+            if (filter.readSignificantSubSequence(LogicalOperator.OR.getOperatorString()))
+                ops.add(readLogicalAND());
+            else {
+                filter.setPosition(savepoint);
+                break;
+            }
+/*
             try {
                 filter.readSignificantSubSequence(LogicalOperator.OR.getOperatorString());
                 ops.add(readLogicalAND());
@@ -140,6 +147,7 @@ public class FilterCompiler {
                 filter.setPosition(savepoint);
                 break;
             }
+            */
         }
 
         return 1 == ops.size() ? ops.get(0) : LogicalExpressionNode.createLogicalOr(ops);
@@ -152,6 +160,13 @@ public class FilterCompiler {
 
         while (true) {
             int savepoint = filter.position();
+            if (filter.readSignificantSubSequence(LogicalOperator.AND.getOperatorString()))
+            ops.add(readLogicalANDOperand());
+            else {
+                filter.setPosition(savepoint);
+                break;
+            }
+/*
             try {
                 filter.readSignificantSubSequence(LogicalOperator.AND.getOperatorString());
                 ops.add(readLogicalANDOperand());
@@ -160,6 +175,7 @@ public class FilterCompiler {
                 filter.setPosition(savepoint);
                 break;
             }
+            */
         }
 
         return 1 == ops.size() ? ops.get(0) : LogicalExpressionNode.createLogicalAnd(ops);

@@ -220,16 +220,18 @@ public class CharacterIndex {
         incrementPosition(1);
     }
 
-    public void readSignificantSubSequence(CharSequence s) {
+    // true if successful, false if invalid path
+    public boolean readSignificantSubSequence(CharSequence s) {
         skipBlanks();
         if (! inBounds(position + s.length() - 1)) {
-            throw new InvalidPathException(String.format("End of string reached while expecting: %s", s));
+            return false;
         }
         if (! subSequence(position, position + s.length()).equals(s)) {
-            throw new InvalidPathException(String.format("Expected: %s", s));
+             return false;
         }
 
         incrementPosition(s.length());
+        return true;
     }
 
     public int indexOfPreviousSignificantChar(int startPosition){
