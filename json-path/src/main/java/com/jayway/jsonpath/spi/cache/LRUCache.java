@@ -24,8 +24,7 @@ import java.util.concurrent.locks.ReentrantLock;
 public class LRUCache implements Cache {
 
   private static final float DEFAULT_LOAD_FACTOR = 0.75f;
-  private final ReentrantLock lock = new ReentrantLock();
-  private int size;
+  private final int size;
   private LinkedHashMap<String, JsonPath> hashMap;
 
   public LRUCache(int size) {
