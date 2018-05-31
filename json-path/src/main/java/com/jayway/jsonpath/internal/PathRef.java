@@ -298,7 +298,9 @@ public abstract class PathRef implements Comparable<PathRef>  {
         public void convert(MapFunction mapFunction, Configuration configuration) {
             for (String property : properties) {
                 Object currentValue = configuration.jsonProvider().getMapValue(parent, property);
-                configuration.jsonProvider().setProperty(parent, property, mapFunction.map(currentValue, configuration));
+                if (currentValue != JsonProvider.UNDEFINED) {
+                    configuration.jsonProvider().setProperty(parent, property, mapFunction.map(currentValue, configuration));
+                }
             }
         }
 
