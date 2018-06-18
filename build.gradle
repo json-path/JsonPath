@@ -1,6 +1,9 @@
 buildscript {
     repositories {
-        jcenter()
+        mavenLocal()
+        maven {
+            url 'https://artifactory.tools.bol.com/artifactory/maven-bol'
+        }
     }
     dependencies {
         classpath 'me.champeau.gradle:gradle-javadoc-hotfix-plugin:0.1'
