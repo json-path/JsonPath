@@ -65,10 +65,10 @@ subprojects {
         from sourceSets.main.allSource
     }
 
-//    signing {
-//        required { !snapshotVersion && gradle.taskGraph.hasTask("uploadArchives") }
-//        sign configurations.archives
-//    }
+    signing {
+        required { !snapshotVersion && gradle.taskGraph.hasTask("uploadArchives") }
+        sign configurations.archives
+    }
 
     artifacts {
         archives jar, javadocJar, sourcesJar
