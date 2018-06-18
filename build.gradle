@@ -52,7 +52,7 @@ subprojects {
     targetCompatibility = 1.6
 
     repositories {
-        mavenCentral()
+        mavenLocal()
     }
 
     task javadocJar(type: Jar) {
