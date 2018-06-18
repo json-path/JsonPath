@@ -65,10 +65,10 @@ subprojects {
         from sourceSets.main.allSource
     }
 
-    signing {
-        required { !snapshotVersion && gradle.taskGraph.hasTask("uploadArchives") }
-        sign configurations.archives
-    }
+//    signing {
+//        required { !snapshotVersion && gradle.taskGraph.hasTask("uploadArchives") }
+//        sign configurations.archives
+//    }
 
     artifacts {
         archives jar, javadocJar, sourcesJar
@@ -76,7 +76,7 @@ subprojects {
 }
 
 task wrapper(type: Wrapper) {
-    gradleVersion = '4.1'
+    gradleVersion = '4.7'
 }
 
 //Task used by Heroku for staging
