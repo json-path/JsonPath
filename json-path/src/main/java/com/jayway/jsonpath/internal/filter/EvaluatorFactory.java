@@ -91,7 +91,13 @@ public class EvaluatorFactory {
     private static class LessThanEvaluator implements Evaluator {
         @Override
         public boolean evaluate(ValueNode left, ValueNode right, Predicate.PredicateContext ctx) {
-            if(left.isNumberNode() && right.isNumberNode()){
+            if(left.isStringNode() && right.isNumberNode()) {
+                return Double.parseDouble(left.asStringNode().getString()) < right.asNumberNode().getNumber().doubleValue();
+            }
+            else if(left.isNumberNode() && right.isStringNode()) {
+                return left.asNumberNode().getNumber().doubleValue() < Double.parseDouble(right.asStringNode().getString());
+            }
+            else if(left.isNumberNode() && right.isNumberNode()){
                 return left.asNumberNode().getNumber().compareTo(right.asNumberNode().getNumber()) < 0;
             } if(left.isStringNode() && right.isStringNode()){
                 return left.asStringNode().getString().compareTo(right.asStringNode().getString()) < 0;
@@ -103,7 +109,13 @@ public class EvaluatorFactory {
     private static class LessThanEqualsEvaluator implements Evaluator {
         @Override
         public boolean evaluate(ValueNode left, ValueNode right, Predicate.PredicateContext ctx) {
-            if(left.isNumberNode() && right.isNumberNode()){
+            if(left.isStringNode() && right.isNumberNode()) {
+                return Double.parseDouble(left.asStringNode().getString()) <= right.asNumberNode().getNumber().doubleValue();
+            }
+            else if(left.isNumberNode() && right.isStringNode()) {
+                return left.asNumberNode().getNumber().doubleValue() <= Double.parseDouble(right.asStringNode().getString());
+            }
+            else if(left.isNumberNode() && right.isNumberNode()){
                 return left.asNumberNode().getNumber().compareTo(right.asNumberNode().getNumber()) <= 0;
             } if(left.isStringNode() && right.isStringNode()){
                 return left.asStringNode().getString().compareTo(right.asStringNode().getString()) <= 0;
@@ -115,9 +127,16 @@ public class EvaluatorFactory {
     private static class GreaterThanEvaluator implements Evaluator {
         @Override
         public boolean evaluate(ValueNode left, ValueNode right, Predicate.PredicateContext ctx) {
-            if(left.isNumberNode() && right.isNumberNode()){
+            if(left.isStringNode() && right.isNumberNode()) {
+                return Double.parseDouble(left.asStringNode().getString()) > right.asNumberNode().getNumber().doubleValue();
+            }
+            else if(left.isNumberNode() && right.isStringNode()) {
+                return left.asNumberNode().getNumber().doubleValue() > Double.parseDouble(right.asStringNode().getString());
+            }
+            else if(left.isNumberNode() && right.isNumberNode()){
                 return left.asNumberNode().getNumber().compareTo(right.asNumberNode().getNumber()) > 0;
-            } else if(left.isStringNode() && right.isStringNode()){
+            }
+            else if(left.isStringNode() && right.isStringNode()){
                 return left.asStringNode().getString().compareTo(right.asStringNode().getString()) > 0;
             }
             return false;
@@ -127,7 +146,13 @@ public class EvaluatorFactory {
     private static class GreaterThanEqualsEvaluator implements Evaluator {
         @Override
         public boolean evaluate(ValueNode left, ValueNode right, Predicate.PredicateContext ctx) {
-            if(left.isNumberNode() && right.isNumberNode()){
+            if(left.isStringNode() && right.isNumberNode()) {
+                return Double.parseDouble(left.asStringNode().getString()) >= right.asNumberNode().getNumber().doubleValue();
+            }
+            else if(left.isNumberNode() && right.isStringNode()) {
+                return left.asNumberNode().getNumber().doubleValue() >= Double.parseDouble(right.asStringNode().getString());
+            }
+            else if(left.isNumberNode() && right.isNumberNode()){
                 return left.asNumberNode().getNumber().compareTo(right.asNumberNode().getNumber()) >= 0;
             } else if(left.isStringNode() && right.isStringNode()){
                 return left.asStringNode().getString().compareTo(right.asStringNode().getString()) >= 0;
