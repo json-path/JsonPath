@@ -216,7 +216,7 @@ public class JsonContext implements DocumentContext {
 
     private JsonPath pathFromCache(String path, Predicate[] filters) {
         Cache cache = CacheProvider.getCache();
-        String cacheKey = Utils.concat(path, new LinkedList<Predicate>(asList(filters)).toString());
+        String cacheKey = path + new LinkedList<Predicate>(asList(filters)).toString();
         JsonPath jsonPath = cache.get(cacheKey);
         if (jsonPath == null) {
             jsonPath = compile(path, filters);
