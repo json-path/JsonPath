@@ -295,6 +295,56 @@ public class Criteria implements Predicate {
     }
 
     /**
+     * The <code>anyof</code> operator selects objects for which the specified field is
+     * an array that contain at least an element in the specified array.
+     *
+     * @param o the values to match against
+     * @return the criteria
+     */
+    public Criteria anyof(Object... o) {
+        return subsetof(Arrays.asList(o));
+    }
+
+    /**
+     * The <code>anyof</code> operator selects objects for which the specified field is
+     * an array that contain at least an element in the specified array.
+     *
+     * @param c the values to match against
+     * @return the criteria
+     */
+    public Criteria anyof(Collection<?> c) {
+        notNull(c, "collection can not be null");
+        this.criteriaType = RelationalOperator.ANYOF;
+        this.right = new ValueNode.ValueListNode(c);
+        return this;
+    }
+
+    /**
+     * The <code>noneof</code> operator selects objects for which the specified field is
+     * an array that does not contain any of the elements of the specified array.
+     *
+     * @param o the values to match against
+     * @return the criteria
+     */
+    public Criteria noneof(Object... o) {
+        return subsetof(Arrays.asList(o));
+    }
+
+    /**
+     * The <code>noneof</code> operator selects objects for which the specified field is
+     * an array that does not contain any of the elements of the specified array.
+     *
+     * @param c the values to match against
+     * @return the criteria
+     */
+    public Criteria noneof(Collection<?> c) {
+        notNull(c, "collection can not be null");
+        this.criteriaType = RelationalOperator.NONEOF;
+        this.right = new ValueNode.ValueListNode(c);
+        return this;
+    }
+
+    /**
      * The <code>all</code> operator is similar to $in, but instead of matching any value
      * in the specified array all values in the array must be matched.
      *
