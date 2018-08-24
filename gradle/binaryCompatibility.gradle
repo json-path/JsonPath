@@ -21,7 +21,10 @@ import groovy.text.markup.TemplateConfiguration
 buildscript {
     // this block should not be necessary, but for some reason it fails without!
     repositories {
-        jcenter()
+        mavenLocal()
+        maven {
+            url 'https://artifactory.tools.bol.com/artifactory/maven-bol'
+        }
     }
 
     dependencies {

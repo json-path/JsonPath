@@ -7,6 +7,7 @@ import com.jayway.jsonpath.internal.function.PathFunctionFactory;
 import com.jayway.jsonpath.internal.function.latebinding.JsonLateBindingValue;
 import com.jayway.jsonpath.internal.function.latebinding.PathLateBindingValue;
 
+import java.util.Collections;
 import java.util.List;
 
 /**
@@ -48,17 +49,16 @@ public class FunctionPathToken extends PathToken {
 
         if (null != functionParams) {
             for (Parameter param : functionParams) {
-                if (!param.hasEvaluated()) {
-                    switch (param.getType()) {
-                        case PATH:
-                            param.setLateBinding(new PathLateBindingValue(param.getPath(), ctx.rootDocument(), ctx.configuration()));
-                            param.setEvaluated(true);
-                            break;
-                        case JSON:
+                switch (param.getType()) {
+                    case PATH:
+                        param.setLateBinding(new PathLateBindingValue(param.getPath(), ctx.rootDocument(), ctx.configuration()));
+                        break;
+                    case JSON:
+                        if (!param.hasEvaluated()) {
                             param.setLateBinding(new JsonLateBindingValue(ctx.configuration().jsonProvider(), param));
                             param.setEvaluated(true);
-                            break;
-                    }
+                        }
+                        break;
                 }
             }
         }

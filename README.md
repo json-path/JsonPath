@@ -1,4 +1,4 @@
-Jayway JsonPath
+Jayway JsonPath (bol version)
 =====================
 
 **A Java DSL for reading JSON documents.**
@@ -11,6 +11,11 @@ Jayway JsonPath is a Java port of [Stefan Goessner JsonPath implementation](http
 
 News
 ----
+ 
+24 Aug 2018 - Released JsonPath 2.5.1 - **Bol edition**
+
+18 Jun 2018 - Released JsonPath 2.5.0 - **Bol edition**
+
 05 Jul 2017 - Released JsonPath 2.4.0
 
 26 Jun 2017 - Released JsonPath 2.3.0
@@ -35,9 +40,9 @@ JsonPath is available at the Central Maven Repository. Maven users add this to y
 
 ```xml
 <dependency>
-    <groupId>com.jayway.jsonpath</groupId>
+    <groupId>com.bol.jsonpath</groupId>
     <artifactId>json-path</artifactId>
-    <version>2.3.0</version>
+    <version>2.5.0</version>
 </dependency>
 ```
 
@@ -74,8 +79,8 @@ Operators
 Functions
 ---------
 
-Functions can be invoked at the tail end of a path - the input to a function is the output of the path expression.
-The function output is dictated by the function itself.
+Functions can be invoked at the beginning of a path - the input to a function is the output of the path expression.
+The function output is dictated by the function itself. 
 
 | Function                  | Description                                                        | Output    |
 | :------------------------ | :----------------------------------------------------------------- |-----------|
@@ -84,6 +89,8 @@ The function output is dictated by the function itself.
 | avg()                    | Provides the average value of an array of numbers                   | Double    |
 | stddev()                 | Provides the standard deviation value of an array of numbers        | Double    |
 | length()                 | Provides the length of an array                                     | Integer   |
+
+`Example: $.avg($.store.book[*].price)`
 
 
 Filter Operators

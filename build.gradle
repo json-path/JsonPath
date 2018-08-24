@@ -1,6 +1,9 @@
 buildscript {
     repositories {
-        jcenter()
+        mavenLocal()
+        maven {
+            url 'https://artifactory.tools.bol.com/artifactory/maven-bol'
+        }
     }
     dependencies {
         classpath 'me.champeau.gradle:gradle-javadoc-hotfix-plugin:0.1'
@@ -30,8 +33,8 @@ allprojects {
     ext.displayName = null
     ext.buildTimestamp = new Date().format('yyyy-MM-dd HH:mm:ss')
 
-    group = 'com.jayway.jsonpath'
-    version = '2.4.0' + (snapshotVersion ? "-SNAPSHOT" : "")
+    group = 'com.bol.jsonpath'
+    version = '2.5.1' + (snapshotVersion ? "-SNAPSHOT" : "")
 
     if (JavaVersion.current().isJava8Compatible()) {
         tasks.withType(Javadoc) {
@@ -42,14 +45,14 @@ allprojects {
 
 subprojects {
     apply plugin: 'java'
-    apply plugin: 'signing'
+    //apply plugin: 'signing'
     apply plugin: 'osgi'
 
     sourceCompatibility = 1.6
     targetCompatibility = 1.6
 
     repositories {
-        mavenCentral()
+        mavenLocal()
     }
 
     task javadocJar(type: Jar) {
@@ -62,10 +65,10 @@ subprojects {
         from sourceSets.main.allSource
     }
 
-    signing {
-        required { !snapshotVersion && gradle.taskGraph.hasTask("uploadArchives") }
-        sign configurations.archives
-    }
+//    signing {
+//        required { !snapshotVersion && gradle.taskGraph.hasTask("uploadArchives") }
+//        sign configurations.archives
+//    }
 
     artifacts {
         archives jar, javadocJar, sourcesJar
@@ -73,7 +76,7 @@ subprojects {
 }
 
 task wrapper(type: Wrapper) {
-    gradleVersion = '4.1'
+    gradleVersion = '4.2'
 }
 
 //Task used by Heroku for staging
