@@ -11,6 +11,9 @@ Jayway JsonPath is a Java port of [Stefan Goessner JsonPath implementation](http
 
 News
 ----
+ 
+24 Aug 2018 - Released JsonPath 2.5.1 - **Bol edition**
+
 18 Jun 2018 - Released JsonPath 2.5.0 - **Bol edition**
 
 05 Jul 2017 - Released JsonPath 2.4.0

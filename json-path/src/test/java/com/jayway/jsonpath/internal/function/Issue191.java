@@ -88,38 +88,28 @@ public class Issue191 {
         JsonPath jsonPathDiskMax = JsonPath.compile("$.max($..disk)");
         JsonPath jsonPathMemMax = JsonPath.compile("$.max($..mem)");
 
-        JsonPath jsonPathCpu = JsonPath.compile("$.check[0].cpus");
+        assertEquals(-2.44249065417534E-15, documentContext1.read(jsonPathCpuMin));
+        assertEquals(1.0, documentContext2.read(jsonPathCpuMin));
+        assertEquals(32.0, documentContext3.read(jsonPathCpuMin));
 
+        assertEquals(1600.0, documentContext3.read(jsonPathMemMax));
+        assertEquals(16.0, documentContext2.read(jsonPathMemMax));
+        assertEquals(2744.0, documentContext1.read(jsonPathMemMax));
 
-        //for (int i = 0; i < 1; i++) {
-        //assertEquals(0.2, documentContext1.read(jsonPathCpu));
-//            assertEquals(1, documentContext2.read(jsonPathCpu));
-//            assertEquals(32, documentContext3.read(jsonPathCpu));
+        assertEquals(512.0, documentContext2.read(jsonPathDiskMin));
+        assertEquals(4096.0, documentContext3.read(jsonPathDiskMin));
+        assertEquals(0.0, documentContext1.read(jsonPathDiskMin));
 
-        assertEquals(-2.44249065417534E-15, documentContext1.read("$.min($..cpus)"));
-        assertEquals(1.0, documentContext2.read("$.min($..cpus)"));
-        assertEquals(32.0, documentContext3.read("$.min($..cpus)"));
-//
-//            assertEquals(1600.0, documentContext3.read(jsonPathMemMax));
-//            assertEquals(2048.0, documentContext2.read(jsonPathMemMax));
-//            assertEquals(2744.0, documentContext1.read(jsonPathMemMax));
-//
-//            assertEquals(512.0, documentContext2.read(jsonPathDiskMin));
-//            assertEquals(4096.0, documentContext3.read(jsonPathDiskMin));
-//            assertEquals(0.0, documentContext1.read(jsonPathDiskMin));
-//
-//            assertEquals(3966.0, documentContext1.read(jsonPathDiskMax));
-//            assertEquals(2048.0, documentContext2.read(jsonPathDiskMax));
-//            assertEquals(204800, documentContext3.read(jsonPathDiskMax));
-//
-//            assertEquals(0.0, documentContext1.read(jsonPathMemMin));
-//            assertEquals(2.0, documentContext2.read(jsonPathMemMin));
-//            assertEquals(32.0, documentContext3.read(jsonPathMemMin));
-//
-//            assertEquals(2.0, documentContext1.read(jsonPathCpuMax));
-//            assertEquals(6.0, documentContext2.read(jsonPathCpuMax));
-//            assertEquals(100, documentContext3.read(jsonPathCpuMax));
+        assertEquals(3966.0, documentContext1.read(jsonPathDiskMax));
+        assertEquals(2048.0, documentContext2.read(jsonPathDiskMax));
+        assertEquals(204800.0, documentContext3.read(jsonPathDiskMax));
 
-        //}
+        assertEquals(0.0, documentContext1.read(jsonPathMemMin));
+        assertEquals(2.0, documentContext2.read(jsonPathMemMin));
+        assertEquals(32.0, documentContext3.read(jsonPathMemMin));
+
+        assertEquals(2.0, documentContext1.read(jsonPathCpuMax));
+        assertEquals(6.0, documentContext2.read(jsonPathCpuMax));
+        assertEquals(100.0, documentContext3.read(jsonPathCpuMax));
     }
 }
