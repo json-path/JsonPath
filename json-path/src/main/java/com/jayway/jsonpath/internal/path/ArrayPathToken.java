@@ -109,7 +109,9 @@ public class ArrayPathToken extends PathToken {
         int length = ctx.jsonProvider().length(model);
         int from = operation.from();
         int to = operation.to();
-
+        if (to < 0) {
+            to = length + to;
+        }
         to = Math.min(length, to);
 
         if (from >= to || length == 0) {
