@@ -2,11 +2,7 @@ package com.jayway.jsonpath.internal.function;
 
 import com.jayway.jsonpath.InvalidPathException;
 import com.jayway.jsonpath.internal.function.json.Append;
-import com.jayway.jsonpath.internal.function.numeric.Average;
-import com.jayway.jsonpath.internal.function.numeric.Max;
-import com.jayway.jsonpath.internal.function.numeric.Min;
-import com.jayway.jsonpath.internal.function.numeric.StandardDeviation;
-import com.jayway.jsonpath.internal.function.numeric.Sum;
+import com.jayway.jsonpath.internal.function.numeric.*;
 import com.jayway.jsonpath.internal.function.text.Concatenate;
 import com.jayway.jsonpath.internal.function.text.Length;
 
@@ -34,6 +30,8 @@ public class PathFunctionFactory {
         map.put("avg", Average.class);
         map.put("stddev", StandardDeviation.class);
         map.put("sum", Sum.class);
+        map.put("mult", Mult.class);
+        map.put("div", Div.class);
         map.put("min", Min.class);
         map.put("max", Max.class);
 
@@ -69,7 +67,7 @@ public class PathFunctionFactory {
             throw new InvalidPathException("Function with name: " + name + " does not exist.");
         } else {
             try {
-                return (PathFunction)functionClazz.newInstance();
+                return (PathFunction)functionClazz.getDeclaredConstructor().newInstance();
             } catch (Exception e) {
                 throw new InvalidPathException("Function of name: " + name + " cannot be created", e);
             }

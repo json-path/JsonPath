@@ -417,13 +417,13 @@ public class FilterTest extends BaseTest {
     //----------------------------------------------------------------------------
     @Test
     public void not_empty_evals() {
-        assertThat(filter(where("string-key").notEmpty()).apply(createPredicateContext(json))).isEqualTo(true);
-        assertThat(filter(where("string-key-empty").notEmpty()).apply(createPredicateContext(json))).isEqualTo(false);
+        assertThat(filter(where("string-key").empty(false)).apply(createPredicateContext(json))).isEqualTo(true);
+        assertThat(filter(where("string-key-empty").empty(false)).apply(createPredicateContext(json))).isEqualTo(false);
 
-        assertThat(filter(where("int-arr").notEmpty()).apply(createPredicateContext(json))).isEqualTo(true);
-        assertThat(filter(where("arr-empty").notEmpty()).apply(createPredicateContext(json))).isEqualTo(false);
+        assertThat(filter(where("int-arr").empty(false)).apply(createPredicateContext(json))).isEqualTo(true);
+        assertThat(filter(where("arr-empty").empty(false)).apply(createPredicateContext(json))).isEqualTo(false);
 
-        assertThat(filter(where("null-key").notEmpty()).apply(createPredicateContext(json))).isEqualTo(false);
+        assertThat(filter(where("null-key").empty(false)).apply(createPredicateContext(json))).isEqualTo(false);
     }
 
     //----------------------------------------------------------------------------

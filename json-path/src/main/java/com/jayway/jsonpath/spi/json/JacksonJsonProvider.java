@@ -30,7 +30,7 @@ import java.util.List;
 public class JacksonJsonProvider extends AbstractJsonProvider {
 
     private static final ObjectMapper defaultObjectMapper = new ObjectMapper();
-    private static final ObjectReader defaultObjectReader = defaultObjectMapper.reader().withType(Object.class);
+    private static final ObjectReader defaultObjectReader = defaultObjectMapper.reader().forType(Object.class);
 
     protected ObjectMapper objectMapper;
     protected ObjectReader objectReader;
@@ -51,7 +51,7 @@ public class JacksonJsonProvider extends AbstractJsonProvider {
      * @param objectMapper the ObjectMapper to use
      */
     public JacksonJsonProvider(ObjectMapper objectMapper) {
-      this(objectMapper, objectMapper.reader().withType(Object.class));
+      this(objectMapper, objectMapper.reader().forType(Object.class));
     }
 
     /**
