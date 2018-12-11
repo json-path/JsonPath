@@ -53,9 +53,33 @@ public class NestedFunctionTest extends BaseFunctionTest {
         verifyMathFunction(conf, "$.numbers.sum($.numbers.min(), $.numbers.max())", 66.0);
     }
 
+    /**
+     * This test calculates the following:
+     *
+     * For each number in $.numbers 1 -> 10 mult each number up,
+     * then mult 1 (min), 10 (max)
+     *
+     * Alternatively 1*2*3*4*5*6*7*8*9*10*1*10 == 36_288_000
+     */
+    @Test
+    public void testArrayMultFunctionCallWithParameters() {
+        System.out.println(1d * 2d * 3d * 4d * 5d * 6d * 7d * 8d * 9d * 10d * 1d * 10d);
+        verifyMathFunction(conf, "$.numbers.mult($.numbers.min(), $.numbers.max())", 1d * 2d * 3d * 4d * 5d * 6d * 7d * 8d * 9d * 10d * 1d * 10d);
+    }
+
     @Test
     public void testJsonInnerArgumentArray() {
         verifyMathFunction(conf, "$.sum(5, 3, $.numbers.max(), 2)", 20.0);
+    }
+
+    @Test
+    public void testJsonInnerArgumentArrayMult() {
+        verifyMathFunction(conf, "$.mult(5, 3, $.numbers.max(), 2)", 5d * 3d * 10 * 2d);
+    }
+
+    @Test
+    public void testJsonInnerArgumentArrayDiv() {
+        verifyMathFunction(conf, "$.div($.numbers.min(), $.numbers.max())", 1d / 10d);
     }
 
     @Test
@@ -79,6 +103,14 @@ public class NestedFunctionTest extends BaseFunctionTest {
     @Test
     public void testAppendTextAndNumberThenSum() {
         verifyMathFunction(conf, "$.numbers.append(\"0\", \"11\").sum()", 55.0);
+    }
+
+    /**
+     * Aggregation function should ignore text values
+     */
+    @Test
+    public void testAppendTextAndNumberThenMult() {
+        verifyMathFunction(conf, "$.numbers.append(\"0\", \"11\").mult()", 1d * 2d * 3d * 4d * 5d * 6d * 7d * 8d * 9d * 10d);
     }
 
     @Test

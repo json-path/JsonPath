@@ -18,7 +18,7 @@ import java.util.List;
 public abstract class AbstractAggregation implements PathFunction {
 
     /**
-     * Defines the next value in the array to the mathmatical function
+     * Defines the next value in the array to the mathematical function
      *
      * @param value
      *      The numerical value to process next

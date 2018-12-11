@@ -16,6 +16,8 @@ import static org.junit.runners.Parameterized.Parameters;
  * Defines functional tests around executing:
  *
  * - sum
+ * - mult
+ * - div
  * - avg
  * - stddev
  *
@@ -62,11 +64,86 @@ public class NumericPathFunctionTest extends BaseFunctionTest {
     }
 
     @Test
+    public void testMultOfDouble() {
+        verifyMathFunction(conf, "$.numbers.mult()", 1d * 2d * 3d * 4d * 5d * 6d * 7d * 8d * 9d * 10d);
+    }
+
+    @Test
+    public void testDivOfRootDoublePair() {
+        verifyMathFunction(conf, "$.div(1,10)", 1d / 10d);
+    }
+
+    @Test
+    public void testDivOfDoublePairCalledNotFromRoot() {
+        verifyMathFunction(conf, "$.numbers.div(1,10)", 1d / 10d);
+    }
+
+    @Test
+    public void testDivOfDoublePairNested() {
+        verifyMathFunction(conf, "$.div($.numbers[0],$.numbers[-1])", 1d / 10d);
+    }
+
+    @Test
+    public void testDivOfDoublePair() {
+        verifyMathFunction(conf, "$.div(" + Double.MAX_VALUE + ',' + Double.MAX_VALUE + ')', 1d);
+    }
+
+    @Test
+    public void testDivByZeroPositive() {
+        try {
+            verifyMathFunction(conf, "$.div(1,0)", Double.POSITIVE_INFINITY);
+        } catch (JsonPathException e) {
+            assertEquals(e.getMessage(), "Division by zero. Infinity is not a valid double value as per JSON specification");
+        }
+    }
+
+    @Test
+    public void testDivByZeroNegative() {
+        try {
+            verifyMathFunction(conf, "$.div(-1,0)", Double.NEGATIVE_INFINITY);
+        } catch (JsonPathException e) {
+            assertEquals(e.getMessage(), "Division by zero. Infinity is not a valid double value as per JSON specification");
+        }
+    }
+
+    @Test
+    public void testDivOfDouble() {
+        verifyMathFunction(conf, "$.numbers.mult()", 1d * 2d * 3d * 4d * 5d * 6d * 7d * 8d * 9d * 10d);
+    }
+
+    @Test
+    public void testDivOfMoreThanTwoArgsNegative() {
+        try {
+            verifyMathFunction(conf, "$.numbers.div()", null);
+        } catch (JsonPathException e) {
+            assertEquals(e.getMessage(), "Division function attempted to calculate value using other than 2 arguments");
+        }
+    }
+
+    @Test
     public void testSumOfEmptyListNegative() {
         try {
             verifyMathFunction(conf, "$.empty.sum()", null);
         } catch (JsonPathException e) {
             assertEquals(e.getMessage(), "Aggregation function attempted to calculate value using empty array");
+        }
+    }
+
+    @Test
+    public void testMultOfEmptyListNegative() {
+        try {
+            verifyMathFunction(conf, "$.empty.mult()", null);
+        } catch (JsonPathException e) {
+            assertEquals(e.getMessage(), "Aggregation function attempted to calculate value using empty array");
+        }
+    }
+
+    @Test
+    public void testDivOfEmptyListNegative() {
+        try {
+            verifyMathFunction(conf, "$.empty.div()", null);
+        } catch (JsonPathException e) {
+            assertEquals(e.getMessage(), "Division function attempted to calculate value using other than 2 arguments");
         }
     }
 
