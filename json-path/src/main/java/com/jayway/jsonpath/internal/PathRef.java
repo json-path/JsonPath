@@ -107,7 +107,7 @@ public abstract class PathRef implements Comparable<PathRef>  {
 
         @Override
         public void set(Object newVal, Configuration configuration) {
-            throw new InvalidModificationException("Invalid delete operation");
+            throw new InvalidModificationException("Invalid set operation");
         }
 
         public void convert(MapFunction mapFunction, Configuration configuration){
