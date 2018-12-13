@@ -32,6 +32,6 @@ public final class DefaultsImpl implements Defaults {
   }
 
   private DefaultsImpl() {
-  };
+  }
 
 }

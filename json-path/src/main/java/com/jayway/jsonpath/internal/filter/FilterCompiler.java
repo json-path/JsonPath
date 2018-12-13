@@ -4,13 +4,14 @@ import com.jayway.jsonpath.Filter;
 import com.jayway.jsonpath.InvalidPathException;
 import com.jayway.jsonpath.Predicate;
 import com.jayway.jsonpath.internal.CharacterIndex;
+import static com.jayway.jsonpath.internal.filter.ValueNodes.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class FilterCompiler {
+public class FilterCompiler  {
     private static final Logger logger = LoggerFactory.getLogger(FilterCompiler.class);
 
     private static final char DOC_CONTEXT = '$';
@@ -132,11 +133,9 @@ public class FilterCompiler {
 
         while (true) {
             int savepoint = filter.position();
-            try {
-                filter.readSignificantSubSequence(LogicalOperator.OR.getOperatorString());
+            if (filter.hasSignificantSubSequence(LogicalOperator.OR.getOperatorString())) {
                 ops.add(readLogicalAND());
-            }
-            catch (InvalidPathException exc) {
+            } else {
                 filter.setPosition(savepoint);
                 break;
             }
@@ -152,11 +151,9 @@ public class FilterCompiler {
 
         while (true) {
             int savepoint = filter.position();
-            try {
-                filter.readSignificantSubSequence(LogicalOperator.AND.getOperatorString());
+            if (filter.hasSignificantSubSequence(LogicalOperator.AND.getOperatorString())) {
                 ops.add(readLogicalANDOperand());
-            }
-            catch (InvalidPathException exc) {
+            } else {
                 filter.setPosition(savepoint);
                 break;
             }
@@ -201,10 +198,10 @@ public class FilterCompiler {
             filter.setPosition(savepoint);
         }
 
-        ValueNode.PathNode pathNode = left.asPathNode();
+        PathNode pathNode = left.asPathNode();
         left = pathNode.asExistsCheck(pathNode.shouldExists());
         RelationalOperator operator = RelationalOperator.EXISTS;
-        ValueNode right = left.asPathNode().shouldExists() ? ValueNode.TRUE : ValueNode.FALSE;
+        ValueNode right = left.asPathNode().shouldExists() ? ValueNodes.TRUE : ValueNodes.FALSE;
         return new RelationalExpressionNode(left, operator, right);
     }
 
@@ -243,7 +240,7 @@ public class FilterCompiler {
         return RelationalOperator.fromString(operator.toString());
     }
 
-    private ValueNode.NullNode readNullLiteral() {
+    private NullNode readNullLiteral() {
         int begin = filter.position();
         if(filter.currentChar() == NULL && filter.inBounds(filter.position() + 3)){
             CharSequence nullValue = filter.subSequence(filter.position(), filter.position() + 4);
@@ -256,7 +253,7 @@ public class FilterCompiler {
         throw new InvalidPathException("Expected <null> value");
     }
 
-    private ValueNode.JsonNode readJsonLiteral(){
+    private JsonNode readJsonLiteral(){
         int begin = filter.position();
 
         char openChar = filter.currentChar();
@@ -277,7 +274,7 @@ public class FilterCompiler {
 
     }
 
-    private ValueNode.PatternNode readPattern() {
+    private PatternNode readPattern() {
         int begin = filter.position();
         int closingIndex = filter.nextIndexOfUnescaped(PATTERN);
         if (closingIndex == -1) {
@@ -293,7 +290,7 @@ public class FilterCompiler {
         return ValueNode.createPatternNode(pattern);
     }
 
-    private ValueNode.StringNode readStringLiteral(char endChar) {
+    private StringNode readStringLiteral(char endChar) {
         int begin = filter.position();
 
         int closingSingleQuoteIndex = filter.nextIndexOfUnescaped(endChar);
@@ -307,7 +304,7 @@ public class FilterCompiler {
         return ValueNode.createStringNode(stringLiteral, true);
     }
 
-    private ValueNode.NumberNode readNumberLiteral() {
+    private NumberNode readNumberLiteral() {
         int begin = filter.position();
 
         while (filter.inBounds() && filter.isNumberCharacter(filter.position())) {
@@ -318,7 +315,7 @@ public class FilterCompiler {
         return ValueNode.createNumberNode(numberLiteral);
     }
 
-    private ValueNode.BooleanNode readBooleanLiteral() {
+    private BooleanNode readBooleanLiteral() {
         int begin = filter.position();
         int end = filter.currentChar() == TRUE ? filter.position() + 3 : filter.position() + 4;
 
@@ -335,7 +332,7 @@ public class FilterCompiler {
         return ValueNode.createBooleanNode(boolValue);
     }
 
-    private ValueNode.PathNode readPath() {
+    private PathNode readPath() {
         char previousSignificantChar = filter.previousSignificantChar();
         int begin = filter.position();
 

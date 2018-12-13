@@ -3,6 +3,7 @@ package com.jayway.jsonpath;
 import org.junit.Test;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import static com.jayway.jsonpath.JsonPath.using;
@@ -114,7 +115,7 @@ public class MultiPropTest {
         final Configuration conf = Configuration.defaultConfiguration().addOptions(Option.REQUIRE_PROPERTIES);
         final String json = "{\"a\": {\"v\": 5}, \"b\": {\"v\": 4}, \"c\": {\"v\": 1}}";
 
-        assertThat(using(conf).parse(json).read("$['a', 'c'].v")).asList().containsOnly(5, 1);
+        assertThat((List)using(conf).parse(json).read("$['a', 'c'].v")).asList().containsOnly(5, 1);
         assertEvaluationThrows(json, "$['d', 'a', 'c', 'm'].v", PathNotFoundException.class, conf);
     }
 }

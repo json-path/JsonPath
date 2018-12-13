@@ -275,7 +275,7 @@ public class PathCompiler {
         Boolean endOfStream = false;
         char priorChar = 0;
         List<Parameter> parameters = new ArrayList<Parameter>();
-        StringBuffer parameter = new StringBuffer();
+        StringBuilder parameter = new StringBuilder();
         while (path.inBounds() && !endOfStream) {
             char c = path.currentChar();
             path.incrementPosition(1);
@@ -580,7 +580,7 @@ public class PathCompiler {
                 }
                 break;
             } else if (c == potentialStringDelimiter) {
-                if (inProperty && !inEscape) {
+                if (inProperty) {
                     char nextSignificantChar = path.nextSignificantChar(readPosition);
                     if (nextSignificantChar != CLOSE_SQUARE_BRACKET && nextSignificantChar != COMMA) {
                         fail("Property must be separated by comma or Property must be terminated close square bracket at index "+readPosition);

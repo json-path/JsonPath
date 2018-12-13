@@ -133,7 +133,7 @@ public class JsonPathTest extends BaseTest {
             Assertions.fail("Expected PathNotFoundException");
         } catch (PathNotFoundException e) {
         }
-        Assertions.assertThat(JsonPath.read(json, "$.data2.passes[0].id")).isEqualTo("1");
+        Assertions.assertThat((String)JsonPath.read(json, "$.data2.passes[0].id")).isEqualTo("1");
     }
 
     @Test

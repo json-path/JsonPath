@@ -2,6 +2,7 @@ package com.jayway.jsonpath.internal.filter;
 
 import com.jayway.jsonpath.JsonPathException;
 import com.jayway.jsonpath.Predicate;
+import static com.jayway.jsonpath.internal.filter.ValueNodes.*;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -168,7 +169,7 @@ public class EvaluatorFactory {
     private static class InEvaluator implements Evaluator {
         @Override
         public boolean evaluate(ValueNode left, ValueNode right, Predicate.PredicateContext ctx) {
-            ValueNode.ValueListNode valueListNode;
+            ValueListNode valueListNode;
             if(right.isJsonNode()){
                 ValueNode vn = right.asJsonNode().asValueListNode(ctx);
                 if(vn.isUndefinedNode()){
@@ -193,12 +194,12 @@ public class EvaluatorFactory {
     private static class AllEvaluator implements Evaluator {
         @Override
         public boolean evaluate(ValueNode left, ValueNode right, Predicate.PredicateContext ctx) {
-            ValueNode.ValueListNode requiredValues = right.asValueListNode();
+            ValueListNode requiredValues = right.asValueListNode();
 
             if(left.isJsonNode()){
                 ValueNode valueNode = left.asJsonNode().asValueListNode(ctx); //returns UndefinedNode if conversion is not possible
                 if(valueNode.isValueListNode()){
-                    ValueNode.ValueListNode shouldContainAll = valueNode.asValueListNode();
+                    ValueListNode shouldContainAll = valueNode.asValueListNode();
                     for (ValueNode required : requiredValues) {
                         if(!shouldContainAll.contains(required)){
                             return false;
@@ -249,7 +250,7 @@ public class EvaluatorFactory {
             }
         }
 
-        private boolean matches(ValueNode.PatternNode patternNode, String inputToMatch) {
+        private boolean matches(PatternNode patternNode, String inputToMatch) {
             return patternNode.getCompiledPattern().matcher(inputToMatch).matches();
         }
 
@@ -269,7 +270,7 @@ public class EvaluatorFactory {
     private static class SubsetOfEvaluator implements Evaluator {
        @Override
        public boolean evaluate(ValueNode left, ValueNode right, Predicate.PredicateContext ctx) {
-           ValueNode.ValueListNode rightValueListNode;
+           ValueListNode rightValueListNode;
            if(right.isJsonNode()){
                ValueNode vn = right.asJsonNode().asValueListNode(ctx);
                if(vn.isUndefinedNode()){
@@ -280,7 +281,7 @@ public class EvaluatorFactory {
            } else {
                rightValueListNode = right.asValueListNode();
            }
-           ValueNode.ValueListNode leftValueListNode;
+           ValueListNode leftValueListNode;
            if(left.isJsonNode()){
                ValueNode vn = left.asJsonNode().asValueListNode(ctx);
                if(vn.isUndefinedNode()){
