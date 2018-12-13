@@ -603,6 +603,10 @@ public class PathCompiler {
             readPosition++;
         }
 
+        if (inProperty){
+            fail("Property has not been closed - missing closing " + potentialStringDelimiter);
+        }
+
         int endBracketIndex = path.indexOfNextSignificantChar(endPosition, CLOSE_SQUARE_BRACKET) + 1;
 
         path.setPosition(endBracketIndex);
