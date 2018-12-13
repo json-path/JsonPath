@@ -398,7 +398,7 @@ This option makes sure no exceptions are propagated from path evaluation. It fol
 
 ### JsonProvider SPI
 
-JsonPath is shipped with three different JsonProviders:
+JsonPath is shipped with five different JsonProviders:
 
 * [JsonSmartJsonProvider](https://code.google.com/p/json-smart/) (default)
 * [JacksonJsonProvider](https://github.com/FasterXML/jackson)
