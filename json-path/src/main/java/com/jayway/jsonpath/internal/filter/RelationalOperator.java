@@ -30,7 +30,9 @@ public enum RelationalOperator {
     TYPE("TYPE"),
     MATCHES("MATCHES"),
     EMPTY("EMPTY"),
-    SUBSETOF("SUBSETOF");
+    SUBSETOF("SUBSETOF"),
+    ANYOF("ANYOF"),
+    NONEOF("NONEOF");
 
     private final String operatorString;
 
