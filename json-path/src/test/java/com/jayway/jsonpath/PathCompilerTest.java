@@ -296,6 +296,14 @@ public class PathCompilerTest {
         assertThat(result).containsExactly("] it");
     }
 
+    @Test
+    public void a_function_can_be_compiled() {
+        assertThat(compile("$.aaa.foo()").toString()).isEqualTo("$['aaa'].foo()");
+        assertThat(compile("$.aaa.foo(5)").toString()).isEqualTo("$['aaa'].foo(...)");
+        assertThat(compile("$.aaa.foo($.bar)").toString()).isEqualTo("$['aaa'].foo(...)");
+        assertThat(compile("$.aaa.foo(5,10,15)").toString()).isEqualTo("$['aaa'].foo(...)");
+    }
+
     @Test(expected = InvalidPathException.class)
     public void array_indexes_must_be_separated_by_commas() {
         compile("$[0, 1, 2 4]");
