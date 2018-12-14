@@ -47,19 +47,22 @@ public interface ValueNodes {
     class PatternNode extends ValueNode {
         private final String pattern;
         private final Pattern compiledPattern;
+        private final String flags;
 
         PatternNode(CharSequence charSequence) {
             String tmp = charSequence.toString();
             int begin = tmp.indexOf('/');
             int end = tmp.lastIndexOf('/');
-            int flags = tmp.endsWith("/i") ? Pattern.CASE_INSENSITIVE : 0;
             this.pattern = tmp.substring(begin + 1, end);
-            this.compiledPattern  = Pattern.compile(pattern, flags);
+            int flagsIndex = end + 1;
+            this.flags = tmp.length() > flagsIndex ? tmp.substring(flagsIndex) : "";
+            this.compiledPattern = Pattern.compile(pattern, PatternFlag.parseFlags(flags.toCharArray()));
         }
 
         PatternNode(Pattern pattern) {
             this.pattern = pattern.pattern();
             this.compiledPattern = pattern;
+            this.flags = PatternFlag.parseFlags(pattern.flags());
         }
 
 
@@ -83,10 +86,6 @@ public interface ValueNodes {
         @Override
         public String toString() {
 
-            String flags = "";
-            if((compiledPattern.flags() & Pattern.CASE_INSENSITIVE) == Pattern.CASE_INSENSITIVE){
-                flags = "i";
-            }
             if(!pattern.startsWith("/")){
                 return "/" + pattern + "/" + flags;
             } else {

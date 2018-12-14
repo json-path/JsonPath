@@ -280,8 +280,11 @@ public class FilterCompiler  {
         if (closingIndex == -1) {
             throw new InvalidPathException("Pattern not closed. Expected " + PATTERN + " in " + filter);
         } else {
-            if(filter.inBounds(closingIndex+1) && filter.charAt(closingIndex+1) == IGNORE_CASE){
-                closingIndex++;
+            if(filter.inBounds(closingIndex+1)) {
+                int equalSignIndex = filter.nextIndexOf('=');
+                int endIndex = equalSignIndex > closingIndex ? equalSignIndex : filter.nextIndexOfUnescaped(CLOSE_PARENTHESIS);
+                CharSequence flags = filter.subSequence(closingIndex + 1, endIndex);
+                closingIndex += flags.length();
             }
             filter.setPosition(closingIndex + 1);
         }
