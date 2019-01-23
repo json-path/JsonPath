@@ -49,14 +49,28 @@ public class RegexpEvaluatorTest extends BaseTest {
     public static Iterable data() {
         return Arrays.asList(
             new Object[][]{
-                { "/true|false/", createStringNode("true", true),   true  },
-                { "/9.*9/",       createNumberNode("9979"),         true  },
-                { "/fa.*se/",     createBooleanNode("false"),       true  },
-                { "/Eval.*or/",   createClassNode(String.class),    false },
-                { "/JsonNode/",   createJsonNode(json()),           false },
-                { "/PathNode/",   createPathNode(path()),           false },
-                { "/Undefined/",  createUndefinedNode(),            false },
-                { "/NullNode/",   createNullNode(),                 false }
+                { "/true|false/",      createStringNode("true", true),       true  },
+                { "/9.*9/",            createNumberNode("9979"),             true  },
+                { "/fa.*se/",          createBooleanNode("false"),           true  },
+                { "/Eval.*or/",        createClassNode(String.class),        false },
+                { "/JsonNode/",        createJsonNode(json()),               false },
+                { "/PathNode/",        createPathNode(path()),               false },
+                { "/Undefined/",       createUndefinedNode(),                false },
+                { "/NullNode/",        createNullNode(),                     false },
+                { "/test/i",           createStringNode("tEsT", true),       true  },
+                { "/test/",            createStringNode("tEsT", true),       false },
+                { "/\u00de/ui",        createStringNode("\u00fe", true),     true  },
+                { "/\u00de/",          createStringNode("\u00fe", true),     false },
+                { "/\u00de/i",         createStringNode("\u00fe", true),     false },
+                { "/test# code/",      createStringNode("test", true),       false },
+                { "/test# code/x",     createStringNode("test", true),       true  },
+                { "/.*test.*/d",       createStringNode("my\rtest", true),   true  },
+                { "/.*test.*/",        createStringNode("my\rtest", true),   false },
+                { "/.*tEst.*/is",      createStringNode("test\ntest", true), true  },
+                { "/.*tEst.*/i",       createStringNode("test\ntest", true), false },
+                { "/^\\w+$/U",         createStringNode("\u00fe", true),     true  },
+                { "/^\\w+$/",          createStringNode("\u00fe", true),     false },
+                { "/^test$\\ntest$/m", createStringNode("test\ntest", true), true  }
             }
         );
     }
