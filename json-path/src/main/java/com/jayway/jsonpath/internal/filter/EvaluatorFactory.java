@@ -2,10 +2,12 @@ package com.jayway.jsonpath.internal.filter;
 
 import com.jayway.jsonpath.JsonPathException;
 import com.jayway.jsonpath.Predicate;
-import static com.jayway.jsonpath.internal.filter.ValueNodes.*;
 
 import java.util.HashMap;
 import java.util.Map;
+
+import static com.jayway.jsonpath.internal.filter.ValueNodes.PatternNode;
+import static com.jayway.jsonpath.internal.filter.ValueNodes.ValueListNode;
 
 public class EvaluatorFactory {
 

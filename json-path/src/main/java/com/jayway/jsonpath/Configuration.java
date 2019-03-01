@@ -18,12 +18,7 @@ import com.jayway.jsonpath.internal.DefaultsImpl;
 import com.jayway.jsonpath.spi.json.JsonProvider;
 import com.jayway.jsonpath.spi.mapper.MappingProvider;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.EnumSet;
-import java.util.Set;
+import java.util.*;
 
 import static com.jayway.jsonpath.internal.Utils.notNull;
 import static java.util.Arrays.asList;

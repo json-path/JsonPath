@@ -1,6 +1,5 @@
 package com.jayway.jsonpath.spi.json;
 
-import org.json.JSONObject;
 import com.jayway.jsonpath.InvalidJsonException;
 import com.jayway.jsonpath.JsonPathException;
 import org.json.JSONArray;

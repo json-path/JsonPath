@@ -1,9 +1,9 @@
 package com.jayway.jsonpath;
 
-import java.util.Collections;
 import org.assertj.core.api.Assertions;
 import org.junit.Test;
 
+import java.util.Collections;
 import java.util.regex.Pattern;
 
 import static com.jayway.jsonpath.Criteria.where;

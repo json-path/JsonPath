@@ -15,11 +15,7 @@
 package com.jayway.jsonpath;
 
 
-import com.jayway.jsonpath.internal.EvaluationContext;
-import com.jayway.jsonpath.internal.ParseContextImpl;
-import com.jayway.jsonpath.internal.Path;
-import com.jayway.jsonpath.internal.PathRef;
-import com.jayway.jsonpath.internal.Utils;
+import com.jayway.jsonpath.internal.*;
 import com.jayway.jsonpath.internal.path.PathCompiler;
 import com.jayway.jsonpath.spi.json.JsonProvider;
 

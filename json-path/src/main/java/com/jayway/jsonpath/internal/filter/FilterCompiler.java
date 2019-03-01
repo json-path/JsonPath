@@ -4,12 +4,13 @@ import com.jayway.jsonpath.Filter;
 import com.jayway.jsonpath.InvalidPathException;
 import com.jayway.jsonpath.Predicate;
 import com.jayway.jsonpath.internal.CharacterIndex;
-import static com.jayway.jsonpath.internal.filter.ValueNodes.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import static com.jayway.jsonpath.internal.filter.ValueNodes.*;
 
 public class FilterCompiler  {
     private static final Logger logger = LoggerFactory.getLogger(FilterCompiler.class);

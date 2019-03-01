@@ -1,6 +1,5 @@
 package com.jayway.jsonpath;
 
-import com.jayway.jsonpath.internal.ParseContextImpl;
 import org.junit.Ignore;
 import org.junit.Test;
 

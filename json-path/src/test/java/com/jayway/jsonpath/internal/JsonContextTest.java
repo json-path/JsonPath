@@ -1,10 +1,6 @@
 package com.jayway.jsonpath.internal;
 
-import com.jayway.jsonpath.BaseTest;
-import com.jayway.jsonpath.Criteria;
-import com.jayway.jsonpath.DocumentContext;
-import com.jayway.jsonpath.Filter;
-import com.jayway.jsonpath.JsonPath;
+import com.jayway.jsonpath.*;
 import org.assertj.core.api.Assertions;
 import org.junit.Test;
 

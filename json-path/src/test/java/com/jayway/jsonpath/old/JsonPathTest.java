@@ -1,11 +1,6 @@
 package com.jayway.jsonpath.old;
 
-import com.jayway.jsonpath.BaseTest;
-import com.jayway.jsonpath.Configuration;
-import com.jayway.jsonpath.InvalidPathException;
-import com.jayway.jsonpath.JsonPath;
-import com.jayway.jsonpath.Option;
-import com.jayway.jsonpath.PathNotFoundException;
+import com.jayway.jsonpath.*;
 import com.jayway.jsonpath.internal.path.PathCompiler;
 import org.assertj.core.api.Assertions;
 import org.junit.Test;

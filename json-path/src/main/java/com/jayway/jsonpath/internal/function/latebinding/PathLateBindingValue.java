@@ -16,7 +16,6 @@ package com.jayway.jsonpath.internal.function.latebinding;
 
 import com.jayway.jsonpath.Configuration;
 import com.jayway.jsonpath.internal.Path;
-import com.jayway.jsonpath.internal.function.ParamType;
 
 /**
  * Defines the contract for late bindings, provides document state and enough context to perform the evaluation at a later

@@ -16,8 +16,11 @@ package com.jayway.jsonpath.internal.path;
 
 import com.jayway.jsonpath.Option;
 import com.jayway.jsonpath.PathNotFoundException;
+import com.jayway.jsonpath.identifier.AbstractIdentifier;
+import com.jayway.jsonpath.identifier.ArrayIndexIdentifier;
+import com.jayway.jsonpath.identifier.Identifier;
+import com.jayway.jsonpath.identifier.MultiIdentifier;
 import com.jayway.jsonpath.internal.PathRef;
-import com.jayway.jsonpath.internal.Utils;
 import com.jayway.jsonpath.internal.function.PathFunction;
 import com.jayway.jsonpath.spi.json.JsonProvider;
 
@@ -36,11 +39,11 @@ public abstract class PathToken {
         return next;
     }
 
-    void handleObjectProperty(String currentPath, Object model, EvaluationContextImpl ctx, List<String> properties) {
+    void handleObjectProperty(AbstractIdentifier currentPath, Object model, EvaluationContextImpl ctx, List<String> properties) {
 
         if(properties.size() == 1) {
             String property = properties.get(0);
-            String evalPath = Utils.concat(currentPath, "['", property, "']");
+            AbstractIdentifier evalPath = new Identifier(property,currentPath);
             Object propertyVal = readObjectProperty(property, model, ctx);
             if(propertyVal == JsonProvider.UNDEFINED){
                 // Conditions below heavily depend on current token type (and its logic) and are not "universal",
@@ -81,7 +84,7 @@ public abstract class PathToken {
                 next().evaluate(evalPath, pathRef, propertyVal, ctx);
             }
         } else {
-            String evalPath = currentPath + "[" + Utils.join(", ", "'", properties) + "]";
+            AbstractIdentifier evalPath = new MultiIdentifier(properties,currentPath);
 
             assert isLeaf() : "non-leaf multi props handled elsewhere";
 
@@ -122,8 +125,8 @@ public abstract class PathToken {
     }
 
 
-    protected void handleArrayIndex(int index, String currentPath, Object model, EvaluationContextImpl ctx) {
-        String evalPath = Utils.concat(currentPath, "[", String.valueOf(index), "]");
+    protected void handleArrayIndex(int index, AbstractIdentifier currentPath, Object model, EvaluationContextImpl ctx) {
+        AbstractIdentifier evalPath = new ArrayIndexIdentifier(currentPath,index);
         PathRef pathRef = ctx.forUpdate() ? PathRef.create(model, index) : PathRef.NO_OP;
         int effectiveIndex = index < 0 ? ctx.jsonProvider().length(model) + index : index;
         try {
@@ -205,11 +208,11 @@ public abstract class PathToken {
         return super.equals(obj);
     }
 
-    public void invoke(PathFunction pathFunction, String currentPath, PathRef parent, Object model, EvaluationContextImpl ctx) {
+    public void invoke(PathFunction pathFunction, AbstractIdentifier currentPath, PathRef parent, Object model, EvaluationContextImpl ctx) {
         ctx.addResult(currentPath, parent, pathFunction.invoke(currentPath, parent, model, ctx, null));
     }
 
-    public abstract void evaluate(String currentPath, PathRef parent,  Object model, EvaluationContextImpl ctx);
+    public abstract void evaluate(AbstractIdentifier currentPath, PathRef parent, Object model, EvaluationContextImpl ctx);
 
     public abstract boolean isTokenDefinite();
 

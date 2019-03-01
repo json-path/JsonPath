@@ -1,6 +1,5 @@
 package com.jayway.jsonpath;
 
-import java.util.ArrayList;
 import org.assertj.core.util.Lists;
 import org.junit.Test;
 

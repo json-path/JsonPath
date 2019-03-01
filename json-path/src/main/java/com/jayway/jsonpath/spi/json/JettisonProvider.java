@@ -14,18 +14,13 @@
  */
 package com.jayway.jsonpath.spi.json;
 
+import com.jayway.jsonpath.InvalidJsonException;
+import org.codehaus.jettison.json.JSONException;
+
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.Iterator;
-import java.util.List;
-import java.util.NoSuchElementException;
-
-import org.codehaus.jettison.json.JSONException;
-import com.jayway.jsonpath.InvalidJsonException;
+import java.util.*;
 
 public class JettisonProvider extends AbstractJsonProvider
 {

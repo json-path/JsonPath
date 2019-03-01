@@ -2,18 +2,8 @@ package com.jayway.jsonpath;
 
 import com.jayway.jsonpath.internal.Path;
 import com.jayway.jsonpath.internal.path.PredicateContextImpl;
-import com.jayway.jsonpath.spi.json.GsonJsonProvider;
-import com.jayway.jsonpath.spi.json.JacksonJsonNodeJsonProvider;
-import com.jayway.jsonpath.spi.json.JacksonJsonProvider;
-import com.jayway.jsonpath.spi.json.JettisonProvider;
-import com.jayway.jsonpath.spi.json.JsonOrgJsonProvider;
-import com.jayway.jsonpath.spi.json.JsonSmartJsonProvider;
-import com.jayway.jsonpath.spi.json.TapestryJsonProvider;
-import com.jayway.jsonpath.spi.mapper.GsonMappingProvider;
-import com.jayway.jsonpath.spi.mapper.JacksonMappingProvider;
-import com.jayway.jsonpath.spi.mapper.JsonOrgMappingProvider;
-import com.jayway.jsonpath.spi.mapper.JsonSmartMappingProvider;
-import com.jayway.jsonpath.spi.mapper.TapestryMappingProvider;
+import com.jayway.jsonpath.spi.json.*;
+import com.jayway.jsonpath.spi.mapper.*;
 
 import java.util.HashMap;
 
@@ -120,6 +110,6 @@ public class BaseTest {
 
     public Predicate.PredicateContext createPredicateContext(final Object check) {
 
-        return new PredicateContextImpl(check, check, Configuration.defaultConfiguration(), new HashMap<Path, Object>());
+        return new PredicateContextImpl(null,check, check, Configuration.defaultConfiguration(), new HashMap<Path, Object>());
     }
 }

@@ -1,6 +1,7 @@
 package com.jayway.jsonpath.internal.function.numeric;
 
 import com.jayway.jsonpath.JsonPathException;
+import com.jayway.jsonpath.identifier.AbstractIdentifier;
 import com.jayway.jsonpath.internal.EvaluationContext;
 import com.jayway.jsonpath.internal.PathRef;
 import com.jayway.jsonpath.internal.function.Parameter;
@@ -34,7 +35,7 @@ public abstract class AbstractAggregation implements PathFunction {
     protected abstract Number getValue();
 
     @Override
-    public Object invoke(String currentPath, PathRef parent, Object model, EvaluationContext ctx, List<Parameter> parameters) {
+    public Object invoke(AbstractIdentifier currentPath, PathRef parent, Object model, EvaluationContext ctx, List<Parameter> parameters) {
         int count = 0;
         if(ctx.configuration().jsonProvider().isArray(model)){
 

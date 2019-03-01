@@ -16,6 +16,7 @@ package com.jayway.jsonpath.internal.path;
 
 import com.jayway.jsonpath.Configuration;
 import com.jayway.jsonpath.Predicate;
+import com.jayway.jsonpath.identifier.AbstractIdentifier;
 import com.jayway.jsonpath.internal.Path;
 import com.jayway.jsonpath.spi.mapper.MappingException;
 import org.slf4j.Logger;
@@ -31,12 +32,14 @@ public class PredicateContextImpl implements Predicate.PredicateContext {
     private final Object rootDocument;
     private final Configuration configuration;
     private final HashMap<Path, Object> documentPathCache;
+    private final AbstractIdentifier currentPath;
 
-    public PredicateContextImpl(Object contextDocument, Object rootDocument, Configuration configuration, HashMap<Path, Object> documentPathCache) {
+    public PredicateContextImpl(AbstractIdentifier currentPath, Object contextDocument, Object rootDocument, Configuration configuration, HashMap<Path, Object> documentPathCache) {
         this.contextDocument = contextDocument;
         this.rootDocument = rootDocument;
         this.configuration = configuration;
         this.documentPathCache = documentPathCache;
+        this.currentPath=currentPath;
     }
 
     public Object evaluate(Path path){
@@ -57,6 +60,11 @@ public class PredicateContextImpl implements Predicate.PredicateContext {
 
     public HashMap<Path, Object> documentPathCache() {
         return documentPathCache;
+    }
+    
+    @Override
+    public AbstractIdentifier getCurrentPath() {
+        return currentPath;
     }
 
     @Override

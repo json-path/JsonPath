@@ -1,10 +1,8 @@
 package com.jayway.jsonpath.old.internal;
 
 import com.jayway.jsonpath.JsonPath;
-
-import org.junit.Assert;
-
 import org.hamcrest.Matchers;
+import org.junit.Assert;
 import org.junit.Test;
 
 import java.util.List;
