@@ -41,13 +41,7 @@ public interface ValueNodes {
         private final String flags;
 
         PatternNode(CharSequence charSequence) {
-            String tmp = charSequence.toString();
-            int begin = tmp.indexOf('/');
-            int end = tmp.lastIndexOf('/');
-            this.pattern = tmp.substring(begin + 1, end);
-            int flagsIndex = end + 1;
-            this.flags = tmp.length() > flagsIndex ? tmp.substring(flagsIndex) : "";
-            this.compiledPattern = Pattern.compile(pattern, PatternFlag.parseFlags(flags.toCharArray()));
+            this(Utils.compilePattern(charSequence));
         }
 
         PatternNode(Pattern pattern) {

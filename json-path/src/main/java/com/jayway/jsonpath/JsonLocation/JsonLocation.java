@@ -1,9 +1,9 @@
-package com.jayway.jsonpath.identifier;
+package com.jayway.jsonpath.JsonLocation;
 
-public  class Identifier extends AbstractIdentifier {
+public  class JsonLocation extends AbstractJsonLocation {
 
     final String tagName;
-    final AbstractIdentifier parent;
+    final AbstractJsonLocation parent;
 
     @Override
     public String getTagName() {
@@ -11,11 +11,11 @@ public  class Identifier extends AbstractIdentifier {
     }
 
     @Override
-    public AbstractIdentifier getParent() {
+    public AbstractJsonLocation getParent() {
         return parent;
     }
 
-    public Identifier(String tagName, AbstractIdentifier parent) {
+    public JsonLocation(String tagName, AbstractJsonLocation parent) {
         this.tagName = tagName;
         this.parent = parent;
     }

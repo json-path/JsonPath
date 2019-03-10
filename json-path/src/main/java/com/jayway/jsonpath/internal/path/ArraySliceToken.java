@@ -14,7 +14,7 @@
  */
 package com.jayway.jsonpath.internal.path;
 
-import com.jayway.jsonpath.identifier.AbstractIdentifier;
+import com.jayway.jsonpath.JsonLocation.AbstractJsonLocation;
 import com.jayway.jsonpath.internal.PathRef;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -30,7 +30,7 @@ public class ArraySliceToken extends ArrayPathToken {
     }
 
     @Override
-    public void evaluate(AbstractIdentifier currentPath, PathRef parent, Object model, EvaluationContextImpl ctx) {
+    public void evaluate(AbstractJsonLocation currentPath, PathRef parent, Object model, EvaluationContextImpl ctx) {
         if (!checkArrayModel(currentPath, model, ctx))
             return;
         switch (operation.operation()) {
@@ -46,7 +46,7 @@ public class ArraySliceToken extends ArrayPathToken {
         }
     }
 
-    private void sliceFrom(AbstractIdentifier currentPath, PathRef parent, Object model, EvaluationContextImpl ctx) {
+    private void sliceFrom(AbstractJsonLocation currentPath, PathRef parent, Object model, EvaluationContextImpl ctx) {
         int length = ctx.jsonProvider().length(model);
         int from = operation.from();
         if (from < 0) {
@@ -65,7 +65,7 @@ public class ArraySliceToken extends ArrayPathToken {
         }
     }
 
-    private void sliceBetween(AbstractIdentifier currentPath, PathRef parent, Object model, EvaluationContextImpl ctx) {
+    private void sliceBetween(AbstractJsonLocation currentPath, PathRef parent, Object model, EvaluationContextImpl ctx) {
         int length = ctx.jsonProvider().length(model);
         int from = operation.from();
         int to = operation.to();
@@ -83,7 +83,7 @@ public class ArraySliceToken extends ArrayPathToken {
         }
     }
 
-    private void sliceTo(AbstractIdentifier currentPath, PathRef parent, Object model, EvaluationContextImpl ctx) {
+    private void sliceTo(AbstractJsonLocation currentPath, PathRef parent, Object model, EvaluationContextImpl ctx) {
         int length = ctx.jsonProvider().length(model);
         if (length == 0) {
             return;

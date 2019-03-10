@@ -49,4 +49,8 @@ public class PathTokenFactory {
     public static PathToken createFunctionPathToken(String function, List<Parameter> parameters) {
         return new FunctionPathToken(function, parameters);
     }
+
+    public static PathToken createPatternPathToken(CharSequence pattern) {
+        return new PatternPathToken(pattern);
+    }
 }

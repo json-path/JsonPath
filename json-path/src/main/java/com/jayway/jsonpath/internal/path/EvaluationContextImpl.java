@@ -18,7 +18,7 @@ import com.jayway.jsonpath.Configuration;
 import com.jayway.jsonpath.EvaluationListener;
 import com.jayway.jsonpath.Option;
 import com.jayway.jsonpath.PathNotFoundException;
-import com.jayway.jsonpath.identifier.AbstractIdentifier;
+import com.jayway.jsonpath.JsonLocation.AbstractJsonLocation;
 import com.jayway.jsonpath.internal.EvaluationAbortException;
 import com.jayway.jsonpath.internal.EvaluationContext;
 import com.jayway.jsonpath.internal.Path;
@@ -68,7 +68,7 @@ public class EvaluationContextImpl implements EvaluationContext {
         return forUpdate;
     }
 
-    public void addResult(AbstractIdentifier path, PathRef operation, Object model) {
+    public void addResult(AbstractJsonLocation path, PathRef operation, Object model) {
 
         if(forUpdate) {
             updateOperations.add(operation);

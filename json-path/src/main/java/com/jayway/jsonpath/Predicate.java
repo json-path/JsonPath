@@ -14,7 +14,7 @@
  */
 package com.jayway.jsonpath;
 
-import com.jayway.jsonpath.identifier.AbstractIdentifier;
+import com.jayway.jsonpath.JsonLocation.AbstractJsonLocation;
 import com.jayway.jsonpath.spi.mapper.MappingException;
 
 /**
@@ -52,6 +52,6 @@ public interface Predicate {
         Configuration configuration();
         
 
-        AbstractIdentifier getCurrentPath();
+        AbstractJsonLocation getCurrentPath();
     }
 }

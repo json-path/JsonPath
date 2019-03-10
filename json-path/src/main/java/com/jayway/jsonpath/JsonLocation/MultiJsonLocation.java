@@ -1,14 +1,14 @@
-package com.jayway.jsonpath.identifier;
+package com.jayway.jsonpath.JsonLocation;
 
 import com.jayway.jsonpath.internal.Utils;
 
 import java.util.List;
 
-public class MultiIdentifier extends AbstractIdentifier{
+public class MultiJsonLocation extends AbstractJsonLocation {
     final List<String> tagNames;
-    final AbstractIdentifier parent;
+    final AbstractJsonLocation parent;
 
-    public MultiIdentifier(List<String> tagNames, AbstractIdentifier parent) {
+    public MultiJsonLocation(List<String> tagNames, AbstractJsonLocation parent) {
         this.tagNames = tagNames;
         this.parent = parent;
     }
@@ -19,7 +19,7 @@ public class MultiIdentifier extends AbstractIdentifier{
     }
 
     @Override
-    public AbstractIdentifier getParent() {
+    public AbstractJsonLocation getParent() {
         return parent;
     }
 

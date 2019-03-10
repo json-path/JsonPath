@@ -16,7 +16,7 @@ package com.jayway.jsonpath.internal.path;
 
 import com.jayway.jsonpath.InvalidPathException;
 import com.jayway.jsonpath.PathNotFoundException;
-import com.jayway.jsonpath.identifier.AbstractIdentifier;
+import com.jayway.jsonpath.JsonLocation.AbstractJsonLocation;
 import com.jayway.jsonpath.internal.PathRef;
 import com.jayway.jsonpath.internal.Utils;
 
@@ -59,7 +59,7 @@ class PropertyPathToken extends PathToken {
     }
 
     @Override
-    public void evaluate(AbstractIdentifier currentPath, PathRef parent, Object model, EvaluationContextImpl ctx) {
+    public void evaluate(AbstractJsonLocation currentPath, PathRef parent, Object model, EvaluationContextImpl ctx) {
         // Can't assert it in ctor because isLeaf() could be changed later on.
         assert onlyOneIsTrueNonThrow(singlePropertyCase(), multiPropertyMergeCase(), multiPropertyIterationCase());
 

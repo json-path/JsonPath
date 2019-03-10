@@ -1,5 +1,7 @@
 package com.jayway.jsonpath;
 
+import com.jayway.jsonpath.internal.Path;
+import com.jayway.jsonpath.internal.path.PathCompiler;
 import org.junit.Ignore;
 import org.junit.Test;
 
@@ -322,4 +324,6 @@ public class PathCompilerTest {
     public void property_must_be_separated_by_commas() {
         compile("$['aaa'}'bbb']");
     }
+
+
 }

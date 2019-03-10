@@ -14,14 +14,70 @@
  */
 package com.jayway.jsonpath.internal;
 
+import com.jayway.jsonpath.InvalidPathException;
 import com.jayway.jsonpath.JsonPathException;
+import com.jayway.jsonpath.internal.filter.FilterCompiler;
+import com.jayway.jsonpath.internal.filter.PatternFlag;
+import com.jayway.jsonpath.internal.filter.ValueNode;
+import com.jayway.jsonpath.internal.filter.ValueNodes;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.Closeable;
 import java.io.IOException;
 import java.io.StringWriter;
 import java.util.Iterator;
+import java.util.regex.Pattern;
 
 public final class Utils {
+
+
+    private static final Logger logger = LoggerFactory.getLogger(Utils.class);
+
+
+    /**
+     * Compiles the charSequence into a pattern
+     * @param charSequence the sequence to use
+     * @return the Pattern
+     */
+    public static Pattern compilePattern(CharSequence charSequence){
+        String tmp = charSequence.toString();
+        int begin = tmp.indexOf('/');
+        int end = tmp.lastIndexOf('/');
+        String pattern = tmp.substring(begin + 1, end);
+        int flagsIndex = end + 1;
+        String flags = tmp.length() > flagsIndex ? tmp.substring(flagsIndex) : "";
+        return  Pattern.compile(pattern, PatternFlag.parseFlags(flags.toCharArray()));
+    }
+
+    /**
+     * Reads a pattern (a regex) of the form /.../flags
+     * @param filter the CharacterIndex to parse
+     * @param PATTERN the pattern character, usually /
+     * @param CLOSE_BRACKET the character which defines the end of the pattern expression. For filters ) for PathTokens ]
+     * @return the
+     */
+    public static CharSequence readPattern(final CharacterIndex filter,final char PATTERN,final char  CLOSE_BRACKET ) {
+        int begin = filter.position();
+        int closingIndex = filter.nextIndexOfUnescaped(PATTERN);
+        if (closingIndex == -1) {
+            throw new InvalidPathException("Pattern not closed. Expected " + PATTERN + " in " + filter);
+        } else {
+            if(filter.inBounds(closingIndex+1)) {
+                int equalSignIndex = filter.nextIndexOf('=');
+                int endIndex = Math.max(filter.nextIndexOfUnescaped(closingIndex, CLOSE_BRACKET),closingIndex);
+                //when = appears after the Pattern end char / but before the closing bracket,, we are likely in a pattern like ?(/abc/ =~@.name)
+                if(equalSignIndex != -1 && equalSignIndex < endIndex && equalSignIndex > closingIndex )
+                    endIndex = equalSignIndex;
+                CharSequence flags = filter.subSequence(closingIndex + 1, endIndex);
+                closingIndex += flags.length();
+            }
+            filter.setPosition(closingIndex + 1);
+        }
+        CharSequence pattern = filter.subSequence(begin, filter.position());
+        logger.trace("PatternNode from {} to {} -> [{}]", begin, filter.position(), pattern);
+        return pattern;
+    }
 
     // accept a collection of objects, since all objects have toString()
     public static String join(String delimiter, String wrap, Iterable<?> objs) {

@@ -41,6 +41,7 @@ public class PathCompiler {
     private static final char MINUS = '-';
     private static final char SINGLE_QUOTE = '\'';
     private static final char DOUBLE_QUOTE = '"';
+    private static final char PATTERN = '/';
 
     private final LinkedList<Predicate> filterStack;
     private final CharacterIndex path;
@@ -140,7 +141,8 @@ public class PathCompiler {
                         readWildCardToken(appender) ||
                         readFilterToken(appender) ||
                         readPlaceholderToken(appender) ||
-                        fail("Could not parse token starting at position " + path.position() + ". Expected ?, ', 0-9, * ");
+                        readPatternToken(appender) ||
+                        fail("Could not parse token starting at position " + path.position() + ". Expected ?, ', 0-9, *,/ ");
             case PERIOD:
                 return readDotToken(appender) ||
                         fail("Could not parse token starting at position " + path.position());
@@ -494,6 +496,22 @@ public class PathCompiler {
         }
 
         appender.appendPathToken(PathTokenFactory.createWildCardPathToken());
+
+        return path.currentIsTail() || readNextToken(appender);
+    }
+
+    private boolean readPatternToken(PathTokenAppender appender) {
+        if (!path.currentCharIs(OPEN_SQUARE_BRACKET)) {
+            return false;
+        }
+        if (!path.nextSignificantCharIs(PATTERN)) {
+            return false;
+        }
+        path.incrementPosition(1);
+        //position now at the PATTERN character
+        CharSequence pattern = Utils.readPattern(path, PATTERN, CLOSE_SQUARE_BRACKET);
+
+        appender.appendPathToken(PathTokenFactory.createPatternPathToken(pattern));
 
         return path.currentIsTail() || readNextToken(appender);
     }

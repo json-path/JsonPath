@@ -16,7 +16,7 @@ package com.jayway.jsonpath.internal.path;
 
 import com.jayway.jsonpath.Option;
 import com.jayway.jsonpath.PathNotFoundException;
-import com.jayway.jsonpath.identifier.AbstractIdentifier;
+import com.jayway.jsonpath.JsonLocation.AbstractJsonLocation;
 import com.jayway.jsonpath.internal.PathRef;
 
 import java.util.Collections;
@@ -30,7 +30,7 @@ public class WildcardPathToken extends PathToken {
     }
 
     @Override
-    public void evaluate(AbstractIdentifier currentPath, PathRef parent, Object model, EvaluationContextImpl ctx) {
+    public void evaluate(AbstractJsonLocation currentPath, PathRef parent, Object model, EvaluationContextImpl ctx) {
         if (ctx.jsonProvider().isMap(model)) {
             for (String property : ctx.jsonProvider().getPropertyKeys(model)) {
                 handleObjectProperty(currentPath, model, ctx, Collections.singletonList(property));

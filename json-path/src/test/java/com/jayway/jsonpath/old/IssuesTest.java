@@ -3,7 +3,7 @@ package com.jayway.jsonpath.old;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.google.gson.JsonObject;
 import com.jayway.jsonpath.*;
-import com.jayway.jsonpath.identifier.AbstractIdentifier;
+import com.jayway.jsonpath.JsonLocation.AbstractJsonLocation;
 import com.jayway.jsonpath.internal.Utils;
 import com.jayway.jsonpath.spi.cache.LRUCache;
 import com.jayway.jsonpath.spi.json.GsonJsonProvider;
@@ -817,7 +817,7 @@ public class IssuesTest extends BaseTest {
         
         
           @Override
-    public AbstractIdentifier getCurrentPath() {
+    public AbstractJsonLocation getCurrentPath() {
         return null;
     }
 

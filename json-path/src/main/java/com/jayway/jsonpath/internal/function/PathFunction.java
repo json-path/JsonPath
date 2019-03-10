@@ -1,6 +1,6 @@
 package com.jayway.jsonpath.internal.function;
 
-import com.jayway.jsonpath.identifier.AbstractIdentifier;
+import com.jayway.jsonpath.JsonLocation.AbstractJsonLocation;
 import com.jayway.jsonpath.internal.EvaluationContext;
 import com.jayway.jsonpath.internal.PathRef;
 
@@ -33,5 +33,5 @@ public interface PathFunction {
      * @param parameters
      * @return
      */
-    Object invoke(AbstractIdentifier currentPath, PathRef parent, Object model, EvaluationContext ctx, List<Parameter> parameters);
+    Object invoke(AbstractJsonLocation currentPath, PathRef parent, Object model, EvaluationContext ctx, List<Parameter> parameters);
 }

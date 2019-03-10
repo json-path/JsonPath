@@ -28,7 +28,7 @@ public abstract class ValueNode {
     }
 
     public PathNode asPathNode() {
-        throw new InvalidPathException("Expected path node");
+        throw new InvalidPathException("Expected path node, not "+getClass().getSimpleName());
     }
 
     public boolean isNumberNode() {
