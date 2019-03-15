@@ -18,6 +18,7 @@ import com.jayway.jsonpath.InvalidPathException;
 import com.jayway.jsonpath.PathNotFoundException;
 import com.jayway.jsonpath.internal.PathRef;
 import com.jayway.jsonpath.internal.Utils;
+import com.jayway.jsonpath.Option;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -66,12 +67,16 @@ class PropertyPathToken extends PathToken {
             if (! isUpstreamDefinite()) {
                 return;
             } else {
-                String m = model == null ? "null" : model.getClass().getName();
+                //If we are in CREATE PATH Mode do not complain
+                if (!isPathDefinite() ||
+                        !ctx.options().contains(Option.CREATE_MISSING_PROPERTIES_ON_DEFINITE_PATH)) {
+                    String m = model == null ? "null" : model.getClass().getName();
 
-                throw new PathNotFoundException(String.format(
-                        "Expected to find an object with property %s in path %s but found '%s'. " +
-                        "This is not a json object according to the JsonProvider: '%s'.",
-                        getPathFragment(), currentPath, m, ctx.configuration().jsonProvider().getClass().getName()));
+                    throw new PathNotFoundException(String.format(
+                            "Expected to find an object with property %s in path %s but found '%s'. " +
+                                    "This is not a json object according to the JsonProvider: '%s'.",
+                            getPathFragment(), currentPath, m, ctx.configuration().jsonProvider().getClass().getName()));
+                }
             }
         }
 

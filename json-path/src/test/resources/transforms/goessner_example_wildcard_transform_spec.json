@@ -1,0 +1,10 @@
+{
+  "pathMappings": [{
+    "source": "$.store.book[*].price",
+    "target": "$.store.novel[*].cost"
+  }, {
+    "source": "$.store.book[*].title",
+    "target": "$.store.novel[*].bookTitle"
+  }
+  ]
+}

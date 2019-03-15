@@ -15,10 +15,12 @@
 package com.jayway.jsonpath.spi.json;
 
 import com.jayway.jsonpath.JsonPathException;
+import com.jayway.jsonpath.Configuration;
 
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
+
 
 public abstract class AbstractJsonProvider implements JsonProvider {
 
@@ -47,6 +49,7 @@ public abstract class AbstractJsonProvider implements JsonProvider {
         return getArrayIndex(obj, idx);
     }
 
+
     public void setArrayIndex(Object array, int index, Object newValue) {
         if (!isArray(array)) {
             throw new UnsupportedOperationException();
@@ -60,6 +63,19 @@ public abstract class AbstractJsonProvider implements JsonProvider {
         }
     }
 
+    /**
+     * method to add a new Value to the array.
+     * @param array
+     * @param newValue
+     */
+    public void addArrayIndex(Object array,  Object newValue) {
+        if (!isArray(array)) {
+            throw new UnsupportedOperationException();
+        } else {
+            List l = (List) array;
+            l.add(newValue);
+        }
+    }
 
     /**
      * Extracts a value from an map

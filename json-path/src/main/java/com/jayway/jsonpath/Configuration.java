@@ -17,6 +17,7 @@ package com.jayway.jsonpath;
 import com.jayway.jsonpath.internal.DefaultsImpl;
 import com.jayway.jsonpath.spi.json.JsonProvider;
 import com.jayway.jsonpath.spi.mapper.MappingProvider;
+import com.jayway.jsonpath.spi.transformer.TransformationProvider;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -54,18 +55,26 @@ public class Configuration {
     private final JsonProvider jsonProvider;
     private final MappingProvider mappingProvider;
     private final Set<Option> options;
+    private final TransformationProvider transformationProvider;
     private final Collection<EvaluationListener> evaluationListeners;
 
-    private Configuration(JsonProvider jsonProvider, MappingProvider mappingProvider, EnumSet<Option> options, Collection<EvaluationListener> evaluationListeners) {
+    private Configuration(JsonProvider jsonProvider,
+                          MappingProvider mappingProvider,
+                          TransformationProvider transformationProvider,
+                          EnumSet<Option> options,
+                          Collection<EvaluationListener> evaluationListeners) {
         notNull(jsonProvider, "jsonProvider can not be null");
         notNull(mappingProvider, "mappingProvider can not be null");
         notNull(options, "setOptions can not be null");
         notNull(evaluationListeners, "evaluationListeners can not be null");
+        //we allow the transformationProvider to be null as it is not always necessary.
         this.jsonProvider = jsonProvider;
         this.mappingProvider = mappingProvider;
         this.options = Collections.unmodifiableSet(options);
         this.evaluationListeners = Collections.unmodifiableCollection(evaluationListeners);
+        this.transformationProvider = transformationProvider;
     }
+
 
     /**
      * Creates a new Configuration by the provided evaluation listeners to the current listeners
@@ -183,12 +192,22 @@ public class Configuration {
     }
 
     /**
+     * Returns {@link com.jayway.jsonpath.spi.transformer.TransformationProvider} used by this configuration
+     * @return the TransformationProvider
+     */
+    public TransformationProvider transformationProvider() {
+        return transformationProvider;
+    }
+
+    /**
      * Configuration builder
      */
     public static class ConfigurationBuilder {
 
         private JsonProvider jsonProvider;
         private MappingProvider mappingProvider;
+        private TransformationProvider transformationProvider;
+
         private EnumSet<Option> options = EnumSet.noneOf(Option.class);
         private Collection<EvaluationListener> evaluationListener = new ArrayList<EvaluationListener>();
 
@@ -199,6 +218,11 @@ public class Configuration {
 
         public ConfigurationBuilder mappingProvider(MappingProvider provider) {
             this.mappingProvider = provider;
+            return this;
+        }
+
+        public ConfigurationBuilder transformationProvider(TransformationProvider provider) {
+            this.transformationProvider = provider;
             return this;
         }
 
@@ -225,7 +249,7 @@ public class Configuration {
         }
 
         public Configuration build() {
-            if (jsonProvider == null || mappingProvider == null) {
+            if (jsonProvider == null || mappingProvider == null || transformationProvider == null) {
                 final Defaults defaults = getEffectiveDefaults();
                 if (jsonProvider == null) {
                     jsonProvider = defaults.jsonProvider();
@@ -233,8 +257,15 @@ public class Configuration {
                 if (mappingProvider == null){
                     mappingProvider = defaults.mappingProvider();
                 }
+
+                if (transformationProvider == null) {
+                    transformationProvider = defaults.transformationProvider();
+                }
+
             }
-            return new Configuration(jsonProvider, mappingProvider, options, evaluationListener);
+            return new Configuration(jsonProvider,
+                    mappingProvider, transformationProvider,
+                    options, evaluationListener);
         }
     }
 
@@ -257,6 +288,13 @@ public class Configuration {
          * @return default mapping provider
          */
         MappingProvider mappingProvider();
+
+        /**
+         * Returns the default {@link com.jayway.jsonpath.spi.transformer.TransformationProvider}
+         *
+         * @return default transformation provider
+         */
+        TransformationProvider transformationProvider();
 
     }
 }

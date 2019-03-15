@@ -83,6 +83,41 @@ public enum Option {
      * If REQUIRE_PROPERTIES option is present PathNotFoundException is thrown.
      * If REQUIRE_PROPERTIES option is not present ["b-val"] is returned.
      */
-    REQUIRE_PROPERTIES
+    REQUIRE_PROPERTIES,
+
+    /**
+     * Configures JsonPath to create a missing leaf property(and its parent Path(s), with the exception of the RootPath)
+     * in the input document when a <bold>definite</bold> path is evaluated.
+     *
+     * Since the original Document is mutated by this setting, this setting is only meant to be used with operations
+     * such as {@link JsonPath#set(Object, Object, Configuration)}.
+     *
+     *  Given:
+     *
+     * <pre>
+     * [
+     *     {
+     *         "a" : "a-val"
+     *     }
+     * ]
+     * </pre>
+     *
+     * evaluating the definite path "$[0].b"
+     *
+     * results in :
+     *
+     * <pre>
+     * [
+     *     {
+     *         "a" : "a-val",
+     *         "b" : null
+     *     }
+     * ]
+     * </pre>
+     *
+     */
+     CREATE_MISSING_PROPERTIES_ON_DEFINITE_PATH
+
+
 
 }

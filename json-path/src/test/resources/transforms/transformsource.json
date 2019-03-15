@@ -1,0 +1,18 @@
+{
+  "shipment": {
+    "id": 123456,
+    "state": "EN_ROUTE",
+    "stops" : [
+      {
+        "name" : "source",
+        "sequence" : "0",
+        "location" : "-44,123"
+      },
+      {
+        "name" : "destination",
+        "sequence" : "1",
+        "location" : "-98,225"
+      }
+    ]
+  }
+}

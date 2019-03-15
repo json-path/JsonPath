@@ -7,6 +7,7 @@ import com.jayway.jsonpath.PathNotFoundException;
 import com.jayway.jsonpath.spi.json.JsonProvider;
 
 import java.util.Collection;
+import java.util.List;
 
 public abstract class PathRef implements Comparable<PathRef>  {
 
@@ -158,6 +159,15 @@ public abstract class PathRef implements Comparable<PathRef>  {
         }
 
         public void set(Object newVal, Configuration configuration){
+            if (configuration.containsOption(Option.CREATE_MISSING_PROPERTIES_ON_DEFINITE_PATH)) {
+                // handle the case where the Path is indexing beyond the bounds.
+                List l = (List) parent;
+                if (index > l.size()) {
+                    for (int i = 0; i < (index - l.size()); i++) {
+                        l.add(null);
+                    }
+                }
+            }
             configuration.jsonProvider().setArrayIndex(parent, index, newVal);
         }
 

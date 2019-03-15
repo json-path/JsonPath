@@ -19,6 +19,7 @@ import com.jayway.jsonpath.PathNotFoundException;
 import com.jayway.jsonpath.internal.PathRef;
 import com.jayway.jsonpath.internal.Utils;
 import com.jayway.jsonpath.internal.function.PathFunction;
+import com.jayway.jsonpath.spi.json.AbstractJsonProvider;
 import com.jayway.jsonpath.spi.json.JsonProvider;
 
 import java.util.List;
@@ -50,7 +51,11 @@ public abstract class PathToken {
                 assert this instanceof PropertyPathToken : "only PropertyPathToken is supported";
 
                 if(isLeaf()) {
-                    if(ctx.options().contains(Option.DEFAULT_PATH_LEAF_TO_NULL)){
+
+                    if (isPathDefinite() &&
+                            ctx.options().contains(Option.CREATE_MISSING_PROPERTIES_ON_DEFINITE_PATH)) {
+                        propertyVal =  null;
+                    } else if(ctx.options().contains(Option.DEFAULT_PATH_LEAF_TO_NULL)){
                         propertyVal =  null;
                     } else {
                         if(ctx.options().contains(Option.SUPPRESS_EXCEPTIONS) ||
@@ -69,7 +74,11 @@ public abstract class PathToken {
                         // branches could be examined.
                         return;
                     } else {
-                        throw new PathNotFoundException("Missing property in path " + evalPath);
+                        //When we are in a CREATE DEFINITE PATH mode, then do not throw
+                        if (!ctx.options().contains(Option.CREATE_MISSING_PROPERTIES_ON_DEFINITE_PATH)
+                                        || !isUpstreamDefinite() && isTokenDefinite()) {
+                            throw new PathNotFoundException("Missing property in path " + evalPath);
+                        }
                     }
                 }
             }
@@ -78,6 +87,16 @@ public abstract class PathToken {
                 ctx.addResult(evalPath, pathRef, propertyVal);
             }
             else {
+                //Create a non-leaf container
+                if ((propertyVal == null || propertyVal == JsonProvider.UNDEFINED)
+                        && ctx.configuration().containsOption(Option.CREATE_MISSING_PROPERTIES_ON_DEFINITE_PATH)) {
+                    if (next() instanceof ArrayIndexToken) {
+                        propertyVal = ctx.configuration().jsonProvider().createArray();
+                    } else {
+                        propertyVal = ctx.configuration().jsonProvider().createMap();
+                    }
+                    ctx.jsonProvider().setProperty(model,property, propertyVal);
+                }
                 next().evaluate(evalPath, pathRef, propertyVal, ctx);
             }
         } else {
@@ -127,6 +146,7 @@ public abstract class PathToken {
         PathRef pathRef = ctx.forUpdate() ? PathRef.create(model, index) : PathRef.NO_OP;
         int effectiveIndex = index < 0 ? ctx.jsonProvider().length(model) + index : index;
         try {
+
             Object evalHit = ctx.jsonProvider().getArrayIndex(model, effectiveIndex);
             if (isLeaf()) {
                 ctx.addResult(evalPath, pathRef, evalHit);
@@ -134,6 +154,31 @@ public abstract class PathToken {
                 next().evaluate(evalPath, pathRef, evalHit, ctx);
             }
         } catch (IndexOutOfBoundsException e) {
+            //TODO: Not a good idea to do things here, but that's the only way to not disturb the original code
+            //create the non-leaf Container.
+            if (ctx.options().contains(Option.CREATE_MISSING_PROPERTIES_ON_DEFINITE_PATH)) {
+                if (isLeaf()) {
+                    ctx.addResult(evalPath, pathRef, null);
+                } else {
+                    Object propertyVal;
+                    if (next() instanceof ArrayIndexToken) {
+                        propertyVal = ctx.configuration().jsonProvider().createArray();
+                    } else {
+                        propertyVal = ctx.configuration().jsonProvider().createMap();
+                    }
+                    int length = ctx.jsonProvider().length(model);
+                    if (index > length) {
+                        for (int i = 0; i < (index - length); i++) {
+                            //do not wish to add this method to JsonProvider
+                            //as the interface change impacts all providers
+                            ((AbstractJsonProvider)ctx.jsonProvider()).
+                                    addArrayIndex(model,  null);
+                        }
+                    }
+                    ctx.jsonProvider().setArrayIndex(model,index,propertyVal);
+                    next().evaluate(evalPath, pathRef, propertyVal, ctx);
+                }
+            }
         }
     }
 
