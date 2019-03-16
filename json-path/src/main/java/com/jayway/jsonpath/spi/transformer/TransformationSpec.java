@@ -1,6 +1,5 @@
 package com.jayway.jsonpath.spi.transformer;
 
-import com.sun.xml.internal.ws.developer.ValidationErrorHandler;
 
 import java.util.List;
 

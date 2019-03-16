@@ -33,15 +33,17 @@ public class TransformationWithFiltersAndFunctions {
 
     }
 
-    //Functions and Filters do not see to work in the core JsonPath
+    //Functions and Filters do not seem to work in  core JsonPath
     // and hence they would not work under transforms as well (although
     // they are very desirable for the transform feature).
-    // So these test are there as the desire is to make them work one day
+    // So these test are there with the desire to make them work in future
     // and not throw JsonPathException
     @Test(expected = JsonPathException.class)
     public void transform_spec_with_wildcard_array_test() {
         Object transformed = configuration.transformationProvider().
                 transform(sourceJson, spec, configuration);
+        DocumentContext jsonContext = JsonPath.parse(transformed);
+        System.out.println("Document Created by Transformation:" + jsonContext.jsonString());
     }
 
 

@@ -21,7 +21,7 @@
   }, {
     "source": "$.shipment.state",
     "target": "$.shipment.status",
-    "lookupTable": "stateMapper1"
+    "lookupTable": "stateMapper"
   }, {
     "source" : "$.shipment.stops[0].name",
     "target" : "$.shipment.loading.name"

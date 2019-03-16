@@ -5,6 +5,7 @@ import com.jayway.jsonpath.InvalidModificationException;
 import com.jayway.jsonpath.MapFunction;
 import com.jayway.jsonpath.PathNotFoundException;
 import com.jayway.jsonpath.spi.json.JsonProvider;
+import com.jayway.jsonpath.Option;
 
 import java.util.Collection;
 import java.util.List;

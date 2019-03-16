@@ -112,12 +112,12 @@ public class JsonPathTransformationSpec  implements TransformationSpec {
 
                 boolean bothNotSame = isSrcArrayWildCard ^ isTgtArrayWildCard;
 
-                if (!compiledSrc.isDefinite() && !isSrcArrayWildCard) {
+                if (!compiledSrc.isFunctionPath() && !compiledSrc.isDefinite() && !isSrcArrayWildCard) {
                     response.add(new JsonPathTransformerValidationError(
                             PATH_NEITHER_DEFINITE_NOR_WILDCARD_ARRAY, src));
 
                 }
-                if (!compiledTgt.isDefinite() && !isTgtArrayWildCard) {
+                if (!compiledSrc.isFunctionPath() && !compiledTgt.isDefinite() && !isTgtArrayWildCard) {
                     response.add(new JsonPathTransformerValidationError(
                             PATH_NEITHER_DEFINITE_NOR_WILDCARD_ARRAY, tgt));
 
@@ -150,7 +150,9 @@ public class JsonPathTransformationSpec  implements TransformationSpec {
         List<ValidationError> response = new ArrayList<ValidationError>();
         PathMapping[] mappings = spec.getPathMappings();
         LookupTable[] tables = spec.getLookupTables();
-
+        if ((tables == null) || tables.length == 0) {
+            return response;
+        }
         for (LookupTable t : tables) {
             //make sure all LookupTables have a name
             if (t.getTableName() == null || t.getTableName().isEmpty()) {
@@ -192,7 +194,10 @@ public class JsonPathTransformationSpec  implements TransformationSpec {
     /* package */ static boolean isArrayWildCard(String path) {
         //TODO: We support only a single wild-card to begin with.
         path = path.replaceAll("\\s", "");
-        ;
+        JsonPath compiled = JsonPath.compile(path);
+        if (compiled.isFunctionPath()) {
+            return false;
+        }
         int lastIndex = path.lastIndexOf("[*]");
         int firstIndex = path.indexOf("[*]");
         if (firstIndex != -1) {
