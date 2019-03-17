@@ -490,8 +490,7 @@ There are usecases where one would like the above set API to create a JSON of th
 ```javascript
 {"a":{"b":{"c":12345}}}
 ```
-This is now possible by enabling a new Configuration Option named * `CREATE_MISSING_PROPERTIES_ON_DEFINITE_PATH`. The feature will 
-only work if the 'path' argument represents a Definite Path as per JsonPath definitions.
+This is now possible by enabling a new Configuration Option named `CREATE_MISSING_PROPERTIES_ON_DEFINITE_PATH`. The feature will only work if the 'path' argument represents a Definite Path as per JsonPath definitions.
 
 ```java
     Configuration pathConfiguration = Configuration.builder()
@@ -507,11 +506,13 @@ only work if the 'path' argument represents a Definite Path as per JsonPath defi
     assertThat(result).isEqualTo(12345);
 ```
 
-### Transformation SPI
+* `NOTE: when the path argument supplied is not definite, one would see things such as classcast exception`
 
-Building on the JSON Generation support one can now perform JSON to JSON transformations using JsonPath Mappings between an existing Source and a desirded Traget JSON Document. The Souce JSON document could then be transformed into the Target JSON document. This feature is quiet useful in Enterprise Integrations where typically the source and destination JSON Documents tend to have varying structures for the same Object.
+### TransformationProvider SPI
 
-A new TransformationProvider SPI has been introduced in JsonPath to support this. There can be multiple implementations of the SPI but there is a default implementation in place which uses a specific form of Mapping Definition also called TransformationSpec. Each new implementation of the TransformationProvider can define its own format for the TransformationSpec.
+Building on the JSON Generation support one can now perform JSON to JSON transformations using JsonPath Mappings between an existing Source and a desired Traget JSON Document. The Source JSON document could then be transformed into the Target JSON document. This feature is quiet useful in Enterprise Integrations where typically the source and destination JSON Documents tend to have varying structures for the same Object/Concept.
+
+A new `TransformationProvider` SPI has been introduced in JsonPath to support this requirement. There can be multiple implementations of the SPI but there is a default implementation in place which uses a specific form of Mapping Definition also called `TransformationSpec`. Each new implementation of the TransformationProvider can define its own format for the TransformationSpec.
 
 ```java
     InputStream sourceStream;
@@ -529,6 +530,8 @@ A new TransformationProvider SPI has been introduced in JsonPath to support this
     System.out.println("Document Created by Transformation:" + jsonContext.jsonString());
 ```
 
+The above code when supplied with a sample Transformation Sepcification like this:
+
 ```javascript
 {
   "pathMappings": [{
@@ -542,7 +545,7 @@ A new TransformationProvider SPI has been introduced in JsonPath to support this
 }
 ```
 
-Input Document
+And an Input Document like this:
 
 ```java
 {
@@ -579,7 +582,7 @@ Input Document
 }
 ```
 
-Document Created by Transformation using the above Mapping.
+would produce a transformed target JSON Document like this:
 
 ```javascript
 {
