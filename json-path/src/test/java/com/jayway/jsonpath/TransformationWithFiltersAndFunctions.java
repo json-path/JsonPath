@@ -33,7 +33,7 @@ public class TransformationWithFiltersAndFunctions {
 
     }
 
-    //Functions and Filters do not seem to work in  core JsonPath
+    //TODO: Functions and Filters do not seem to work in  core JsonPath
     // and hence they would not work under transforms as well (although
     // they are very desirable for the transform feature).
     // So these test are there with the desire to make them work in future
