@@ -521,6 +521,8 @@ A new `TransformationProvider` SPI has been introduced in JsonPath to support th
     Object sourceJson;
 
     //assuming sourceStream, and transformSpec have been initialized
+    Configuration configuration = Configuration.builder()
+                .options(Option.CREATE_MISSING_PROPERTIES_ON_DEFINITE_PATH).build();
     sourceJson = configuration.jsonProvider().parse(sourceStream, Charset.defaultCharset().name());
     spec = configuration.transformationProvider().spec(transformSpec, configuration);
     Object transformed = configuration.transformationProvider().transform(sourceJson,spec, configuration);
@@ -603,8 +605,9 @@ would produce a transformed target JSON Document like this:
 	}
 }
 ```
+* `NOTE: The Transformation Feature requires enabling the Option CREATE_MISSING_PROPERTIES_ON_DEFINITE_PATH explicitly.`
     
-This Transformation feature can also be used to do things like summarization/aggregation on a given Source document when the Source JsonPath makes use of Filters and Functions (min, max, sum etc).
+This Transformation feature can potentially be used to do things like summarization/aggregation on a given Source document when the Source JsonPath makes use of Filters and Functions (min, max, sum etc).
 
     
 ```javascript
@@ -619,7 +622,7 @@ This Transformation feature can also be used to do things like summarization/agg
   ]
 }
 ```
-* `NOTE: some of the JsonPath's aggregate functions do not see to work right now, due to bugs ?`
+* `NOTE: some of the JsonPath's aggregate functions do not seem to work right now, due to bugs ?`
 
 The above transformation specification can be used to produce the following summary document 
 
@@ -634,7 +637,7 @@ The above transformation specification can be used to produce the following summ
 
 The default transformation provider supports a transformation spec which allows for WildCard mappings (currently Single-Level) for array paths. It also provides a notion of LookupTables that support custom mappings of a string/enumeration value in the source document to a value in the corresponding transformed target document. The example shown earlier in this section shows the usage of wildcard (limited to "*" only, slices are not supported currently). The example below shows the use of LookupTables.
 
-Source Document
+Given a Source Document like this:
 
 ```javascript
 {
@@ -657,7 +660,7 @@ Source Document
 }
 ```
 
-Transformation Specification
+and a Transformation Specification like this:
 
 ```javascript
 {
@@ -696,7 +699,7 @@ Transformation Specification
 }
 ```
 
-Transformed Target Document
+The Transformed Target document produced would be like this:
 
 ```javascript
 {
