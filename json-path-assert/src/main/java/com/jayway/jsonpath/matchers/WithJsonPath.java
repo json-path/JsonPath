@@ -38,7 +38,8 @@ public class WithJsonPath<T> extends TypeSafeMatcher<ReadContext> {
     @Override
     protected void describeMismatchSafely(ReadContext context, Description mismatchDescription) {
         try {
-            T value = jsonPath.read(context.json());
+            //with java 8, compilation fails saying ambiguous jsonPath.read
+            T value = jsonPath.read((Object)context.json());
             mismatchDescription
                     .appendText("json path ")
                     .appendValue(jsonPath.getPath())

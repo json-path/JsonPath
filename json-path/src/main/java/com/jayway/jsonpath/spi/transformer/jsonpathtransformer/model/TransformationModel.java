@@ -24,7 +24,7 @@ public class TransformationModel {
 
     @Override
     public String toString() {
-        return "ClassPojo [lookupTables = " + lookupTables + ", pathMappings = " + pathMappings + "]";
+        return "TransformationModel [lookupTables = " + lookupTables + ", pathMappings = " + pathMappings + "]";
     }
 
 }

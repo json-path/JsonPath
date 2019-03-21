@@ -1,0 +1,195 @@
+{
+  "id": "4BCCE7DF-AA42-4189-A626-A0A0E245BCC4",
+  "externalId": "09341",
+  "name": "09341",
+  "cost": 753.7783305899845,
+  "isTPLManaged": false,
+  "equipment": {
+    "externalId": "212454548388281",
+    "groupId": "48 DRY"
+  },
+  "orderCount": 2,
+  "shipUnitCount": 2,
+  "carrierName": "JB HUNT",
+  "domainName": "D1",
+  "carrierId": "JBHUNT",
+  "weight": 43000.0,
+  "volume": 13464.940118097964,
+  "loadedDistance": 245.03292329124795,
+  "weightUtilization": 0.95556,
+  "volumeUtilization": 0.51903,
+  "equipmentUtilization": 0.0,
+  "unLoadedDistance": 105.59065260630554,
+  "earliestStartTime": 1505983284000,
+  "latestStartTime": 1506446973000,
+  "driverId": {
+    "externalId": "DRIVER_1",
+    "loginId": "IotFMDriver1"
+  },
+  "powerUnitId": {},
+  "stops": [{
+    "address": "17 CULLMAN ST::MONTGOMERY::AL::USA::36104",
+    "geoLocation": [
+      -86.33327,
+      32.37614
+    ],
+    "estimatedTimeToNextStop": 10737,
+    "distanceToNextStop": 105.59084905908,
+    "expectedDurationFromStart": 0,
+    "stopDurationInSeconds": 0,
+    "city": "MONTGOMERY",
+    "country": "USA",
+    "estimatedArrivalTime": 1505983284000,
+    "estimatedDepartureTime": 1505983284000,
+    "plannedArrivalTime": 1505983284000,
+    "plannedDepartureTime": 1505983284000,
+    "postalCode": "36104",
+    "state": "AL",
+    "stopType": "NFR",
+    "street": "17 CULLMAN ST",
+    "timeZone": "America/Chicago",
+    "stopSequence": 1
+  },
+    {
+      "address": "980 MURRAY RD::DOTHAN::AL::USA::36301",
+      "geoLocation": [
+        -85.40645,
+        31.25712
+      ],
+      "estimatedTimeToNextStop": 16665,
+      "distanceToNextStop": 209.66493104337,
+      "expectedDurationFromStart": 10737,
+      "stopDurationInSeconds": 0,
+      "city": "DOTHAN",
+      "country": "USA",
+      "estimatedArrivalTime": 1505994021000,
+      "estimatedDepartureTime": 1505995821000,
+      "plannedArrivalTime": 1505994021000,
+      "plannedDepartureTime": 1505995821000,
+      "postalCode": "36301",
+      "state": "AL",
+      "stopType": "P",
+      "street": "980 MURRAY RD",
+      "timeZone": "America/Chicago",
+      "stopSequence": 2
+    },
+    {
+      "address": "5600 N HENRY BLVD::STOCKBRIDGE::GA::USA::30281",
+      "geoLocation": [
+        -84.25891,
+        33.55317
+      ],
+      "estimatedTimeToNextStop": 3225,
+      "distanceToNextStop": 35.3684481348,
+      "expectedDurationFromStart": 29202,
+      "stopDurationInSeconds": 0,
+      "city": "STOCKBRIDGE",
+      "country": "USA",
+      "estimatedArrivalTime": 1506012486000,
+      "estimatedDepartureTime": 1506014286000,
+      "plannedArrivalTime": 1506012486000,
+      "plannedDepartureTime": 1506014286000,
+      "postalCode": "30281",
+      "state": "GA",
+      "stopType": "D",
+      "street": "5600 N HENRY BLVD",
+      "timeZone": "America/New_York",
+      "stopSequence": 3
+    },
+    {
+      "address": "1015 NORCROSS INDUSTRIAL CT::NORCROSS::GA::USA::30071",
+      "geoLocation": [
+        -84.20205,
+        33.94962
+      ],
+      "estimatedTimeToNextStop": 0,
+      "distanceToNextStop": 0.0,
+      "expectedDurationFromStart": 34227,
+      "stopDurationInSeconds": 0,
+      "city": "NORCROSS",
+      "country": "USA",
+      "estimatedArrivalTime": 1506017511000,
+      "estimatedDepartureTime": 1506019311000,
+      "plannedArrivalTime": 1506017511000,
+      "plannedDepartureTime": 1506019311000,
+      "postalCode": "30071",
+      "state": "GA",
+      "stopType": "D",
+      "street": "1015 NORCROSS INDUSTRIAL CT",
+      "timeZone": "America/New_York",
+      "stopSequence": 4
+    }
+  ],
+  "lastModifiedTime": 1551687126760,
+  "lastModifiedTimeAsString": "2019-03-04T08:12:06.760Z",
+  "createdTime": "2019-03-04T08:12:06.932Z",
+  "transportMode": "TL",
+  "plannedDriveDurationSeconds": 30627,
+  "plannedDriveDistance": 350.6251009730697,
+  "extendedFields": [{
+    "name": "INVOICE",
+    "value": "ABC123"
+  },
+    {
+      "name": "CAPACITYPROVIDERACCOUNTCODE",
+      "value": "CAPACITY1"
+    },
+    {
+      "name": "PORTABLETRACKERID",
+      "value": "XYZ789"
+    },
+    {
+      "name": "LICENSE_PLATE",
+      "group": "VehicleIdentifier",
+      "value": "UPSZ123456"
+    },
+    {
+      "name": "P44_EU",
+      "group": "VehicleIdentifier",
+      "value": "1122334455"
+    },
+    {
+      "name": "DOT_NUMBER",
+      "group": "VehicleIdentifier",
+      "value": "0987555425"
+    },
+    {
+      "name": "SYSTEM",
+      "group": "VehicleIdentifier",
+      "value": "AS400"
+    },
+    {
+      "name": "MC_NUMBER",
+      "group": "VehicleIdentifier",
+      "value": "MC12345678"
+    },
+    {
+      "name": "SECONDARYDRIVERALTERNATEMOBILENUMBER",
+      "value": "7005551212"
+    },
+    {
+      "name": "BM",
+      "group": "ShipmentIdentifier",
+      "value": "BROADWAY-SP-000507"
+    },
+    {
+      "name": "PRIMARYDRIVERMOBILENUMBER",
+      "value": "8885551212"
+    },
+    {
+      "name": "SECONDARYDRIVERMOBILENUMBER",
+      "value": "7775551212"
+    },
+    {
+      "name": "PRIMARYDRIVERALTERNATEMOBILENUMBER",
+      "value": "8005551212"
+    }, {
+      "name" : "LOCATIONSOURCE",
+      "value" : "SIM"
+    }
+  ],
+  "costCurrency": "USD",
+  "status": "PLANNED",
+  "stopCount": 4,
+  "stopsCompleted": 0
+}

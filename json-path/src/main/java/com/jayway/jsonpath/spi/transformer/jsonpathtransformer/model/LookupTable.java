@@ -25,6 +25,6 @@ public class LookupTable {
 
     @Override
     public String toString() {
-        return "ClassPojo [tableData = " + tableData + ", tableName = " + tableName + "]";
+        return "LookupTable [tableData = " + tableData + ", tableName = " + tableName + "]";
     }
 }

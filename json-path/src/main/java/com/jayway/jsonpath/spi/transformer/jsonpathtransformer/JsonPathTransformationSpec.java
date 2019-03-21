@@ -2,13 +2,12 @@ package com.jayway.jsonpath.spi.transformer.jsonpathtransformer;
 
 import com.jayway.jsonpath.InvalidPathException;
 import com.jayway.jsonpath.JsonPath;
+import com.jayway.jsonpath.JsonPathException;
 import com.jayway.jsonpath.spi.transformer.TransformationSpec;
 import com.jayway.jsonpath.spi.transformer.TransformationSpecValidationException;
 import com.jayway.jsonpath.spi.transformer.ValidationError;
-import com.jayway.jsonpath.spi.transformer.jsonpathtransformer.model.JsonPathTransformerValidationError;
-import com.jayway.jsonpath.spi.transformer.jsonpathtransformer.model.LookupTable;
-import com.jayway.jsonpath.spi.transformer.jsonpathtransformer.model.PathMapping;
-import com.jayway.jsonpath.spi.transformer.jsonpathtransformer.model.TransformationModel;
+import com.jayway.jsonpath.spi.transformer.jsonpathtransformer.model.*;
+
 import static com.jayway.jsonpath.spi.transformer.jsonpathtransformer.model.JsonPathTransformerValidationError.*;
 
 import java.util.*;
@@ -16,38 +15,38 @@ import java.util.*;
 /**
  * The Transformation Spec is essentially a JSON document with the following structure:
  * {
- *     "lookupTables" : [
- *        {
- *            "tableName" : "stateMapper",
- *            "tableData" : {
- *                "EN_ROUTE" : "ACTIVE",
- *                "PLANNED" : "DISPATCHED",
- *                "COMPLETED" : "COMPLETED"
- *            }
- *        },
- *        {
- *            "tableName" : "distMapper",
- *            "tableData" : {
- *               "DISTANCE" : "dist"
- *            }
- *        }
- *
- *     ],
- *     "pathMappings" : [
- *         {
- *         "source" : "$.shipment.id",
- *         "target" : "$.shipment.extid"
- *         }, {
- *         "source" : "$.shipment.state",
- *         "target" : "$.shipment.state",
- *         "lookupTable" : "stateMapper"
- *         }
- *     ]
+ * "lookupTables" : [
+ * {
+ * "tableName" : "stateMapper",
+ * "tableData" : {
+ * "EN_ROUTE" : "ACTIVE",
+ * "PLANNED" : "DISPATCHED",
+ * "COMPLETED" : "COMPLETED"
  * }
- *
+ * },
+ * {
+ * "tableName" : "distMapper",
+ * "tableData" : {
+ * "DISTANCE" : "dist"
+ * }
+ * }
+ * <p>
+ * ],
+ * "pathMappings" : [
+ * {
+ * "source" : "$.shipment.id",
+ * "target" : "$.shipment.extid"
+ * }, {
+ * "source" : "$.shipment.state",
+ * "target" : "$.shipment.state",
+ * "lookupTable" : "stateMapper"
+ * }
+ * ]
+ * }
+ * <p>
  * As the name indicates, this transformation provider uses JsonPath's to express the transformation
  * of the source document to the target document.
- *
+ * <p>
  * 1. Target's should be definite singular paths suitable for writing.
  * 2. Source should be definite singular and can contain all that is supported by JsonPath (including filters/Functions)
  * 3. Array Source/Target can additionally specify a "*" to indicate same mapping for all elements.
@@ -59,10 +58,10 @@ import java.util.*;
  * 5. Lookuptables are strictly string-to-string mappings and are primarily intended to capture enumerations
  * which can differ in the source and target domains.
  * 6. Need to support slices of arrays. Will be handled in future
- *
+ * <p>
  * TODO: identify more Validations.
  */
-public class JsonPathTransformationSpec  implements TransformationSpec {
+public class JsonPathTransformationSpec implements TransformationSpec {
     /*
      * The Object could be whatever is returned by the underlying JsonProvider used to
      * parse the SPEC.
@@ -83,8 +82,10 @@ public class JsonPathTransformationSpec  implements TransformationSpec {
         List<ValidationError> errors = new ArrayList<ValidationError>();
         errors.addAll(validateDefinitePathsAndArrayWildCardRules());
         errors.addAll(validateLookupTableRules());
+        errors.addAll(validateAddtionalTransforms());
         return errors;
     }
+
 
     private Collection<? extends ValidationError> validateDefinitePathsAndArrayWildCardRules() {
         List<ValidationError> response = new ArrayList<ValidationError>();
@@ -95,29 +96,51 @@ public class JsonPathTransformationSpec  implements TransformationSpec {
             String src = mapping.getSource();
             String tgt = mapping.getTarget();
             try {
-                JsonPath compiledSrc = JsonPath.compile(mapping.getSource());
-                JsonPath compiledTgt = JsonPath.compile(mapping.getTarget());
-                boolean isSrcArrayWildCard = false;
-                try {
-                    isSrcArrayWildCard = isArrayWildCard(src);
-                } catch(UnsupportedWildcardPathException ex) {
-                    response.add(new JsonPathTransformerValidationError(UNSUPPORTED_WILDCARD_PATH, src));
+                //with the introduction of addtionalTransform, src can be null
+                if (src == null && mapping.getAdditionalTransform() == null) {
+                    //TODO: throw invalid mapping both source and additional transform cannot be null
+                    response.add(new JsonPathTransformerValidationError(NULL_SOURCE));
+                    continue;
                 }
+                if (tgt == null) {
+                    response.add(new JsonPathTransformerValidationError(NULL_TARGET));
+                    continue;
+                }
+
+                JsonPath compiledSrc = null;
+                boolean isSrcArrayWildCard = false;
+                if (src != null) {
+                    compiledSrc = JsonPath.compile(mapping.getSource());
+                    try {
+                        isSrcArrayWildCard = isArrayWildCard(src);
+                    } catch (UnsupportedWildcardPathException ex) {
+                        response.add(new JsonPathTransformerValidationError(UNSUPPORTED_WILDCARD_PATH, src));
+                    }
+                }
+                JsonPath compiledTgt = JsonPath.compile(mapping.getTarget());
                 boolean isTgtArrayWildCard = false;
                 try {
                     isTgtArrayWildCard = isArrayWildCard(tgt);
-                } catch(UnsupportedWildcardPathException ex) {
+                } catch (UnsupportedWildcardPathException ex) {
                     response.add(new JsonPathTransformerValidationError(UNSUPPORTED_WILDCARD_PATH, tgt));
                 }
 
                 boolean bothNotSame = isSrcArrayWildCard ^ isTgtArrayWildCard;
 
-                if (!compiledSrc.isFunctionPath() && !compiledSrc.isDefinite() && !isSrcArrayWildCard) {
+
+                //On the source side we would want to allow predicate expressions, if they
+                //do not evaluate to a scalar value at runtime then the isScalar check would
+                //fail.
+                // example: $.shipment.stops[?(@.name == 'source')].location'
+                //response.add(new JsonPathTransformerValidationError(
+                //      PATH_NEITHER_DEFINITE_NOR_WILDCARD_ARRAY, src));
+                /*if (!compiledSrc.isFunctionPath() && !compiledSrc.isDefinite() && !isSrcArrayWildCard) {
                     response.add(new JsonPathTransformerValidationError(
                             PATH_NEITHER_DEFINITE_NOR_WILDCARD_ARRAY, src));
 
-                }
-                if (!compiledSrc.isFunctionPath() && !compiledTgt.isDefinite() && !isTgtArrayWildCard) {
+                }*/
+
+                if (src != null && !compiledSrc.isFunctionPath() && !compiledTgt.isDefinite() && !isTgtArrayWildCard) {
                     response.add(new JsonPathTransformerValidationError(
                             PATH_NEITHER_DEFINITE_NOR_WILDCARD_ARRAY, tgt));
 
@@ -125,20 +148,20 @@ public class JsonPathTransformationSpec  implements TransformationSpec {
                 if (bothNotSame) {
                     response.add(new JsonPathTransformerValidationError(
                             INVALID_WILDCARD_ARRAY_MAPPING,
-                            src, isSrcArrayWildCard, tgt, isTgtArrayWildCard));
+                            (src != null) ? src : "null", isSrcArrayWildCard, tgt, isTgtArrayWildCard));
 
                 }
 
-            } catch (InvalidPathException  e) {
+            } catch (InvalidPathException e) {
                 response.add(new JsonPathTransformerValidationError(
-                        INVALID_JSON_PATH, src , e.getMessage()));
+                        INVALID_JSON_PATH, (src != null) ? src : "null", e.getMessage()));
             }
 
             try {
                 JsonPath.compile(mapping.getTarget());
-            } catch (InvalidPathException  e) {
+            } catch (InvalidPathException e) {
                 response.add(new JsonPathTransformerValidationError(
-                        INVALID_JSON_PATH, tgt , e.getMessage()));
+                        INVALID_JSON_PATH, tgt, e.getMessage()));
             }
         }
         return response;
@@ -167,7 +190,7 @@ public class JsonPathTransformationSpec  implements TransformationSpec {
         }
 
         for (PathMapping m : mappings) {
-            if (m.getLookupTable() != null)  {
+            if (m.getLookupTable() != null) {
                 boolean referenceFound = find(m.getLookupTable(), tables);
                 if (!referenceFound) {
                     response.add(new JsonPathTransformerValidationError(
@@ -178,6 +201,110 @@ public class JsonPathTransformationSpec  implements TransformationSpec {
         }
         return response;
     }
+
+
+    //TODO: need to restructure it a bit.
+    private Collection<? extends ValidationError> validateAddtionalTransforms() {
+        List<ValidationError> response = new ArrayList<ValidationError>();
+
+        PathMapping[] mappings = spec.getPathMappings();
+        for (PathMapping mapping : mappings) {
+
+            SourceTransform additionalTransform = mapping.getAdditionalTransform();
+            if (additionalTransform == null) {
+                continue;
+            }
+
+            //first validate the JsonPath syntax
+            String src = mapping.getSource();
+            String tgt = mapping.getTarget();
+
+            String additionalSrc = additionalTransform.getSourcePath();
+            Object constantSrcValue = additionalTransform.getConstantSourceValue();
+            String operator = additionalTransform.getOperator();
+
+            JsonPath compiledSrcPath = null;
+            if (additionalSrc != null) {
+                try {
+                    compiledSrcPath = JsonPath.compile(additionalSrc);
+                } catch (InvalidPathException ex) {
+                    response.add(new JsonPathTransformerValidationError(
+                            INVALID_JSON_PATH, additionalSrc, ex.getMessage()));
+                }
+            }
+
+            if (operator != null) {
+                try {
+                    SourceTransform.AllowedOperation operatorEnum =
+                            SourceTransform.AllowedOperation.valueOf(operator);
+                } catch (IllegalArgumentException ex) {
+                    response.add(new JsonPathTransformerValidationError(
+                            INVALID_OPERATOR, operator));
+                }
+            }
+            // if constantValue specified then its a valid wrapper type and a scalar
+            if (constantSrcValue != null) {
+                if (!isScalar(constantSrcValue)) {
+                    response.add(new JsonPathTransformerValidationError(
+                            INVALID_CONSTANT_NOT_SCALAR));
+                }
+
+            }
+            if (src == null && operator != null) {
+
+                //throw invalid operator with null source path
+                response.add(new JsonPathTransformerValidationError(
+                        INVALID_OPERATOR_WITH_SRC_NULL, operator));
+
+            }
+            if (src != null && operator != null) {
+                if (operator.startsWith("UNARY")) {
+                    if (additionalSrc != null
+                            || constantSrcValue != null) {
+                        //Invalid Unary operator for binary operands
+                        response.add(new JsonPathTransformerValidationError(
+                                INVALID_UNARY_OPERATOR, src, additionalSrc));
+                    }
+                }
+            } else if (src != null && operator == null) {
+                if (additionalSrc != null
+                        || constantSrcValue != null) {
+                    //missing operator
+                    response.add(new JsonPathTransformerValidationError(
+                            MISSING_OPERATOR, src,
+                            additionalSrc != null ?
+                                    additionalSrc :
+                                    constantSrcValue));
+                }
+
+            }
+
+            //ensure one of them is present
+            if (additionalSrc != null
+                    && constantSrcValue != null) {
+                //Invalid additionalTransform, expected only one of sourcePath or constantSource
+                response.add(new JsonPathTransformerValidationError(
+                        INVALID_ADDITIONAL_TRANSFORM,
+                        constantSrcValue,
+                        additionalSrc));
+
+            } else if (additionalSrc == null &&
+                    constantSrcValue == null) {
+                //throw invalid additional transform, one of sourcePath or constantSource should be non-null
+                response.add(new JsonPathTransformerValidationError(
+                        NULL_ADDITIONAL_TRANSFORM));
+
+                if (src != null && operator != null
+                        && !operator.startsWith("UNARY")) {
+                    response.add(new JsonPathTransformerValidationError(
+                            MISSING_OPERAND_FOR_BINARY_OPERATOR, operator));
+                }
+            }
+        }
+
+        return response;
+    }
+
 
     private boolean find(String lookupTable, LookupTable[] tables) {
         if ((tables == null) || tables.length == 0) {
@@ -191,7 +318,8 @@ public class JsonPathTransformationSpec  implements TransformationSpec {
         return false;
     }
 
-    /* package */ static boolean isArrayWildCard(String path) {
+    /* package */
+    static boolean isArrayWildCard(String path) {
         //TODO: We support only a single wild-card to begin with.
         path = path.replaceAll("\\s", "");
         JsonPath compiled = JsonPath.compile(path);
@@ -218,13 +346,15 @@ public class JsonPathTransformationSpec  implements TransformationSpec {
             Arrays.asList(Integer.class, Boolean.class, Float.class, Double.class, String.class,
                     Character.class, Byte.class, Short.class, Long.class));
 
-    /*package*/ static boolean isScalar(Object srcValue) {
+    /*package*/
+    static boolean isScalar(Object srcValue) {
         if (srcValue == null) {
             return true;
         }
         if (WRAPPER_TYPES.contains(srcValue.getClass())) {
             return true;
         }
+
         return false;
     }
 

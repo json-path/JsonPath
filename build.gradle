@@ -45,8 +45,8 @@ subprojects {
     apply plugin: 'signing'
     apply plugin: 'osgi'
 
-    sourceCompatibility = 1.6
-    targetCompatibility = 1.6
+    sourceCompatibility = 1.8
+    targetCompatibility = 1.8
 
     repositories {
         mavenCentral()
