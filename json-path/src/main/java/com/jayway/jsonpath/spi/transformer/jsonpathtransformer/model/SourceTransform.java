@@ -43,6 +43,8 @@ public class SourceTransform {
     public static final String STRING = "string";
     public static final String BOOLEAN = "boolean";
     public static final String UNARY_BOOLEAN = "unary_boolean";
+    public static final String UNARY_TIME ="unary_time";
+
 
     public enum AllowedOperation {
 
@@ -50,7 +52,8 @@ public class SourceTransform {
 
         LHS_STRING_CONCAT(STRING), RHS_STRING_CONCAT(STRING), ADD(NUMERIC), LHS_SUB(NUMERIC),
         RHS_SUB(NUMERIC), MUL(NUMERIC), LHS_DIV(NUMERIC), RHS_DIV(NUMERIC),
-        AND(BOOLEAN), OR(BOOLEAN), NOT(UNARY_BOOLEAN), XOR(BOOLEAN);
+        AND(BOOLEAN), OR(BOOLEAN), NOT(UNARY_BOOLEAN), XOR(BOOLEAN), TO_EPOCHMILLIS(UNARY_TIME),
+        TO_ISO8601(UNARY_TIME);
 
         private static Set<String> allowedOperations;
         private String type;

@@ -45,9 +45,15 @@
       }
     }, {
       "source" : "$.earliestStartTime",
+      "additionalTransform" : {
+        "operator" : "TO_ISO8601"
+      },
       "target" : "$.originSTD"
     }, {
       "source" : "$.stops[-1].estimatedArrivalTime",
+      "additionalTransform" : {
+        "operator" : "TO_ISO8601"
+      },
       "target" : "$.destinationSTA"
     }, {
       "source" : "$.stops[0].street",
@@ -79,6 +85,44 @@
     }, {
       "source" : "$.stops[-1].geoLocation[1]",
       "target" : "$.unloading.longitude"
+    },
+    {
+      "source" : "$.earliestStartTime",
+      "additionalTransform" : {
+        "operator" : "ADD",
+        "sourcePath" : "$.plannedDriveDurationSeconds"
+      },
+      "target" : "$.testingAdditionalTransform.destinationSTAComputed"
+    },
+    {
+      "source": "$.isTPLManaged",
+      "additionalTransform": {
+        "operator" : "NOT"
+      },
+      "target": "$.testingAdditionalTransform.isNotTPLManaged"
+    },
+    {
+      "source": "$.cost",
+      "additionalTransform": {
+        "operator" : "ADD",
+        "constantSourceValue" : 100
+      },
+      "target": "$.testingAdditionalTransform.totalCost"
+    },
+    {
+      "source": "$.weight",
+      "additionalTransform": {
+        "operator" : "RHS_DIV",
+        "constantSourceValue" : 1000
+      },
+      "target": "$.testingAdditionalTransform.weightKGS"
+    },{
+      "source": "$.weightUtilization",
+      "additionalTransform": {
+        "operator" : "LHS_SUB",
+        "constantSourceValue" : 1
+      },
+      "target": "$.testingAdditionalTransform.unUtilizedWeight"
     }
 
   ]

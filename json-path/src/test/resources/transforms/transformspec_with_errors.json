@@ -85,6 +85,20 @@
         "operator" : "AND"
       },
       "target": "$.shipment.unloading.location"
+    },
+    {
+      "source": "$.shipment.state",
+      "additionalTransform": {
+        "operator" : "TO_EPOCHMILLIS"
+      },
+      "target": "$.shipment.epochmillis"
+    },
+    {
+      "source": "$.shipment.state",
+      "additionalTransform": {
+        "operator" : "TO_ISO8601"
+      },
+      "target": "$.shipment.iso8601"
     }
 
   ]

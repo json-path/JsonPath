@@ -7,6 +7,9 @@ import org.junit.Test;
 import java.io.InputStream;
 import java.nio.charset.Charset;
 
+import static org.junit.Assert.assertEquals;
+
+
 public class TransformationAdvancedTest {
 
     InputStream sourceStream;
@@ -14,6 +17,7 @@ public class TransformationAdvancedTest {
     Configuration configuration;
     TransformationSpec spec;
     Object sourceJson;
+    DocumentContext jsonContext;
 
     @Before
     public void setup() {
@@ -22,7 +26,7 @@ public class TransformationAdvancedTest {
         sourceStream = this.getClass().getClassLoader().getResourceAsStream("transforms/shipment.json");
         sourceJson = configuration.jsonProvider().parse(sourceStream, Charset.defaultCharset().name());
 
-        DocumentContext jsonContext = JsonPath.parse(sourceJson);
+        jsonContext = JsonPath.parse(sourceJson);
         System.out.println("Document Input :" + jsonContext.jsonString());
 
         transformSpec = this.getClass().getClassLoader().getResourceAsStream("transforms/shipment_transform_spec.json");
@@ -34,8 +38,35 @@ public class TransformationAdvancedTest {
     @Test
     public void simple_transform_spec_test() {
         Object transformed = configuration.transformationProvider().transform(sourceJson,spec, configuration);
-        DocumentContext jsonContext = JsonPath.parse(transformed);
-        System.out.println("Document Created by Transformation:" + jsonContext.jsonString());
+        DocumentContext tgtJsonContext = JsonPath.parse(transformed);
+        System.out.println("Document Created by Transformation:" + tgtJsonContext.jsonString());
+
+        //Assertions about correctness of transformations
+        //$.earliestStartTime +  $.plannedDriveDurationSeconds == $.testingAdditionalTransform.destinationSTAComputed
+        long earliestStartTime = jsonContext.read("$.earliestStartTime");
+        int plannedDriveDurationSeconds = jsonContext.read( "$.plannedDriveDurationSeconds");
+        long destinationSTAComputed = tgtJsonContext.read("$.testingAdditionalTransform.destinationSTAComputed");
+        assertEquals((earliestStartTime + plannedDriveDurationSeconds), destinationSTAComputed);
+
+        //! $.isTPLManaged == $.testingAdditionalTransform.isNotTPLManaged
+        boolean isTPLManaged = jsonContext.read("$.isTPLManaged");
+        boolean isNotTPLManaged = tgtJsonContext.read("$.testingAdditionalTransform.isNotTPLManaged");
+        assertEquals(!isTPLManaged,isNotTPLManaged);
+
+        //$.cost + 100 == $.testingAdditionalTransform.totalCost
+        double cost = jsonContext.read("$.cost");
+        double totalCost = tgtJsonContext.read("$.testingAdditionalTransform.totalCost");
+        assertEquals(cost + 100, totalCost, 0);
+
+        //$.weight / 1000 == $.testingAdditionalTransform.weightKGS
+        double weight = jsonContext.read("$.weight ");
+        double weightKGS = tgtJsonContext.read("$.testingAdditionalTransform.weightKGS");
+        assertEquals(weight/1000, weightKGS, 0.01);
+
+        //1 - $.weightUtilization == $.testingAdditionalTransform.unUtilizedWeight
+        double weightUtilization = jsonContext.read("$.weightUtilization");
+        double unUtilizedWeight = tgtJsonContext.read("$.testingAdditionalTransform.unUtilizedWeight");
+        assertEquals(1-weightUtilization, unUtilizedWeight, 0.01);
     }
 
 }

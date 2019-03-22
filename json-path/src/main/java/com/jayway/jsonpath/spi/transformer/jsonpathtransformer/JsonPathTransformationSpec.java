@@ -62,6 +62,8 @@ import java.util.*;
  * TODO: identify more Validations.
  */
 public class JsonPathTransformationSpec implements TransformationSpec {
+
+    public static final String UNARY = "unary";
     /*
      * The Object could be whatever is returned by the underlying JsonProvider used to
      * parse the SPEC.
@@ -233,10 +235,10 @@ public class JsonPathTransformationSpec implements TransformationSpec {
                 }
             }
 
+            SourceTransform.AllowedOperation operatorEnum = null;
             if (operator != null) {
                 try {
-                    SourceTransform.AllowedOperation operatorEnum =
-                            SourceTransform.AllowedOperation.valueOf(operator);
+                    operatorEnum = SourceTransform.AllowedOperation.valueOf(operator);
                 } catch (IllegalArgumentException ex) {
                     response.add(new JsonPathTransformerValidationError(
                             INVALID_OPERATOR, operator));
@@ -258,7 +260,7 @@ public class JsonPathTransformationSpec implements TransformationSpec {
 
             }
             if (src != null && operator != null) {
-                if (operator.startsWith("UNARY")) {
+                if (operatorEnum.getType().startsWith(UNARY)) {
                     if (additionalSrc != null
                             || constantSrcValue != null) {
                         //Invalid Unary operator for binary operands
@@ -285,17 +287,16 @@ public class JsonPathTransformationSpec implements TransformationSpec {
                 //Invalid additionalTransform, expected only one of sourcePath or constantSource
                 response.add(new JsonPathTransformerValidationError(
                         INVALID_ADDITIONAL_TRANSFORM,
-                        constantSrcValue,
-                        additionalSrc));
+                        constantSrcValue,additionalSrc));
 
             } else if (additionalSrc == null &&
-                    constantSrcValue == null) {
+                    constantSrcValue == null && operator != null &&
+                    !operatorEnum.getType().startsWith(UNARY)) {
                 //throw invalid additional transform, one of sourcePath or constantSource should be non-null
                 response.add(new JsonPathTransformerValidationError(
                         NULL_ADDITIONAL_TRANSFORM));
 
-                if (src != null && operator != null
-                        && !operator.startsWith("UNARY")) {
+                if (src != null) {
                     response.add(new JsonPathTransformerValidationError(
                             MISSING_OPERAND_FOR_BINARY_OPERATOR, operator));
                 }
