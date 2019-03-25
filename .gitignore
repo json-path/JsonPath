@@ -13,3 +13,4 @@ TODO
 gradle.properties
 build
 bin/
+out/
