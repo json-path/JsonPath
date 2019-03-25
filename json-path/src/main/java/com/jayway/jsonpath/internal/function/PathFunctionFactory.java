@@ -1,5 +1,6 @@
 package com.jayway.jsonpath.internal.function;
 
+import com.jayway.jsonpath.Configuration;
 import com.jayway.jsonpath.InvalidPathException;
 import com.jayway.jsonpath.internal.function.json.Append;
 import com.jayway.jsonpath.internal.function.numeric.Average;
@@ -63,8 +64,17 @@ public class PathFunctionFactory {
      *
      * @throws InvalidPathException
      */
-    public static PathFunction newFunction(String name) throws InvalidPathException {
-        Class functionClazz = FUNCTIONS.get(name);
+    public static PathFunction newFunction(String name, Configuration conf) throws InvalidPathException {
+        Class functionClazz = null;
+        if (conf != null && conf.getFunctionMap() != null) {
+            Map<String, Class> confFunctionMap = conf.getFunctionMap();
+            functionClazz = confFunctionMap.get(name);
+        }
+
+        if (functionClazz == null) {
+            functionClazz = FUNCTIONS.get(name);
+        }
+
         if(functionClazz == null){
             throw new InvalidPathException("Function with name: " + name + " does not exist.");
         } else {
