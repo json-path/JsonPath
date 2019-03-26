@@ -720,5 +720,7 @@ The Transformed Target document produced would be like this:
 
 Notice that the "state" field in the source document was mapped to a "status" field in target document and the mapping made use of a LookupTable to transform "EN_ROUTE" to "ACTIVE". The use of LookupTables is optional in the transformation specification.
 
+Additional features in the form of binary and unary operations on the source-path combined with a constant or a secondary source json-path are also supported by the TransformationProvider. For more details refer the [![testcase](https://github.com/KumarJayanti/JsonPath/blob/feature/transformation-api/json-path/src/test/java/com/jayway/jsonpath/TransformationAdvancedTest.java)]
+
 [![Analytics](https://ga-beacon.appspot.com/UA-54945131-1/jsonpath/index)](https://github.com/igrigorik/ga-beacon)
  
