@@ -16,6 +16,7 @@ package com.jayway.jsonpath;
 
 
 import com.jayway.jsonpath.internal.EvaluationContext;
+import com.jayway.jsonpath.internal.FastPathNotFoundException;
 import com.jayway.jsonpath.internal.ParseContextImpl;
 import com.jayway.jsonpath.internal.Path;
 import com.jayway.jsonpath.internal.PathRef;
@@ -195,6 +196,11 @@ public class JsonPath {
             }
         } catch (RuntimeException e) {
             if (!optSuppressExceptions) {
+                if (e instanceof FastPathNotFoundException) {
+                    // the caller wants an exception -> convert the stacktrace-less FastPathNotFoundException
+                    // into one with stacktrace
+                    throw new PathNotFoundException(e.getMessage());
+                }
                 throw e;
             } else {
                 if (optAsPathList) {
