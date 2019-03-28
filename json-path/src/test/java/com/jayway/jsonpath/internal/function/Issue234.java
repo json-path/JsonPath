@@ -1,9 +1,9 @@
 package com.jayway.jsonpath.internal.function;
 
 import com.jayway.jsonpath.JsonPath;
-import org.assertj.core.util.Maps;
 import org.junit.Test;
 
+import java.util.HashMap;
 import java.util.Map;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -27,7 +27,7 @@ public class Issue234 {
 
     @Test
     public void testIssue234() {
-        Map<String, String> context = Maps.newHashMap();
+        Map<String, String> context = new HashMap<>();
         context.put("key", "first");
         Object value = JsonPath.read(context, "concat(\"/\", $.key)");
         assertThat(value).isEqualTo("/first");

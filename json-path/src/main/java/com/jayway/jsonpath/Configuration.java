@@ -18,12 +18,7 @@ import com.jayway.jsonpath.internal.DefaultsImpl;
 import com.jayway.jsonpath.spi.json.JsonProvider;
 import com.jayway.jsonpath.spi.mapper.MappingProvider;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.EnumSet;
-import java.util.Set;
+import java.util.*;
 
 import static com.jayway.jsonpath.internal.Utils.notNull;
 import static java.util.Arrays.asList;
@@ -142,7 +137,7 @@ public class Configuration {
     /**
      * Creates a new configuration with the provided options. Options in this configuration are discarded.
      * @param options
-     * @return
+     * @return the new configuration instance
      */
     public Configuration setOptions(Option... options) {
         return Configuration.builder().jsonProvider(jsonProvider).mappingProvider(mappingProvider).options(options).evaluationListener(evaluationListeners).build();
@@ -150,7 +145,7 @@ public class Configuration {
 
     /**
      * Returns the options used by this configuration
-     * @return
+     * @return the new configuration instance
      */
     public Set<Option> getOptions() {
         return options;

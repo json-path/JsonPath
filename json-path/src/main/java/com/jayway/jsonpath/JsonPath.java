@@ -15,11 +15,7 @@
 package com.jayway.jsonpath;
 
 
-import com.jayway.jsonpath.internal.EvaluationContext;
-import com.jayway.jsonpath.internal.ParseContextImpl;
-import com.jayway.jsonpath.internal.Path;
-import com.jayway.jsonpath.internal.PathRef;
-import com.jayway.jsonpath.internal.Utils;
+import com.jayway.jsonpath.internal.*;
 import com.jayway.jsonpath.internal.path.PathCompiler;
 import com.jayway.jsonpath.spi.json.JsonProvider;
 
@@ -289,7 +285,7 @@ public class JsonPath {
      * Adds or updates the Object this path points to in the provided jsonObject with a key with a value
      *
      * @param jsonObject    a json object
-     * @param value         the key to add or update
+     * @param key         the key to add or update
      * @param value         the new value
      * @param configuration configuration to use
      * @param <T>           expected return type
@@ -628,6 +624,7 @@ public class JsonPath {
      * @param json url
      * @return a read context
      */
+    @Deprecated
     public static DocumentContext parse(URL json) throws IOException {
         return new ParseContextImpl().parse(json);
     }
@@ -683,6 +680,7 @@ public class JsonPath {
      * @param json input
      * @return a read context
      */
+    @Deprecated
     public static DocumentContext parse(URL json, Configuration configuration) throws IOException {
         return new ParseContextImpl(configuration).parse(json);
     }

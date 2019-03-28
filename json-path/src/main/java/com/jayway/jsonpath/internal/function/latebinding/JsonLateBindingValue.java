@@ -34,7 +34,7 @@ public class JsonLateBindingValue implements ILateBindingValue {
      * Evaluate the JSON document at the point of need using the JSON parameter and associated document model which may
      * itself originate from yet another function thus recursively invoking late binding methods.
      *
-     * @return
+     * @return the late value
      */
     @Override
     public Object get() {

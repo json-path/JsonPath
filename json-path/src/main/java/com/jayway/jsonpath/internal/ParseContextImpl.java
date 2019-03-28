@@ -68,6 +68,7 @@ public class ParseContextImpl implements ParseContext {
     }
 
     @Override
+    @Deprecated
     public DocumentContext parse(URL url) throws IOException {
         notNull(url, "url can not be null");
         InputStream fis = null;

@@ -38,7 +38,7 @@ public class WithJsonPath<T> extends TypeSafeMatcher<ReadContext> {
     @Override
     protected void describeMismatchSafely(ReadContext context, Description mismatchDescription) {
         try {
-            T value = jsonPath.read(context.json());
+            T value = jsonPath.read(context.jsonString());
             mismatchDescription
                     .appendText("json path ")
                     .appendValue(jsonPath.getPath())

@@ -418,13 +418,13 @@ public class FilterTest extends BaseTest {
     //----------------------------------------------------------------------------
     @Test
     public void not_empty_evals() {
-        assertThat(filter(where("string-key").notEmpty()).apply(createPredicateContext(json))).isEqualTo(true);
-        assertThat(filter(where("string-key-empty").notEmpty()).apply(createPredicateContext(json))).isEqualTo(false);
+        assertThat(filter(where("string-key").empty(false)).apply(createPredicateContext(json))).isEqualTo(true);
+        assertThat(filter(where("string-key-empty").empty(false)).apply(createPredicateContext(json))).isEqualTo(false);
 
-        assertThat(filter(where("int-arr").notEmpty()).apply(createPredicateContext(json))).isEqualTo(true);
-        assertThat(filter(where("arr-empty").notEmpty()).apply(createPredicateContext(json))).isEqualTo(false);
+        assertThat(filter(where("int-arr").empty(false)).apply(createPredicateContext(json))).isEqualTo(true);
+        assertThat(filter(where("arr-empty").empty(false)).apply(createPredicateContext(json))).isEqualTo(false);
 
-        assertThat(filter(where("null-key").notEmpty()).apply(createPredicateContext(json))).isEqualTo(false);
+        assertThat(filter(where("null-key").empty(false)).apply(createPredicateContext(json))).isEqualTo(false);
     }
 
     //----------------------------------------------------------------------------
@@ -516,11 +516,11 @@ public class FilterTest extends BaseTest {
     @Test
     public void criteria_can_be_parsed() {
 
-        Criteria criteria = Criteria.parse("@.foo == 'baar'");
-        assertThat(criteria.toString()).isEqualTo("@['foo'] == 'baar'");
+        Filter criteria = Filter.parse("[?(@.foo == 'baar')]");
+        assertThat(criteria.toString()).isEqualTo("[?(@['foo'] == 'baar')]");
 
-        criteria = Criteria.parse("@.foo");
-        assertThat(criteria.toString()).isEqualTo("@['foo']");
+        criteria = Filter.parse("[?(@.foo)]");
+        assertThat(criteria.toString()).isEqualTo("[?(@['foo'])]");
     }
 
 

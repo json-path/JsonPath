@@ -43,6 +43,7 @@ public abstract class AbstractJsonProvider implements JsonProvider {
         return ((List) obj).get(idx);
     }
 
+    @Deprecated
     public final Object getArrayIndex(Object obj, int idx, boolean unwrap){
         return getArrayIndex(obj, idx);
     }
