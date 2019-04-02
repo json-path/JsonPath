@@ -30,7 +30,6 @@ DAMAGE.
 package com.jayway.jsonassert.impl.matcher;
 
 import org.hamcrest.Description;
-import org.hamcrest.Factory;
 import org.hamcrest.Matcher;
 
 import java.util.Map;
@@ -59,12 +58,10 @@ public class IsMapContainingValue<V> extends MapTypeSafeMatcher<Map<?,V>>{
                    .appendDescriptionOf(valueMatcher);
     }
 
-    @Factory
     public static <V> Matcher<? super Map<?,V>> hasValue(V value) {
         return IsMapContainingValue.<V>hasValue(equalTo(value));
     }
 
-    @Factory
     public static <V> Matcher<? super Map<?,V>> hasValue(Matcher<? super V> valueMatcher) {
         return new IsMapContainingValue<V>(valueMatcher);
     }

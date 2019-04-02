@@ -30,7 +30,6 @@ DAMAGE.
 package com.jayway.jsonassert.impl.matcher;
 
 import org.hamcrest.Description;
-import org.hamcrest.Factory;
 import org.hamcrest.Matcher;
 
 import java.util.Collection;
@@ -52,7 +51,6 @@ public class IsEmptyCollection<E> extends CollectionMatcher<Collection<E>> {
     /**
      * Matches an empty collection.
      */
-    @Factory
     public static <E> Matcher<Collection<E>> empty() {
         return new IsEmptyCollection<E>();
     }
