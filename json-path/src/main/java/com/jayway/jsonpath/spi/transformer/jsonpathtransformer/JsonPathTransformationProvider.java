@@ -146,7 +146,8 @@ public class JsonPathTransformationProvider implements TransformationProvider<Js
                             transformed = transform(
                                     exp, first, inputObject, configuration, jsonContext, transformed, model
                                     , pm.getLookupTable());
-                            first = false;
+                            //if the very first path is not found in the source.
+                            first = (transformed != null) ? false : true;
                         } else {
                             transformed = transform(
                                     exp, first, inputObject, configuration, jsonContext, transformed, model
@@ -163,7 +164,8 @@ public class JsonPathTransformationProvider implements TransformationProvider<Js
                 transformed = transform(
                         pm, first, inputObject, configuration, jsonContext, transformed, model
                         , pm.getLookupTable());
-                first = false;
+                //if the very first path is not found in the source.
+                first = (transformed != null) ? false : true;
             } else {
                 transformed = transform(
                         pm, first, inputObject, configuration, jsonContext, transformed, model
@@ -209,6 +211,7 @@ public class JsonPathTransformationProvider implements TransformationProvider<Js
                 additionalTransform.getSourcePath() : null;
         String operator = (additionalTransform != null) ?
                 additionalTransform.getOperator() : null;
+
 
         if (additionalTransform != null) {
             if (constantSourceValue != null &&
@@ -277,7 +280,9 @@ public class JsonPathTransformationProvider implements TransformationProvider<Js
                     additonalSourceValue =
                             jsonContext.read(JsonPath.compile(additionalSourcePath));
                 } catch (PathNotFoundException ex) {
-                    throw new TransformationException(ex);
+                    //throw new TransformationException(ex);
+                    //any time we find a missing value in source document path
+                    //we ignore the entire operation.
                 }
 
             }
@@ -286,11 +291,15 @@ public class JsonPathTransformationProvider implements TransformationProvider<Js
                 SourceTransform.AllowedOperation.valueOf(operator) : null;
 
 
-        checkDataTypesAndOperator(
-                srcValue, additonalSourceValue, operatorEnum);
+        if (additonalSourceValue != null ||
+                (additonalSourceValue == null
+                        && SourceTransform.AllowedOperation.isUnary(operatorEnum))) {
+            checkDataTypesAndOperator(
+                    srcValue, additonalSourceValue, operatorEnum);
 
-        if (operator != null) {
-            srcValue = applyAddtionalTransform(srcValue, additonalSourceValue, operatorEnum);
+            if (operator != null) {
+                srcValue = applyAddtionalTransform(srcValue, additonalSourceValue, operatorEnum);
+            }
         }
 
         if (first) {
@@ -314,7 +323,7 @@ public class JsonPathTransformationProvider implements TransformationProvider<Js
                             srcValue, additonalSourceValue));
 
         }
-        if (operator != null && operator.getType().startsWith(JsonPathTransformationSpec.UNARY)) {
+        if (operator != null && SourceTransform.AllowedOperation.isUnary(operator)) {
             if (srcValue != null && additonalSourceValue != null) {
                 //throw invalid Unary Operator NOT with Two Operands
                 throw new TransformationException(

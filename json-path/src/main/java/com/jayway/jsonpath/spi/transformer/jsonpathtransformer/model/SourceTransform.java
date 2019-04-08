@@ -44,6 +44,7 @@ public class SourceTransform {
     public static final String BOOLEAN = "boolean";
     public static final String UNARY_BOOLEAN = "unary_boolean";
     public static final String UNARY_TIME ="unary_time";
+    public static final String UNARY_PREFIX = "unary";
 
 
     public enum AllowedOperation {
@@ -75,6 +76,13 @@ public class SourceTransform {
 
         public String getType() {
             return type;
+        }
+
+        public static boolean isUnary(AllowedOperation op) {
+            if (op == null) {
+                return false;
+            }
+            return op.getType().startsWith(UNARY_PREFIX);
         }
 
     }

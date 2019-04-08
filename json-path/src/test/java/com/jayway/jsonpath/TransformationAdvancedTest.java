@@ -6,6 +6,7 @@ import org.junit.Test;
 
 import java.io.InputStream;
 import java.nio.charset.Charset;
+import java.util.Map;
 
 import static org.junit.Assert.assertEquals;
 
@@ -13,18 +14,25 @@ import static org.junit.Assert.assertEquals;
 public class TransformationAdvancedTest {
 
     InputStream sourceStream;
+    InputStream sourceStream_1;
     InputStream transformSpec;
     Configuration configuration;
     TransformationSpec spec;
     Object sourceJson;
+    Object sourceJson_1;
     DocumentContext jsonContext;
+    DocumentContext jsonContext_1;
+    Map<String, String> kssProps;
 
     @Before
     public void setup() {
+
         configuration = Configuration.builder()
                 .options(Option.CREATE_MISSING_PROPERTIES_ON_DEFINITE_PATH).build();
         sourceStream = this.getClass().getClassLoader().getResourceAsStream("transforms/shipment.json");
+        sourceStream_1 = this.getClass().getClassLoader().getResourceAsStream("transforms/shipment_1.json");
         sourceJson = configuration.jsonProvider().parse(sourceStream, Charset.defaultCharset().name());
+        sourceJson_1 = configuration.jsonProvider().parse(sourceStream_1, Charset.defaultCharset().name());
 
         jsonContext = JsonPath.parse(sourceJson);
         System.out.println("Document Input :" + jsonContext.jsonString());
@@ -67,6 +75,14 @@ public class TransformationAdvancedTest {
         double weightUtilization = jsonContext.read("$.weightUtilization");
         double unUtilizedWeight = tgtJsonContext.read("$.testingAdditionalTransform.unUtilizedWeight");
         assertEquals(1-weightUtilization, unUtilizedWeight, 0.01);
+    }
+
+    @Test
+    public void simple_transform_spec_with_missing_source_fields() {
+        Object transformed = configuration.transformationProvider().transform(sourceJson_1,spec, configuration);
+        DocumentContext tgtJsonContext = JsonPath.parse(transformed);
+        System.out.println("Document Created by Transformation:" + tgtJsonContext.jsonString());
+
     }
 
 }
