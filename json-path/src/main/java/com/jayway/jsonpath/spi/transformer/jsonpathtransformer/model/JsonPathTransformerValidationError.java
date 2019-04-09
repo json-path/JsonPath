@@ -17,6 +17,7 @@ public class JsonPathTransformerValidationError extends ValidationError {
     public static final String PATH_NEITHER_DEFINITE_NOR_WILDCARD_ARRAY =
             "PATH_NEITHER_DEFINITE_NOR_WILDCARD_ARRAY";
     public static final String INVALID_JSON_PATH = "INVALID_JSON_PATH";
+    public static final String INVALID_JSON_OBJECT = "INVALID_JSON_OBJECT";
     public static final String INVALID_WILDCARD_ARRAY_MAPPING = "INVALID_WILDCARD_ARRAY_MAPPING";
     public static final String MISSING_TABLE_NAME = "MISSING_TABLE_NAME";
     public static final String MISSING_TABLE_DATA = "MISSING_TABLE_DATA";

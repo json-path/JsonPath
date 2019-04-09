@@ -124,8 +124,26 @@ public class JsonPathTransformationProvider implements TransformationProvider<Js
         String inputObject = "{ }";
         Object transformed = null;
         boolean first = true;
+        Object sourceJson = source;
 
-        DocumentContext jsonContext = JsonPath.parse(source);
+        if (source == null) {
+            throw new IllegalArgumentException(
+                    getStringFromBundle(NULL_PARAMETER, "source"));
+        }
+
+        if (source instanceof  String) {
+            sourceJson = configuration.jsonProvider().parse((String)source);
+        } else if (source instanceof  InputStream) {
+            sourceJson = configuration.jsonProvider().parse((InputStream)source,
+                    Charset.defaultCharset().name());
+        }
+        if (!configuration.jsonProvider().isArray(sourceJson) &&
+                !configuration.jsonProvider().isMap(sourceJson)) {
+            throw new IllegalArgumentException(
+                    getStringFromBundle(INVALID_JSON_OBJECT, source.getClass().getName()));
+        }
+
+        DocumentContext jsonContext = JsonPath.parse(sourceJson);
         TransformationModel model = (TransformationModel) spec.get();
 
         for (PathMapping pm : model.getPathMappings()) {

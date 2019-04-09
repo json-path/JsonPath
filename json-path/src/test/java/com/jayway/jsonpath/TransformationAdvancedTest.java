@@ -1,5 +1,7 @@
 package com.jayway.jsonpath;
 
+import com.jayway.jsonpath.spi.json.JsonProvider;
+import com.jayway.jsonpath.spi.mapper.MappingProvider;
 import com.jayway.jsonpath.spi.transformer.TransformationSpec;
 import org.junit.Before;
 import org.junit.Test;
@@ -7,6 +9,7 @@ import org.junit.Test;
 import java.io.InputStream;
 import java.nio.charset.Charset;
 import java.util.Map;
+import java.util.Set;
 
 import static org.junit.Assert.assertEquals;
 
@@ -28,7 +31,7 @@ public class TransformationAdvancedTest {
     public void setup() {
 
         configuration = Configuration.builder()
-                .options(Option.CREATE_MISSING_PROPERTIES_ON_DEFINITE_PATH).build();
+               .options(Option.CREATE_MISSING_PROPERTIES_ON_DEFINITE_PATH).build();
         sourceStream = this.getClass().getClassLoader().getResourceAsStream("transforms/shipment.json");
         sourceStream_1 = this.getClass().getClassLoader().getResourceAsStream("transforms/shipment_1.json");
         sourceJson = configuration.jsonProvider().parse(sourceStream, Charset.defaultCharset().name());
@@ -82,7 +85,6 @@ public class TransformationAdvancedTest {
         Object transformed = configuration.transformationProvider().transform(sourceJson_1,spec, configuration);
         DocumentContext tgtJsonContext = JsonPath.parse(transformed);
         System.out.println("Document Created by Transformation:" + tgtJsonContext.jsonString());
-
     }
 
 }

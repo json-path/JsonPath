@@ -18,6 +18,7 @@ import com.jayway.jsonpath.internal.DefaultsImpl;
 import com.jayway.jsonpath.spi.json.JsonProvider;
 import com.jayway.jsonpath.spi.mapper.MappingProvider;
 import com.jayway.jsonpath.spi.transformer.TransformationProvider;
+import com.jayway.jsonpath.spi.transformer.jsonpathtransformer.JsonPathTransformationProvider;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -294,7 +295,9 @@ public class Configuration {
          *
          * @return default transformation provider
          */
-        TransformationProvider transformationProvider();
+        default TransformationProvider transformationProvider() {
+            return new JsonPathTransformationProvider();
+        }
 
     }
 }
