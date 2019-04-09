@@ -6,15 +6,19 @@ jar {
     baseName 'json-path'
     manifest {
         attributes 'Implementation-Title': 'json-path', 'Implementation-Version': version
-		instruction 'Require-Capability', "json-path-provider"
+		instruction 'Require-Capability', "json-provider"
     }
 }
 
 dependencies {
     compile libs.slf4jApi
-
     testCompile libs.test
     testCompile libs.jsonSmart
+    testCompile libs.gson
+    testCompile libs.jettison
+    testCompile libs.tapestryJson
+    testCompile libs.jacksonDatabind
+    testCompile libs.jsonOrg
 }
 
 task distZip(type: Zip, dependsOn: assemble) {
