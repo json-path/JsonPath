@@ -20,7 +20,7 @@ public class IsJson<T> extends TypeSafeMatcher<T> {
     @Override
     protected boolean matchesSafely(T json) {
         try {
-            ReadContext context = parse(json, true);
+            ReadContext context = parse(json);
             return jsonMatcher.matches(context);
         } catch (JsonPathException e) {
             return false;
@@ -36,7 +36,7 @@ public class IsJson<T> extends TypeSafeMatcher<T> {
     @Override
     protected void describeMismatchSafely(T json, Description mismatchDescription) {
         try {
-            ReadContext context = parse(json, true);
+            ReadContext context = parse(json);
             jsonMatcher.describeMismatch(context, mismatchDescription);
         } catch (JsonPathException e) {
             buildMismatchDescription(json, mismatchDescription, e);
@@ -53,11 +53,11 @@ public class IsJson<T> extends TypeSafeMatcher<T> {
                 .appendValue(e.getMessage());
     }
 
-    private static ReadContext parse(Object object, boolean strict) throws IOException {
+    private static ReadContext parse(Object object) throws IOException {
         if (object instanceof String) {
-            return JsonPath.parse((String) object, strict);
+            return JsonPath.parse((String) object);
         } else if (object instanceof File) {
-            return JsonPath.parse((File) object, strict);
+            return JsonPath.parse((File) object);
         } else if (object instanceof ReadContext) {
             return (ReadContext) object;
         } else {

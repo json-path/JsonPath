@@ -1,2 +1,2 @@
 rootProject.name='json-path-parent'
-include ':json-path', ':json-provider', ':json-path-assert', ':json-path-web-test'
+include ':json-path', ':json-provider-jackson', ':json-provider-jsonsmart', ':json-provider-jsonorg', ':json-provider-tapestry', ':json-provider-jettison', ':json-provider-gson', ':json-path-assert', ':json-path-web-test'

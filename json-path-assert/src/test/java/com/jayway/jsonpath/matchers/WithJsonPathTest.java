@@ -1,34 +1,23 @@
 package com.jayway.jsonpath.matchers;
 
-import static com.jayway.jsonpath.JsonPath.compile;
-import static com.jayway.jsonpath.matchers.JsonPathMatchers.withJsonPath;
-import static com.jayway.jsonpath.matchers.helpers.ResourceHelpers.resource;
-import static org.hamcrest.Matchers.containsString;
-import static org.hamcrest.Matchers.equalTo;
-import static org.hamcrest.Matchers.hasItem;
-import static org.hamcrest.Matchers.hasSize;
-import static org.hamcrest.Matchers.instanceOf;
-import static org.hamcrest.Matchers.not;
-import static org.junit.Assert.assertThat;
-
-import java.util.Collection;
-import java.util.List;
-
+import com.jayway.jsonpath.InvalidPathException;
+import com.jayway.jsonpath.JsonPath;
+import com.jayway.jsonpath.ReadContext;
 import org.hamcrest.Description;
 import org.hamcrest.Matcher;
 import org.hamcrest.StringDescription;
 import org.junit.Test;
 
-import com.jayway.jsonpath.InvalidPathException;
-import com.jayway.jsonpath.JsonPath;
-import com.jayway.jsonpath.ReadContext;
+import java.util.Collection;
+import java.util.List;
+
+import static com.jayway.jsonpath.JsonPath.compile;
+import static com.jayway.jsonpath.matchers.JsonPathMatchers.withJsonPath;
+import static com.jayway.jsonpath.matchers.helpers.ResourceHelpers.resource;
+import static org.hamcrest.Matchers.*;
+import static org.junit.Assert.assertThat;
 
 public class WithJsonPathTest {
-	
-	static{
-    	System.setProperty("com.jayway.jsonpath.jsonsmart.parsing.mode","MODE_PERMISSIVE");
-	}
-	
     private static final ReadContext BOOKS_JSON = JsonPath.parse(resource("books.json"));
 
     @Test
@@ -100,7 +89,7 @@ public class WithJsonPathTest {
 
     @Test
     public void shouldNotMatchOnInvalidJson() {
-    	ReadContext invalidJson = JsonPath.parse("invalid-json", false);
+        ReadContext invalidJson = JsonPath.parse("invalid-json");
         assertThat(invalidJson, not(withJsonPath("$.expensive", equalTo(10))));
     }
 

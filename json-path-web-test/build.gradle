@@ -28,10 +28,9 @@ jar {
 
 dependencies {
     compile project(':json-path')
-    compile project(':json-provider')
+    compile project(':json-provider-jsonsmart')
+    compile project(':json-provider-jackson')
     compile 'commons-io:commons-io:2.4'
-    compile libs.jacksonDatabind
-    compile libs.jsonSmart
     compile 'io.fastjson:boon:0.33'
     compile 'com.nebhale.jsonpath:jsonpath:1.2'
     compile 'io.gatling:jsonpath_2.10:0.6.4'
