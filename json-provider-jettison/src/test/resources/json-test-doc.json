@@ -1,0 +1,30 @@
+{
+    "id": 100,
+    "type": "donut",
+    "name": "Cake",
+    "available": true,
+    "ppu": 0.55,
+    "batters":
+    {
+        "batter":
+                [
+                    {
+                        "id": "1001",
+                        "type": "Regular"
+                    },
+                    {
+                        "id": "1002",
+                        "type": "Chocolate"
+                    },
+                    {
+                        "id": "1003",
+                        "type": "Blueberry"
+                    },
+                    {
+                        "id": "1004",
+                        "type": "Devil's Food"
+                    }
+                ]
+    },
+    "toppings": ["Glazed", "Sugar", "Chocolate", "Maple"]
+}

@@ -1,0 +1,27 @@
+
+
+
+{
+    "arr": [
+        {
+            "obj":{"innerArr": [
+                {
+                    "val": "bla_0"
+                },
+                {
+                    "val": null
+                }
+            ]}
+        },
+        {
+            "obj":{"innerArr": [
+                {
+                    "val": "bla_4"
+                },
+                {
+                    "val": "bla_5"
+                }
+            ]}
+        }
+    ]
+}

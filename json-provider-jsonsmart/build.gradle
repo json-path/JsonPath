@@ -1,0 +1,56 @@
+apply from: "$rootDir/gradle/publishMaven.gradle"
+
+description = "Java port of Stefan Goessner JsonPath."
+
+jar {
+    baseName 'json-provider-jsonsmart'
+    manifest {
+        attributes 'Implementation-Title': 'json-provider-jsonsmart', 'Implementation-Version': version
+        instruction 'Fragment-Host', 'com.jayway.jsonpath.json-path'
+		instruction 'Provide-Capability', 'json-provider'
+    }
+}
+
+dependencies {
+    compile project(':json-path') 
+    compile libs.jsonSmart
+    compile libs.slf4jApi
+
+    testCompile libs.test
+}
+
+task distZip(type: Zip, dependsOn: assemble) {
+    classifier = 'with-dependencies'
+
+    from('build/docs') {
+        into 'api'
+    }
+    from(sourcesJar) {
+        into 'source'
+    }
+    from(jar) {
+        into 'lib'
+    }
+}
+
+task distTar(type: Tar, dependsOn: assemble) {
+    classifier = 'with-dependencies'
+    compression = Compression.GZIP
+    extension = 'tar.gz'
+
+    from('build/docs') {
+        into 'api'
+    }
+    from(sourcesJar) {
+        into 'source'
+    }
+    from(jar) {
+        into 'lib'
+    }
+}
+
+task dist(){
+
+}
+dist.dependsOn distZip
+dist.dependsOn distTar
