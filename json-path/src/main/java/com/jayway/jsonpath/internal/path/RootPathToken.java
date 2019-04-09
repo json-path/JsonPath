@@ -27,7 +27,7 @@ public class RootPathToken extends PathToken {
 
 
     RootPathToken(char rootToken) {
-        this.rootToken = Character.toString(rootToken);;
+        this.rootToken = Character.toString(rootToken);
         this.tail = this;
         this.tokenCount = 1;
     }

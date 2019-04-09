@@ -1,15 +1,16 @@
 package com.jayway.jsonpath.internal.filter;
 
+import java.util.regex.Pattern;
+
 import com.jayway.jsonpath.InvalidPathException;
+import com.jayway.jsonpath.JsonPathException;
 import com.jayway.jsonpath.Predicate;
+import com.jayway.jsonpath.internal.Path;
+import com.jayway.jsonpath.internal.path.PathCompiler;
+import static com.jayway.jsonpath.internal.filter.ValueNodes.*;
 
 public abstract class ValueNode {
 
-    public static final NullNode NULL_NODE = new NullNode();
-    public static final BooleanNode TRUE = new BooleanNode("true");
-    public static final BooleanNode FALSE = new BooleanNode("false");
-    public static final UndefinedNode UNDEFINED = new UndefinedNode();
-    
     public abstract Class<?> type(Predicate.PredicateContext ctx);
 
     public boolean isPatternNode() {
@@ -99,4 +100,94 @@ public abstract class ValueNode {
     public ClassNode asClassNode() {
         throw new InvalidPathException("Expected class node");
     }
+
+    private static boolean isPath(Object o) {
+        if(o == null || !(o instanceof String)){
+            return false;
+        }
+        String str = o.toString().trim();
+        if (str.length() <= 0) {
+            return false;
+        }
+        char c0 = str.charAt(0);
+        if(c0 == '@' || c0 == '$'){
+            try {
+                PathCompiler.compile(str);
+                return true;
+            } catch(Exception e){
+                return false;
+            }
+        }
+        return false;
+    }
+
+    //----------------------------------------------------
+    //
+    // Factory methods
+    //
+    //----------------------------------------------------
+    public static ValueNode toValueNode(Object o){
+        if(o == null) return NULL_NODE;
+        if(o instanceof ValueNode) return (ValueNode)o;
+        if(o instanceof Class) return createClassNode((Class)o);
+        else if(isPath(o)) return new PathNode(o.toString(), false, false);
+        else if(JsonNode.isJson(o)) return createJsonNode(o.toString());
+        else if(o instanceof String) return createStringNode(o.toString(), true);
+        else if(o instanceof Character) return createStringNode(o.toString(), false);
+        else if(o instanceof Number) return createNumberNode(o.toString());
+        else if(o instanceof Boolean) return createBooleanNode(o.toString());
+        else if(o instanceof Pattern) return createPatternNode((Pattern)o);
+        else throw new JsonPathException("Could not determine value type");
+    }
+
+    public static StringNode createStringNode(CharSequence charSequence, boolean escape){
+        return new StringNode(charSequence, escape);
+    }
+
+    public static ClassNode createClassNode(Class<?> clazz){
+        return new ClassNode(clazz);
+    }
+
+    public static NumberNode createNumberNode(CharSequence charSequence){
+        return new NumberNode(charSequence);
+    }
+
+    public static BooleanNode createBooleanNode(CharSequence charSequence){
+        return Boolean.parseBoolean(charSequence.toString()) ? TRUE : FALSE;
+    }
+
+    public static NullNode createNullNode(){
+        return NULL_NODE;
+    }
+
+
+    public static JsonNode createJsonNode(CharSequence json) {
+        return JsonNode.newInstance(json);
+    }
+
+    public static JsonNode createJsonNode(Object parsedJson) {
+        return JsonNode.newInstance(parsedJson);
+    }
+
+    public static PatternNode createPatternNode(CharSequence pattern) {
+        return new PatternNode(pattern);
+    }
+
+    public static PatternNode createPatternNode(Pattern pattern) {
+        return new PatternNode(pattern);
+    }
+
+    public static UndefinedNode createUndefinedNode() {
+        return UNDEFINED;
+    }
+
+    public static PathNode createPathNode(CharSequence path, boolean existsCheck, boolean shouldExists) {
+        return new PathNode(path, existsCheck, shouldExists);
+    }
+
+    public static ValueNode createPathNode(Path path) {
+        return new PathNode(path);
+    }
+
 }
+

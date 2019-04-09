@@ -1,21 +1,25 @@
 package com.jayway.jsonpath.internal.path;
 
+import static java.lang.Character.isDigit;
+import static java.util.Arrays.asList;
+
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.LinkedList;
+import java.util.List;
+
+import com.jayway.jsonpath.Filter;
 import com.jayway.jsonpath.InvalidPathException;
 import com.jayway.jsonpath.Predicate;
 import com.jayway.jsonpath.internal.CharacterIndex;
 import com.jayway.jsonpath.internal.Path;
 import com.jayway.jsonpath.internal.Utils;
 import com.jayway.jsonpath.internal.filter.FilterCompiler;
+import com.jayway.jsonpath.internal.function.FilterFunctionFactory;
 import com.jayway.jsonpath.internal.function.ParamType;
 import com.jayway.jsonpath.internal.function.Parameter;
-
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.LinkedList;
-import java.util.List;
-
-import static java.lang.Character.isDigit;
-import static java.util.Arrays.asList;
+import com.jayway.jsonpath.internal.function.PathFunctionFactory;
 
 public class PathCompiler {
 
@@ -117,7 +121,7 @@ public class PathCompiler {
         path.incrementPosition(1);
 
         if(path.currentChar() != PERIOD && path.currentChar() != OPEN_SQUARE_BRACKET){
-            fail("Illegal character at position " + path.position() + " expected '.' or '[");
+            fail("Illegal character at position " + path.position() + " expected '.' or '['");
         }
 
         PathTokenAppender appender = pathToken.getPathTokenAppender();
@@ -195,28 +199,35 @@ public class PathCompiler {
             }
             else if (c == OPEN_PARENTHESIS) {
                 isFunction = true;
-                endPosition = readPosition++;
+                endPosition = readPosition;
                 break;
             }
             readPosition++;
         }
         if (endPosition == 0) {
             endPosition = path.length();
-        }
-
-
-        List<Parameter> functionParameters = null;
+        }        
         if (isFunction) {
+            String functionName = path.subSequence(startPosition, endPosition).toString();
             if (path.inBounds(readPosition+1)) {
                 // read the next token to determine if we have a simple no-args function call
                 char c = path.charAt(readPosition + 1);
                 if (c != CLOSE_PARENTHESIS) {
                     path.setPosition(endPosition+1);
                     // parse the arguments of the function - arguments that are inner queries or JSON document(s)
-                    String functionName = path.subSequence(startPosition, endPosition).toString();
-                    functionParameters = parseFunctionParameters(functionName);
+
+                	Class functionClass = FilterFunctionFactory.FUNCTIONS.get(functionName);
+                	if(functionClass != null) {
+                		Filter functionFilter = parseFunctionFilter(functionName);
+                		appender.appendPathToken(PathTokenFactory.createFilterPathToken(functionName, functionFilter));
+                	} else {
+                      functionClass = PathFunctionFactory.FUNCTIONS.get(functionName);
+                      List<Parameter> functionParameters = parseFunctionParameters(functionName);
+                      appender.appendPathToken(PathTokenFactory.createFunctionPathToken(functionName, functionParameters));
+                    }
                 } else {
                     path.setPosition(readPosition + 1);
+                    appender.appendPathToken(PathTokenFactory.createFunctionPathToken(functionName, Collections.<Parameter>emptyList()));
                 }
             }
             else {
@@ -225,18 +236,91 @@ public class PathCompiler {
         }
         else {
             path.setPosition(endPosition);
-        }
-
-        String property = path.subSequence(startPosition, endPosition).toString();
-        if(isFunction){
-            appender.appendPathToken(PathTokenFactory.createFunctionPathToken(property, functionParameters));
-        } else {
+            String property = path.subSequence(startPosition, endPosition).toString();
             appender.appendPathToken(PathTokenFactory.createSinglePropertyPathToken(property, SINGLE_QUOTE));
         }
-
         return path.currentIsTail() || readNextToken(appender);
     }
 
+    /**
+     * Parse the filter applying on a filter function call,
+     * 
+     * @return
+     *      An Filter that is processed via the function.  Typically functions either process
+     *      an array of values and/or can consume parameters in addition to the values provided from the consumption of
+     *      an array.
+     */
+    private Filter parseFunctionFilter(String funcName) {
+        // Parenthesis starts at 1 since we're marking the start of a function call, the close paren will denote the
+        // last parameter boundary
+        Integer groupParen = 1, groupBracket = 0, groupBrace = 0, groupDQuote = 0, groupQuote = 0;
+        Boolean endOfStream = false;
+        char priorChar = 0;
+        StringBuilder filterBuilder = new StringBuilder();
+        Filter filter = null;
+        while (path.inBounds() && !endOfStream) {
+            char c = path.currentChar();
+            path.incrementPosition(1);
+
+            switch (c) {
+                case DOUBLE_QUOTE:
+                    if (priorChar != '\\' && groupDQuote > 0) {
+                        if (groupQuote == 0) {
+                            throw new InvalidPathException("Unexpected quote '\"' at character position: " + path.position());
+                        }
+                        groupDQuote--;
+                    }
+                    else {
+                        groupDQuote++;
+                    }
+                    break;  
+                case SINGLE_QUOTE:
+                        if (groupQuote > 0) {
+                            groupQuote--;
+                        } else {
+                            groupQuote++;
+                        }
+                        break;
+                case OPEN_PARENTHESIS:
+                    groupParen++;
+                    break;
+                case OPEN_BRACE:
+                    groupBrace++;
+                    break;
+                case OPEN_SQUARE_BRACKET:
+                    groupBracket++;
+                    break;
+                case CLOSE_BRACE:
+                    if (0 == groupBrace) {
+                        throw new InvalidPathException("Unexpected close brace '}' at character position: " + path.position());
+                    }
+                    groupBrace--;
+                    break;
+                case CLOSE_SQUARE_BRACKET:
+                    if (0 == groupBracket) {
+                        throw new InvalidPathException("Unexpected close bracket ']' at character position: " + path.position());
+                    }
+                    groupBracket--;
+                    break;
+                case CLOSE_PARENTHESIS:
+                    groupParen--;
+                    // In this state we've reach the end of a function parameter and we can pass along the parameter string
+                    // to the parser
+                    if ((0 == groupQuote && 0 == groupDQuote && 0 == groupBrace && 0 == groupBracket && (0 == groupParen && CLOSE_PARENTHESIS == c))) {
+                        endOfStream = true;
+                    	filter = FilterCompiler.compile(filterBuilder.toString());                        
+                    }
+                    break;
+            }
+            filterBuilder.append(c);
+            priorChar = c;
+        }
+        if (0 != groupBrace || 0 != groupParen || 0 != groupBracket) {
+            throw new InvalidPathException("Arguments to function: '" + funcName + "' are not closed properly.");
+        }
+        return filter;
+    }
+    
     /**
      * Parse the parameters of a function call, either the caller has supplied JSON data, or the caller has supplied
      * another path expression which must be evaluated and in turn invoked against the root document.  In this tokenizer
@@ -275,7 +359,7 @@ public class PathCompiler {
         Boolean endOfStream = false;
         char priorChar = 0;
         List<Parameter> parameters = new ArrayList<Parameter>();
-        StringBuffer parameter = new StringBuffer();
+        StringBuilder parameter = new StringBuilder();
         while (path.inBounds() && !endOfStream) {
             char c = path.currentChar();
             path.incrementPosition(1);
@@ -484,7 +568,8 @@ public class PathCompiler {
         if (inBracket) {
             int wildCardIndex = path.indexOfNextSignificantChar(WILDCARD);
             if (!path.nextSignificantCharIs(wildCardIndex, CLOSE_SQUARE_BRACKET)) {
-                throw new InvalidPathException("Expected wildcard token to end with ']' on position " + wildCardIndex + 1);
+                int offset = wildCardIndex + 1;
+                throw new InvalidPathException("Expected wildcard token to end with ']' on position " + offset);
             }
             int bracketCloseIndex = path.indexOfNextSignificantChar(wildCardIndex, CLOSE_SQUARE_BRACKET);
             path.setPosition(bracketCloseIndex + 1);
@@ -580,7 +665,7 @@ public class PathCompiler {
                 }
                 break;
             } else if (c == potentialStringDelimiter) {
-                if (inProperty && !inEscape) {
+                if (inProperty) {
                     char nextSignificantChar = path.nextSignificantChar(readPosition);
                     if (nextSignificantChar != CLOSE_SQUARE_BRACKET && nextSignificantChar != COMMA) {
                         fail("Property must be separated by comma or Property must be terminated close square bracket at index "+readPosition);
@@ -601,6 +686,10 @@ public class PathCompiler {
                 lastSignificantWasComma = true;
             }
             readPosition++;
+        }
+
+        if (inProperty){
+            fail("Property has not been closed - missing closing " + potentialStringDelimiter);
         }
 
         int endBracketIndex = path.indexOfNextSignificantChar(endPosition, CLOSE_SQUARE_BRACKET) + 1;

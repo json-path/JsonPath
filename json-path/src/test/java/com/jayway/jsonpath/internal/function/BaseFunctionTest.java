@@ -28,7 +28,7 @@ public class BaseFunctionTest {
      *      The expected value to be returned from the test
      */
     protected void verifyFunction(Configuration conf, String pathExpr, String json, Object expectedValue) {
-        Object result = using(conf).parse(json, false).read(pathExpr);
+        Object result = using(conf).parse(json).read(pathExpr);
         assertThat(conf.jsonProvider().unwrap(result)).isEqualTo(expectedValue);
     }
 

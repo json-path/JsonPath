@@ -36,7 +36,7 @@ public class PredicatePathTokenTest {
                     "{\n" +
                     "   \"foo\" : \"foo-val-6\"\n" +
                     "}" +
-                    "]", false);
+                    "]");
 
     private static Object  ARRAY2 = Configuration.defaultConfiguration().jsonProvider().parse(
             "[" +
@@ -81,7 +81,7 @@ public class PredicatePathTokenTest {
             "   \"decimal\" : 0.7,\n" +
             "   \"bool\" : true\n" +
             "}" +
-            "]", false);
+            "]");
 
 
     @Test

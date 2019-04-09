@@ -9,8 +9,8 @@ import org.junit.Test;
 
 import java.util.List;
 
-import static junit.framework.Assert.assertEquals;
-import static junit.framework.Assert.assertNull;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNull;
 
 public class NullHandlingTest {
 
@@ -59,7 +59,7 @@ public class NullHandlingTest {
     @Test
     public void the_age_of_all_with_age_defined() {
         //List<Integer> result = JsonPath.read(DOCUMENT, "$.children[*].age");
-        List<Integer> result = JsonPath.using(Configuration.defaultConfiguration().setOptions(Option.SUPPRESS_EXCEPTIONS)).parse(DOCUMENT, false).read("$.children[*].age");
+        List<Integer> result = JsonPath.using(Configuration.defaultConfiguration().setOptions(Option.SUPPRESS_EXCEPTIONS)).parse(DOCUMENT).read("$.children[*].age");
 
         Assertions.assertThat(result).containsSequence(0, null);
 
@@ -75,7 +75,7 @@ public class NullHandlingTest {
     public void path() {
         String json = "{\"a\":[{\"b\":1,\"c\":2},{\"b\":5,\"c\":2}]}";
 
-        List<Object> result = JsonPath.using(Configuration.defaultConfiguration().setOptions(Option.DEFAULT_PATH_LEAF_TO_NULL)).parse(json, false).read("a[?(@.b==5)].d");
+        List<Object> result = JsonPath.using(Configuration.defaultConfiguration().setOptions(Option.DEFAULT_PATH_LEAF_TO_NULL)).parse(json).read("a[?(@.b==5)].d");
 
         Assertions.assertThat(result).hasSize(1);
         Assertions.assertThat(result.get(0)).isNull();

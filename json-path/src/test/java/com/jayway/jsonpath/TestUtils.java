@@ -23,7 +23,7 @@ public final class TestUtils {
     public static void assertEvaluationThrows(final String json, final String path,
                                               Class<? extends JsonPathException> expected, final Configuration conf) {
         try {
-            using(conf).parse(json, false).read(path);
+            using(conf).parse(json).read(path);
             fail("Should throw " + expected.getName());
         } catch (JsonPathException exc) {
             if (exc.getClass() != expected)
@@ -58,7 +58,7 @@ public final class TestUtils {
      * @param conf conf to use during evaluation
      */
     public static void assertHasResults(final String json, final String path, final int expectedResultCount, Configuration conf) {
-        Object result = JsonPath.using(conf).parse(json, false).read(path);
+        Object result = JsonPath.using(conf).parse(json).read(path);
         assertThat(conf.jsonProvider().length(result)).isEqualTo(expectedResultCount);
     }
 }

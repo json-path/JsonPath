@@ -172,7 +172,7 @@ public class CharacterIndex {
                 inEscape = false;
             } else if('\\' == charAt(readPosition)){
                 inEscape = true;
-            } else if (c == charAt(readPosition) && !inEscape){
+            } else if (c == charAt(readPosition)){
                 return readPosition;
             }
             readPosition ++;
@@ -220,16 +220,17 @@ public class CharacterIndex {
         incrementPosition(1);
     }
 
-    public void readSignificantSubSequence(CharSequence s) {
+    public boolean hasSignificantSubSequence(CharSequence s) {
         skipBlanks();
         if (! inBounds(position + s.length() - 1)) {
-            throw new InvalidPathException(String.format("End of string reached while expecting: %s", s));
+            return false;
         }
         if (! subSequence(position, position + s.length()).equals(s)) {
-            throw new InvalidPathException(String.format("Expected: %s", s));
+            return false;
         }
 
         incrementPosition(s.length());
+        return true;
     }
 
     public int indexOfPreviousSignificantChar(int startPosition){

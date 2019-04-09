@@ -2,6 +2,7 @@ package com.jayway.jsonpath.internal.filter;
 
 import com.jayway.jsonpath.JsonPathException;
 import com.jayway.jsonpath.Predicate;
+import static com.jayway.jsonpath.internal.filter.ValueNodes.*;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -65,9 +66,11 @@ public class EvaluatorFactory {
         public boolean evaluate(ValueNode left, ValueNode right, Predicate.PredicateContext ctx) {
             if(left.isJsonNode() && right.isJsonNode()){
                 return left.asJsonNode().equals(right.asJsonNode(), ctx);
-            } else {
-                return left.equals(right);
             }
+            if((left.isUndefinedNode() && right.isNullNode()) || (left.isNullNode() && right.isUndefinedNode())) {
+            	return true;
+            }
+            return left.equals(right);
         }
     }
 

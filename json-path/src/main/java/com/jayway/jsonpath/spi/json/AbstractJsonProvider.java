@@ -14,25 +14,13 @@
  */
 package com.jayway.jsonpath.spi.json;
 
-import com.jayway.jsonpath.InvalidJsonException;
 import com.jayway.jsonpath.JsonPathException;
 
-import java.io.InputStream;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 
 public abstract class AbstractJsonProvider implements JsonProvider {
-
-    @Override
-    public Object parse(String json) {
-       return parse(json, false);
-    }
-
-    @Override
-    public Object parse(InputStream jsonStream, String charset) throws InvalidJsonException {
-       return parse(jsonStream, charset, false);
-    }
 
     /**
      * checks if object is an array
@@ -51,17 +39,16 @@ public abstract class AbstractJsonProvider implements JsonProvider {
      * @param idx index
      * @return the entry at the given index
      */
-    @SuppressWarnings("rawtypes")
-	public Object getArrayIndex(Object obj, int idx) {
+    public Object getArrayIndex(Object obj, int idx) {
         return ((List) obj).get(idx);
     }
 
+    @Deprecated
     public final Object getArrayIndex(Object obj, int idx, boolean unwrap){
         return getArrayIndex(obj, idx);
     }
 
-    @SuppressWarnings({ "unchecked", "rawtypes" })
-	public void setArrayIndex(Object array, int index, Object newValue) {
+    public void setArrayIndex(Object array, int index, Object newValue) {
         if (!isArray(array)) {
             throw new UnsupportedOperationException();
         } else {
@@ -82,8 +69,7 @@ public abstract class AbstractJsonProvider implements JsonProvider {
      * @param key property key
      * @return the map entry or {@link com.jayway.jsonpath.spi.json.JsonProvider#UNDEFINED} for missing properties
      */
-    @SuppressWarnings("rawtypes")
-	public Object getMapValue(Object obj, String key){
+    public Object getMapValue(Object obj, String key){
         Map m = (Map) obj;
         if(!m.containsKey(key)){
             return JsonProvider.UNDEFINED;
@@ -99,7 +85,7 @@ public abstract class AbstractJsonProvider implements JsonProvider {
      * @param key   a String key
      * @param value the value to set
      */
-    @SuppressWarnings({ "unchecked", "rawtypes" })
+    @SuppressWarnings("unchecked")
     public void setProperty(Object obj, Object key, Object value) {
         if (isMap(obj))
             ((Map) obj).put(key.toString(), value);
@@ -116,8 +102,8 @@ public abstract class AbstractJsonProvider implements JsonProvider {
      * @param obj   an array or an object
      * @param key   a String key or a numerical index to remove
      */
-    @SuppressWarnings("rawtypes")
-	public void removeProperty(Object obj, Object key) {
+    @SuppressWarnings("unchecked")
+    public void removeProperty(Object obj, Object key) {
         if (isMap(obj))
             ((Map) obj).remove(key.toString());
         else {
@@ -144,7 +130,7 @@ public abstract class AbstractJsonProvider implements JsonProvider {
      * @param obj an object
      * @return the keys for an object
      */
-    @SuppressWarnings({ "unchecked", "rawtypes" })
+    @SuppressWarnings("unchecked")
     public Collection<String> getPropertyKeys(Object obj) {
         if (isArray(obj)) {
           throw new UnsupportedOperationException();
@@ -159,8 +145,7 @@ public abstract class AbstractJsonProvider implements JsonProvider {
      * @param obj an array or an object
      * @return the number of entries in the array or object
      */
-    @SuppressWarnings("rawtypes")
-	public int length(Object obj) {
+    public int length(Object obj) {
         if (isArray(obj)) {
             return ((List) obj).size();
         } else if (isMap(obj)){
@@ -177,8 +162,8 @@ public abstract class AbstractJsonProvider implements JsonProvider {
      * @param obj an array
      * @return an Iterable that iterates over the entries of an array
      */
-    @SuppressWarnings({ "unchecked", "rawtypes" })
-    public Iterable<? extends Object> toIterable(Object obj) {
+    @SuppressWarnings("unchecked")
+    public Iterable<?> toIterable(Object obj) {
         if (isArray(obj))
             return ((Iterable) obj);
         else

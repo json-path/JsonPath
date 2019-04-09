@@ -1,5 +1,6 @@
 package com.jayway.jsonpath;
 
+import com.jayway.jsonpath.internal.ParseContextImpl;
 import org.junit.Ignore;
 import org.junit.Test;
 
@@ -237,6 +238,49 @@ public class PathCompilerTest {
     }
 
     @Test
+    public void issue_predicate_can_have_double_quotes() {
+        String json = "{\n"
+                + "    \"logs\": [\n"
+                + "        {\n"
+                + "            \"message\": \"\\\"it\\\"\",\n"
+                + "        }\n"
+                + "    ]\n"
+                + "}";
+        List<String> result = JsonPath.read(json, "$.logs[?(@.message == '\"it\"')].message");
+        assertThat(result).containsExactly("\"it\"");
+    }
+
+    @Test
+    public void issue_predicate_can_have_single_quotes() {
+        String json = "{\n"
+                + "    \"logs\": [\n"
+                + "        {\n"
+                + "            \"message\": \"'it'\",\n"
+                + "        }\n"
+                + "    ]\n"
+                + "}";
+        DocumentContext parse = JsonPath.parse(json);
+        JsonPath compile = JsonPath.compile("$.logs[?(@.message == \"'it'\")].message");
+        List<String> result = parse.read(compile);
+        assertThat(result).containsExactly("'it'");
+    }
+
+    @Test
+    public void issue_predicate_can_have_single_quotes_escaped() {
+        String json = "{\n"
+                + "    \"logs\": [\n"
+                + "        {\n"
+                + "            \"message\": \"'it'\",\n"
+                + "        }\n"
+                + "    ]\n"
+                + "}";
+        DocumentContext parse = JsonPath.parse(json);
+        JsonPath compile = JsonPath.compile("$.logs[?(@.message == '\\'it\\'')].message");
+        List<String> result = parse.read(compile);
+        assertThat(result).containsExactly("'it'");
+    }
+
+    @Test
     public void issue_predicate_can_have_square_bracket_in_prop() {
         String json = "{\n"
                 + "    \"logs\": [\n"
@@ -250,6 +294,14 @@ public class PathCompilerTest {
         List<String> result = JsonPath.read(json, "$.logs[?(@.message == '] it')].message");
 
         assertThat(result).containsExactly("] it");
+    }
+
+    @Test
+    public void a_function_can_be_compiled() {
+        assertThat(compile("$.aaa.foo()").toString()).isEqualTo("$['aaa'].foo()");
+        assertThat(compile("$.aaa.foo(5)").toString()).isEqualTo("$['aaa'].foo(...)");
+        assertThat(compile("$.aaa.foo($.bar)").toString()).isEqualTo("$['aaa'].foo(...)");
+        assertThat(compile("$.aaa.foo(5,10,15)").toString()).isEqualTo("$['aaa'].foo(...)");
     }
 
     @Test(expected = InvalidPathException.class)

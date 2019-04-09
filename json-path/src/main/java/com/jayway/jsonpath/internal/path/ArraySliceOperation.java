@@ -58,19 +58,19 @@ public class ArraySliceOperation {
 
         Integer tempFrom = tryRead(tokens, 0);
         Integer tempTo = tryRead(tokens, 1);
-        Operation tempOperpation;
+        Operation tempOperation;
 
-        if(tempFrom != null && tempTo == null){
-            tempOperpation  = Operation.SLICE_FROM;
-        } else if(tempFrom != null && tempTo != null){
-            tempOperpation  = Operation.SLICE_BETWEEN;
-        } else if(tempFrom == null && tempTo != null){
-            tempOperpation  = Operation.SLICE_TO;
+        if (tempFrom != null && tempTo == null) {
+            tempOperation = Operation.SLICE_FROM;
+        } else if (tempFrom != null) {
+            tempOperation = Operation.SLICE_BETWEEN;
+        } else if (tempTo != null) {
+            tempOperation = Operation.SLICE_TO;
         } else {
             throw new InvalidPathException("Failed to parse SliceOperation: " + operation);
         }
 
-        return new ArraySliceOperation(tempFrom, tempTo, tempOperpation);
+        return new ArraySliceOperation(tempFrom, tempTo, tempOperation);
     }
 
     private static Integer tryRead(String[] tokens, int idx){

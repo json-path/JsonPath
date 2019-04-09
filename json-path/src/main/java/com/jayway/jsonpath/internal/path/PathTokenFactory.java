@@ -1,5 +1,6 @@
 package com.jayway.jsonpath.internal.path;
 
+import com.jayway.jsonpath.Filter;
 import com.jayway.jsonpath.Predicate;
 import com.jayway.jsonpath.internal.function.Parameter;
 
@@ -23,11 +24,11 @@ public class PathTokenFactory {
     }
 
     public static PathToken createSliceArrayPathToken(final ArraySliceOperation arraySliceOperation) {
-        return new ArrayPathToken(arraySliceOperation);
+        return new ArraySliceToken(arraySliceOperation);
     }
 
     public static PathToken createIndexArrayPathToken(final ArrayIndexOperation arrayIndexOperation) {
-        return new ArrayPathToken(arrayIndexOperation);
+        return new ArrayIndexToken(arrayIndexOperation);
     }
 
     public static PathToken createWildCardPathToken() {
@@ -48,5 +49,9 @@ public class PathTokenFactory {
 
     public static PathToken createFunctionPathToken(String function, List<Parameter> parameters) {
         return new FunctionPathToken(function, parameters);
+    }
+
+    public static PathToken createFilterPathToken(String function, Filter filter) {
+        return new FilterPathToken(function, filter);
     }
 }

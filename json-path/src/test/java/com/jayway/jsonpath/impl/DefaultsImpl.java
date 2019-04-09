@@ -3,9 +3,10 @@ package com.jayway.jsonpath.impl;
 import java.util.EnumSet;
 import java.util.Set;
 
-import com.jayway.jsonpath.Defaults;
+import com.jayway.jsonpath.Configuration.Defaults;
 import com.jayway.jsonpath.Option;
-import com.jayway.jsonpath.spi.builder.NodeBuilder;
+import com.jayway.jsonpath.spi.json.JsonSmartJsonProvider;
+import com.jayway.jsonpath.spi.mapper.JsonSmartMappingProvider;
 import com.jayway.jsonpath.spi.json.JsonProvider;
 import com.jayway.jsonpath.spi.mapper.MappingProvider;
 
@@ -51,16 +52,5 @@ public class DefaultsImpl implements Defaults {
 	public MappingProvider mappingProvider()
 	{
 		return mappingProvider;
-	}
-
-	/**
-	 * @inheritDoc
-	 *
-	 * @see com.jayway.jsonpath.Defaults#nodeBuilder()
-	 */
-	@Override
-	public NodeBuilder nodeBuilder()
-	{
-		return new JsonSmartNodeBuilder();
 	}
 }

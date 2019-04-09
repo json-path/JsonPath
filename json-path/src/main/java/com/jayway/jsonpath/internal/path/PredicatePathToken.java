@@ -20,6 +20,7 @@ import com.jayway.jsonpath.Predicate;
 import com.jayway.jsonpath.internal.PathRef;
 
 import java.util.Collection;
+import java.util.Collections;
 
 import static java.lang.String.format;
 import static java.util.Arrays.asList;
@@ -33,7 +34,7 @@ public class PredicatePathToken extends PathToken {
     private final Collection<Predicate> predicates;
 
     PredicatePathToken(Predicate filter) {
-        this.predicates = asList(filter);
+        this.predicates = Collections.singletonList(filter);
     }
 
     PredicatePathToken(Collection<Predicate> predicates) {
@@ -51,16 +52,25 @@ public class PredicatePathToken extends PathToken {
                     next().evaluate(currentPath, op, model, ctx);
                 }
             }
-        } else if (ctx.jsonProvider().isArray(model)){
-            int idx = 0;
-            Iterable<?> objects = ctx.jsonProvider().toIterable(model);
-
-            for (Object idxModel : objects) {
-                if (accept(idxModel, ctx.rootDocument(),  ctx.configuration(), ctx)) {
-                    handleArrayIndex(idx, currentPath, model, ctx);
+        } else if (ctx.jsonProvider().isArray(model)){ 
+        	if (!PropertyPathToken.class.isAssignableFrom(super.prev().getClass())
+        		&& accept(model, ctx.rootDocument(), ctx.configuration(), ctx)) {
+                PathRef op = ctx.forUpdate() ? ref : PathRef.NO_OP;
+                if (isLeaf()) {
+                    ctx.addResult(currentPath, op, model);
+                } else {
+                    next().evaluate(currentPath, op, model, ctx);
                 }
-                idx++;
-            }
+	    	} else { 
+	            int idx = 0;
+	            Iterable<?> objects = ctx.jsonProvider().toIterable(model);	
+	            for (Object idxModel : objects) {
+	                if (accept(idxModel, ctx.rootDocument(),  ctx.configuration(), ctx)) {
+	                    handleArrayIndex(idx, currentPath, model, ctx);
+	                }
+	                idx++;
+	            }
+	    	}
         } else {
             if (isUpstreamDefinite()) {
                 throw new InvalidPathException(format("Filter: %s can not be applied to primitives. Current context is: %s", toString(), model));

@@ -7,7 +7,6 @@ import java.util.Collection;
 import java.util.List;
 
 public class LogicalExpressionNode extends ExpressionNode {
-	
     protected List<ExpressionNode> chain = new ArrayList<ExpressionNode>();
     private final LogicalOperator operator;
 
