@@ -227,7 +227,12 @@ public class PathCompiler {
                     }
                 } else {
                     path.setPosition(readPosition + 1);
-                    appender.appendPathToken(PathTokenFactory.createFunctionPathToken(functionName, Collections.<Parameter>emptyList()));
+                	Class functionClass = FilterFunctionFactory.FUNCTIONS.get(functionName);
+                	if(functionClass != null) {
+                        appender.appendPathToken(PathTokenFactory.createFilterPathToken(functionName, null));
+                	} else {
+                        appender.appendPathToken(PathTokenFactory.createFunctionPathToken(functionName, Collections.<Parameter>emptyList()));
+                    }
                 }
             }
             else {

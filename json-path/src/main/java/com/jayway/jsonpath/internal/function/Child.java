@@ -31,6 +31,9 @@ public class Child  implements FilterFunction {
 	           		 idx+=1;
 	           	 }
             }
+            if(ctx.configuration().jsonProvider().length(resultArray) == 1) {
+            	return ctx.configuration().jsonProvider().getArrayIndex(resultArray, 0);
+            }
             return resultArray;
         } else if(ctx.configuration().jsonProvider().isMap(model)){
             Collection<String> keys = ctx.configuration().jsonProvider().getPropertyKeys(model);
@@ -45,6 +48,9 @@ public class Child  implements FilterFunction {
             		 ctx.configuration().jsonProvider().setArrayIndex(resultArray, idx, obj);
             		 idx+=1;
             	 }
+            }
+            if(ctx.configuration().jsonProvider().length(resultArray) == 1) {
+            	return ctx.configuration().jsonProvider().getArrayIndex(resultArray, 0);
             }
             return resultArray;
         }

@@ -12,7 +12,7 @@ import com.jayway.jsonpath.internal.path.PredicateContextImpl;
 /**
  * Applies on the children of a Map or an Array
  */ 
-public class First  implements FilterFunction {
+public class First implements FilterFunction {
 
     @Override
     public Object invoke(String currentPath, PathRef parent, Object model, EvaluationContext ctx, Filter filter) { 

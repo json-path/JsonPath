@@ -25,6 +25,8 @@ public class FilterFunctionFactory {
 
         // Math Functions
         map.put("child", Child.class);
+        map.put("first", First.class);
+        map.put("last", Last.class);
         
         FUNCTIONS = Collections.unmodifiableMap(map);
     }
