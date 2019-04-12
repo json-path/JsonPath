@@ -5,6 +5,7 @@ import com.jayway.jsonpath.internal.PathRef;
 import com.jayway.jsonpath.internal.function.FilterFunction;
 import com.jayway.jsonpath.internal.function.FilterFunctionFactory;
 import com.jayway.jsonpath.internal.function.PathFunctionFactory;
+import com.jayway.jsonpath.spi.json.JsonProvider;
 
 /**
  * Token representing a Function call to one of the functions produced via the FunctionFactory
@@ -32,9 +33,13 @@ public class FilterPathToken extends PathToken {
     public void evaluate(String currentPath, PathRef parent, Object model, EvaluationContextImpl ctx) {
         FilterFunction filterFunction = FilterFunctionFactory.newFunction(functionName);
         Object result = filterFunction.invoke(currentPath, parent, model, ctx, functionFilter);
-        ctx.addResult(currentPath + "." + functionName, parent, result);
-        if (!isLeaf()) {
-            next().evaluate(currentPath, parent, result, ctx);
+        if(result != null) {
+        	ctx.addResult(currentPath + "." + functionName, parent, result);
+	        if (!isLeaf()) {
+	            next().evaluate(currentPath, parent, result, ctx);
+	        }
+        } else {
+        	ctx.addResult(currentPath + "." + functionName, parent, JsonProvider.UNDEFINED);
         }
     }
 

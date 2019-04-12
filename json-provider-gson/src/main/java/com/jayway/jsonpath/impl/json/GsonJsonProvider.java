@@ -19,6 +19,7 @@ import com.jayway.jsonpath.InvalidJsonException;
 import com.jayway.jsonpath.JsonPathException;
 import com.jayway.jsonpath.spi.json.JsonArrayWrapper;
 import com.jayway.jsonpath.spi.json.JsonObjectWrapper;
+import com.jayway.jsonpath.spi.json.JsonProvider;
 import com.jayway.jsonpath.spi.json.JsonWrapper;
 import com.jayway.jsonpath.spi.json.JsonWrapperJsonProvider;
 
@@ -28,7 +29,7 @@ public class GsonJsonProvider extends JsonWrapperJsonProvider<JsonArray,JsonObje
 	public static final String IMPLEMENTATION = "GSON";
 	
 	public static JsonElement toJsonElement(final Object o, Gson gson) {
-		if(o == null) {
+		if(o == null || o == JsonProvider.UNDEFINED) {
     		return JsonNull.INSTANCE;
     	}
 		if(JsonElement.class.isAssignableFrom(o.getClass())){

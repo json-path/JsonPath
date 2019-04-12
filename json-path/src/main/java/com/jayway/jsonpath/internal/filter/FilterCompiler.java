@@ -338,6 +338,7 @@ public class FilterCompiler  {
     private PathNode readPath() {
         char previousSignificantChar = filter.previousSignificantChar();
         int begin = filter.position();
+        boolean keepParenthesis = false;
 
         filter.incrementPosition(1); //skip $ and @
         while (filter.inBounds()) {
@@ -345,14 +346,32 @@ public class FilterCompiler  {
                 int closingSquareBracketIndex = filter.indexOfMatchingCloseChar(filter.position(), OPEN_SQUARE_BRACKET, CLOSE_SQUARE_BRACKET, true, false);
                 if (closingSquareBracketIndex == -1) {
                     throw new InvalidPathException("Square brackets does not match in filter " + filter);
-                } else {
-                    filter.setPosition(closingSquareBracketIndex + 1);
                 }
+                filter.setPosition(closingSquareBracketIndex + 1);                
             }
             boolean closingFunctionBracket = (filter.currentChar() == CLOSE_PARENTHESIS && currentCharIsClosingFunctionBracket(begin));
             boolean closingLogicalBracket  = (filter.currentChar() == CLOSE_PARENTHESIS && !closingFunctionBracket);
 
-            if (!filter.inBounds() || isRelationalOperatorChar(filter.currentChar()) || filter.currentChar() == SPACE || closingLogicalBracket) {
+            if (!filter.inBounds() || isRelationalOperatorChar(filter.currentChar()) || filter.currentChar() == SPACE || closingLogicalBracket){
+            	if(filter.currentChar() == CLOSE_PARENTHESIS){
+                    int c = 1;         
+	                int idx = filter.position();
+	                idx--;
+	                while(filter.inBounds(idx) && idx > begin){
+	                    if(filter.charAt(idx) == CLOSE_PARENTHESIS){
+	                        c+=1;
+	                    }
+	                    if(filter.charAt(idx) == OPEN_PARENTHESIS){
+	                        c-=1;
+	                        if(c==0) {
+	                            filter.incrementPosition(1);
+//	                            keepParenthesis = true;
+	                            break;
+	                        }
+	                    }
+	                    idx--;
+	                } 
+            	}
                 break;
             } else {
                 filter.incrementPosition(1);
@@ -361,7 +380,11 @@ public class FilterCompiler  {
 
         boolean shouldExists = !(previousSignificantChar == NOT);
         CharSequence path = filter.subSequence(begin, filter.position());
-        return ValueNode.createPathNode(path, false, shouldExists);
+        PathNode pn = ValueNode.createPathNode(path, false, shouldExists);
+//        if(keepParenthesis) {
+//        	filter.decrementPosition(1);
+//        }
+        return pn;
     }
 
     private boolean expressionIsTerminated(){

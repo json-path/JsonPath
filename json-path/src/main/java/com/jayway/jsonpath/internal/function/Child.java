@@ -31,10 +31,14 @@ public class Child  implements FilterFunction {
 	           		 idx+=1;
 	           	 }
             }
-            if(ctx.configuration().jsonProvider().length(resultArray) == 1) {
-            	return ctx.configuration().jsonProvider().getArrayIndex(resultArray, 0);
+            switch(ctx.configuration().jsonProvider().length(resultArray)) {
+            case 0: 
+            	return null;
+            case 1:
+            	//return ctx.configuration().jsonProvider().getArrayIndex(resultArray, 0);
+            default: 
+            	return resultArray;
             }
-            return resultArray;
         } else if(ctx.configuration().jsonProvider().isMap(model)){
             Collection<String> keys = ctx.configuration().jsonProvider().getPropertyKeys(model);
             for (String key : keys) {
@@ -49,10 +53,14 @@ public class Child  implements FilterFunction {
             		 idx+=1;
             	 }
             }
-            if(ctx.configuration().jsonProvider().length(resultArray) == 1) {
-            	return ctx.configuration().jsonProvider().getArrayIndex(resultArray, 0);
+            switch(ctx.configuration().jsonProvider().length(resultArray)) {
+            case 0: 
+            	return null;
+            case 1:
+            	//return ctx.configuration().jsonProvider().getArrayIndex(resultArray, 0);
+            default: 
+            	return resultArray;
             }
-            return resultArray;
         }
         throw new JsonPathException("Child function attempted to be applied  value using empty array");
     }

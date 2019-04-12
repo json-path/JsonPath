@@ -90,7 +90,7 @@ public class NestedFunctionTest extends BaseFunctionTest {
     @Test
     public void testErrantCloseBraceNegative() {
         try {
-            using(conf).parse(this.NUMBER_SERIES).read("$.numbers.append(0, 1, 2}).avg()");
+            using(conf).parse(NUMBER_SERIES).read("$.numbers.append(0, 1, 2}).avg()");
             assert(false);
         }
         catch (Exception e) {
@@ -101,7 +101,7 @@ public class NestedFunctionTest extends BaseFunctionTest {
     @Test
     public void testErrantCloseBracketNegative() {
         try {
-            using(conf).parse(this.NUMBER_SERIES).read("$.numbers.append(0, 1, 2]).avg()");
+            using(conf).parse(NUMBER_SERIES).read("$.numbers.append(0, 1, 2]).avg()");
             assert(false);
         }
         catch (Exception e) {
@@ -112,7 +112,7 @@ public class NestedFunctionTest extends BaseFunctionTest {
     @Test
     public void testUnclosedFunctionCallNegative() {
         try {
-            using(conf).parse(this.NUMBER_SERIES).read("$.numbers.append(0, 1, 2");
+            using(conf).parse(NUMBER_SERIES).read("$.numbers.append(0, 1, 2");
             assert(false);
         }
         catch (Exception e) {

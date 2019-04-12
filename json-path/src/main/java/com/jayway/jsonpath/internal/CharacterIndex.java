@@ -53,6 +53,10 @@ public class CharacterIndex {
         return setPosition(position + charCount);
     }
 
+	public int decrementPosition(int charCount) {
+        return setPosition(position - charCount);
+	}
+	
     public int decrementEndPosition(int charCount) {
         return setEndPosition(endPosition - charCount);
     }

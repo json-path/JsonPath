@@ -671,8 +671,92 @@ public class IssuesTest extends BaseTest {
     		"\"expensive\": 10 }";
     		Object res = JsonPath.parse(json).read("$.store.book.first([?(@.price < 10)]).title");
     		assertThat(res).isEqualTo("Sayings of the Century");
+    		res = JsonPath.parse(json).read("$.store.book.last([?(@.price < 10)]).title");
+    		assertThat(res).isEqualTo("Moby Dick");
     }
 
+    @Test
+    public void issue_287(){
+    	String json = "{"
+    			  +"\"store\": {"
+    			    +"\"book\": ["
+    			      +"{"
+    			        +"\"category\": \"reference\","
+    			        +"\"authors\": ["
+    			          +"{"
+    			            +"\"firstName\": \"Nigel\","
+    			            +"\"lastName\": \"Rees\""
+    			          +"},"
+    			          +"{"
+    			            +"\"firstName\": \"Evelyn\","
+    			            +"\"lastName\": \"Waugh\""
+    			          +"}"
+    			        +"],"
+    			        +"\"title\": \"Sayings of the Century\","
+    			        +"\"price\": 8.95"
+    			      +"},"
+    			      +"{"
+    			        +"\"category\": \"fiction\","
+    			        +"\"authors\": ["
+    			          +"{"
+    			            +"\"firstName\": \"A\","
+    			            +"\"lastName\": \"B\""
+    			          +"},"
+    			          +"{"
+    			            +"\"firstName\": \"C\","
+    			            +"\"lastName\": \"D\""
+    			          +"}"
+    			        +"],"
+    			        +"\"title\": \"Sword of Honour\","
+    			        +"\"price\": 12.99"
+    			      +"},"
+    			      +"{"
+    			        +"\"category\": \"fiction\","
+    			        +"\"authors\": ["
+    			          +"{"
+    			            +"\"firstName\": \"A\","
+    			            +"\"lastName\": \"D\""
+    			          +"},"
+    			          +"{"
+    			            +"\"firstName\": \"Evelyn\","
+    			            +"\"lastName\": \"X\""
+    			          +"}"
+    			        +"],"
+    			        +"\"title\": \"Moby Dick\","
+    			        +"\"isbn\": \"0-553-21311-3\","
+    			        +"\"price\": 8.99"
+    			      +"},"
+    			      +"{"
+    			        +"\"category\": \"fiction\","
+    			        +"\"authors\": ["
+    			          +"{"
+    			            +"\"firstName\": \"Nigel\","
+    			            +"\"lastName\": \"Rees\""
+    			          +"},"
+    			          +"{"
+    			            +"\"firstName\": \"Evelyn\","
+    			            +"\"lastName\": \"X\""
+    			          +"}"
+    			        +"],"
+    			        +"\"title\": \"The Lord of the Rings\","
+    			        +"\"isbn\": \"0-395-19395-8\","
+    			        +"\"price\": 22.99"
+    			      +"}"
+    			    +"],"
+    			    +"\"bicycle\": {"
+    			      +"\"color\": \"red\","
+    			      +"\"price\": 19.95"
+    			    +"}"
+    			  +"},"
+    			  +"\"expensive\": 10"
+    			+"}";
+
+        Object res = JsonPath.parse(json).read("$.store.book.child([?(@.authors.child([?(@.lastName == 'Waugh')]))])[0]['title']");
+        assertThat(res).isEqualTo("Sayings of the Century"); 
+        res = JsonPath.parse(json).read("$.store.book[?(@.authors.child([?(@.lastName == 'Waugh')]))]['title']");
+        assertThat(((List)res).get(0)).isEqualTo("Sayings of the Century");
+    }
+    
     //http://stackoverflow.com/questions/28596324/jsonpath-filtering-api
     @Test
     public void stack_overflow_question_1() {

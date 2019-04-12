@@ -13,6 +13,8 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 
+import com.jayway.jsonpath.spi.json.JsonProvider;
+
 @RunWith(Parameterized.class)
 public class InlineFilterTest extends BaseTest {
 
@@ -143,18 +145,16 @@ public class InlineFilterTest extends BaseTest {
         ints.add(2);
         ints.add(3);
 
-        List hits = JsonPath.parse(ints).read("$.child([?(@)])");
-        //assertThat(hits).containsExactly(Arrays.asList(0,1,null,2,3));
-        assertThat(hits).containsExactly(0,1,null,2,3);
+        Object hits = JsonPath.parse(ints).read("$.child([?(@)])");
+        assertThat(hits).asList().containsExactly(0,1,null,2,3);
  
         hits = JsonPath.parse(ints).read("$.child([?(@!=null)])");
-        //assertThat(hits).containsExactly(Arrays.asList(0,1,null,2,3));
-        assertThat(hits).containsExactly(0,1,2,3);
+        assertThat(hits).asList().containsExactly(0,1,2,3);
 
-        List isNull = JsonPath.parse(ints).read("$.child([?(!@)])");
-        //assertThat(isNull).containsExactly(new List[]{});
-        assertThat(isNull).containsExactly(new  Object[]{});
+        hits = JsonPath.parse(ints).read("$.child([?(!@)])");
+        assertThat(hits).isEqualTo(JsonProvider.UNDEFINED);
     }
+   
 
     @Test
     public void equality_check_does_not_break_evaluation() {

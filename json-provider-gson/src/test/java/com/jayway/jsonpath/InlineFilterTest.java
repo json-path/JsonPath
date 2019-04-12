@@ -7,9 +7,12 @@ import static java.util.Arrays.asList;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import org.junit.Test;
+
+import com.jayway.jsonpath.spi.json.JsonProvider;
 
 public class InlineFilterTest extends BaseTest {
 
@@ -131,17 +134,14 @@ public class InlineFilterTest extends BaseTest {
         ints.add(2);
         ints.add(3);
 
-        List hits = JsonPath.parse(ints).read("$.child([?(@)])");
-        //assertThat(hits).containsExactly(Arrays.asList(0,1,null,2,3));
-        assertThat(hits).containsExactly(0,1,null,2,3);
+        Object hits = JsonPath.parse(ints).read("$.child([?(@)])");
+        assertThat(hits).asList().containsExactly(0,1,null,2,3);
  
         hits = JsonPath.parse(ints).read("$.child([?(@!=null)])");
-        //assertThat(hits).containsExactly(Arrays.asList(0,1,null,2,3));
-        assertThat(hits).containsExactly(0,1,2,3);
+        assertThat(hits).asList().containsExactly(0,1,2,3);
 
-        List isNull = JsonPath.parse(ints).read("$.child([?(!@)])");
-        //assertThat(isNull).containsExactly(new List[]{});
-        assertThat(isNull).containsExactly(new  Object[]{});
+        hits = JsonPath.parse(ints).read("$.child([?(!@)])");
+        assertThat(hits).isEqualTo(null);
     }
 
     @Test
