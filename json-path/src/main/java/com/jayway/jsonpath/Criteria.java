@@ -19,6 +19,7 @@ import com.jayway.jsonpath.internal.Utils;
 import com.jayway.jsonpath.internal.filter.RelationalExpressionNode;
 import com.jayway.jsonpath.internal.filter.RelationalOperator;
 import com.jayway.jsonpath.internal.filter.ValueNode;
+import com.jayway.jsonpath.internal.filter.ValueNodes;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -28,9 +29,8 @@ import java.util.List;
 import java.util.regex.Pattern;
 
 import static com.jayway.jsonpath.internal.Utils.notNull;
-import com.jayway.jsonpath.internal.filter.ValueNodes;
-import static com.jayway.jsonpath.internal.filter.ValueNodes.ValueListNode;
 import static com.jayway.jsonpath.internal.filter.ValueNodes.PredicateNode;
+import static com.jayway.jsonpath.internal.filter.ValueNodes.ValueListNode;
 
 /**
  *
@@ -317,7 +317,7 @@ public class Criteria implements Predicate {
     public Criteria anyof(Collection<?> c) {
         notNull(c, "collection can not be null");
         this.criteriaType = RelationalOperator.ANYOF;
-        this.right = new ValueNode.ValueListNode(c);
+        this.right = new ValueListNode(c);
         return this;
     }
 
@@ -342,7 +342,7 @@ public class Criteria implements Predicate {
     public Criteria noneof(Collection<?> c) {
         notNull(c, "collection can not be null");
         this.criteriaType = RelationalOperator.NONEOF;
-        this.right = new ValueNode.ValueListNode(c);
+        this.right = new ValueListNode(c);
         return this;
     }
 

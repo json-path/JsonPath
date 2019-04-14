@@ -2,10 +2,12 @@ package com.jayway.jsonpath.internal.filter;
 
 import com.jayway.jsonpath.JsonPathException;
 import com.jayway.jsonpath.Predicate;
-import static com.jayway.jsonpath.internal.filter.ValueNodes.*;
 
 import java.util.HashMap;
 import java.util.Map;
+
+import static com.jayway.jsonpath.internal.filter.ValueNodes.PatternNode;
+import static com.jayway.jsonpath.internal.filter.ValueNodes.ValueListNode;
 
 public class EvaluatorFactory {
 
@@ -301,7 +303,7 @@ public class EvaluatorFactory {
     private static class AnyOfEvaluator implements Evaluator {
         @Override
         public boolean evaluate(ValueNode left, ValueNode right, Predicate.PredicateContext ctx) {
-            ValueNode.ValueListNode rightValueListNode;
+            ValueListNode rightValueListNode;
             if (right.isJsonNode()) {
                 ValueNode vn = right.asJsonNode().asValueListNode(ctx);
                 if (vn.isUndefinedNode()) {
@@ -312,7 +314,7 @@ public class EvaluatorFactory {
             } else {
                 rightValueListNode = right.asValueListNode();
             }
-            ValueNode.ValueListNode leftValueListNode;
+            ValueListNode leftValueListNode;
             if (left.isJsonNode()) {
                 ValueNode vn = left.asJsonNode().asValueListNode(ctx);
                 if (vn.isUndefinedNode()) {
@@ -338,7 +340,7 @@ public class EvaluatorFactory {
     private static class NoneOfEvaluator implements Evaluator {
         @Override
         public boolean evaluate(ValueNode left, ValueNode right, Predicate.PredicateContext ctx) {
-            ValueNode.ValueListNode rightValueListNode;
+            ValueListNode rightValueListNode;
             if (right.isJsonNode()) {
                 ValueNode vn = right.asJsonNode().asValueListNode(ctx);
                 if (vn.isUndefinedNode()) {
@@ -349,7 +351,7 @@ public class EvaluatorFactory {
             } else {
                 rightValueListNode = right.asValueListNode();
             }
-            ValueNode.ValueListNode leftValueListNode;
+            ValueListNode leftValueListNode;
             if (left.isJsonNode()) {
                 ValueNode vn = left.asJsonNode().asValueListNode(ctx);
                 if (vn.isUndefinedNode()) {
