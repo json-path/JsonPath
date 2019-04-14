@@ -39,7 +39,7 @@ public abstract class Filter implements Predicate {
     /**
      * Create a new Filter based on given list of criteria.
      * @param predicates list of criteria all needs to evaluate to true
-     * @return
+     * @return the filter
      */
     public static Filter filter(Collection<Predicate> predicates) {
         return new AndFilter(predicates);

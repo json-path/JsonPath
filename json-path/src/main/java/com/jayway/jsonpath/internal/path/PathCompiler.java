@@ -117,7 +117,7 @@ public class PathCompiler {
         path.incrementPosition(1);
 
         if(path.currentChar() != PERIOD && path.currentChar() != OPEN_SQUARE_BRACKET){
-            fail("Illegal character at position " + path.position() + " expected '.' or '[");
+            fail("Illegal character at position " + path.position() + " expected '.' or '['");
         }
 
         PathTokenAppender appender = pathToken.getPathTokenAppender();
@@ -195,7 +195,7 @@ public class PathCompiler {
             }
             else if (c == OPEN_PARENTHESIS) {
                 isFunction = true;
-                endPosition = readPosition++;
+                endPosition = readPosition;
                 break;
             }
             readPosition++;
@@ -275,7 +275,7 @@ public class PathCompiler {
         Boolean endOfStream = false;
         char priorChar = 0;
         List<Parameter> parameters = new ArrayList<Parameter>();
-        StringBuffer parameter = new StringBuffer();
+        StringBuilder parameter = new StringBuilder();
         while (path.inBounds() && !endOfStream) {
             char c = path.currentChar();
             path.incrementPosition(1);
@@ -484,7 +484,8 @@ public class PathCompiler {
         if (inBracket) {
             int wildCardIndex = path.indexOfNextSignificantChar(WILDCARD);
             if (!path.nextSignificantCharIs(wildCardIndex, CLOSE_SQUARE_BRACKET)) {
-                throw new InvalidPathException("Expected wildcard token to end with ']' on position " + wildCardIndex + 1);
+                int offset = wildCardIndex + 1;
+                throw new InvalidPathException("Expected wildcard token to end with ']' on position " + offset);
             }
             int bracketCloseIndex = path.indexOfNextSignificantChar(wildCardIndex, CLOSE_SQUARE_BRACKET);
             path.setPosition(bracketCloseIndex + 1);
@@ -580,7 +581,7 @@ public class PathCompiler {
                 }
                 break;
             } else if (c == potentialStringDelimiter) {
-                if (inProperty && !inEscape) {
+                if (inProperty) {
                     char nextSignificantChar = path.nextSignificantChar(readPosition);
                     if (nextSignificantChar != CLOSE_SQUARE_BRACKET && nextSignificantChar != COMMA) {
                         fail("Property must be separated by comma or Property must be terminated close square bracket at index "+readPosition);
@@ -601,6 +602,10 @@ public class PathCompiler {
                 lastSignificantWasComma = true;
             }
             readPosition++;
+        }
+
+        if (inProperty){
+            fail("Property has not been closed - missing closing " + potentialStringDelimiter);
         }
 
         int endBracketIndex = path.indexOfNextSignificantChar(endPosition, CLOSE_SQUARE_BRACKET) + 1;

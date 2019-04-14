@@ -59,6 +59,12 @@ public class NestedFunctionTest extends BaseFunctionTest {
     }
 
     @Test
+    public void testSimpleLiteralArgument() {
+        verifyMathFunction(conf, "$.sum(5)", 5.0);
+        verifyMathFunction(conf, "$.sum(50)", 50.0);
+    }
+
+    @Test
     public void testStringConcat() {
         verifyTextFunction(conf, "$.text.concat()", "abcdef");
     }

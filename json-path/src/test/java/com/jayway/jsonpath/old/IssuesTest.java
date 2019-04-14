@@ -35,8 +35,8 @@ import static com.jayway.jsonpath.Criteria.where;
 import static com.jayway.jsonpath.Filter.filter;
 import static com.jayway.jsonpath.JsonPath.read;
 import static com.jayway.jsonpath.JsonPath.using;
-import static junit.framework.Assert.assertNull;
-import static junit.framework.Assert.assertTrue;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.failBecauseExceptionWasNotThrown;
 import static org.hamcrest.Matchers.is;
@@ -431,7 +431,7 @@ public class IssuesTest extends BaseTest {
                 "]";
 
 
-        assertEquals(1, read(json, "$[0].a"));
+        assertEquals(Integer.valueOf(1), read(json, "$[0].a"));
     }
 
     @Test(expected = PathNotFoundException.class)
@@ -471,9 +471,9 @@ public class IssuesTest extends BaseTest {
 
         String json = "{\"test\":null}";
 
-        assertThat(read(json, "test")).isNull();
+        assertThat((String)read(json, "test")).isNull();
 
-        assertThat(JsonPath.using(Configuration.defaultConfiguration().setOptions(Option.SUPPRESS_EXCEPTIONS)).parse(json).read("nonExistingProperty")).isNull();
+        assertThat((String)JsonPath.using(Configuration.defaultConfiguration().setOptions(Option.SUPPRESS_EXCEPTIONS)).parse(json).read("nonExistingProperty")).isNull();
 
         try {
             read(json, "nonExistingProperty");
@@ -498,7 +498,7 @@ public class IssuesTest extends BaseTest {
     public void issue_45() {
         String json = "{\"rootkey\":{\"sub.key\":\"value\"}}";
 
-        assertThat(read(json, "rootkey['sub.key']")).isEqualTo("value");
+        assertThat((String)read(json, "rootkey['sub.key']")).isEqualTo("value");
     }
 
     @Test
@@ -508,7 +508,7 @@ public class IssuesTest extends BaseTest {
         String json = "{\"a\": {}}";
 
         Configuration configuration = Configuration.defaultConfiguration().setOptions(Option.SUPPRESS_EXCEPTIONS);
-        assertThat(JsonPath.using(configuration).parse(json).read("a.x")).isNull();
+        assertThat((String)JsonPath.using(configuration).parse(json).read("a.x")).isNull();
 
         try {
             read(json, "a.x");
@@ -1018,8 +1018,8 @@ public class IssuesTest extends BaseTest {
 
         DocumentContext doc = JsonPath.parse(json).set("$.jsonArr[1].name", "Jayway");
 
-        assertThat(doc.read("$.jsonArr[0].name")).isEqualTo("nOne");
-        assertThat(doc.read("$.jsonArr[1].name")).isEqualTo("Jayway");
+        assertThat((String)doc.read("$.jsonArr[0].name")).isEqualTo("nOne");
+        assertThat((String)doc.read("$.jsonArr[1].name")).isEqualTo("Jayway");
     }
     
     @Test

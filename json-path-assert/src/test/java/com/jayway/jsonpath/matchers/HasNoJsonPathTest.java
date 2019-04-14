@@ -8,6 +8,7 @@ import static org.junit.Assert.assertThat;
 
 public class HasNoJsonPathTest {
     private static final String JSON_STRING = "{" +
+            "\"none\": null," +
             "\"name\": \"Jessie\"" +
             "}";
 
@@ -19,6 +20,11 @@ public class HasNoJsonPathTest {
     @Test
     public void shouldNotMatchExistingJsonPath() {
         assertThat(JSON_STRING, not(hasNoJsonPath("$.name")));
+    }
+
+    @Test
+    public void shouldNotMatchExplicitNull() {
+        assertThat(JSON_STRING, not(hasNoJsonPath("$.none")));
     }
 
     @Test

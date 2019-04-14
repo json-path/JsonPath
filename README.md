@@ -5,7 +5,7 @@ Jayway JsonPath
 
 [![Build Status](https://travis-ci.org/json-path/JsonPath.svg?branch=master)](https://travis-ci.org/json-path/JsonPath)
 [![Maven Central](https://maven-badges.herokuapp.com/maven-central/com.jayway.jsonpath/json-path/badge.svg)](https://maven-badges.herokuapp.com/maven-central/com.jayway.jsonpath/json-path)
-[![Javadoc](https://javadoc-emblem.rhcloud.com/doc/com.jayway.jsonpath/json-path/badge.svg)](http://www.javadoc.io/doc/com.jayway.jsonpath/json-path)
+[![Javadoc](https://www.javadoc.io/badge/com.jayway.jsonpath/json-path.svg)](http://www.javadoc.io/doc/com.jayway.jsonpath/json-path)
 
 Jayway JsonPath is a Java port of [Stefan Goessner JsonPath implementation](http://goessner.net/articles/JsonPath/). 
 
@@ -77,13 +77,13 @@ Functions
 Functions can be invoked at the tail end of a path - the input to a function is the output of the path expression.
 The function output is dictated by the function itself.
 
-| Function                  | Description                                                         | Output    |
-| :------------------------ | :------------------------------------------------------------------ |-----------|
-| min()                     | Provides the min value of an array of numbers                       | Double    |
-| max()                     | Provides the max value of an array of numbers                       | Double    |
-| avg()                     | Provides the average value of an array of numbers                   | Double    |
-| stddev()                  | Provides the standard deviation value of an array of numbers        | Double    |
-| length()                  | Provides the length of an array                                     | Integer   |
+| Function                  | Description                                                        | Output    |
+| :------------------------ | :----------------------------------------------------------------- |-----------|
+| min()                    | Provides the min value of an array of numbers                       | Double    |
+| max()                    | Provides the max value of an array of numbers                       | Double    |
+| avg()                    | Provides the average value of an array of numbers                   | Double    |
+| stddev()                 | Provides the standard deviation value of an array of numbers        | Double    |
+| length()                 | Provides the length of an array                                     | Integer   |
 
 
 Filter Operators
@@ -91,22 +91,20 @@ Filter Operators
 
 Filters are logical expressions used to filter arrays. A typical filter would be `[?(@.age > 18)]` where `@` represents the current item being processed. More complex filters can be created with logical operators `&&` and `||`. String literals must be enclosed by single or double quotes (`[?(@.color == 'blue')]` or `[?(@.color == "blue")]`).   
 
-| Operator                 | Description                                                           |
-| :----------------------- | :-------------------------------------------------------------------- |
-| ==                       | left is equal to right (note that 1 is not equal to '1')              |
-| !=                       | left is not equal to right                                            |
-| <                        | left is less than right                                               |
-| <=                       | left is less or equal to right                                        |
-| >                        | left is greater than right                                            |
-| >=                       | left is greater than or equal to right                                |
-| =~                       | left matches regular expression  [?(@.name =~ /foo.*?/i)]             |
-| in                       | left exists in right [?(@.size in ['S', 'M'])]                        |
-| nin                      | left does not exists in right                                         |
-| subsetof                 | left is a subset of right [?(@.sizes subsetof ['S', 'M', 'L'])]       |
-| anyof                    | left has an intersection with right [?(@.sizes anyof ['M', 'L'])]     |
-| noneof                   | left has no intersection with right [?(@.sizes noneof ['M', 'L'])]    |
-| size                     | size of left (array or string) should match right                     |
-| empty                    | left (array or string) should be empty                                |
+| Operator                 | Description                                                       |
+| :----------------------- | :---------------------------------------------------------------- |
+| ==                       | left is equal to right (note that 1 is not equal to '1')          |
+| !=                       | left is not equal to right                                        |
+| <                        | left is less than right                                           |
+| <=                       | left is less or equal to right                                    |
+| >                        | left is greater than right                                        |
+| >=                       | left is greater than or equal to right                            |
+| =~                       | left matches regular expression  [?(@.name =~ /foo.*?/i)]         |
+| in                       | left exists in right [?(@.size in ['S', 'M'])]                    |
+| nin                      | left does not exists in right                                     |
+| subsetof                 | left is a subset of right [?(@.sizes subsetof ['S', 'M', 'L'])]     |
+| size                     | size of left (array or string) should match right                 |
+| empty                    | left (array or string) should be empty                            |
 
 
 Path Examples
@@ -241,7 +239,7 @@ String json = "{\"date_as_long\" : 1411455611975}";
 Date date = JsonPath.parse(json).read("$['date_as_long']", Date.class);
 ```
 
-If you configure JsonPath to use `JacksonMappingProvider` or GsonMappingProvider` you can even map your JsonPath output directly into POJO's.
+If you configure JsonPath to use `JacksonMappingProvider` or `GsonMappingProvider` you can even map your JsonPath output directly into POJO's.
 
 ```java
 Book book = JsonPath.parse(json).read("$.store.book[0]", Book.class);
@@ -324,7 +322,7 @@ List<Map<String, Object>> books =
 
 Path vs Value
 -------------
-In the Goessner implementation a JsonPath can return either `Path` or `Value`. `Value` is the default and what all the examples above are returning. If you rather have the path of the elements our query is hitting this can be acheived with an option.
+In the Goessner implementation a JsonPath can return either `Path` or `Value`. `Value` is the default and what all the examples above are returning. If you rather have the path of the elements our query is hitting this can be achieved with an option.
 
 ```java
 Configuration conf = Configuration.builder()
@@ -400,7 +398,7 @@ This option makes sure no exceptions are propagated from path evaluation. It fol
 
 ### JsonProvider SPI
 
-JsonPath is shipped with three different JsonProviders:
+JsonPath is shipped with five different JsonProviders:
 
 * [JsonSmartJsonProvider](https://code.google.com/p/json-smart/) (default)
 * [JacksonJsonProvider](https://github.com/FasterXML/jackson)

@@ -10,14 +10,13 @@ public interface Cache {
      * @param key cache key to lookup the JsonPath
      * @return JsonPath
      */
-	public JsonPath get(String key);
+	 JsonPath get(String key);
 	
 	/**
      * Add JsonPath to the cache
      * @param key cache key to store the JsonPath
      * @param value JsonPath to be cached
-     * @return void
      * @throws InvalidJsonException
      */
-	public void put(String key, JsonPath value);
+	 void put(String key, JsonPath value);
 }

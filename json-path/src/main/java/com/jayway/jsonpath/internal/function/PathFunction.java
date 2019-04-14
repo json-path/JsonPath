@@ -30,7 +30,7 @@ public interface PathFunction {
      *      Eval context, state bag used as the path is traversed, maintains the result of executing
      *
      * @param parameters
-     * @return
+     * @return result
      */
     Object invoke(String currentPath, PathRef parent, Object model, EvaluationContext ctx, List<Parameter> parameters);
 }
