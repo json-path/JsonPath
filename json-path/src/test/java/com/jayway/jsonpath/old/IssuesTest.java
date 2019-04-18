@@ -22,6 +22,7 @@ import java.util.Map;
 
 import org.assertj.core.api.Assertions;
 import org.hamcrest.Matchers;
+import org.junit.Ignore;
 import org.junit.Test;
 
 import com.fasterxml.jackson.databind.node.ObjectNode;
@@ -674,7 +675,116 @@ public class IssuesTest extends BaseTest {
     		res = JsonPath.parse(json).read("$.store.book.last([?(@.price < 10)]).title");
     		assertThat(res).isEqualTo("Moby Dick");
     }
-
+    
+    @Test
+    public void issue_537() {
+    	Configuration jsonConf = Configuration.defaultConfiguration().addOptions(Option.SUPPRESS_EXCEPTIONS);
+    	JsonPath.using(jsonConf).parse("{}").read("missing");
+    	DocumentContext dc = JsonPath.using(jsonConf
+    		).parse("{\"list\":[{\"data\":{\"old\":1}},{\"data\":{}},{\"data\":{\"old\":2}}]}"
+    		).renameKey("$..data", "old", "new");
+    	assertThat ("{\"list\":[{\"data\":{\"new\":1}},{\"data\":{}},{\"data\":{\"new\":2}}]}").isEqualTo(dc.jsonString());
+    }
+    
+    @Ignore
+    @Test 
+    public void issue_516() {
+    	 Object res = JsonPath.parse("{\"name\": \"jack\", \"address\": {\"name\": \"default\", \"detail\": \"xxxxx\"}}").read("$.address");
+    	 System.out.println(res);
+    	 res = JsonPath.parse("{\"name\": \"jack\", \"address\": {\"name\": \"default\", \"detail\": \"xxxxx\"}}").read("$.address", String.class);
+    	 System.out.println(res);
+    }
+    
+    @Test
+    public void issue_394() {
+    	String json ="{"+
+    			  "\"holidays\": ["+
+    			    "{"+
+    			      "\"month\": \"January\","+
+    			      "\"month_id\": 0,"+
+    			      "\"holidays_by_month\": ["+
+    			        "{"+
+    			          "\"date\": \"2017-01-01\","+
+    			          "\"name\": \"New Year\","+
+    			          "\"institution_list\": ["+
+    			            "{"+
+    			              "\"insitution\": \"inst1\","+
+    			              "\"location\": ["+
+    			                "\"Bangalore\","+
+    			                "\"Chennai\","+
+    			                "\"Delhi\","+
+    			                "\"Mumbai\","+
+    			                "\"Hyderabad\","+
+    			                "\"Kolkata\""+
+    			              "]"+
+    			            "},"+
+    			            "{"+
+    			              "\"insitution\": \"inst2\","+
+    			              "\"location\": ["+
+    			                "\"Bangalore\","+
+    			                "\"Chennai\","+
+    			                "\"Delhi\","+
+    			                "\"Mumbai\","+
+    			                "\"Hyderabad\","+
+    			                "\"Kolkata\""+
+    			              "]"+
+    			            "}"+
+    			          "]"+
+    			        "},"+
+    			        "{"+
+    			          "\"date\": \"2017-01-26\","+
+    			          "\"name\": \"Republic Day\","+
+    			          "\"institution_list\": ["+
+    			            "{"+
+    			              "\"insitution\": \"inst1\","+
+    			              "\"location\": ["+
+    			                "\"Bangalore\","+
+    			                "\"Chennai\","+
+    			                "\"Delhi\","+
+    			                "\"Mumbai\","+
+    			                "\"Hyderabad\","+
+    			                "\"Kolkata\""+
+    			              "]"+
+    			            "}"+
+    			          "]"+
+    			        "}"+
+    			      "]"+
+    			    "}"+
+    			  "]"+
+    			"}";
+    	String result = "["+
+    			  "{"+
+    			    "\"insitution\":\"inst1\","+
+    			    "\"location\":["+
+    			      "\"Bangalore\","+
+    			      "\"Chennai\","+
+    			      "\"Delhi\","+
+    			      "\"Mumbai\","+
+    			      "\"Hyderabad\","+
+    			      "\"Kolkata\""+
+    			    "]"+
+    			  "},"+
+    			  "{"+
+    			    "\"insitution\":\"inst1\","+
+    			    "\"location\":["+
+    			      "\"Bangalore\","+
+    			      "\"Chennai\","+
+    			      "\"Delhi\","+
+    			      "\"Mumbai\","+
+    			      "\"Hyderabad\","+
+    			      "\"Kolkata\""+
+    			    "]"+
+    			  "}"+
+    			"]";
+    	String query = "$..holidays.[*].holidays_by_month.[*].institution_list[?(@.insitution=='inst1')]";
+    	Object res = JsonPath.parse(json).read(query);
+    	assertThat(res.toString()).isEqualTo(result);
+    	
+    	query = "$..holidays.[*].holidays_by_month[?(@.institution_list.child([?(@.insitution=='inst2')]))].name";
+    	res = JsonPath.parse(json).read(query);
+    	assertThat(res).isEqualTo(new ArrayList() {{this.add("New Year");}});
+    }
+    
     @Test
     public void issue_287(){
     	String json = "{"
