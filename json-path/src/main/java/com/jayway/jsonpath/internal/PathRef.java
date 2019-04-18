@@ -3,6 +3,7 @@ package com.jayway.jsonpath.internal;
 import com.jayway.jsonpath.Configuration;
 import com.jayway.jsonpath.InvalidModificationException;
 import com.jayway.jsonpath.MapFunction;
+import com.jayway.jsonpath.Option;
 import com.jayway.jsonpath.PathNotFoundException;
 import com.jayway.jsonpath.spi.json.JsonProvider;
 
@@ -60,6 +61,9 @@ public abstract class PathRef implements Comparable<PathRef>  {
     protected void renameInMap(Object targetMap, String oldKeyName, String newKeyName, Configuration configuration){
         if(configuration.jsonProvider().isMap(targetMap)){
             if(configuration.jsonProvider().getMapValue(targetMap, oldKeyName) == JsonProvider.UNDEFINED){
+            	if(configuration.containsOption(Option.SUPPRESS_EXCEPTIONS)) {
+            		return;
+            	}
                 throw new PathNotFoundException("No results for Key "+oldKeyName+" found in map!");
             }
             configuration.jsonProvider().setProperty(targetMap, newKeyName, configuration.jsonProvider().getMapValue(targetMap, oldKeyName));
