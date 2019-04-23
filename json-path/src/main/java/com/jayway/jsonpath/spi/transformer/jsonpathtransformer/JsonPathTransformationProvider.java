@@ -261,6 +261,10 @@ public class JsonPathTransformationProvider implements TransformationProvider<Js
         if (!srcValueIsConstant && srcPath != null) {
             try {
                 srcValue = jsonContext.read(compiledSrcPath);
+                if (srcValue == null) {
+                    // TODO: log here. we are going to ignore any additionalTransform as well.
+                    return transformed;
+                }
             } catch (PathNotFoundException ex) {
                 // if the source path does not exist then nothing to do
                 // just return what came in
@@ -273,9 +277,13 @@ public class JsonPathTransformationProvider implements TransformationProvider<Js
         if (!isScalar(srcValue)) {
             //now check if its an array of size 1
             //applicable when the src path has filter predicates
-            if (configuration.jsonProvider().isArray(srcValue) &&
-                    configuration.jsonProvider().length(srcValue) == 1) {
-                srcValue = configuration.jsonProvider().getArrayIndex(srcValue, 0);
+            if (configuration.jsonProvider().isArray(srcValue)) {
+                if (configuration.jsonProvider().length(srcValue) == 1) {
+                    srcValue = configuration.jsonProvider().getArrayIndex(srcValue, 0);
+                } else if (configuration.jsonProvider().length(srcValue) == 0) {
+                    // TODO: log here. we are going to ignore any additionalTransform as well.
+                    return transformed;
+                }
             } else {
                 throw new TransformationException(
                         getStringFromBundle(SOURCE_NOT_SCALAR, srcPath, srcValue.getClass().getName()));
