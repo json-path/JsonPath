@@ -1,6 +1,5 @@
 package com.jayway.jsonpath;
 
-import java.util.ArrayList;
 import org.assertj.core.util.Lists;
 import org.junit.Test;
 
@@ -377,6 +376,36 @@ public class FilterTest extends BaseTest {
         // list is missing one element
         list = Lists.newArrayList("a", "b", "c", "d");
         assertThat(filter(where("string-arr").subsetof(list)).apply(createPredicateContext(json))).isEqualTo(false);
+    }
+
+    //----------------------------------------------------------------------------
+    //
+    // ANYOF
+    //
+    //----------------------------------------------------------------------------
+    @Test
+    public void array_anyof_evals() {
+        List<String> list = Lists.newArrayList("a", "z");
+        assertThat(filter(where("string-arr").anyof(list)).apply(createPredicateContext(json))).isEqualTo(true);
+        list = Lists.newArrayList("z", "b", "a");
+        assertThat(filter(where("string-arr").anyof(list)).apply(createPredicateContext(json))).isEqualTo(true);
+        list = Lists.newArrayList("x", "y", "z");
+        assertThat(filter(where("string-arr").anyof(list)).apply(createPredicateContext(json))).isEqualTo(false);
+    }
+
+    //----------------------------------------------------------------------------
+    //
+    // NONEOF
+    //
+    //----------------------------------------------------------------------------
+    @Test
+    public void array_noneof_evals() {
+        List<String> list = Lists.newArrayList("a", "z");
+        assertThat(filter(where("string-arr").noneof(list)).apply(createPredicateContext(json))).isEqualTo(false);
+        list = Lists.newArrayList("z", "b", "a");
+        assertThat(filter(where("string-arr").noneof(list)).apply(createPredicateContext(json))).isEqualTo(false);
+        list = Lists.newArrayList("x", "y", "z");
+        assertThat(filter(where("string-arr").noneof(list)).apply(createPredicateContext(json))).isEqualTo(true);
     }
 
     //----------------------------------------------------------------------------
