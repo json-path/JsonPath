@@ -19,7 +19,7 @@ import java.util.List;
 
 public class JsonOrgJsonProvider extends AbstractJsonProvider {
 
-    private static final Logger logger = LoggerFactory.getLogger(GsonJsonProvider.class);
+    private static final Logger logger = LoggerFactory.getLogger(JsonOrgJsonProvider.class);
 
     @Override
     public Object parse(String json) throws InvalidJsonException {
