@@ -7,8 +7,6 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.json.JSONTokener;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -18,8 +16,6 @@ import java.util.Collection;
 import java.util.List;
 
 public class JsonOrgJsonProvider extends AbstractJsonProvider {
-
-    private static final Logger logger = LoggerFactory.getLogger(JsonOrgJsonProvider.class);
 
     @Override
     public Object parse(String json) throws InvalidJsonException {
