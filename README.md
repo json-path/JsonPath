@@ -699,7 +699,7 @@ and a Transformation Specification like this:
 }
 ```
 
-The Transformed Target document produced would be like this:
+The Transformed Target document would look like this:
 
 ```javascript
 {
