@@ -271,7 +271,7 @@ public class PathCompiler {
 
         // Parenthesis starts at 1 since we're marking the start of a function call, the close paren will denote the
         // last parameter boundary
-        Integer groupParen = 1, groupBracket = 0, groupBrace = 0, groupQuote = 0;
+        Integer groupParen = 1, groupBracket = 0, groupBrace = 0, groupQuote = 0, filter = 0;
         Boolean endOfStream = false;
         char priorChar = 0;
         List<Parameter> parameters = new ArrayList<Parameter>();
@@ -329,10 +329,18 @@ public class PathCompiler {
                     groupBracket--;
                     break;
 
+                case BEGIN_FILTER:
+                    filter++;
+                    break;
+
                 // In either the close paren case where we have zero paren groups left, capture the parameter, or where
                 // we've encountered a COMMA do the same
                 case CLOSE_PARENTHESIS:
                     groupParen--;
+                    if(filter > 0) {
+                        filter--;
+                        break;
+                    }
                     if (0 != groupParen) {
                         parameter.append(c);
                     }
