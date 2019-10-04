@@ -270,7 +270,7 @@ public class JacksonJsonNodeJsonProvider extends AbstractJsonProvider {
     	} else if (value == null) {
     		objectNode.set(key.toString(), null); // this will create a null-node
     	} else {
-    		objectNode.put(key.toString(), createJsonElement(value));
+    		objectNode.set(key.toString(), createJsonElement(value));
     	}
 	}
 

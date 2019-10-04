@@ -68,7 +68,7 @@ public class FunctionPathToken extends PathToken {
      * Return the actual value by indicating true. If this return was false then we'd return the value in an array which
      * isn't what is desired - true indicates the raw value is returned.
      *
-     * @return
+     * @return true if token is definite
      */
     @Override
     public boolean isTokenDefinite() {
