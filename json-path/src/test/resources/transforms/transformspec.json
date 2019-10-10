@@ -1,0 +1,41 @@
+{
+  "lookupTables": [{
+    "tableName": "stateMapper",
+    "tableData": {
+      "EN_ROUTE": "ACTIVE",
+      "PLANNED": "DISPATCHED",
+      "COMPLETED": "COMPLETED"
+    }
+  },
+    {
+      "tableName": "distMapper",
+      "tableData": {
+        "DISTANCE": "dist"
+      }
+    }
+
+  ],
+  "pathMappings": [{
+    "source": "$.shipment.id",
+    "target": "$.shipment.extid"
+  }, {
+    "source": "$.shipment.state",
+    "target": "$.shipment.status",
+    "lookupTable": "stateMapper"
+  }, {
+    "source" : "$.shipment.stops[0].name",
+    "target" : "$.shipment.loading.name"
+  },{
+    "source" : "$.shipment.stops[0].location",
+    "target" : "$.shipment.loading.location"
+  },
+    {
+      "source" : "$.shipment.stops[1].name",
+      "target" : "$.shipment.unloading.name"
+    },{
+      "source" : "$.shipment.stops[1].location",
+      "target" : "$.shipment.unloading.location"
+    }
+
+  ]
+}

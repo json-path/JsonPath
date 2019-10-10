@@ -463,10 +463,267 @@ CacheProvider.setCache(new Cache() {
 });
 ```
 
+### Generating JSON from JsonPath
 
+JsonPath set/put API can be used to update the value in a document at a given Path. But what if the Path to be updated does not exist.
 
+```java
+    String inputObject =  "{ }";
+    String path = "$.a.b.c";
+    JsonPath compiledPath = JsonPath.compile(path);
+    Object output = compiledPath.set(pathConfiguration.jsonProvider().parse(inputObject),
+                12345,pathConfiguration);
+    Integer result = parse(output).read(path);
+    DocumentContext jsonContext = JsonPath.parse(output);
+    System.out.println("Document Created by JsonPaths:" + jsonContext.jsonString());
+    assertThat(result).isEqualTo(12345);
+```
+Here path '$.a.b.c' does not exist in the input Object so we would get a PathNotFoundException
 
+```java
+com.jayway.jsonpath.PathNotFoundException: Missing property in path $['a']
+	at com.jayway.jsonpath.internal.path.EvaluationContextImpl.getValue(EvaluationContextImpl.java:133)
+	at com.jayway.jsonpath.JsonPath.read(JsonPath.java:199)
+	at com.jayway.jsonpath.internal.JsonContext.read(JsonContext.java:89)
+	at com.jayway.jsonpath.internal.JsonContext.read(JsonContext.java:78)
+```
 
+There are usecases where one would like the above set API to create a JSON of the form below:
+
+```javascript
+{"a":{"b":{"c":12345}}}
+```
+This is now possible by enabling a new Configuration Option named `CREATE_MISSING_PROPERTIES_ON_DEFINITE_PATH`. The feature will only work if the 'path' argument represents a Definite Path as per JsonPath definitions.
+
+```java
+    Configuration pathConfiguration = Configuration.builder()
+                .options(Option.CREATE_MISSING_PROPERTIES_ON_DEFINITE_PATH).build();
+    String inputObject =  "{ }";
+    String path = "$.a.b.c";
+    JsonPath compiledPath = JsonPath.compile(path);
+    Object output = compiledPath.set(pathConfiguration.jsonProvider().parse(inputObject),
+            12345,pathConfiguration);
+    Integer result = parse(output).read(path);
+    DocumentContext jsonContext = JsonPath.parse(output);
+    System.out.println("Document Created by JsonPaths:" + jsonContext.jsonString());
+    assertThat(result).isEqualTo(12345);
+```
+
+* `NOTE: when the path argument supplied is not definite, one would see things such as classcast exception`
+
+### TransformationProvider SPI
+
+Building on the JSON Generation support one can now perform JSON to JSON transformations using JsonPath Mappings between an existing Source and a desired Traget JSON Document. The Source JSON document could then be transformed into the Target JSON document. This feature is quiet useful in Enterprise Integrations where typically the source and destination JSON Documents tend to have varying structures for the same Object/Concept.
+
+A new `TransformationProvider` SPI has been introduced in JsonPath to support this requirement. There can be multiple implementations of the SPI but there is a default implementation in place which uses a specific form of Mapping Definition also called `TransformationSpec`. Each new implementation of the TransformationProvider can define its own format for the TransformationSpec.
+
+```java
+    InputStream sourceStream;
+    InputStream transformSpec;
+    TransformationSpec spec;
+    Object sourceJson;
+
+    //assuming sourceStream, and transformSpec have been initialized
+    Configuration configuration = Configuration.builder()
+                .options(Option.CREATE_MISSING_PROPERTIES_ON_DEFINITE_PATH).build();
+    sourceJson = configuration.jsonProvider().parse(sourceStream, Charset.defaultCharset().name());
+    spec = configuration.transformationProvider().spec(transformSpec, configuration);
+    Object transformed = configuration.transformationProvider().transform(sourceJson,spec, configuration);
+    
+    //print the transformed document
+    DocumentContext jsonContext = JsonPath.parse(transformed);
+    System.out.println("Document Created by Transformation:" + jsonContext.jsonString());
+```
+
+The above code when supplied with a sample Transformation Sepcification like this:
+
+```javascript
+{
+  "pathMappings": [{
+    "source": "$.store.book[*].price",
+    "target": "$.store.novel[*].cost"
+  }, {
+    "source": "$.store.book[*].title",
+    "target": "$.store.novel[*].bookTitle"
+  }
+  ]
+}
+```
+
+And an Input Document like this:
+
+```java
+{
+	"store": {
+		"book": [{
+			"category": "reference",
+			"author": "Nigel Rees",
+			"title": "Sayings of the Century",
+			"price": 8.95
+		}, {
+			"category": "fiction",
+			"author": "Evelyn Waugh",
+			"title": "Sword of Honour",
+			"price": 12.99
+		}, {
+			"category": "fiction",
+			"author": "Herman Melville",
+			"title": "Moby Dick",
+			"isbn": "0-553-21311-3",
+			"price": 8.99
+		}, {
+			"category": "fiction",
+			"author": "J. R. R. Tolkien",
+			"title": "The Lord of the Rings",
+			"isbn": "0-395-19395-8",
+			"price": 22.99
+		}],
+		"bicycle": {
+			"color": "red",
+			"price": 19.95
+		}
+	},
+	"expensive": 10
+}
+```
+
+would produce a transformed target JSON Document like this:
+
+```javascript
+{
+	"store": {
+		"novel": [{
+			"cost": 8.95,
+			"bookTitle": "Sayings of the Century"
+		}, {
+			"cost": 12.99,
+			"bookTitle": "Sword of Honour"
+		}, {
+			"cost": 8.99,
+			"bookTitle": "Moby Dick"
+		}, {
+			"cost": 22.99,
+			"bookTitle": "The Lord of the Rings"
+		}]
+	}
+}
+```
+* `NOTE: The Transformation Feature requires enabling the Option CREATE_MISSING_PROPERTIES_ON_DEFINITE_PATH explicitly.`
+    
+This Transformation feature can potentially be used to do things like summarization/aggregation on a given Source document when the Source JsonPath makes use of Filters and Functions (min, max, sum etc).
+
+    
+```javascript
+{
+  "pathMappings": [{
+    "source": "$.store.book[*].price.max()",
+    "target": "$.storeSummary.maxPrice"
+  }, {
+    "source": "$.store.book[*].price.sum()",
+    "target": "$.storeSummary.totalCostOfBooks"
+  }
+  ]
+}
+```
+* `NOTE: some of the JsonPath's aggregate functions do not seem to work right now, due to bugs ?`
+
+The above transformation specification can be used to produce the following summary document 
+
+```javascript
+{
+  "storeSummary": {
+    "maxPrice": 22.99,
+    "totalCostOfBooks": 53.92
+  }
+}
+```
+
+The default transformation provider supports a transformation spec which allows for WildCard mappings (currently Single-Level) for array paths. It also provides a notion of LookupTables that support custom mappings of a string/enumeration value in the source document to a value in the corresponding transformed target document. The example shown earlier in this section shows the usage of wildcard (limited to "*" only, slices are not supported currently). The example below shows the use of LookupTables.
+
+Given a Source Document like this:
+
+```javascript
+{
+  "shipment": {
+    "id": 123456,
+    "state": "EN_ROUTE",
+    "stops" : [
+      {
+        "name" : "source",
+        "sequence" : "0",
+        "location" : "-44,123"
+      },
+      {
+        "name" : "destination",
+        "sequence" : "1",
+        "location" : "-98,225"
+      }
+    ]
+  }
+}
+```
+
+and a Transformation Specification like this:
+
+```javascript
+{
+  "lookupTables": [{
+    "tableName": "stateMapper",
+    "tableData": {
+      "EN_ROUTE": "ACTIVE",
+      "PLANNED": "DISPATCHED",
+      "COMPLETED": "COMPLETED"
+    }
+  }
+  ],
+  "pathMappings": [{
+    "source": "$.shipment.id",
+    "target": "$.shipment.extid"
+  }, {
+    "source": "$.shipment.state",
+    "target": "$.shipment.status",
+    "lookupTable": "stateMapper"
+  }, {
+    "source" : "$.shipment.stops[0].name",
+    "target" : "$.shipment.loading.name"
+  },{
+    "source" : "$.shipment.stops[0].location",
+    "target" : "$.shipment.loading.location"
+  },
+    {
+      "source" : "$.shipment.stops[1].name",
+      "target" : "$.shipment.unloading.name"
+    },{
+      "source" : "$.shipment.stops[1].location",
+      "target" : "$.shipment.unloading.location"
+    }
+
+  ]
+}
+```
+
+The Transformed Target document would look like this:
+
+```javascript
+{
+  "shipment": {
+    "extid": 123456,
+    "status": "ACTIVE",
+    "loading": {
+      "name": "source",
+      "location": "-44,123"
+    },
+    "unloading": {
+      "name": "destination",
+      "location": "-98,225"
+    }
+  }
+}
+```
+
+Notice that the "state" field in the source document was mapped to a "status" field in target document and the mapping made use of a LookupTable to transform "EN_ROUTE" to "ACTIVE". The use of LookupTables is optional in the transformation specification.
+
+Additional features in the form of binary and unary operations on the source-path combined with a constant or a secondary source json-path are also supported by the TransformationProvider. For more details refer [[testcase](https://github.com/KumarJayanti/JsonPath/blob/feature/transformation-api/json-path/src/test/java/com/jayway/jsonpath/TransformationAdvancedTest.java)]
 
 [![Analytics](https://ga-beacon.appspot.com/UA-54945131-1/jsonpath/index)](https://github.com/igrigorik/ga-beacon)
-
+ 

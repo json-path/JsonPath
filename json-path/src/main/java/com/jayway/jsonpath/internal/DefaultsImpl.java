@@ -6,6 +6,8 @@ import com.jayway.jsonpath.spi.json.JsonProvider;
 import com.jayway.jsonpath.spi.json.JsonSmartJsonProvider;
 import com.jayway.jsonpath.spi.mapper.JsonSmartMappingProvider;
 import com.jayway.jsonpath.spi.mapper.MappingProvider;
+import com.jayway.jsonpath.spi.transformer.TransformationProvider;
+import com.jayway.jsonpath.spi.transformer.jsonpathtransformer.JsonPathTransformationProvider;
 
 import java.util.EnumSet;
 import java.util.Set;
@@ -29,6 +31,11 @@ public final class DefaultsImpl implements Defaults {
   @Override
   public MappingProvider mappingProvider() {
     return mappingProvider;
+  }
+
+  @Override
+  public TransformationProvider transformationProvider() {
+    return new JsonPathTransformationProvider();
   }
 
   private DefaultsImpl() {

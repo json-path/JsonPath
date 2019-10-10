@@ -1,0 +1,105 @@
+{
+  "lookupTables": [
+    {
+      "tableData": {
+        "EN_ROUTE": "ACTIVE",
+        "PLANNED": "DISPATCHED",
+        "COMPLETED": "COMPLETED"
+      }
+    },
+    {
+      "tableName": "distMapper"
+    },
+    {
+      "tableName": "activityMapper",
+      "tableData": {
+        "AT_PLAY": "PLAYING",
+        "SIT": "SITTING",
+        "AT_WORK": "WORKING"
+      }
+    }
+  ],
+  "pathMappings": [
+    {
+      "target": "$.shipment.unloading.time"
+    },
+    {
+      "source": "$.shipment.state"
+    },
+    {
+      "source": "$*shipment.id",
+      "target": "$.shipment.extid"
+    },
+    {
+      "source": "$.shipment.state",
+      "target": "$.shipment.status",
+      "lookupTable": "stateMapper"
+    },
+    {
+      "source": "$.shipment.stops[*].name",
+      "target": "$.shipment.loading.name"
+    },
+    {
+      "source": "$.shipment.stops[0:1].location",
+      "target": "$.shipment.loading.location"
+    },
+    {
+      "source": "$.shipment.stops[1].name",
+      "target": "$.shipment.unloading.name"
+    },
+    {
+      "source": "$.shipment.stops[*].location.initial[*].value",
+      "target": "$.shipment.unloading.location"
+    },
+    {
+      "source": "$.shipment.id",
+      "additionalTransform": {
+        "constantSourceValue": true
+      },
+      "target": "$.shipment.unloading.location"
+    },
+    {
+      "source": "$.shipment.state",
+      "additionalTransform": {
+        "constantSourceValue": true,
+        "sourcePath" : "$.shipment.state"
+      },
+      "target": "$.shipment.unloading.location"
+    },
+    {
+      "source": "$.shipment.id",
+      "additionalTransform": {
+        "sourcePath" : "$.shipment.state"
+      },
+      "target": "$.shipment.unloading.location"
+    },
+    {
+      "source": "$.shipment.state",
+      "additionalTransform": {
+        "operator" : "AND"
+      },
+      "target": "$.shipment.unloading.location"
+    },
+    {
+      "additionalTransform": {
+        "operator" : "AND"
+      },
+      "target": "$.shipment.unloading.location"
+    },
+    {
+      "source": "$.shipment.state",
+      "additionalTransform": {
+        "operator" : "TO_EPOCHMILLIS"
+      },
+      "target": "$.shipment.epochmillis"
+    },
+    {
+      "source": "$.shipment.state",
+      "additionalTransform": {
+        "operator" : "TO_ISO8601"
+      },
+      "target": "$.shipment.iso8601"
+    }
+
+  ]
+}

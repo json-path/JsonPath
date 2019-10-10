@@ -1,0 +1,129 @@
+{
+
+  "pathMappings": [{
+    "source": "$.id",
+    "target": "$.feedUniqueId"
+  }, {
+    "source": "$.carrierName",
+    "target": "$.transporter.name"
+  }, {
+    "source" : "$.carrierId",
+    "target" : "$.transporter.uniqueId"
+  },{
+    "source" : "$.driverId.loginId",
+    "target" : "$.driverName"
+  },
+    {
+      "source" : "$.extendedFields[?(@.name == 'LICENSE_PLATE')].value",
+      "target" : "$.vehicleNumber"
+    },
+    {
+      "source" : "$.extendedFields[?(@.name == 'LOCATIONSOURCE')].value",
+      "target" : "$.locationSource"
+    },
+    {
+      "source" : "$.extendedFields[?(@.name == 'PORTABLETRACKERID')].value",
+      "target" : "$.portableTrackerId"
+    },
+
+    {
+      "source" : "$.extendedFields[?(@.name ==  'PRIMARYDRIVERMOBILENUMBER')].value",
+      "target" : "$.driverNumbers[0]"
+    },{
+      "source" : "$.extendedFields[?(@.name ==  'PRIMARYDRIVERALTERNATEMOBILENUMBER')].value",
+      "target" : "$.driverNumbers[1]"
+    },
+    {
+      "target" : "$.needSTD",
+      "additionalTransform" : {
+        "constantSourceValue" : true
+      }
+    },{
+      "target" : "$.needSTA",
+      "additionalTransform" : {
+        "constantSourceValue" : true
+      }
+    }, {
+      "source" : "$.earliestStartTime",
+      "additionalTransform" : {
+        "operator" : "TO_ISO8601"
+      },
+      "target" : "$.originSTD"
+    }, {
+      "source" : "$.stops[-1].estimatedArrivalTime",
+      "additionalTransform" : {
+        "operator" : "TO_ISO8601"
+      },
+      "target" : "$.destinationSTA"
+    }, {
+      "source" : "$.stops[0].street",
+      "target" : "$.loading.uniqueId"
+    }, {
+      "source" : "$.stops[-1].street",
+      "target" : "$.unloading.uniqueId"
+    },{
+      "source" : "$.stops[0].city",
+      "target" : "$.loading.city"
+    }, {
+      "source" : "$.stops[-1].city",
+      "target" : "$.unloading.city"
+    },{
+      "source" : "$.stops[0].postalCode",
+      "target" : "$.loading.area"
+    }, {
+      "source" : "$.stops[-1].postalCode",
+      "target" : "$.unloading.area"
+    },{
+      "source" : "$.stops[0].geoLocation[0]",
+      "target" : "$.loading.latitude"
+    }, {
+      "source" : "$.stops[-1].geoLocation[0]",
+      "target" : "$.unloading.latitude"
+    },{
+      "source" : "$.stops[0].geoLocation[1]",
+      "target" : "$.loading.longitude"
+    }, {
+      "source" : "$.stops[-1].geoLocation[1]",
+      "target" : "$.unloading.longitude"
+    },
+    {
+      "source" : "$.earliestStartTime",
+      "additionalTransform" : {
+        "operator" : "ADD",
+        "sourcePath" : "$.plannedDriveDurationSeconds"
+      },
+      "target" : "$.testingAdditionalTransform.destinationSTAComputed"
+    },
+    {
+      "source": "$.isTPLManaged",
+      "additionalTransform": {
+        "operator" : "NOT"
+      },
+      "target": "$.testingAdditionalTransform.isNotTPLManaged"
+    },
+    {
+      "source": "$.cost",
+      "additionalTransform": {
+        "operator" : "ADD",
+        "constantSourceValue" : 100
+      },
+      "target": "$.testingAdditionalTransform.totalCost"
+    },
+    {
+      "source": "$.weight",
+      "additionalTransform": {
+        "operator" : "RHS_DIV",
+        "constantSourceValue" : 1000
+      },
+      "target": "$.testingAdditionalTransform.weightKGS"
+    },{
+      "source": "$.weightUtilization",
+      "additionalTransform": {
+        "operator" : "LHS_SUB",
+        "constantSourceValue" : 1
+      },
+      "target": "$.testingAdditionalTransform.unUtilizedWeight"
+    }
+
+  ]
+}

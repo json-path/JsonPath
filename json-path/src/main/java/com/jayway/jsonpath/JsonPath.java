@@ -140,6 +140,18 @@ public class JsonPath {
     }
 
     /**
+     * Checks if a path is a Function Path.
+     * function path examples are:
+     * <p/>
+     * $.store.book[?(@.price < 10)].price.max()
+     * <p/>
+     * @return true if path is definite (points to single item)
+     */
+    public boolean isFunctionPath() {
+        return path.isFunctionPath();
+    }
+
+    /**
      * Applies this JsonPath to the provided json document.
      * Note that the document must be identified as either a List or Map by
      * the {@link JsonProvider}
