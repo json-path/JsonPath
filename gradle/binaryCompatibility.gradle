@@ -108,7 +108,6 @@ if (JavaVersion.current().isJava7Compatible()) {
 
             def htmlReportFile = file("${buildDir}/reports/binary-compat-${project.name}.html")
             inputs.file file("$configDir/$templateFile")
-            inputs.file templateFile
             outputs.file htmlReportFile
 
             def model = [title   : "Binary compatibility report for ${project.name}",
