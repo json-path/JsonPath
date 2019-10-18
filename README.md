@@ -340,6 +340,15 @@ assertThat(pathList).containsExactly(
     "$['store']['book'][3]['author']");
 ```
 
+Set a value 
+-----------
+The library offers the possibility to set a value.
+
+```java
+String newJson = parse(json).set("$['store']['book'][0]['author']", "Paul").jsonString();
+```
+
+
 
 Tweaking Configuration
 ----------------------
