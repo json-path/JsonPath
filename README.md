@@ -37,7 +37,7 @@ JsonPath is available at the Central Maven Repository. Maven users add this to y
 <dependency>
     <groupId>com.jayway.jsonpath</groupId>
     <artifactId>json-path</artifactId>
-    <version>2.4.0</version>
+    <version>2.5.0</version>
 </dependency>
 ```
 
@@ -63,6 +63,7 @@ Operators
 | `$`                       | The root element to query. This starts all path expressions.       |
 | `@`                       | The current node being processed by a filter predicate.            |
 | `*`                       | Wildcard. Available anywhere a name or numeric are required.       |
+| `^`                       | Carrot. Scan parent node.       |
 | `..`                      | Deep scan. Available anywhere a name is required.                  |
 | `.<name>`                 | Dot-notated child                                                  |
 | `['<name>' (, '<name>')]` | Bracket-notated child or children                                  |
