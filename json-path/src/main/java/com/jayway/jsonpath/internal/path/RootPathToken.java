@@ -15,6 +15,8 @@
 package com.jayway.jsonpath.internal.path;
 
 import com.jayway.jsonpath.internal.PathRef;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  *
@@ -25,6 +27,7 @@ public class RootPathToken extends PathToken {
     private int tokenCount;
     private final String rootToken;
 
+    private static final Logger logger = LoggerFactory.getLogger(RootPathToken.class);
 
     RootPathToken(char rootToken) {
         this.rootToken = Character.toString(rootToken);
@@ -47,6 +50,9 @@ public class RootPathToken extends PathToken {
         return new PathTokenAppender(){
             @Override
             public PathTokenAppender appendPathToken(PathToken next) {
+                if ( logger.isDebugEnabled() ) {
+                    logger.debug("append: " + next);
+                }
                 append(next);
                 return this;
             }
@@ -56,9 +62,15 @@ public class RootPathToken extends PathToken {
     @Override
     public void evaluate(String currentPath, PathRef pathRef, Object model, EvaluationContextImpl ctx) {
         if (isLeaf()) {
+            if ( logger.isDebugEnabled() ) {
+                logger.debug("next(): " + next());
+            }
             PathRef op = ctx.forUpdate() ?  pathRef : PathRef.NO_OP;
             ctx.addResult(rootToken, op, model);
         } else {
+            if ( logger.isDebugEnabled() ) {
+                logger.debug("next(): " + next());
+            }
             next().evaluate(rootToken, pathRef, model, ctx);
         }
     }

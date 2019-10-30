@@ -1,0 +1,3796 @@
+{
+  "_id" : "5d70771f96c30d3ec4334b83",
+  "competitionCode" : "AG2018",
+  "documentCode" : "GARM1AA---------------FNL---------",
+  "documentType" : "DT_CUMULATIVE_RESULT",
+  "source" : "KHDGAR1",
+  "version" : "402",
+  "feedFlag" : "P",
+  "resultStatus" : "OFFICIAL",
+  "dateTime" : "2018-08-21T18:49:02.453+09:00",
+  "competition" : {
+    "ExtendedInfos" : {
+      "ExtendedInfo" : [
+        {
+          ":Type" : "UI",
+          ":Code" : "SUBDIVISION",
+          ":Value" : "1"
+        },
+        {
+          ":Type" : "UI",
+          ":Code" : "ROTATION",
+          ":Value" : "1"
+        },
+        {
+          ":Type" : "UI",
+          ":Code" : "LAST_UNIT",
+          ":Value" : "GARM1AA---------------FNL-000001--"
+        }
+      ],
+      "SportDescription" : {
+        ":DisciplineName" : "Gymnastics Artistic",
+        ":EventName" : "Men\"\"s Individual All-Around",
+        ":Gender" : "M",
+        ":SubEventName" : "Men\"\"s Individual All-Around Final"
+      },
+      "VenueDescription" : {
+        ":Venue" : "KHD",
+        ":VenueName" : "JIExpo - Hall D",
+        ":Location" : "KHD",
+        ":LocationName" : "JIExpo - Hall D"
+      }
+    },
+    "Result" : [
+      {
+        ":SortOrder" : "1",
+        ":ResultType" : "POINTS",
+        ":Result" : "86.750",
+        ":Rank" : "1",
+        "ExtendedResults" : {
+          "ExtendedResult" : [
+            {
+              ":Type" : "ER",
+              ":Code" : "START_APPARATUS",
+              ":Value" : "PB"
+            },
+            {
+              ":Type" : "ER",
+              ":Code" : "FX",
+              ":Value" : "14.050",
+              ":Pos" : "1",
+              ":ValueType" : "POINTS",
+              ":Rank" : "8",
+              "Extension" : [
+                {
+                  ":Code" : "DIFFICULTY",
+                  ":Value" : "6.100"
+                },
+                {
+                  ":Code" : "EXECUTION",
+                  ":Value" : "8.050"
+                },
+                {
+                  ":Code" : "PENALTY",
+                  ":Value" : "-0.100"
+                }
+              ]
+            },
+            {
+              ":Type" : "ER",
+              ":Code" : "PH",
+              ":Value" : "14.450",
+              ":Pos" : "2",
+              ":ValueType" : "POINTS",
+              ":Rank" : "4",
+              "Extension" : [
+                {
+                  ":Code" : "DIFFICULTY",
+                  ":Value" : "5.800"
+                },
+                {
+                  ":Code" : "EXECUTION",
+                  ":Value" : "8.650"
+                }
+              ]
+            },
+            {
+              ":Type" : "ER",
+              ":Code" : "SR",
+              ":Value" : "14.150",
+              ":Pos" : "3",
+              ":ValueType" : "POINTS",
+              ":Rank" : "11",
+              "Extension" : [
+                {
+                  ":Code" : "DIFFICULTY",
+                  ":Value" : "5.600"
+                },
+                {
+                  ":Code" : "EXECUTION",
+                  ":Value" : "8.550"
+                }
+              ]
+            },
+            {
+              ":Type" : "ER",
+              ":Code" : "VT",
+              ":Value" : "14.550",
+              ":Pos" : "4",
+              ":ValueType" : "POINTS",
+              ":Rank" : "4",
+              "Extension" : [
+                {
+                  ":Code" : "DIFFICULTY",
+                  ":Value" : "5.600"
+                },
+                {
+                  ":Code" : "EXECUTION",
+                  ":Value" : "8.950"
+                }
+              ]
+            },
+            {
+              ":Type" : "ER",
+              ":Code" : "PB",
+              ":Value" : "15.100",
+              ":Pos" : "5",
+              ":ValueType" : "POINTS",
+              ":Rank" : "3",
+              "Extension" : [
+                {
+                  ":Code" : "DIFFICULTY",
+                  ":Value" : "6.400"
+                },
+                {
+                  ":Code" : "EXECUTION",
+                  ":Value" : "8.700"
+                }
+              ]
+            },
+            {
+              ":Type" : "ER",
+              ":Code" : "HB",
+              ":Value" : "14.450",
+              ":Pos" : "6",
+              ":ValueType" : "POINTS",
+              ":Rank" : "4",
+              "Extension" : [
+                {
+                  ":Code" : "DIFFICULTY",
+                  ":Value" : "6.200"
+                },
+                {
+                  ":Code" : "EXECUTION",
+                  ":Value" : "8.250"
+                }
+              ]
+            },
+            {
+              ":Type" : "ER",
+              ":Code" : "REPORTED",
+              ":Value" : "15.100",
+              ":ValueType" : "POINTS",
+              ":Rank" : "2",
+              ":SortOrder" : "2"
+            }
+          ]
+        },
+        "Competitor" : {
+          ":Code" : "3011699",
+          ":Type" : "A",
+          ":Bib" : "106",
+          ":Organisation" : "CHN",
+          "Composition" : {
+            "Athlete" : {
+              ":Code" : "3011699",
+              ":Bib" : "106",
+              ":Order" : "1",
+              "Description" : {
+                ":FamilyName" : "Lin",
+                ":GivenName" : "Chaopan",
+                ":Gender" : "M",
+                ":Organisation" : "CHN",
+                ":IFId" : "20886",
+                ":BirthDate" : "1995-08-27"
+              }
+            }
+          }
+        }
+      },
+      {
+        ":SortOrder" : "2",
+        ":ResultType" : "POINTS",
+        ":Result" : "85.950",
+        ":Rank" : "2",
+        "ExtendedResults" : {
+          "ExtendedResult" : [
+            {
+              ":Type" : "ER",
+              ":Code" : "START_APPARATUS",
+              ":Value" : "SR"
+            },
+            {
+              ":Type" : "ER",
+              ":Code" : "FX",
+              ":Value" : "14.050",
+              ":Pos" : "1",
+              ":ValueType" : "POINTS",
+              ":Rank" : "6",
+              "Extension" : [
+                {
+                  ":Code" : "DIFFICULTY",
+                  ":Value" : "5.800"
+                },
+                {
+                  ":Code" : "EXECUTION",
+                  ":Value" : "8.250"
+                }
+              ]
+            },
+            {
+              ":Type" : "ER",
+              ":Code" : "PH",
+              ":Value" : "14.150",
+              ":Pos" : "2",
+              ":ValueType" : "POINTS",
+              ":Rank" : "8",
+              "Extension" : [
+                {
+                  ":Code" : "DIFFICULTY",
+                  ":Value" : "5.700"
+                },
+                {
+                  ":Code" : "EXECUTION",
+                  ":Value" : "8.450"
+                }
+              ]
+            },
+            {
+              ":Type" : "ER",
+              ":Code" : "SR",
+              ":Value" : "14.600",
+              ":Pos" : "3",
+              ":ValueType" : "POINTS",
+              ":Rank" : "4",
+              "Extension" : [
+                {
+                  ":Code" : "DIFFICULTY",
+                  ":Value" : "6.000"
+                },
+                {
+                  ":Code" : "EXECUTION",
+                  ":Value" : "8.600"
+                }
+              ]
+            },
+            {
+              ":Type" : "ER",
+              ":Code" : "VT",
+              ":Value" : "14.450",
+              ":Pos" : "4",
+              ":ValueType" : "POINTS",
+              ":Rank" : "5",
+              ":RankEqual" : "Y",
+              "Extension" : [
+                {
+                  ":Code" : "DIFFICULTY",
+                  ":Value" : "5.200"
+                },
+                {
+                  ":Code" : "EXECUTION",
+                  ":Value" : "9.250"
+                }
+              ]
+            },
+            {
+              ":Type" : "ER",
+              ":Code" : "PB",
+              ":Value" : "14.950",
+              ":Pos" : "5",
+              ":ValueType" : "POINTS",
+              ":Rank" : "4",
+              "Extension" : [
+                {
+                  ":Code" : "DIFFICULTY",
+                  ":Value" : "6.300"
+                },
+                {
+                  ":Code" : "EXECUTION",
+                  ":Value" : "8.650"
+                }
+              ]
+            },
+            {
+              ":Type" : "ER",
+              ":Code" : "HB",
+              ":Value" : "13.750",
+              ":Pos" : "6",
+              ":ValueType" : "POINTS",
+              ":Rank" : "8",
+              "Extension" : [
+                {
+                  ":Code" : "DIFFICULTY",
+                  ":Value" : "5.500"
+                },
+                {
+                  ":Code" : "EXECUTION",
+                  ":Value" : "8.250"
+                }
+              ]
+            },
+            {
+              ":Type" : "ER",
+              ":Code" : "REPORTED",
+              ":Value" : "14.600",
+              ":ValueType" : "POINTS",
+              ":Rank" : "4",
+              ":SortOrder" : "4"
+            }
+          ]
+        },
+        "Competitor" : {
+          ":Code" : "3024850",
+          ":Type" : "A",
+          ":Bib" : "127",
+          ":Organisation" : "JPN",
+          "Composition" : {
+            "Athlete" : {
+              ":Code" : "3024850",
+              ":Bib" : "127",
+              ":Order" : "1",
+              "Description" : {
+                ":FamilyName" : "Nonomura",
+                ":GivenName" : "Shogo",
+                ":Gender" : "M",
+                ":Organisation" : "JPN",
+                ":IFId" : "14824",
+                ":BirthDate" : "1993-08-16"
+              }
+            }
+          }
+        }
+      },
+      {
+        ":SortOrder" : "3",
+        ":ResultType" : "POINTS",
+        ":Result" : "85.550",
+        ":Rank" : "3",
+        "ExtendedResults" : {
+          "ExtendedResult" : [
+            {
+              ":Type" : "ER",
+              ":Code" : "START_APPARATUS",
+              ":Value" : "PB"
+            },
+            {
+              ":Type" : "ER",
+              ":Code" : "FX",
+              ":Value" : "14.100",
+              ":Pos" : "1",
+              ":ValueType" : "POINTS",
+              ":Rank" : "5",
+              "Extension" : [
+                {
+                  ":Code" : "DIFFICULTY",
+                  ":Value" : "5.900"
+                },
+                {
+                  ":Code" : "EXECUTION",
+                  ":Value" : "8.200"
+                }
+              ]
+            },
+            {
+              ":Type" : "ER",
+              ":Code" : "PH",
+              ":Value" : "13.900",
+              ":Pos" : "2",
+              ":ValueType" : "POINTS",
+              ":Rank" : "11",
+              "Extension" : [
+                {
+                  ":Code" : "DIFFICULTY",
+                  ":Value" : "5.900"
+                },
+                {
+                  ":Code" : "EXECUTION",
+                  ":Value" : "8.000"
+                },
+                {
+                  ":Code" : "INQUIRY",
+                  ":Value" : "ACCEPTED"
+                }
+              ]
+            },
+            {
+              ":Type" : "ER",
+              ":Code" : "SR",
+              ":Value" : "14.200",
+              ":Pos" : "3",
+              ":ValueType" : "POINTS",
+              ":Rank" : "9",
+              ":RankEqual" : "Y",
+              "Extension" : [
+                {
+                  ":Code" : "DIFFICULTY",
+                  ":Value" : "5.700"
+                },
+                {
+                  ":Code" : "EXECUTION",
+                  ":Value" : "8.500"
+                }
+              ]
+            },
+            {
+              ":Type" : "ER",
+              ":Code" : "VT",
+              ":Value" : "13.650",
+              ":Pos" : "4",
+              ":ValueType" : "POINTS",
+              ":Rank" : "29",
+              "Extension" : [
+                {
+                  ":Code" : "DIFFICULTY",
+                  ":Value" : "5.600"
+                },
+                {
+                  ":Code" : "EXECUTION",
+                  ":Value" : "8.150"
+                },
+                {
+                  ":Code" : "PENALTY",
+                  ":Value" : "-0.100"
+                }
+              ]
+            },
+            {
+              ":Type" : "ER",
+              ":Code" : "PB",
+              ":Value" : "15.150",
+              ":Pos" : "5",
+              ":ValueType" : "POINTS",
+              ":Rank" : "2",
+              "Extension" : [
+                {
+                  ":Code" : "DIFFICULTY",
+                  ":Value" : "6.200"
+                },
+                {
+                  ":Code" : "EXECUTION",
+                  ":Value" : "8.950"
+                }
+              ]
+            },
+            {
+              ":Type" : "ER",
+              ":Code" : "HB",
+              ":Value" : "14.550",
+              ":Pos" : "6",
+              ":ValueType" : "POINTS",
+              ":Rank" : "2",
+              "Extension" : [
+                {
+                  ":Code" : "DIFFICULTY",
+                  ":Value" : "6.100"
+                },
+                {
+                  ":Code" : "EXECUTION",
+                  ":Value" : "8.450"
+                }
+              ]
+            },
+            {
+              ":Type" : "ER",
+              ":Code" : "REPORTED",
+              ":Value" : "15.150",
+              ":ValueType" : "POINTS",
+              ":Rank" : "1",
+              ":SortOrder" : "1"
+            }
+          ]
+        },
+        "Competitor" : {
+          ":Code" : "3007701",
+          ":Type" : "A",
+          ":Bib" : "104",
+          ":Organisation" : "CHN",
+          "Composition" : {
+            "Athlete" : {
+              ":Code" : "3007701",
+              ":Bib" : "104",
+              ":Order" : "1",
+              "Description" : {
+                ":FamilyName" : "Xiao",
+                ":GivenName" : "Ruoteng",
+                ":Gender" : "M",
+                ":Organisation" : "CHN",
+                ":IFId" : "20937",
+                ":BirthDate" : "1996-01-30"
+              }
+            }
+          }
+        }
+      },
+      {
+        ":SortOrder" : "4",
+        ":ResultType" : "POINTS",
+        ":Result" : "84.850",
+        ":Rank" : "4",
+        "ExtendedResults" : {
+          "ExtendedResult" : [
+            {
+              ":Type" : "ER",
+              ":Code" : "START_APPARATUS",
+              ":Value" : "SR"
+            },
+            {
+              ":Type" : "ER",
+              ":Code" : "FX",
+              ":Value" : "14.400",
+              ":Pos" : "1",
+              ":ValueType" : "POINTS",
+              ":Rank" : "3",
+              "Extension" : [
+                {
+                  ":Code" : "DIFFICULTY",
+                  ":Value" : "5.900"
+                },
+                {
+                  ":Code" : "EXECUTION",
+                  ":Value" : "8.500"
+                }
+              ]
+            },
+            {
+              ":Type" : "ER",
+              ":Code" : "PH",
+              ":Value" : "13.250",
+              ":Pos" : "2",
+              ":ValueType" : "POINTS",
+              ":Rank" : "17",
+              "Extension" : [
+                {
+                  ":Code" : "DIFFICULTY",
+                  ":Value" : "6.000"
+                },
+                {
+                  ":Code" : "EXECUTION",
+                  ":Value" : "7.250"
+                }
+              ]
+            },
+            {
+              ":Type" : "ER",
+              ":Code" : "SR",
+              ":Value" : "14.000",
+              ":Pos" : "3",
+              ":ValueType" : "POINTS",
+              ":Rank" : "17",
+              "Extension" : [
+                {
+                  ":Code" : "DIFFICULTY",
+                  ":Value" : "5.300"
+                },
+                {
+                  ":Code" : "EXECUTION",
+                  ":Value" : "8.700"
+                }
+              ]
+            },
+            {
+              ":Type" : "ER",
+              ":Code" : "VT",
+              ":Value" : "14.450",
+              ":Pos" : "4",
+              ":ValueType" : "POINTS",
+              ":Rank" : "5",
+              ":RankEqual" : "Y",
+              "Extension" : [
+                {
+                  ":Code" : "DIFFICULTY",
+                  ":Value" : "5.200"
+                },
+                {
+                  ":Code" : "EXECUTION",
+                  ":Value" : "9.250"
+                }
+              ]
+            },
+            {
+              ":Type" : "ER",
+              ":Code" : "PB",
+              ":Value" : "14.750",
+              ":Pos" : "5",
+              ":ValueType" : "POINTS",
+              ":Rank" : "6",
+              "Extension" : [
+                {
+                  ":Code" : "DIFFICULTY",
+                  ":Value" : "6.000"
+                },
+                {
+                  ":Code" : "EXECUTION",
+                  ":Value" : "8.750"
+                }
+              ]
+            },
+            {
+              ":Type" : "ER",
+              ":Code" : "HB",
+              ":Value" : "14.000",
+              ":Pos" : "6",
+              ":ValueType" : "POINTS",
+              ":Rank" : "7",
+              "Extension" : [
+                {
+                  ":Code" : "DIFFICULTY",
+                  ":Value" : "5.600"
+                },
+                {
+                  ":Code" : "EXECUTION",
+                  ":Value" : "8.400"
+                }
+              ]
+            },
+            {
+              ":Type" : "ER",
+              ":Code" : "REPORTED",
+              ":Value" : "14.000",
+              ":ValueType" : "POINTS",
+              ":Rank" : "7",
+              ":SortOrder" : "7",
+              ":RankEqual" : "Y"
+            }
+          ]
+        },
+        "Competitor" : {
+          ":Code" : "3024871",
+          ":Type" : "A",
+          ":Bib" : "128",
+          ":Organisation" : "JPN",
+          "Composition" : {
+            "Athlete" : {
+              ":Code" : "3024871",
+              ":Bib" : "128",
+              ":Order" : "1",
+              "Description" : {
+                ":FamilyName" : "Tanigawa",
+                ":GivenName" : "Kakeru",
+                ":Gender" : "M",
+                ":Organisation" : "JPN",
+                ":IFId" : "29562",
+                ":BirthDate" : "1999-02-15"
+              }
+            }
+          }
+        }
+      },
+      {
+        ":SortOrder" : "5",
+        ":ResultType" : "POINTS",
+        ":Result" : "81.900",
+        ":Rank" : "5",
+        "ExtendedResults" : {
+          "ExtendedResult" : [
+            {
+              ":Type" : "ER",
+              ":Code" : "START_APPARATUS",
+              ":Value" : "PH"
+            },
+            {
+              ":Type" : "ER",
+              ":Code" : "FX",
+              ":Value" : "13.900",
+              ":Pos" : "1",
+              ":ValueType" : "POINTS",
+              ":Rank" : "9",
+              "Extension" : [
+                {
+                  ":Code" : "DIFFICULTY",
+                  ":Value" : "5.800"
+                },
+                {
+                  ":Code" : "EXECUTION",
+                  ":Value" : "8.100"
+                }
+              ]
+            },
+            {
+              ":Type" : "ER",
+              ":Code" : "PH",
+              ":Value" : "15.050",
+              ":Pos" : "2",
+              ":ValueType" : "POINTS",
+              ":Rank" : "1",
+              "Extension" : [
+                {
+                  ":Code" : "DIFFICULTY",
+                  ":Value" : "6.000"
+                },
+                {
+                  ":Code" : "EXECUTION",
+                  ":Value" : "9.050"
+                }
+              ]
+            },
+            {
+              ":Type" : "ER",
+              ":Code" : "SR",
+              ":Value" : "13.350",
+              ":Pos" : "3",
+              ":ValueType" : "POINTS",
+              ":Rank" : "26",
+              "Extension" : [
+                {
+                  ":Code" : "DIFFICULTY",
+                  ":Value" : "5.100"
+                },
+                {
+                  ":Code" : "EXECUTION",
+                  ":Value" : "8.250"
+                }
+              ]
+            },
+            {
+              ":Type" : "ER",
+              ":Code" : "VT",
+              ":Value" : "14.300",
+              ":Pos" : "4",
+              ":ValueType" : "POINTS",
+              ":Rank" : "9",
+              "Extension" : [
+                {
+                  ":Code" : "DIFFICULTY",
+                  ":Value" : "5.200"
+                },
+                {
+                  ":Code" : "EXECUTION",
+                  ":Value" : "9.100"
+                }
+              ]
+            },
+            {
+              ":Type" : "ER",
+              ":Code" : "PB",
+              ":Value" : "14.000",
+              ":Pos" : "5",
+              ":ValueType" : "POINTS",
+              ":Rank" : "11",
+              "Extension" : [
+                {
+                  ":Code" : "DIFFICULTY",
+                  ":Value" : "5.200"
+                },
+                {
+                  ":Code" : "EXECUTION",
+                  ":Value" : "8.800"
+                }
+              ]
+            },
+            {
+              ":Type" : "ER",
+              ":Code" : "HB",
+              ":Value" : "11.300",
+              ":Pos" : "6",
+              ":ValueType" : "POINTS",
+              ":Rank" : "48",
+              "Extension" : [
+                {
+                  ":Code" : "DIFFICULTY",
+                  ":Value" : "4.600"
+                },
+                {
+                  ":Code" : "EXECUTION",
+                  ":Value" : "6.700"
+                }
+              ]
+            },
+            {
+              ":Type" : "ER",
+              ":Code" : "REPORTED",
+              ":Value" : "15.050",
+              ":ValueType" : "POINTS",
+              ":Rank" : "3",
+              ":SortOrder" : "3"
+            }
+          ]
+        },
+        "Competitor" : {
+          ":Code" : "3007262",
+          ":Type" : "A",
+          ":Bib" : "171",
+          ":Organisation" : "TPE",
+          "Composition" : {
+            "Athlete" : {
+              ":Code" : "3007262",
+              ":Bib" : "171",
+              ":Order" : "1",
+              "Description" : {
+                ":FamilyName" : "Lee",
+                ":GivenName" : "Chih Kai",
+                ":Gender" : "M",
+                ":Organisation" : "TPE",
+                ":IFId" : "20689",
+                ":BirthDate" : "1996-04-03"
+              }
+            }
+          }
+        }
+      },
+      {
+        ":SortOrder" : "6",
+        ":ResultType" : "POINTS",
+        ":Result" : "81.850",
+        ":Rank" : "6",
+        "ExtendedResults" : {
+          "ExtendedResult" : [
+            {
+              ":Type" : "ER",
+              ":Code" : "START_APPARATUS",
+              ":Value" : "HB"
+            },
+            {
+              ":Type" : "ER",
+              ":Code" : "FX",
+              ":Value" : "14.200",
+              ":Pos" : "1",
+              ":ValueType" : "POINTS",
+              ":Rank" : "4",
+              "Extension" : [
+                {
+                  ":Code" : "DIFFICULTY",
+                  ":Value" : "6.100"
+                },
+                {
+                  ":Code" : "EXECUTION",
+                  ":Value" : "8.100"
+                }
+              ]
+            },
+            {
+              ":Type" : "ER",
+              ":Code" : "PH",
+              ":Value" : "12.950",
+              ":Pos" : "2",
+              ":ValueType" : "POINTS",
+              ":Rank" : "18",
+              "Extension" : [
+                {
+                  ":Code" : "DIFFICULTY",
+                  ":Value" : "5.200"
+                },
+                {
+                  ":Code" : "EXECUTION",
+                  ":Value" : "7.750"
+                }
+              ]
+            },
+            {
+              ":Type" : "ER",
+              ":Code" : "SR",
+              ":Value" : "14.050",
+              ":Pos" : "3",
+              ":ValueType" : "POINTS",
+              ":Rank" : "15",
+              "Extension" : [
+                {
+                  ":Code" : "DIFFICULTY",
+                  ":Value" : "5.600"
+                },
+                {
+                  ":Code" : "EXECUTION",
+                  ":Value" : "8.450"
+                }
+              ]
+            },
+            {
+              ":Type" : "ER",
+              ":Code" : "VT",
+              ":Value" : "14.200",
+              ":Pos" : "4",
+              ":ValueType" : "POINTS",
+              ":Rank" : "12",
+              "Extension" : [
+                {
+                  ":Code" : "DIFFICULTY",
+                  ":Value" : "5.600"
+                },
+                {
+                  ":Code" : "EXECUTION",
+                  ":Value" : "8.600"
+                }
+              ]
+            },
+            {
+              ":Type" : "ER",
+              ":Code" : "PB",
+              ":Value" : "13.450",
+              ":Pos" : "5",
+              ":ValueType" : "POINTS",
+              ":Rank" : "21",
+              "Extension" : [
+                {
+                  ":Code" : "DIFFICULTY",
+                  ":Value" : "5.600"
+                },
+                {
+                  ":Code" : "EXECUTION",
+                  ":Value" : "7.850"
+                }
+              ]
+            },
+            {
+              ":Type" : "ER",
+              ":Code" : "HB",
+              ":Value" : "13.000",
+              ":Pos" : "6",
+              ":ValueType" : "POINTS",
+              ":Rank" : "16",
+              "Extension" : [
+                {
+                  ":Code" : "DIFFICULTY",
+                  ":Value" : "4.600"
+                },
+                {
+                  ":Code" : "EXECUTION",
+                  ":Value" : "8.400"
+                }
+              ]
+            },
+            {
+              ":Type" : "ER",
+              ":Code" : "REPORTED",
+              ":Value" : "13.000",
+              ":ValueType" : "POINTS",
+              ":Rank" : "18",
+              ":SortOrder" : "18"
+            }
+          ]
+        },
+        "Competitor" : {
+          ":Code" : "3017142",
+          ":Type" : "A",
+          ":Bib" : "135",
+          ":Organisation" : "KOR",
+          "Composition" : {
+            "Athlete" : {
+              ":Code" : "3017142",
+              ":Bib" : "135",
+              ":Order" : "1",
+              "Description" : {
+                ":FamilyName" : "Kim",
+                ":GivenName" : "Hansol",
+                ":Gender" : "M",
+                ":Organisation" : "KOR",
+                ":IFId" : "20952",
+                ":BirthDate" : "1995-12-29"
+              }
+            }
+          }
+        }
+      },
+      {
+        ":SortOrder" : "7",
+        ":ResultType" : "POINTS",
+        ":Result" : "80.750",
+        ":Rank" : "7",
+        "ExtendedResults" : {
+          "ExtendedResult" : [
+            {
+              ":Type" : "ER",
+              ":Code" : "START_APPARATUS",
+              ":Value" : "UN"
+            },
+            {
+              ":Type" : "ER",
+              ":Code" : "FX",
+              ":Value" : "14.500",
+              ":Pos" : "1",
+              ":ValueType" : "POINTS",
+              ":Rank" : "1",
+              "Extension" : [
+                {
+                  ":Code" : "DIFFICULTY",
+                  ":Value" : "6.100"
+                },
+                {
+                  ":Code" : "EXECUTION",
+                  ":Value" : "8.400"
+                }
+              ]
+            },
+            {
+              ":Type" : "ER",
+              ":Code" : "PH",
+              ":Value" : "12.550",
+              ":Pos" : "2",
+              ":ValueType" : "POINTS",
+              ":Rank" : "24",
+              "Extension" : [
+                {
+                  ":Code" : "DIFFICULTY",
+                  ":Value" : "4.600"
+                },
+                {
+                  ":Code" : "EXECUTION",
+                  ":Value" : "7.950"
+                }
+              ]
+            },
+            {
+              ":Type" : "ER",
+              ":Code" : "SR",
+              ":Value" : "13.900",
+              ":Pos" : "3",
+              ":ValueType" : "POINTS",
+              ":Rank" : "18",
+              "Extension" : [
+                {
+                  ":Code" : "DIFFICULTY",
+                  ":Value" : "5.100"
+                },
+                {
+                  ":Code" : "EXECUTION",
+                  ":Value" : "8.800"
+                }
+              ]
+            },
+            {
+              ":Type" : "ER",
+              ":Code" : "VT",
+              ":Value" : "13.950",
+              ":Pos" : "4",
+              ":ValueType" : "POINTS",
+              ":Rank" : "18",
+              ":RankEqual" : "Y",
+              "Extension" : [
+                {
+                  ":Code" : "DIFFICULTY",
+                  ":Value" : "5.200"
+                },
+                {
+                  ":Code" : "EXECUTION",
+                  ":Value" : "8.850"
+                },
+                {
+                  ":Code" : "PENALTY",
+                  ":Value" : "-0.100"
+                }
+              ]
+            },
+            {
+              ":Type" : "ER",
+              ":Code" : "PB",
+              ":Value" : "13.800",
+              ":Pos" : "5",
+              ":ValueType" : "POINTS",
+              ":Rank" : "14",
+              "Extension" : [
+                {
+                  ":Code" : "DIFFICULTY",
+                  ":Value" : "5.700"
+                },
+                {
+                  ":Code" : "EXECUTION",
+                  ":Value" : "8.100"
+                }
+              ]
+            },
+            {
+              ":Type" : "ER",
+              ":Code" : "HB",
+              ":Value" : "12.050",
+              ":Pos" : "6",
+              ":ValueType" : "POINTS",
+              ":Rank" : "36",
+              "Extension" : [
+                {
+                  ":Code" : "DIFFICULTY",
+                  ":Value" : "5.200"
+                },
+                {
+                  ":Code" : "EXECUTION",
+                  ":Value" : "6.850"
+                }
+              ]
+            },
+            {
+              ":Type" : "ER",
+              ":Code" : "REPORTED",
+              ":Value" : "13.800",
+              ":ValueType" : "POINTS",
+              ":Rank" : "12",
+              ":SortOrder" : "12"
+            }
+          ]
+        },
+        "Competitor" : {
+          ":Code" : "3010516",
+          ":Type" : "A",
+          ":Bib" : "149",
+          ":Organisation" : "PHI",
+          "Composition" : {
+            "Athlete" : {
+              ":Code" : "3010516",
+              ":Bib" : "149",
+              ":Order" : "1",
+              "Description" : {
+                ":FamilyName" : "Yulo",
+                ":GivenName" : "Carlos Edriel",
+                ":Gender" : "M",
+                ":Organisation" : "PHI",
+                ":IFId" : "28919",
+                ":BirthDate" : "2000-02-16"
+              }
+            }
+          }
+        }
+      },
+      {
+        ":SortOrder" : "8",
+        ":ResultType" : "POINTS",
+        ":Result" : "79.700",
+        ":Rank" : "8",
+        "ExtendedResults" : {
+          "ExtendedResult" : [
+            {
+              ":Type" : "ER",
+              ":Code" : "START_APPARATUS",
+              ":Value" : "HB"
+            },
+            {
+              ":Type" : "ER",
+              ":Code" : "FX",
+              ":Value" : "12.400",
+              ":Pos" : "1",
+              ":ValueType" : "POINTS",
+              ":Rank" : "31",
+              "Extension" : [
+                {
+                  ":Code" : "DIFFICULTY",
+                  ":Value" : "5.000"
+                },
+                {
+                  ":Code" : "EXECUTION",
+                  ":Value" : "7.700"
+                },
+                {
+                  ":Code" : "PENALTY",
+                  ":Value" : "-0.300"
+                }
+              ]
+            },
+            {
+              ":Type" : "ER",
+              ":Code" : "PH",
+              ":Value" : "12.350",
+              ":Pos" : "2",
+              ":ValueType" : "POINTS",
+              ":Rank" : "27",
+              "Extension" : [
+                {
+                  ":Code" : "DIFFICULTY",
+                  ":Value" : "4.600"
+                },
+                {
+                  ":Code" : "EXECUTION",
+                  ":Value" : "7.750"
+                }
+              ]
+            },
+            {
+              ":Type" : "ER",
+              ":Code" : "SR",
+              ":Value" : "13.250",
+              ":Pos" : "3",
+              ":ValueType" : "POINTS",
+              ":Rank" : "27",
+              "Extension" : [
+                {
+                  ":Code" : "DIFFICULTY",
+                  ":Value" : "4.800"
+                },
+                {
+                  ":Code" : "EXECUTION",
+                  ":Value" : "8.450"
+                }
+              ]
+            },
+            {
+              ":Type" : "ER",
+              ":Code" : "VT",
+              ":Value" : "14.650",
+              ":Pos" : "4",
+              ":ValueType" : "POINTS",
+              ":Rank" : "2",
+              "Extension" : [
+                {
+                  ":Code" : "DIFFICULTY",
+                  ":Value" : "5.600"
+                },
+                {
+                  ":Code" : "EXECUTION",
+                  ":Value" : "9.050"
+                }
+              ]
+            },
+            {
+              ":Type" : "ER",
+              ":Code" : "PB",
+              ":Value" : "13.500",
+              ":Pos" : "5",
+              ":ValueType" : "POINTS",
+              ":Rank" : "20",
+              "Extension" : [
+                {
+                  ":Code" : "DIFFICULTY",
+                  ":Value" : "5.900"
+                },
+                {
+                  ":Code" : "EXECUTION",
+                  ":Value" : "7.600"
+                }
+              ]
+            },
+            {
+              ":Type" : "ER",
+              ":Code" : "HB",
+              ":Value" : "13.550",
+              ":Pos" : "6",
+              ":ValueType" : "POINTS",
+              ":Rank" : "10",
+              "Extension" : [
+                {
+                  ":Code" : "DIFFICULTY",
+                  ":Value" : "5.000"
+                },
+                {
+                  ":Code" : "EXECUTION",
+                  ":Value" : "8.550"
+                }
+              ]
+            },
+            {
+              ":Type" : "ER",
+              ":Code" : "REPORTED",
+              ":Value" : "13.550",
+              ":ValueType" : "POINTS",
+              ":Rank" : "13",
+              ":SortOrder" : "13"
+            }
+          ]
+        },
+        "Competitor" : {
+          ":Code" : "3001402",
+          ":Type" : "A",
+          ":Bib" : "179",
+          ":Organisation" : "VIE",
+          "Composition" : {
+            "Athlete" : {
+              ":Code" : "3001402",
+              ":Bib" : "179",
+              ":Order" : "1",
+              "Description" : {
+                ":FamilyName" : "Le",
+                ":GivenName" : "Thanh Tung",
+                ":Gender" : "M",
+                ":Organisation" : "VIE",
+                ":IFId" : "12461",
+                ":BirthDate" : "1995-10-24"
+              }
+            }
+          }
+        }
+      },
+      {
+        ":SortOrder" : "9",
+        ":ResultType" : "POINTS",
+        ":Result" : "79.650",
+        ":Rank" : "9",
+        "ExtendedResults" : {
+          "ExtendedResult" : [
+            {
+              ":Type" : "ER",
+              ":Code" : "START_APPARATUS",
+              ":Value" : "HB"
+            },
+            {
+              ":Type" : "ER",
+              ":Code" : "FX",
+              ":Value" : "13.450",
+              ":Pos" : "1",
+              ":ValueType" : "POINTS",
+              ":Rank" : "12",
+              "Extension" : [
+                {
+                  ":Code" : "DIFFICULTY",
+                  ":Value" : "5.900"
+                },
+                {
+                  ":Code" : "EXECUTION",
+                  ":Value" : "7.550"
+                },
+                {
+                  ":Code" : "INQUIRY",
+                  ":Value" : "ACCEPTED"
+                }
+              ]
+            },
+            {
+              ":Type" : "ER",
+              ":Code" : "PH",
+              ":Value" : "11.000",
+              ":Pos" : "2",
+              ":ValueType" : "POINTS",
+              ":Rank" : "38",
+              "Extension" : [
+                {
+                  ":Code" : "DIFFICULTY",
+                  ":Value" : "4.600"
+                },
+                {
+                  ":Code" : "EXECUTION",
+                  ":Value" : "6.400"
+                }
+              ]
+            },
+            {
+              ":Type" : "ER",
+              ":Code" : "SR",
+              ":Value" : "13.500",
+              ":Pos" : "3",
+              ":ValueType" : "POINTS",
+              ":Rank" : "24",
+              "Extension" : [
+                {
+                  ":Code" : "DIFFICULTY",
+                  ":Value" : "4.800"
+                },
+                {
+                  ":Code" : "EXECUTION",
+                  ":Value" : "8.700"
+                }
+              ]
+            },
+            {
+              ":Type" : "ER",
+              ":Code" : "VT",
+              ":Value" : "13.400",
+              ":Pos" : "4",
+              ":ValueType" : "POINTS",
+              ":Rank" : "39",
+              "Extension" : [
+                {
+                  ":Code" : "DIFFICULTY",
+                  ":Value" : "4.800"
+                },
+                {
+                  ":Code" : "EXECUTION",
+                  ":Value" : "8.600"
+                }
+              ]
+            },
+            {
+              ":Type" : "ER",
+              ":Code" : "PB",
+              ":Value" : "14.200",
+              ":Pos" : "5",
+              ":ValueType" : "POINTS",
+              ":Rank" : "9",
+              "Extension" : [
+                {
+                  ":Code" : "DIFFICULTY",
+                  ":Value" : "5.700"
+                },
+                {
+                  ":Code" : "EXECUTION",
+                  ":Value" : "8.500"
+                }
+              ]
+            },
+            {
+              ":Type" : "ER",
+              ":Code" : "HB",
+              ":Value" : "14.100",
+              ":Pos" : "6",
+              ":ValueType" : "POINTS",
+              ":Rank" : "6",
+              "Extension" : [
+                {
+                  ":Code" : "DIFFICULTY",
+                  ":Value" : "5.900"
+                },
+                {
+                  ":Code" : "EXECUTION",
+                  ":Value" : "8.200"
+                }
+              ]
+            },
+            {
+              ":Type" : "ER",
+              ":Code" : "REPORTED",
+              ":Value" : "14.100",
+              ":ValueType" : "POINTS",
+              ":Rank" : "6",
+              ":SortOrder" : "6"
+            }
+          ]
+        },
+        "Competitor" : {
+          ":Code" : "3017175",
+          ":Type" : "A",
+          ":Bib" : "138",
+          ":Organisation" : "KOR",
+          "Composition" : {
+            "Athlete" : {
+              ":Code" : "3017175",
+              ":Bib" : "138",
+              ":Order" : "1",
+              "Description" : {
+                ":FamilyName" : "Lee",
+                ":GivenName" : "Junho",
+                ":Gender" : "M",
+                ":Organisation" : "KOR",
+                ":IFId" : "20949",
+                ":BirthDate" : "1995-10-22"
+              }
+            }
+          }
+        }
+      },
+      {
+        ":SortOrder" : "10",
+        ":ResultType" : "POINTS",
+        ":Result" : "79.300",
+        ":Rank" : "10",
+        "ExtendedResults" : {
+          "ExtendedResult" : [
+            {
+              ":Type" : "ER",
+              ":Code" : "START_APPARATUS",
+              ":Value" : "PH"
+            },
+            {
+              ":Type" : "ER",
+              ":Code" : "FX",
+              ":Value" : "13.300",
+              ":Pos" : "1",
+              ":ValueType" : "POINTS",
+              ":Rank" : "14",
+              "Extension" : [
+                {
+                  ":Code" : "DIFFICULTY",
+                  ":Value" : "5.700"
+                },
+                {
+                  ":Code" : "EXECUTION",
+                  ":Value" : "7.600"
+                }
+              ]
+            },
+            {
+              ":Type" : "ER",
+              ":Code" : "PH",
+              ":Value" : "13.400",
+              ":Pos" : "2",
+              ":ValueType" : "POINTS",
+              ":Rank" : "15",
+              "Extension" : [
+                {
+                  ":Code" : "DIFFICULTY",
+                  ":Value" : "5.800"
+                },
+                {
+                  ":Code" : "EXECUTION",
+                  ":Value" : "7.600"
+                }
+              ]
+            },
+            {
+              ":Type" : "ER",
+              ":Code" : "SR",
+              ":Value" : "13.200",
+              ":Pos" : "3",
+              ":ValueType" : "POINTS",
+              ":Rank" : "29",
+              "Extension" : [
+                {
+                  ":Code" : "DIFFICULTY",
+                  ":Value" : "4.600"
+                },
+                {
+                  ":Code" : "EXECUTION",
+                  ":Value" : "8.600"
+                }
+              ]
+            },
+            {
+              ":Type" : "ER",
+              ":Code" : "VT",
+              ":Value" : "14.100",
+              ":Pos" : "4",
+              ":ValueType" : "POINTS",
+              ":Rank" : "14",
+              "Extension" : [
+                {
+                  ":Code" : "DIFFICULTY",
+                  ":Value" : "4.800"
+                },
+                {
+                  ":Code" : "EXECUTION",
+                  ":Value" : "9.300"
+                }
+              ]
+            },
+            {
+              ":Type" : "ER",
+              ":Code" : "PB",
+              ":Value" : "13.700",
+              ":Pos" : "5",
+              ":ValueType" : "POINTS",
+              ":Rank" : "16",
+              "Extension" : [
+                {
+                  ":Code" : "DIFFICULTY",
+                  ":Value" : "5.200"
+                },
+                {
+                  ":Code" : "EXECUTION",
+                  ":Value" : "8.500"
+                }
+              ]
+            },
+            {
+              ":Type" : "ER",
+              ":Code" : "HB",
+              ":Value" : "11.600",
+              ":Pos" : "6",
+              ":ValueType" : "POINTS",
+              ":Rank" : "42",
+              "Extension" : [
+                {
+                  ":Code" : "DIFFICULTY",
+                  ":Value" : "4.700"
+                },
+                {
+                  ":Code" : "EXECUTION",
+                  ":Value" : "6.900"
+                }
+              ]
+            },
+            {
+              ":Type" : "ER",
+              ":Code" : "REPORTED",
+              ":Value" : "13.400",
+              ":ValueType" : "POINTS",
+              ":Rank" : "14",
+              ":SortOrder" : "15",
+              ":RankEqual" : "Y"
+            }
+          ]
+        },
+        "Competitor" : {
+          ":Code" : "3021219",
+          ":Type" : "A",
+          ":Bib" : "131",
+          ":Organisation" : "KAZ",
+          "Composition" : {
+            "Athlete" : {
+              ":Code" : "3021219",
+              ":Bib" : "131",
+              ":Order" : "1",
+              "Description" : {
+                ":FamilyName" : "Mussayev",
+                ":GivenName" : "Akim",
+                ":Gender" : "M",
+                ":Organisation" : "KAZ",
+                ":IFId" : "29140",
+                ":BirthDate" : "1999-08-28"
+              }
+            }
+          }
+        }
+      },
+      {
+        ":SortOrder" : "11",
+        ":ResultType" : "POINTS",
+        ":Result" : "77.550",
+        ":Rank" : "11",
+        "ExtendedResults" : {
+          "ExtendedResult" : [
+            {
+              ":Type" : "ER",
+              ":Code" : "START_APPARATUS",
+              ":Value" : "UN"
+            },
+            {
+              ":Type" : "ER",
+              ":Code" : "FX",
+              ":Value" : "12.850",
+              ":Pos" : "1",
+              ":ValueType" : "POINTS",
+              ":Rank" : "21",
+              "Extension" : [
+                {
+                  ":Code" : "DIFFICULTY",
+                  ":Value" : "4.700"
+                },
+                {
+                  ":Code" : "EXECUTION",
+                  ":Value" : "8.150"
+                }
+              ]
+            },
+            {
+              ":Type" : "ER",
+              ":Code" : "PH",
+              ":Value" : "12.700",
+              ":Pos" : "2",
+              ":ValueType" : "POINTS",
+              ":Rank" : "19",
+              "Extension" : [
+                {
+                  ":Code" : "DIFFICULTY",
+                  ":Value" : "4.200"
+                },
+                {
+                  ":Code" : "EXECUTION",
+                  ":Value" : "8.500"
+                }
+              ]
+            },
+            {
+              ":Type" : "ER",
+              ":Code" : "SR",
+              ":Value" : "13.500",
+              ":Pos" : "3",
+              ":ValueType" : "POINTS",
+              ":Rank" : "25",
+              "Extension" : [
+                {
+                  ":Code" : "DIFFICULTY",
+                  ":Value" : "5.000"
+                },
+                {
+                  ":Code" : "EXECUTION",
+                  ":Value" : "8.500"
+                }
+              ]
+            },
+            {
+              ":Type" : "ER",
+              ":Code" : "VT",
+              ":Value" : "12.600",
+              ":Pos" : "4",
+              ":ValueType" : "POINTS",
+              ":Rank" : "51",
+              "Extension" : [
+                {
+                  ":Code" : "DIFFICULTY",
+                  ":Value" : "3.200"
+                },
+                {
+                  ":Code" : "EXECUTION",
+                  ":Value" : "9.400"
+                }
+              ]
+            },
+            {
+              ":Type" : "ER",
+              ":Code" : "PB",
+              ":Value" : "13.500",
+              ":Pos" : "5",
+              ":ValueType" : "POINTS",
+              ":Rank" : "19",
+              "Extension" : [
+                {
+                  ":Code" : "DIFFICULTY",
+                  ":Value" : "4.600"
+                },
+                {
+                  ":Code" : "EXECUTION",
+                  ":Value" : "8.900"
+                }
+              ]
+            },
+            {
+              ":Type" : "ER",
+              ":Code" : "HB",
+              ":Value" : "12.400",
+              ":Pos" : "6",
+              ":ValueType" : "POINTS",
+              ":Rank" : "26",
+              "Extension" : [
+                {
+                  ":Code" : "DIFFICULTY",
+                  ":Value" : "3.700"
+                },
+                {
+                  ":Code" : "EXECUTION",
+                  ":Value" : "8.700"
+                }
+              ]
+            },
+            {
+              ":Type" : "ER",
+              ":Code" : "REPORTED",
+              ":Value" : "12.850",
+              ":ValueType" : "POINTS",
+              ":Rank" : "19",
+              ":SortOrder" : "19"
+            }
+          ]
+        },
+        "Competitor" : {
+          ":Code" : "3005617",
+          ":Type" : "A",
+          ":Bib" : "121",
+          ":Organisation" : "IRI",
+          "Composition" : {
+            "Athlete" : {
+              ":Code" : "3005617",
+              ":Bib" : "121",
+              ":Order" : "1",
+              "Description" : {
+                ":FamilyName" : "Khosronezhad",
+                ":GivenName" : "Mohammadreza",
+                ":Gender" : "M",
+                ":Organisation" : "IRI",
+                ":IFId" : "40782",
+                ":BirthDate" : "2000-06-13"
+              }
+            }
+          }
+        }
+      },
+      {
+        ":SortOrder" : "12",
+        ":ResultType" : "POINTS",
+        ":Result" : "76.900",
+        ":Rank" : "12",
+        "ExtendedResults" : {
+          "ExtendedResult" : [
+            {
+              ":Type" : "ER",
+              ":Code" : "START_APPARATUS",
+              ":Value" : "PH"
+            },
+            {
+              ":Type" : "ER",
+              ":Code" : "FX",
+              ":Value" : "11.800",
+              ":Pos" : "1",
+              ":ValueType" : "POINTS",
+              ":Rank" : "43",
+              "Extension" : [
+                {
+                  ":Code" : "DIFFICULTY",
+                  ":Value" : "4.900"
+                },
+                {
+                  ":Code" : "EXECUTION",
+                  ":Value" : "6.900"
+                }
+              ]
+            },
+            {
+              ":Type" : "ER",
+              ":Code" : "PH",
+              ":Value" : "12.200",
+              ":Pos" : "2",
+              ":ValueType" : "POINTS",
+              ":Rank" : "29",
+              "Extension" : [
+                {
+                  ":Code" : "DIFFICULTY",
+                  ":Value" : "4.100"
+                },
+                {
+                  ":Code" : "EXECUTION",
+                  ":Value" : "8.100"
+                }
+              ]
+            },
+            {
+              ":Type" : "ER",
+              ":Code" : "SR",
+              ":Value" : "14.150",
+              ":Pos" : "3",
+              ":ValueType" : "POINTS",
+              ":Rank" : "12",
+              "Extension" : [
+                {
+                  ":Code" : "DIFFICULTY",
+                  ":Value" : "5.800"
+                },
+                {
+                  ":Code" : "EXECUTION",
+                  ":Value" : "8.350"
+                }
+              ]
+            },
+            {
+              ":Type" : "ER",
+              ":Code" : "VT",
+              ":Value" : "13.650",
+              ":Pos" : "4",
+              ":ValueType" : "POINTS",
+              ":Rank" : "28",
+              "Extension" : [
+                {
+                  ":Code" : "DIFFICULTY",
+                  ":Value" : "4.800"
+                },
+                {
+                  ":Code" : "EXECUTION",
+                  ":Value" : "8.850"
+                }
+              ]
+            },
+            {
+              ":Type" : "ER",
+              ":Code" : "PB",
+              ":Value" : "13.250",
+              ":Pos" : "5",
+              ":ValueType" : "POINTS",
+              ":Rank" : "24",
+              "Extension" : [
+                {
+                  ":Code" : "DIFFICULTY",
+                  ":Value" : "5.000"
+                },
+                {
+                  ":Code" : "EXECUTION",
+                  ":Value" : "8.250"
+                }
+              ]
+            },
+            {
+              ":Type" : "ER",
+              ":Code" : "HB",
+              ":Value" : "11.850",
+              ":Pos" : "6",
+              ":ValueType" : "POINTS",
+              ":Rank" : "38",
+              "Extension" : [
+                {
+                  ":Code" : "DIFFICULTY",
+                  ":Value" : "4.600"
+                },
+                {
+                  ":Code" : "EXECUTION",
+                  ":Value" : "7.250"
+                }
+              ]
+            },
+            {
+              ":Type" : "ER",
+              ":Code" : "REPORTED",
+              ":Value" : "12.200",
+              ":ValueType" : "POINTS",
+              ":Rank" : "24",
+              ":SortOrder" : "24"
+            }
+          ]
+        },
+        "Competitor" : {
+          ":Code" : "3007261",
+          ":Type" : "A",
+          ":Bib" : "170",
+          ":Organisation" : "TPE",
+          "Composition" : {
+            "Athlete" : {
+              ":Code" : "3007261",
+              ":Bib" : "170",
+              ":Order" : "1",
+              "Description" : {
+                ":FamilyName" : "Yu",
+                ":GivenName" : "Chao Wei",
+                ":Gender" : "M",
+                ":Organisation" : "TPE",
+                ":IFId" : "19487",
+                ":BirthDate" : "1993-10-22"
+              }
+            }
+          }
+        }
+      },
+      {
+        ":SortOrder" : "13",
+        ":ResultType" : "POINTS",
+        ":Result" : "76.600",
+        ":Rank" : "13",
+        "ExtendedResults" : {
+          "ExtendedResult" : [
+            {
+              ":Type" : "ER",
+              ":Code" : "START_APPARATUS",
+              ":Value" : "UN"
+            },
+            {
+              ":Type" : "ER",
+              ":Code" : "FX",
+              ":Value" : "12.300",
+              ":Pos" : "1",
+              ":ValueType" : "POINTS",
+              ":Rank" : "34",
+              "Extension" : [
+                {
+                  ":Code" : "DIFFICULTY",
+                  ":Value" : "5.200"
+                },
+                {
+                  ":Code" : "EXECUTION",
+                  ":Value" : "7.400"
+                },
+                {
+                  ":Code" : "PENALTY",
+                  ":Value" : "-0.300"
+                }
+              ]
+            },
+            {
+              ":Type" : "ER",
+              ":Code" : "PH",
+              ":Value" : "10.950",
+              ":Pos" : "2",
+              ":ValueType" : "POINTS",
+              ":Rank" : "40",
+              "Extension" : [
+                {
+                  ":Code" : "DIFFICULTY",
+                  ":Value" : "4.600"
+                },
+                {
+                  ":Code" : "EXECUTION",
+                  ":Value" : "6.350"
+                }
+              ]
+            },
+            {
+              ":Type" : "ER",
+              ":Code" : "SR",
+              ":Value" : "13.200",
+              ":Pos" : "3",
+              ":ValueType" : "POINTS",
+              ":Rank" : "30",
+              "Extension" : [
+                {
+                  ":Code" : "DIFFICULTY",
+                  ":Value" : "4.700"
+                },
+                {
+                  ":Code" : "EXECUTION",
+                  ":Value" : "8.500"
+                }
+              ]
+            },
+            {
+              ":Type" : "ER",
+              ":Code" : "VT",
+              ":Value" : "13.450",
+              ":Pos" : "4",
+              ":ValueType" : "POINTS",
+              ":Rank" : "35",
+              "Extension" : [
+                {
+                  ":Code" : "DIFFICULTY",
+                  ":Value" : "4.800"
+                },
+                {
+                  ":Code" : "EXECUTION",
+                  ":Value" : "8.950"
+                },
+                {
+                  ":Code" : "PENALTY",
+                  ":Value" : "-0.300"
+                }
+              ]
+            },
+            {
+              ":Type" : "ER",
+              ":Code" : "PB",
+              ":Value" : "13.850",
+              ":Pos" : "5",
+              ":ValueType" : "POINTS",
+              ":Rank" : "12",
+              "Extension" : [
+                {
+                  ":Code" : "DIFFICULTY",
+                  ":Value" : "5.700"
+                },
+                {
+                  ":Code" : "EXECUTION",
+                  ":Value" : "8.150"
+                }
+              ]
+            },
+            {
+              ":Type" : "ER",
+              ":Code" : "HB",
+              ":Value" : "12.850",
+              ":Pos" : "6",
+              ":ValueType" : "POINTS",
+              ":Rank" : "20",
+              ":RankEqual" : "Y",
+              "Extension" : [
+                {
+                  ":Code" : "DIFFICULTY",
+                  ":Value" : "4.400"
+                },
+                {
+                  ":Code" : "EXECUTION",
+                  ":Value" : "8.450"
+                }
+              ]
+            },
+            {
+              ":Type" : "ER",
+              ":Code" : "REPORTED",
+              ":Value" : "13.200",
+              ":ValueType" : "POINTS",
+              ":Rank" : "17",
+              ":SortOrder" : "17"
+            }
+          ]
+        },
+        "Competitor" : {
+          ":Code" : "3001713",
+          ":Type" : "A",
+          ":Bib" : "176",
+          ":Organisation" : "UZB",
+          "Composition" : {
+            "Athlete" : {
+              ":Code" : "3001713",
+              ":Bib" : "176",
+              ":Order" : "1",
+              "Description" : {
+                ":FamilyName" : "Abdurakhimov",
+                ":GivenName" : "Rasuljon",
+                ":Gender" : "M",
+                ":Organisation" : "UZB",
+                ":IFId" : "20448",
+                ":BirthDate" : "1996-10-03"
+              }
+            }
+          }
+        }
+      },
+      {
+        ":SortOrder" : "14",
+        ":ResultType" : "POINTS",
+        ":Result" : "76.550",
+        ":Rank" : "14",
+        "ExtendedResults" : {
+          "ExtendedResult" : [
+            {
+              ":Type" : "ER",
+              ":Code" : "START_APPARATUS",
+              ":Value" : "VT"
+            },
+            {
+              ":Type" : "ER",
+              ":Code" : "FX",
+              ":Value" : "11.250",
+              ":Pos" : "1",
+              ":ValueType" : "POINTS",
+              ":Rank" : "50",
+              "Extension" : [
+                {
+                  ":Code" : "DIFFICULTY",
+                  ":Value" : "4.800"
+                },
+                {
+                  ":Code" : "EXECUTION",
+                  ":Value" : "6.750"
+                },
+                {
+                  ":Code" : "PENALTY",
+                  ":Value" : "-0.300"
+                }
+              ]
+            },
+            {
+              ":Type" : "ER",
+              ":Code" : "PH",
+              ":Value" : "13.350",
+              ":Pos" : "2",
+              ":ValueType" : "POINTS",
+              ":Rank" : "16",
+              "Extension" : [
+                {
+                  ":Code" : "DIFFICULTY",
+                  ":Value" : "5.500"
+                },
+                {
+                  ":Code" : "EXECUTION",
+                  ":Value" : "7.850"
+                }
+              ]
+            },
+            {
+              ":Type" : "ER",
+              ":Code" : "SR",
+              ":Value" : "12.250",
+              ":Pos" : "3",
+              ":ValueType" : "POINTS",
+              ":Rank" : "44",
+              "Extension" : [
+                {
+                  ":Code" : "DIFFICULTY",
+                  ":Value" : "4.200"
+                },
+                {
+                  ":Code" : "EXECUTION",
+                  ":Value" : "8.350"
+                },
+                {
+                  ":Code" : "PENALTY",
+                  ":Value" : "-0.300"
+                }
+              ]
+            },
+            {
+              ":Type" : "ER",
+              ":Code" : "VT",
+              ":Value" : "14.000",
+              ":Pos" : "4",
+              ":ValueType" : "POINTS",
+              ":Rank" : "16",
+              "Extension" : [
+                {
+                  ":Code" : "DIFFICULTY",
+                  ":Value" : "4.800"
+                },
+                {
+                  ":Code" : "EXECUTION",
+                  ":Value" : "9.200"
+                }
+              ]
+            },
+            {
+              ":Type" : "ER",
+              ":Code" : "PB",
+              ":Value" : "13.050",
+              ":Pos" : "5",
+              ":ValueType" : "POINTS",
+              ":Rank" : "28",
+              "Extension" : [
+                {
+                  ":Code" : "DIFFICULTY",
+                  ":Value" : "4.600"
+                },
+                {
+                  ":Code" : "EXECUTION",
+                  ":Value" : "8.450"
+                }
+              ]
+            },
+            {
+              ":Type" : "ER",
+              ":Code" : "HB",
+              ":Value" : "12.650",
+              ":Pos" : "6",
+              ":ValueType" : "POINTS",
+              ":Rank" : "25",
+              "Extension" : [
+                {
+                  ":Code" : "DIFFICULTY",
+                  ":Value" : "4.000"
+                },
+                {
+                  ":Code" : "EXECUTION",
+                  ":Value" : "8.650"
+                }
+              ]
+            },
+            {
+              ":Type" : "ER",
+              ":Code" : "REPORTED",
+              ":Value" : "14.000",
+              ":ValueType" : "POINTS",
+              ":Rank" : "7",
+              ":SortOrder" : "8",
+              ":RankEqual" : "Y"
+            }
+          ]
+        },
+        "Competitor" : {
+          ":Code" : "3005455",
+          ":Type" : "A",
+          ":Bib" : "144",
+          ":Organisation" : "MAS",
+          "Composition" : {
+            "Athlete" : {
+              ":Code" : "3005455",
+              ":Bib" : "144",
+              ":Order" : "1",
+              "Description" : {
+                ":FamilyName" : "Loo",
+                ":GivenName" : "Phay Xing",
+                ":Gender" : "M",
+                ":Organisation" : "MAS",
+                ":IFId" : "29290",
+                ":BirthDate" : "1997-09-28"
+              }
+            }
+          }
+        }
+      },
+      {
+        ":SortOrder" : "15",
+        ":ResultType" : "POINTS",
+        ":Result" : "76.400",
+        ":Rank" : "15",
+        "ExtendedResults" : {
+          "ExtendedResult" : [
+            {
+              ":Type" : "ER",
+              ":Code" : "START_APPARATUS",
+              ":Value" : "UN"
+            },
+            {
+              ":Type" : "ER",
+              ":Code" : "FX",
+              ":Value" : "12.450",
+              ":Pos" : "1",
+              ":ValueType" : "POINTS",
+              ":Rank" : "27",
+              "Extension" : [
+                {
+                  ":Code" : "DIFFICULTY",
+                  ":Value" : "5.400"
+                },
+                {
+                  ":Code" : "EXECUTION",
+                  ":Value" : "7.550"
+                },
+                {
+                  ":Code" : "PENALTY",
+                  ":Value" : "-0.500"
+                }
+              ]
+            },
+            {
+              ":Type" : "ER",
+              ":Code" : "PH",
+              ":Value" : "13.500",
+              ":Pos" : "2",
+              ":ValueType" : "POINTS",
+              ":Rank" : "13",
+              "Extension" : [
+                {
+                  ":Code" : "DIFFICULTY",
+                  ":Value" : "6.000"
+                },
+                {
+                  ":Code" : "EXECUTION",
+                  ":Value" : "7.500"
+                }
+              ]
+            },
+            {
+              ":Type" : "ER",
+              ":Code" : "SR",
+              ":Value" : "12.600",
+              ":Pos" : "3",
+              ":ValueType" : "POINTS",
+              ":Rank" : "42",
+              ":RankEqual" : "Y",
+              "Extension" : [
+                {
+                  ":Code" : "DIFFICULTY",
+                  ":Value" : "4.300"
+                },
+                {
+                  ":Code" : "EXECUTION",
+                  ":Value" : "8.300"
+                }
+              ]
+            },
+            {
+              ":Type" : "ER",
+              ":Code" : "VT",
+              ":Value" : "13.700",
+              ":Pos" : "4",
+              ":ValueType" : "POINTS",
+              ":Rank" : "27",
+              "Extension" : [
+                {
+                  ":Code" : "DIFFICULTY",
+                  ":Value" : "4.800"
+                },
+                {
+                  ":Code" : "EXECUTION",
+                  ":Value" : "8.900"
+                }
+              ]
+            },
+            {
+              ":Type" : "ER",
+              ":Code" : "PB",
+              ":Value" : "11.850",
+              ":Pos" : "5",
+              ":ValueType" : "POINTS",
+              ":Rank" : "47",
+              "Extension" : [
+                {
+                  ":Code" : "DIFFICULTY",
+                  ":Value" : "4.700"
+                },
+                {
+                  ":Code" : "EXECUTION",
+                  ":Value" : "7.150"
+                }
+              ]
+            },
+            {
+              ":Type" : "ER",
+              ":Code" : "HB",
+              ":Value" : "12.300",
+              ":Pos" : "6",
+              ":ValueType" : "POINTS",
+              ":Rank" : "29",
+              "Extension" : [
+                {
+                  ":Code" : "DIFFICULTY",
+                  ":Value" : "4.300"
+                },
+                {
+                  ":Code" : "EXECUTION",
+                  ":Value" : "8.000"
+                }
+              ]
+            },
+            {
+              ":Type" : "ER",
+              ":Code" : "REPORTED",
+              ":Value" : "12.600",
+              ":ValueType" : "POINTS",
+              ":Rank" : "21",
+              ":SortOrder" : "21"
+            }
+          ]
+        },
+        "Competitor" : {
+          ":Code" : "3001712",
+          ":Type" : "A",
+          ":Bib" : "175",
+          ":Organisation" : "UZB",
+          "Composition" : {
+            "Athlete" : {
+              ":Code" : "3001712",
+              ":Bib" : "175",
+              ":Order" : "1",
+              "Description" : {
+                ":FamilyName" : "Azimov",
+                ":GivenName" : "Abdulla",
+                ":Gender" : "M",
+                ":Organisation" : "UZB",
+                ":IFId" : "20444",
+                ":BirthDate" : "1996-03-20"
+              }
+            }
+          }
+        }
+      },
+      {
+        ":SortOrder" : "16",
+        ":ResultType" : "POINTS",
+        ":Result" : "75.950",
+        ":Rank" : "16",
+        "ExtendedResults" : {
+          "ExtendedResult" : [
+            {
+              ":Type" : "ER",
+              ":Code" : "START_APPARATUS",
+              ":Value" : "UN"
+            },
+            {
+              ":Type" : "ER",
+              ":Code" : "FX",
+              ":Value" : "12.450",
+              ":Pos" : "1",
+              ":ValueType" : "POINTS",
+              ":Rank" : "28",
+              "Extension" : [
+                {
+                  ":Code" : "DIFFICULTY",
+                  ":Value" : "5.000"
+                },
+                {
+                  ":Code" : "EXECUTION",
+                  ":Value" : "7.450"
+                }
+              ]
+            },
+            {
+              ":Type" : "ER",
+              ":Code" : "PH",
+              ":Value" : "12.150",
+              ":Pos" : "2",
+              ":ValueType" : "POINTS",
+              ":Rank" : "30",
+              "Extension" : [
+                {
+                  ":Code" : "DIFFICULTY",
+                  ":Value" : "4.800"
+                },
+                {
+                  ":Code" : "EXECUTION",
+                  ":Value" : "7.350"
+                }
+              ]
+            },
+            {
+              ":Type" : "ER",
+              ":Code" : "SR",
+              ":Value" : "12.650",
+              ":Pos" : "3",
+              ":ValueType" : "POINTS",
+              ":Rank" : "41",
+              "Extension" : [
+                {
+                  ":Code" : "DIFFICULTY",
+                  ":Value" : "4.200"
+                },
+                {
+                  ":Code" : "EXECUTION",
+                  ":Value" : "8.450"
+                }
+              ]
+            },
+            {
+              ":Type" : "ER",
+              ":Code" : "VT",
+              ":Value" : "14.150",
+              ":Pos" : "4",
+              ":ValueType" : "POINTS",
+              ":Rank" : "13",
+              "Extension" : [
+                {
+                  ":Code" : "DIFFICULTY",
+                  ":Value" : "5.200"
+                },
+                {
+                  ":Code" : "EXECUTION",
+                  ":Value" : "8.950"
+                }
+              ]
+            },
+            {
+              ":Type" : "ER",
+              ":Code" : "PB",
+              ":Value" : "13.000",
+              ":Pos" : "5",
+              ":ValueType" : "POINTS",
+              ":Rank" : "30",
+              "Extension" : [
+                {
+                  ":Code" : "DIFFICULTY",
+                  ":Value" : "4.700"
+                },
+                {
+                  ":Code" : "EXECUTION",
+                  ":Value" : "8.300"
+                }
+              ]
+            },
+            {
+              ":Type" : "ER",
+              ":Code" : "HB",
+              ":Value" : "11.550",
+              ":Pos" : "6",
+              ":ValueType" : "POINTS",
+              ":Rank" : "43",
+              "Extension" : [
+                {
+                  ":Code" : "DIFFICULTY",
+                  ":Value" : "3.900"
+                },
+                {
+                  ":Code" : "EXECUTION",
+                  ":Value" : "7.650"
+                }
+              ]
+            },
+            {
+              ":Type" : "ER",
+              ":Code" : "REPORTED",
+              ":Value" : "12.150",
+              ":ValueType" : "POINTS",
+              ":Rank" : "25",
+              ":SortOrder" : "25"
+            }
+          ]
+        },
+        "Competitor" : {
+          ":Code" : "3022872",
+          ":Type" : "A",
+          ":Bib" : "118",
+          ":Organisation" : "IND",
+          "Composition" : {
+            "Athlete" : {
+              ":Code" : "3022872",
+              ":Bib" : "118",
+              ":Order" : "1",
+              "Description" : {
+                ":FamilyName" : "Singh",
+                ":GivenName" : "Yogeshwar",
+                ":Gender" : "M",
+                ":Organisation" : "IND",
+                ":IFId" : "42377",
+                ":BirthDate" : "1997-04-26"
+              }
+            }
+          }
+        }
+      },
+      {
+        ":SortOrder" : "17",
+        ":ResultType" : "POINTS",
+        ":Result" : "75.000",
+        ":Rank" : "17",
+        "ExtendedResults" : {
+          "ExtendedResult" : [
+            {
+              ":Type" : "ER",
+              ":Code" : "START_APPARATUS",
+              ":Value" : "PH"
+            },
+            {
+              ":Type" : "ER",
+              ":Code" : "FX",
+              ":Value" : "11.350",
+              ":Pos" : "1",
+              ":ValueType" : "POINTS",
+              ":Rank" : "49",
+              "Extension" : [
+                {
+                  ":Code" : "DIFFICULTY",
+                  ":Value" : "5.500"
+                },
+                {
+                  ":Code" : "EXECUTION",
+                  ":Value" : "6.250"
+                },
+                {
+                  ":Code" : "PENALTY",
+                  ":Value" : "-0.400"
+                }
+              ]
+            },
+            {
+              ":Type" : "ER",
+              ":Code" : "PH",
+              ":Value" : "13.400",
+              ":Pos" : "2",
+              ":ValueType" : "POINTS",
+              ":Rank" : "14",
+              "Extension" : [
+                {
+                  ":Code" : "DIFFICULTY",
+                  ":Value" : "5.700"
+                },
+                {
+                  ":Code" : "EXECUTION",
+                  ":Value" : "7.700"
+                }
+              ]
+            },
+            {
+              ":Type" : "ER",
+              ":Code" : "SR",
+              ":Value" : "13.000",
+              ":Pos" : "3",
+              ":ValueType" : "POINTS",
+              ":Rank" : "33",
+              ":RankEqual" : "Y",
+              "Extension" : [
+                {
+                  ":Code" : "DIFFICULTY",
+                  ":Value" : "4.400"
+                },
+                {
+                  ":Code" : "EXECUTION",
+                  ":Value" : "8.600"
+                }
+              ]
+            },
+            {
+              ":Type" : "ER",
+              ":Code" : "VT",
+              ":Value" : "13.500",
+              ":Pos" : "4",
+              ":ValueType" : "POINTS",
+              ":Rank" : "32",
+              ":RankEqual" : "Y",
+              "Extension" : [
+                {
+                  ":Code" : "DIFFICULTY",
+                  ":Value" : "4.800"
+                },
+                {
+                  ":Code" : "EXECUTION",
+                  ":Value" : "8.800"
+                },
+                {
+                  ":Code" : "PENALTY",
+                  ":Value" : "-0.100"
+                }
+              ]
+            },
+            {
+              ":Type" : "ER",
+              ":Code" : "PB",
+              ":Value" : "13.000",
+              ":Pos" : "5",
+              ":ValueType" : "POINTS",
+              ":Rank" : "31",
+              "Extension" : [
+                {
+                  ":Code" : "DIFFICULTY",
+                  ":Value" : "4.800"
+                },
+                {
+                  ":Code" : "EXECUTION",
+                  ":Value" : "8.200"
+                }
+              ]
+            },
+            {
+              ":Type" : "ER",
+              ":Code" : "HB",
+              ":Value" : "10.750",
+              ":Pos" : "6",
+              ":ValueType" : "POINTS",
+              ":Rank" : "51",
+              "Extension" : [
+                {
+                  ":Code" : "DIFFICULTY",
+                  ":Value" : "3.600"
+                },
+                {
+                  ":Code" : "EXECUTION",
+                  ":Value" : "7.150"
+                }
+              ]
+            },
+            {
+              ":Type" : "ER",
+              ":Code" : "REPORTED",
+              ":Value" : "13.400",
+              ":ValueType" : "POINTS",
+              ":Rank" : "14",
+              ":SortOrder" : "14",
+              ":RankEqual" : "Y"
+            }
+          ]
+        },
+        "Competitor" : {
+          ":Code" : "3021221",
+          ":Type" : "A",
+          ":Bib" : "129",
+          ":Organisation" : "KAZ",
+          "Composition" : {
+            "Athlete" : {
+              ":Code" : "3021221",
+              ":Bib" : "129",
+              ":Order" : "1",
+              "Description" : {
+                ":FamilyName" : "Azizov",
+                ":GivenName" : "Ilyas",
+                ":Gender" : "M",
+                ":Organisation" : "KAZ",
+                ":IFId" : "31800",
+                ":BirthDate" : "1999-12-07"
+              }
+            }
+          }
+        }
+      },
+      {
+        ":SortOrder" : "18",
+        ":ResultType" : "POINTS",
+        ":Result" : "74.850",
+        ":Rank" : "18",
+        "ExtendedResults" : {
+          "ExtendedResult" : [
+            {
+              ":Type" : "ER",
+              ":Code" : "START_APPARATUS",
+              ":Value" : "FX"
+            },
+            {
+              ":Type" : "ER",
+              ":Code" : "FX",
+              ":Value" : "12.700",
+              ":Pos" : "1",
+              ":ValueType" : "POINTS",
+              ":Rank" : "24",
+              "Extension" : [
+                {
+                  ":Code" : "DIFFICULTY",
+                  ":Value" : "5.100"
+                },
+                {
+                  ":Code" : "EXECUTION",
+                  ":Value" : "7.600"
+                }
+              ]
+            },
+            {
+              ":Type" : "ER",
+              ":Code" : "PH",
+              ":Value" : "12.550",
+              ":Pos" : "2",
+              ":ValueType" : "POINTS",
+              ":Rank" : "25",
+              "Extension" : [
+                {
+                  ":Code" : "DIFFICULTY",
+                  ":Value" : "4.900"
+                },
+                {
+                  ":Code" : "EXECUTION",
+                  ":Value" : "7.650"
+                }
+              ]
+            },
+            {
+              ":Type" : "ER",
+              ":Code" : "SR",
+              ":Value" : "11.650",
+              ":Pos" : "3",
+              ":ValueType" : "POINTS",
+              ":Rank" : "48",
+              "Extension" : [
+                {
+                  ":Code" : "DIFFICULTY",
+                  ":Value" : "3.500"
+                },
+                {
+                  ":Code" : "EXECUTION",
+                  ":Value" : "8.150"
+                }
+              ]
+            },
+            {
+              ":Type" : "ER",
+              ":Code" : "VT",
+              ":Value" : "13.850",
+              ":Pos" : "4",
+              ":ValueType" : "POINTS",
+              ":Rank" : "23",
+              ":RankEqual" : "Y",
+              "Extension" : [
+                {
+                  ":Code" : "DIFFICULTY",
+                  ":Value" : "4.800"
+                },
+                {
+                  ":Code" : "EXECUTION",
+                  ":Value" : "9.050"
+                }
+              ]
+            },
+            {
+              ":Type" : "ER",
+              ":Code" : "PB",
+              ":Value" : "12.800",
+              ":Pos" : "5",
+              ":ValueType" : "POINTS",
+              ":Rank" : "34",
+              "Extension" : [
+                {
+                  ":Code" : "DIFFICULTY",
+                  ":Value" : "5.000"
+                },
+                {
+                  ":Code" : "EXECUTION",
+                  ":Value" : "7.800"
+                }
+              ]
+            },
+            {
+              ":Type" : "ER",
+              ":Code" : "HB",
+              ":Value" : "11.300",
+              ":Pos" : "6",
+              ":ValueType" : "POINTS",
+              ":Rank" : "47",
+              "Extension" : [
+                {
+                  ":Code" : "DIFFICULTY",
+                  ":Value" : "4.500"
+                },
+                {
+                  ":Code" : "EXECUTION",
+                  ":Value" : "6.800"
+                }
+              ]
+            },
+            {
+              ":Type" : "ER",
+              ":Code" : "REPORTED",
+              ":Value" : "12.700",
+              ":ValueType" : "POINTS",
+              ":Rank" : "20",
+              ":SortOrder" : "20"
+            }
+          ]
+        },
+        "Competitor" : {
+          ":Code" : "3020549",
+          ":Type" : "A",
+          ":Bib" : "114",
+          ":Organisation" : "INA",
+          "Composition" : {
+            "Athlete" : {
+              ":Code" : "3020549",
+              ":Bib" : "114",
+              ":Order" : "1",
+              "Description" : {
+                ":FamilyName" : "Akbar",
+                ":GivenName" : "Agung",
+                ":Gender" : "M",
+                ":Organisation" : "INA",
+                ":IFId" : "37959",
+                ":BirthDate" : "1994-07-23"
+              }
+            }
+          }
+        }
+      },
+      {
+        ":SortOrder" : "19",
+        ":ResultType" : "POINTS",
+        ":Result" : "74.550",
+        ":Rank" : "19",
+        "ExtendedResults" : {
+          "ExtendedResult" : [
+            {
+              ":Type" : "ER",
+              ":Code" : "START_APPARATUS",
+              ":Value" : "UN"
+            },
+            {
+              ":Type" : "ER",
+              ":Code" : "FX",
+              ":Value" : "13.100",
+              ":Pos" : "1",
+              ":ValueType" : "POINTS",
+              ":Rank" : "17",
+              "Extension" : [
+                {
+                  ":Code" : "DIFFICULTY",
+                  ":Value" : "5.600"
+                },
+                {
+                  ":Code" : "EXECUTION",
+                  ":Value" : "7.500"
+                }
+              ]
+            },
+            {
+              ":Type" : "ER",
+              ":Code" : "PH",
+              ":Value" : "9.900",
+              ":Pos" : "2",
+              ":ValueType" : "POINTS",
+              ":Rank" : "47",
+              "Extension" : [
+                {
+                  ":Code" : "DIFFICULTY",
+                  ":Value" : "3.500"
+                },
+                {
+                  ":Code" : "EXECUTION",
+                  ":Value" : "6.400"
+                }
+              ]
+            },
+            {
+              ":Type" : "ER",
+              ":Code" : "SR",
+              ":Value" : "13.050",
+              ":Pos" : "3",
+              ":ValueType" : "POINTS",
+              ":Rank" : "32",
+              "Extension" : [
+                {
+                  ":Code" : "DIFFICULTY",
+                  ":Value" : "4.500"
+                },
+                {
+                  ":Code" : "EXECUTION",
+                  ":Value" : "8.550"
+                }
+              ]
+            },
+            {
+              ":Type" : "ER",
+              ":Code" : "VT",
+              ":Value" : "14.100",
+              ":Pos" : "4",
+              ":ValueType" : "POINTS",
+              ":Rank" : "15",
+              "Extension" : [
+                {
+                  ":Code" : "DIFFICULTY",
+                  ":Value" : "5.200"
+                },
+                {
+                  ":Code" : "EXECUTION",
+                  ":Value" : "8.900"
+                }
+              ]
+            },
+            {
+              ":Type" : "ER",
+              ":Code" : "PB",
+              ":Value" : "12.500",
+              ":Pos" : "5",
+              ":ValueType" : "POINTS",
+              ":Rank" : "37",
+              "Extension" : [
+                {
+                  ":Code" : "DIFFICULTY",
+                  ":Value" : "4.600"
+                },
+                {
+                  ":Code" : "EXECUTION",
+                  ":Value" : "7.900"
+                }
+              ]
+            },
+            {
+              ":Type" : "ER",
+              ":Code" : "HB",
+              ":Value" : "11.900",
+              ":Pos" : "6",
+              ":ValueType" : "POINTS",
+              ":Rank" : "37",
+              "Extension" : [
+                {
+                  ":Code" : "DIFFICULTY",
+                  ":Value" : "4.300"
+                },
+                {
+                  ":Code" : "EXECUTION",
+                  ":Value" : "7.600"
+                }
+              ]
+            },
+            {
+              ":Type" : "ER",
+              ":Code" : "REPORTED",
+              ":Value" : "9.900",
+              ":ValueType" : "POINTS",
+              ":Rank" : "28",
+              ":SortOrder" : "28"
+            }
+          ]
+        },
+        "Competitor" : {
+          ":Code" : "3004125",
+          ":Type" : "A",
+          ":Bib" : "115",
+          ":Organisation" : "IND",
+          "Composition" : {
+            "Athlete" : {
+              ":Code" : "3004125",
+              ":Bib" : "115",
+              ":Order" : "1",
+              "Description" : {
+                ":FamilyName" : "Kumar",
+                ":GivenName" : "Ashish",
+                ":Gender" : "M",
+                ":Organisation" : "IND",
+                ":IFId" : "9968",
+                ":BirthDate" : "1990-11-26"
+              }
+            }
+          }
+        }
+      },
+      {
+        ":SortOrder" : "20",
+        ":ResultType" : "POINTS",
+        ":Result" : "74.350",
+        ":Rank" : "20",
+        "ExtendedResults" : {
+          "ExtendedResult" : [
+            {
+              ":Type" : "ER",
+              ":Code" : "START_APPARATUS",
+              ":Value" : "UN"
+            },
+            {
+              ":Type" : "ER",
+              ":Code" : "FX",
+              ":Value" : "12.500",
+              ":Pos" : "1",
+              ":ValueType" : "POINTS",
+              ":Rank" : "26",
+              "Extension" : [
+                {
+                  ":Code" : "DIFFICULTY",
+                  ":Value" : "4.600"
+                },
+                {
+                  ":Code" : "EXECUTION",
+                  ":Value" : "7.900"
+                }
+              ]
+            },
+            {
+              ":Type" : "ER",
+              ":Code" : "PH",
+              ":Value" : "11.850",
+              ":Pos" : "2",
+              ":ValueType" : "POINTS",
+              ":Rank" : "31",
+              "Extension" : [
+                {
+                  ":Code" : "DIFFICULTY",
+                  ":Value" : "4.200"
+                },
+                {
+                  ":Code" : "EXECUTION",
+                  ":Value" : "7.650"
+                }
+              ]
+            },
+            {
+              ":Type" : "ER",
+              ":Code" : "SR",
+              ":Value" : "12.700",
+              ":Pos" : "3",
+              ":ValueType" : "POINTS",
+              ":Rank" : "38",
+              "Extension" : [
+                {
+                  ":Code" : "DIFFICULTY",
+                  ":Value" : "4.200"
+                },
+                {
+                  ":Code" : "EXECUTION",
+                  ":Value" : "8.500"
+                }
+              ]
+            },
+            {
+              ":Type" : "ER",
+              ":Code" : "VT",
+              ":Value" : "13.550",
+              ":Pos" : "4",
+              ":ValueType" : "POINTS",
+              ":Rank" : "31",
+              "Extension" : [
+                {
+                  ":Code" : "DIFFICULTY",
+                  ":Value" : "4.800"
+                },
+                {
+                  ":Code" : "EXECUTION",
+                  ":Value" : "8.850"
+                },
+                {
+                  ":Code" : "PENALTY",
+                  ":Value" : "-0.100"
+                }
+              ]
+            },
+            {
+              ":Type" : "ER",
+              ":Code" : "PB",
+              ":Value" : "11.550",
+              ":Pos" : "5",
+              ":ValueType" : "POINTS",
+              ":Rank" : "49",
+              "Extension" : [
+                {
+                  ":Code" : "DIFFICULTY",
+                  ":Value" : "4.200"
+                },
+                {
+                  ":Code" : "EXECUTION",
+                  ":Value" : "7.350"
+                }
+              ]
+            },
+            {
+              ":Type" : "ER",
+              ":Code" : "HB",
+              ":Value" : "12.200",
+              ":Pos" : "6",
+              ":ValueType" : "POINTS",
+              ":Rank" : "31",
+              ":RankEqual" : "Y",
+              "Extension" : [
+                {
+                  ":Code" : "DIFFICULTY",
+                  ":Value" : "4.000"
+                },
+                {
+                  ":Code" : "EXECUTION",
+                  ":Value" : "8.200"
+                }
+              ]
+            },
+            {
+              ":Type" : "ER",
+              ":Code" : "REPORTED",
+              ":Value" : "12.500",
+              ":ValueType" : "POINTS",
+              ":Rank" : "22",
+              ":SortOrder" : "22"
+            }
+          ]
+        },
+        "Competitor" : {
+          ":Code" : "3005621",
+          ":Type" : "A",
+          ":Bib" : "123",
+          ":Organisation" : "IRI",
+          "Composition" : {
+            "Athlete" : {
+              ":Code" : "3005621",
+              ":Bib" : "123",
+              ":Order" : "1",
+              "Description" : {
+                ":FamilyName" : "Madani",
+                ":GivenName" : "Saman",
+                ":Gender" : "M",
+                ":Organisation" : "IRI",
+                ":IFId" : "20536",
+                ":BirthDate" : "1996-10-20"
+              }
+            }
+          }
+        }
+      },
+      {
+        ":SortOrder" : "21",
+        ":ResultType" : "POINTS",
+        ":Result" : "73.950",
+        ":Rank" : "21",
+        "ExtendedResults" : {
+          "ExtendedResult" : [
+            {
+              ":Type" : "ER",
+              ":Code" : "START_APPARATUS",
+              ":Value" : "VT"
+            },
+            {
+              ":Type" : "ER",
+              ":Code" : "FX",
+              ":Value" : "12.200",
+              ":Pos" : "1",
+              ":ValueType" : "POINTS",
+              ":Rank" : "35",
+              "Extension" : [
+                {
+                  ":Code" : "DIFFICULTY",
+                  ":Value" : "5.200"
+                },
+                {
+                  ":Code" : "EXECUTION",
+                  ":Value" : "7.100"
+                },
+                {
+                  ":Code" : "PENALTY",
+                  ":Value" : "-0.100"
+                }
+              ]
+            },
+            {
+              ":Type" : "ER",
+              ":Code" : "PH",
+              ":Value" : "10.550",
+              ":Pos" : "2",
+              ":ValueType" : "POINTS",
+              ":Rank" : "42",
+              "Extension" : [
+                {
+                  ":Code" : "DIFFICULTY",
+                  ":Value" : "5.000"
+                },
+                {
+                  ":Code" : "EXECUTION",
+                  ":Value" : "5.550"
+                }
+              ]
+            },
+            {
+              ":Type" : "ER",
+              ":Code" : "SR",
+              ":Value" : "13.000",
+              ":Pos" : "3",
+              ":ValueType" : "POINTS",
+              ":Rank" : "35",
+              "Extension" : [
+                {
+                  ":Code" : "DIFFICULTY",
+                  ":Value" : "5.400"
+                },
+                {
+                  ":Code" : "EXECUTION",
+                  ":Value" : "7.600"
+                }
+              ]
+            },
+            {
+              ":Type" : "ER",
+              ":Code" : "VT",
+              ":Value" : "13.850",
+              ":Pos" : "4",
+              ":ValueType" : "POINTS",
+              ":Rank" : "23",
+              ":RankEqual" : "Y",
+              "Extension" : [
+                {
+                  ":Code" : "DIFFICULTY",
+                  ":Value" : "4.800"
+                },
+                {
+                  ":Code" : "EXECUTION",
+                  ":Value" : "9.050"
+                }
+              ]
+            },
+            {
+              ":Type" : "ER",
+              ":Code" : "PB",
+              ":Value" : "12.850",
+              ":Pos" : "5",
+              ":ValueType" : "POINTS",
+              ":Rank" : "33",
+              "Extension" : [
+                {
+                  ":Code" : "DIFFICULTY",
+                  ":Value" : "5.600"
+                },
+                {
+                  ":Code" : "EXECUTION",
+                  ":Value" : "7.250"
+                }
+              ]
+            },
+            {
+              ":Type" : "ER",
+              ":Code" : "HB",
+              ":Value" : "11.500",
+              ":Pos" : "6",
+              ":ValueType" : "POINTS",
+              ":Rank" : "44",
+              "Extension" : [
+                {
+                  ":Code" : "DIFFICULTY",
+                  ":Value" : "5.400"
+                },
+                {
+                  ":Code" : "EXECUTION",
+                  ":Value" : "6.100"
+                }
+              ]
+            },
+            {
+              ":Type" : "ER",
+              ":Code" : "REPORTED",
+              ":Value" : "13.850",
+              ":ValueType" : "POINTS",
+              ":Rank" : "11",
+              ":SortOrder" : "11"
+            }
+          ]
+        },
+        "Competitor" : {
+          ":Code" : "3027591",
+          ":Type" : "A",
+          ":Bib" : "156",
+          ":Organisation" : "PRK",
+          "Composition" : {
+            "Athlete" : {
+              ":Code" : "3027591",
+              ":Bib" : "156",
+              ":Order" : "1",
+              "Description" : {
+                ":FamilyName" : "Ri",
+                ":GivenName" : "Yong Min",
+                ":Gender" : "M",
+                ":Organisation" : "PRK",
+                ":IFId" : "40746",
+                ":BirthDate" : "1990-09-16"
+              }
+            }
+          }
+        }
+      },
+      {
+        ":SortOrder" : "22",
+        ":ResultType" : "POINTS",
+        ":Result" : "71.500",
+        ":Rank" : "22",
+        "ExtendedResults" : {
+          "ExtendedResult" : [
+            {
+              ":Type" : "ER",
+              ":Code" : "START_APPARATUS",
+              ":Value" : "UN"
+            },
+            {
+              ":Type" : "ER",
+              ":Code" : "FX",
+              ":Value" : "12.300",
+              ":Pos" : "1",
+              ":ValueType" : "POINTS",
+              ":Rank" : "32",
+              "Extension" : [
+                {
+                  ":Code" : "DIFFICULTY",
+                  ":Value" : "4.300"
+                },
+                {
+                  ":Code" : "EXECUTION",
+                  ":Value" : "8.000"
+                }
+              ]
+            },
+            {
+              ":Type" : "ER",
+              ":Code" : "PH",
+              ":Value" : "9.850",
+              ":Pos" : "2",
+              ":ValueType" : "POINTS",
+              ":Rank" : "49",
+              "Extension" : [
+                {
+                  ":Code" : "DIFFICULTY",
+                  ":Value" : "3.800"
+                },
+                {
+                  ":Code" : "EXECUTION",
+                  ":Value" : "6.350"
+                },
+                {
+                  ":Code" : "PENALTY",
+                  ":Value" : "-0.300"
+                }
+              ]
+            },
+            {
+              ":Type" : "ER",
+              ":Code" : "SR",
+              ":Value" : "11.600",
+              ":Pos" : "3",
+              ":ValueType" : "POINTS",
+              ":Rank" : "49",
+              "Extension" : [
+                {
+                  ":Code" : "DIFFICULTY",
+                  ":Value" : "2.900"
+                },
+                {
+                  ":Code" : "EXECUTION",
+                  ":Value" : "8.700"
+                }
+              ]
+            },
+            {
+              ":Type" : "ER",
+              ":Code" : "VT",
+              ":Value" : "13.700",
+              ":Pos" : "4",
+              ":ValueType" : "POINTS",
+              ":Rank" : "26",
+              "Extension" : [
+                {
+                  ":Code" : "DIFFICULTY",
+                  ":Value" : "4.800"
+                },
+                {
+                  ":Code" : "EXECUTION",
+                  ":Value" : "9.000"
+                },
+                {
+                  ":Code" : "PENALTY",
+                  ":Value" : "-0.100"
+                }
+              ]
+            },
+            {
+              ":Type" : "ER",
+              ":Code" : "PB",
+              ":Value" : "12.250",
+              ":Pos" : "5",
+              ":ValueType" : "POINTS",
+              ":Rank" : "39",
+              "Extension" : [
+                {
+                  ":Code" : "DIFFICULTY",
+                  ":Value" : "3.800"
+                },
+                {
+                  ":Code" : "EXECUTION",
+                  ":Value" : "8.450"
+                }
+              ]
+            },
+            {
+              ":Type" : "ER",
+              ":Code" : "HB",
+              ":Value" : "11.800",
+              ":Pos" : "6",
+              ":ValueType" : "POINTS",
+              ":Rank" : "39",
+              "Extension" : [
+                {
+                  ":Code" : "DIFFICULTY",
+                  ":Value" : "3.800"
+                },
+                {
+                  ":Code" : "EXECUTION",
+                  ":Value" : "8.000"
+                }
+              ]
+            },
+            {
+              ":Type" : "ER",
+              ":Code" : "REPORTED",
+              ":Value" : "12.250",
+              ":ValueType" : "POINTS",
+              ":Rank" : "23",
+              ":SortOrder" : "23"
+            }
+          ]
+        },
+        "Competitor" : {
+          ":Code" : "3029073",
+          ":Type" : "A",
+          ":Bib" : "151",
+          ":Organisation" : "PHI",
+          "Composition" : {
+            "Athlete" : {
+              ":Code" : "3029073",
+              ":Bib" : "151",
+              ":Order" : "1",
+              "Description" : {
+                ":FamilyName" : "Timbang",
+                ":GivenName" : "Jan Gwynn",
+                ":Gender" : "M",
+                ":Organisation" : "PHI",
+                ":IFId" : "28871",
+                ":BirthDate" : "1997-10-06"
+              }
+            }
+          }
+        }
+      },
+      {
+        ":SortOrder" : "23",
+        ":ResultType" : "POINTS",
+        ":Result" : "69.750",
+        ":Rank" : "23",
+        "ExtendedResults" : {
+          "ExtendedResult" : [
+            {
+              ":Type" : "ER",
+              ":Code" : "START_APPARATUS",
+              ":Value" : "VT"
+            },
+            {
+              ":Type" : "ER",
+              ":Code" : "FX",
+              ":Value" : "12.500",
+              ":Pos" : "1",
+              ":ValueType" : "POINTS",
+              ":Rank" : "25",
+              "Extension" : [
+                {
+                  ":Code" : "DIFFICULTY",
+                  ":Value" : "4.200"
+                },
+                {
+                  ":Code" : "EXECUTION",
+                  ":Value" : "8.300"
+                }
+              ]
+            },
+            {
+              ":Type" : "ER",
+              ":Code" : "PH",
+              ":Value" : "6.850",
+              ":Pos" : "2",
+              ":ValueType" : "POINTS",
+              ":Rank" : "55",
+              "Extension" : [
+                {
+                  ":Code" : "DIFFICULTY",
+                  ":Value" : "3.200"
+                },
+                {
+                  ":Code" : "EXECUTION",
+                  ":Value" : "7.650"
+                },
+                {
+                  ":Code" : "PENALTY",
+                  ":Value" : "-4.000"
+                }
+              ]
+            },
+            {
+              ":Type" : "ER",
+              ":Code" : "SR",
+              ":Value" : "12.600",
+              ":Pos" : "3",
+              ":ValueType" : "POINTS",
+              ":Rank" : "42",
+              ":RankEqual" : "Y",
+              "Extension" : [
+                {
+                  ":Code" : "DIFFICULTY",
+                  ":Value" : "4.300"
+                },
+                {
+                  ":Code" : "EXECUTION",
+                  ":Value" : "8.300"
+                }
+              ]
+            },
+            {
+              ":Type" : "ER",
+              ":Code" : "VT",
+              ":Value" : "13.400",
+              ":Pos" : "4",
+              ":ValueType" : "POINTS",
+              ":Rank" : "37",
+              ":RankEqual" : "Y",
+              "Extension" : [
+                {
+                  ":Code" : "DIFFICULTY",
+                  ":Value" : "4.800"
+                },
+                {
+                  ":Code" : "EXECUTION",
+                  ":Value" : "8.700"
+                },
+                {
+                  ":Code" : "PENALTY",
+                  ":Value" : "-0.100"
+                }
+              ]
+            },
+            {
+              ":Type" : "ER",
+              ":Code" : "PB",
+              ":Value" : "12.200",
+              ":Pos" : "5",
+              ":ValueType" : "POINTS",
+              ":Rank" : "41",
+              "Extension" : [
+                {
+                  ":Code" : "DIFFICULTY",
+                  ":Value" : "4.700"
+                },
+                {
+                  ":Code" : "EXECUTION",
+                  ":Value" : "7.500"
+                }
+              ]
+            },
+            {
+              ":Type" : "ER",
+              ":Code" : "HB",
+              ":Value" : "12.200",
+              ":Pos" : "6",
+              ":ValueType" : "POINTS",
+              ":Rank" : "31",
+              ":RankEqual" : "Y",
+              "Extension" : [
+                {
+                  ":Code" : "DIFFICULTY",
+                  ":Value" : "4.000"
+                },
+                {
+                  ":Code" : "EXECUTION",
+                  ":Value" : "8.200"
+                }
+              ]
+            },
+            {
+              ":Type" : "ER",
+              ":Code" : "REPORTED",
+              ":Value" : "13.400",
+              ":ValueType" : "POINTS",
+              ":Rank" : "14",
+              ":SortOrder" : "16",
+              ":RankEqual" : "Y"
+            }
+          ]
+        },
+        "Competitor" : {
+          ":Code" : "3005452",
+          ":Type" : "A",
+          ":Bib" : "142",
+          ":Organisation" : "MAS",
+          "Composition" : {
+            "Athlete" : {
+              ":Code" : "3005452",
+              ":Bib" : "142",
+              ":Order" : "1",
+              "Description" : {
+                ":FamilyName" : "Jaafar",
+                ":GivenName" : "Azroy Amierol",
+                ":Gender" : "M",
+                ":Organisation" : "MAS",
+                ":IFId" : "29293",
+                ":BirthDate" : "1998-07-09"
+              }
+            }
+          }
+        }
+      },
+      {
+        ":SortOrder" : "24",
+        ":ResultType" : "POINTS",
+        ":Result" : "68.500",
+        ":Rank" : "24",
+        "ExtendedResults" : {
+          "ExtendedResult" : [
+            {
+              ":Type" : "ER",
+              ":Code" : "START_APPARATUS",
+              ":Value" : "SR"
+            },
+            {
+              ":Type" : "ER",
+              ":Code" : "FX",
+              ":Value" : "11.750",
+              ":Pos" : "1",
+              ":ValueType" : "POINTS",
+              ":Rank" : "44",
+              "Extension" : [
+                {
+                  ":Code" : "DIFFICULTY",
+                  ":Value" : "4.400"
+                },
+                {
+                  ":Code" : "EXECUTION",
+                  ":Value" : "7.350"
+                }
+              ]
+            },
+            {
+              ":Type" : "ER",
+              ":Code" : "PH",
+              ":Value" : "11.350",
+              ":Pos" : "2",
+              ":ValueType" : "POINTS",
+              ":Rank" : "36",
+              "Extension" : [
+                {
+                  ":Code" : "DIFFICULTY",
+                  ":Value" : "4.100"
+                },
+                {
+                  ":Code" : "EXECUTION",
+                  ":Value" : "7.250"
+                }
+              ]
+            },
+            {
+              ":Type" : "ER",
+              ":Code" : "SR",
+              ":Value" : "11.400",
+              ":Pos" : "3",
+              ":ValueType" : "POINTS",
+              ":Rank" : "51",
+              "Extension" : [
+                {
+                  ":Code" : "DIFFICULTY",
+                  ":Value" : "4.300"
+                },
+                {
+                  ":Code" : "EXECUTION",
+                  ":Value" : "7.100"
+                }
+              ]
+            },
+            {
+              ":Type" : "ER",
+              ":Code" : "VT",
+              ":Value" : "13.100",
+              ":Pos" : "4",
+              ":ValueType" : "POINTS",
+              ":Rank" : "42",
+              "Extension" : [
+                {
+                  ":Code" : "DIFFICULTY",
+                  ":Value" : "4.800"
+                },
+                {
+                  ":Code" : "EXECUTION",
+                  ":Value" : "8.600"
+                },
+                {
+                  ":Code" : "PENALTY",
+                  ":Value" : "-0.300"
+                }
+              ]
+            },
+            {
+              ":Type" : "ER",
+              ":Code" : "PB",
+              ":Value" : "10.750",
+              ":Pos" : "5",
+              ":ValueType" : "POINTS",
+              ":Rank" : "52",
+              ":RankEqual" : "Y",
+              "Extension" : [
+                {
+                  ":Code" : "DIFFICULTY",
+                  ":Value" : "4.500"
+                },
+                {
+                  ":Code" : "EXECUTION",
+                  ":Value" : "6.250"
+                }
+              ]
+            },
+            {
+              ":Type" : "ER",
+              ":Code" : "HB",
+              ":Value" : "10.150",
+              ":Pos" : "6",
+              ":ValueType" : "POINTS",
+              ":Rank" : "53",
+              "Extension" : [
+                {
+                  ":Code" : "DIFFICULTY",
+                  ":Value" : "4.500"
+                },
+                {
+                  ":Code" : "EXECUTION",
+                  ":Value" : "5.650"
+                }
+              ]
+            },
+            {
+              ":Type" : "ER",
+              ":Code" : "REPORTED",
+              ":Value" : "11.400",
+              ":ValueType" : "POINTS",
+              ":Rank" : "27",
+              ":SortOrder" : "27"
+            }
+          ]
+        },
+        "Competitor" : {
+          ":Code" : "3028087",
+          ":Type" : "A",
+          ":Bib" : "147",
+          ":Organisation" : "MGL",
+          "Composition" : {
+            "Athlete" : {
+              ":Code" : "3028087",
+              ":Bib" : "147",
+              ":Order" : "1",
+              "Description" : {
+                ":FamilyName" : "Altansukh",
+                ":GivenName" : "Enkhtulga",
+                ":Gender" : "M",
+                ":Organisation" : "MGL",
+                ":IFId" : "28712",
+                ":BirthDate" : "1997-10-03"
+              }
+            }
+          }
+        }
+      }
+    ]
+  },
+  "createdTime" : "2019-09-05T11:46:55.479+09:00",
+  "messageType" : "ODF2"
+}

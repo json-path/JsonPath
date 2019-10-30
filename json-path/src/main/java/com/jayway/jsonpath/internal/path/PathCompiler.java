@@ -31,6 +31,7 @@ public class PathCompiler {
 
     private static final char WILDCARD = '*';
     private static final char PERIOD = '.';
+    private static final char CARET = '^';
     private static final char SPACE = ' ';
     private static final char TAB = '\t';
     private static final char CR = '\r';
@@ -147,10 +148,26 @@ public class PathCompiler {
             case WILDCARD:
                 return readWildCardToken(appender) ||
                         fail("Could not parse token starting at position " + path.position());
+            case CARET:
+                return readCaretToken(appender) ||
+                        fail("Could not parse token starting at position " + path.position());
             default:
                 return readPropertyOrFunctionToken(appender) ||
                         fail("Could not parse token starting at position " + path.position());
         }
+    }
+
+    //
+    // ^
+    //
+    private boolean readCaretToken(PathTokenAppender appender) {
+        if (false == path.currentCharIs(CARET)) {
+            return false;
+        }
+
+        path.incrementPosition(1);
+        appender.appendPathToken(PathTokenFactory.createCaretPathToken());
+        return path.currentIsTail() || readNextToken(appender);
     }
 
     //
@@ -175,7 +192,7 @@ public class PathCompiler {
     // fooBar or fooBar()
     //
     private boolean readPropertyOrFunctionToken(PathTokenAppender appender) {
-        if (path.currentCharIs(OPEN_SQUARE_BRACKET) || path.currentCharIs(WILDCARD) || path.currentCharIs(PERIOD) || path.currentCharIs(SPACE)) {
+        if (path.currentCharIs(OPEN_SQUARE_BRACKET) || path.currentCharIs(WILDCARD) || path.currentCharIs(PERIOD) || path.currentCharIs(CARET) || path.currentCharIs(SPACE)) {
             return false;
         }
         int startPosition = path.position();
