@@ -379,10 +379,7 @@ public final class Utils {
      * @throws IllegalArgumentException if the character sequence is empty
      */
     public static <T extends CharSequence> T notEmpty(T chars, String message, Object... values) {
-        if (chars == null) {
-            throw new IllegalArgumentException(String.format(message, values));
-        }
-        if (chars.length() == 0) {
+        if (chars == null || chars.length() == 0) {
             throw new IllegalArgumentException(String.format(message, values));
         }
         return chars;
