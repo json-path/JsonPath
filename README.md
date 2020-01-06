@@ -248,7 +248,7 @@ If you configure JsonPath to use `JacksonMappingProvider` or `GsonMappingProvide
 Book book = JsonPath.parse(json).read("$.store.book[0]", Book.class);
 ```
 
-To obtainin full generics type information, use TypeRef.
+To obtain full generics type information, use TypeRef.
 
 ```java
 TypeRef<List<String>> typeRef = new TypeRef<List<String>>() {};
@@ -386,10 +386,13 @@ This option configures JsonPath to return a list even when the path is `definite
 ```java
 Configuration conf = Configuration.defaultConfiguration();
 
-//Works fine
+//ClassCastException thrown
 List<String> genders0 = JsonPath.using(conf).parse(json).read("$[0]['gender']");
-//PathNotFoundException thrown
-List<String> genders1 = JsonPath.using(conf).parse(json).read("$[1]['gender']");
+
+Configuration conf2 = conf.addOptions(Option.ALWAYS_RETURN_LIST);
+
+//Works fine
+List<String> genders0 = JsonPath.using(conf2).parse(json).read("$[0]['gender']");
 ``` 
 **SUPPRESS_EXCEPTIONS**
 <br/>
@@ -398,6 +401,21 @@ This option makes sure no exceptions are propagated from path evaluation. It fol
 * If option `ALWAYS_RETURN_LIST` is present an empty list will be returned
 * If option `ALWAYS_RETURN_LIST` is **NOT** present null returned 
 
+**REQUIRE_PROPERTIES**
+</br>
+This option configures JsonPath to require properties defined in path when an `indefinite` path is evaluated.
+
+```java
+Configuration conf = Configuration.defaultConfiguration();
+
+//Works fine
+List<String> genders = JsonPath.using(conf).parse(json).read("$[*]['gender']");
+
+Configuration conf2 = conf.addOptions(Option.REQUIRE_PROPERTIES);
+
+//PathNotFoundException thrown
+List<String> genders = JsonPath.using(conf2).parse(json).read("$[*]['gender']");
+```
 
 ### JsonProvider SPI
 
