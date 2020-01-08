@@ -9,7 +9,9 @@ import com.jayway.jsonpath.Filter;
 import com.jayway.jsonpath.InvalidPathException;
 import com.jayway.jsonpath.JsonPath;
 import com.jayway.jsonpath.Option;
+import com.jayway.jsonpath.JsonPathException;
 import com.jayway.jsonpath.PathNotFoundException;
+import com.jayway.jsonpath.ReadContext;
 import com.jayway.jsonpath.internal.Utils;
 import com.jayway.jsonpath.spi.cache.LRUCache;
 import com.jayway.jsonpath.spi.json.GsonJsonProvider;
@@ -29,12 +31,16 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Stream;
 
 import static com.jayway.jsonpath.Criteria.PredicateContext;
 import static com.jayway.jsonpath.Criteria.where;
 import static com.jayway.jsonpath.Filter.filter;
 import static com.jayway.jsonpath.JsonPath.read;
 import static com.jayway.jsonpath.JsonPath.using;
+import static com.jayway.jsonpath.Option.REQUIRE_PROPERTIES;
+import static com.jayway.jsonpath.internal.path.PathCompiler.fail;
+import static java.text.MessageFormat.format;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 import static org.assertj.core.api.Assertions.assertThat;
@@ -1046,5 +1052,62 @@ public class IssuesTest extends BaseTest {
         JsonPath jsonPath = JsonPath.compile(path);
 
         ctx.read(jsonPath);
+    }
+
+    private static final String JSON = String.join("\n",
+            "{",
+            "  \"optional\":null,",
+            "  \"keyStr\":\"string\",",
+            "  \"keyNum\":10,",
+            "  \"keyBool\":true,",
+            "  \"requiredEmpty\":[],",
+            "  \"requiredWithSingleValidElement\":[{\"required\": \"1\"}],",
+            "  \"requiredWithTwoValidElements\":[{\"required\": \"1\"}, {\"required\": \"2\"}],",
+            "  \"requiredWithSingleInvalidElement\":[{}],",
+            "  \"requiredWithValidAndInvalidElement\":[{\"required\": \"1\"}, {}],",
+            "  \"nested\": [",
+            "    {",
+            "      \"optional\":null,",
+            "      \"requiredEmpty\":[],",
+            "      \"requiredWithSingleValidElement\":[{\"required\": \"1\"}],",
+            "      \"requiredWithTwoValidElements\":[{\"required\": \"1\"}, {\"required\": \"2\"}],",
+            "      \"requiredWithSingleInvalidElement\":[{}],",
+            "      \"requiredWithValidAndInvalidElement\":[{\"required\": \"1\"}, {}]",
+            "    },",
+            "    {",
+            "      \"optional\":null,",
+            "      \"requiredEmpty\":[],",
+            "      \"requiredWithSingleValidElement\":[{\"required\": \"2\"}],",
+            "      \"requiredWithTwoValidElements\":[{\"required\": \"3\"}, {\"required\": \"4\"}],",
+            "      \"requiredWithSingleInvalidElement\":[{}],",
+            "      \"requiredWithValidAndInvalidElement\":[{\"required\": \"2\"}, {}]",
+            "    }",
+            "  ]",
+            "}");
+
+    @Test
+    public void givenNotExistingPathAndExceptionShouldBeThrown() {
+        ReadContext context = JsonPath.parse(JSON, Configuration.builder().options(REQUIRE_PROPERTIES).build());
+
+        // Here's the problem - the commented paths don't throw exception but return empty list instead
+        Stream.of( "$.optional[*].required",    // shouldn't be returned []
+                "$.keyStr[*].required",     // shouldn't be returned []
+                "$.keyNum[*].required",     // shouldn't be returned []
+                "$.keyBool[*].required",    // shouldn't be returned []
+                "$.notExisting[*].required",
+                "$.requiredWithSingleInvalidElement[*].required",
+                "$.requiredWithValidAndInvalidElement[*].required",
+                "$.nested[*].optional[*].required", // shouldn't be returned []
+                "$.nested[*].notExisting[*].required",
+                "$.nested[*].requiredWithSingleInvalidElement[*].required",
+                "$.nested[*].requiredWithValidAndInvalidElement[*].required")
+                .forEach(path -> {
+                    try {
+                        List<String> values = context.read(path);
+                        fail(format("Expected to throw JsonPathException, but instead got '%s' for path '%s'.", values, path));
+                    } catch (JsonPathException e) {
+                        // expected to fail
+                    }
+                });
     }
 }
