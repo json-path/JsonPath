@@ -2,6 +2,7 @@ package com.jayway.jsonpath;
 
 import com.jayway.jsonpath.internal.Path;
 import com.jayway.jsonpath.internal.path.PredicateContextImpl;
+import com.jayway.jsonpath.spi.json.FastjsonJsonProvider;
 import com.jayway.jsonpath.spi.json.GsonJsonProvider;
 import com.jayway.jsonpath.spi.json.JacksonJsonNodeJsonProvider;
 import com.jayway.jsonpath.spi.json.JacksonJsonProvider;
@@ -9,6 +10,7 @@ import com.jayway.jsonpath.spi.json.JettisonProvider;
 import com.jayway.jsonpath.spi.json.JsonOrgJsonProvider;
 import com.jayway.jsonpath.spi.json.JsonSmartJsonProvider;
 import com.jayway.jsonpath.spi.json.TapestryJsonProvider;
+import com.jayway.jsonpath.spi.mapper.FastjsonMappingProvider;
 import com.jayway.jsonpath.spi.mapper.GsonMappingProvider;
 import com.jayway.jsonpath.spi.mapper.JacksonMappingProvider;
 import com.jayway.jsonpath.spi.mapper.JsonOrgMappingProvider;
@@ -59,6 +61,12 @@ public class BaseTest {
         .mappingProvider(new TapestryMappingProvider())
         .jsonProvider(TapestryJsonProvider.INSTANCE)
         .build();
+
+    public static final Configuration FASTJSON_CONFIGURATION = Configuration
+            .builder()
+            .mappingProvider(new FastjsonMappingProvider())
+            .jsonProvider(new FastjsonJsonProvider())
+            .build();
 
     public static final String JSON_BOOK_DOCUMENT =
             "{ " +
