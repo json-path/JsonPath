@@ -20,6 +20,7 @@ ext {
             jsonSmart: 'net.minidev:json-smart:2.3',
             slf4jApi: 'org.slf4j:slf4j-api:1.7.26',
             tapestryJson: 'org.apache.tapestry:tapestry-json:5.4.4',
+            fastjson: 'com.alibaba:fastjson:1.2.62',
 
             test: [
                     'commons-io:commons-io:2.4',
