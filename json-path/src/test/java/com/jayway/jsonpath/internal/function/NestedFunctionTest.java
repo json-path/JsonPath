@@ -84,7 +84,15 @@ public class NestedFunctionTest extends BaseFunctionTest {
      */
     @Test
     public void testAppendTextAndNumberThenSum() {
-        verifyMathFunction(conf, "$.numbers.append(\"0\", \"11\").sum()", 55.0);
+        verifyMathFunction(conf, "$.numbers.append(\"str\", \"str2\").sum()", 55.0);
+    }
+
+    /**
+     * n
+     */
+    @Test
+    public void testAppendStringNumberAndNumberThenSum() {
+        verifyMathFunction(conf, "$.numbers.append(\"0\", \"11\").sum()", 66.0);
     }
 
     @Test
