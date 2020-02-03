@@ -345,7 +345,7 @@ Set a value
 The library offers the possibility to set a value.
 
 ```java
-String newJson = parse(json).set("$['store']['book'][0]['author']", "Paul").jsonString();
+String newJson = JsonPath.parse(json).set("$['store']['book'][0]['author']", "Paul").jsonString();
 ```
 
 
@@ -478,4 +478,3 @@ CacheProvider.setCache(new Cache() {
 
 
 [![Analytics](https://ga-beacon.appspot.com/UA-54945131-1/jsonpath/index)](https://github.com/igrigorik/ga-beacon)
-
