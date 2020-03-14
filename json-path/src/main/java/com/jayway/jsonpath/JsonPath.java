@@ -24,6 +24,8 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
+import java.util.ArrayList;
+import java.util.List;
 
 import static com.jayway.jsonpath.Option.ALWAYS_RETURN_LIST;
 import static com.jayway.jsonpath.Option.AS_PATH_LIST;
@@ -181,10 +183,32 @@ public class JsonPath {
 
             } else {
                 Object res = path.evaluate(jsonObject, jsonObject, configuration).getValue(false);
-                if (optAlwaysReturnList && path.isDefinite()) {
-                    Object array = configuration.jsonProvider().createArray();
-                    configuration.jsonProvider().setArrayIndex(array, 0, res);
-                    return (T) array;
+                if (optAlwaysReturnList) {
+                    List list = new ArrayList();
+                    if (path.isDefinite()) {
+                        Object array = configuration.jsonProvider().createArray();
+                        configuration.jsonProvider().setArrayIndex(array, 0, res);
+                        if (!(array instanceof List)) {
+                            if (array instanceof Iterable) {
+                                for (T item : (Iterable<? extends T>) array) {
+                                    list.add(item);
+                                }
+                            }
+                        } else {
+                            list = (List) array;
+                        }
+                    } else {
+                        if (!(res instanceof List)) {
+                            if (res instanceof Iterable) {
+                                for (T item : (Iterable<? extends T>) res) {
+                                    list.add(item);
+                                }
+                            }
+                        } else {
+                            list = (List) res;
+                        }
+                    }
+                    return (T) list;
                 } else {
                     return (T) res;
                 }
