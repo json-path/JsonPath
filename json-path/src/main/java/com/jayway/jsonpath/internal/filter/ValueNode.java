@@ -1,5 +1,7 @@
 package com.jayway.jsonpath.internal.filter;
 
+import java.time.OffsetDateTime;
+import java.util.Date;
 import java.util.regex.Pattern;
 
 import com.jayway.jsonpath.InvalidPathException;
@@ -75,6 +77,14 @@ public abstract class ValueNode {
     }
 
     public ValueListNode asValueListNode() {
+        throw new InvalidPathException("Expected value list node");
+    }
+
+    public boolean isDateNode() {
+        return false;
+    }
+
+    public DateNode asDateNode() {
         throw new InvalidPathException("Expected value list node");
     }
 
@@ -161,6 +171,8 @@ public abstract class ValueNode {
         else if(o instanceof Number) return createNumberNode(o.toString());
         else if(o instanceof Boolean) return createBooleanNode(o.toString());
         else if(o instanceof Pattern) return createPatternNode((Pattern)o);
+        else if(o instanceof OffsetDateTime) return createDateNode((OffsetDateTime)o);
+        else if(o instanceof Date) return createDateNode((Date)o);
         else throw new JsonPathException("Could not determine value type");
     }
 
@@ -180,6 +192,12 @@ public abstract class ValueNode {
         return Boolean.parseBoolean(charSequence.toString()) ? TRUE : FALSE;
     }
 
+    public static DateNode createDateNode(OffsetDateTime offsetDateTime){
+        return new DateNode(offsetDateTime);
+    }
+    public static DateNode createDateNode(Date dateTime){
+        return new DateNode(dateTime);
+    }
     public static NullNode createNullNode(){
         return NULL_NODE;
     }

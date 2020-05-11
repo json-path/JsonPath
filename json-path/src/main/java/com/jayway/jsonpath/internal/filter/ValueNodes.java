@@ -1,19 +1,6 @@
 package com.jayway.jsonpath.internal.filter;
 
-import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.regex.Pattern;
-
-import com.jayway.jsonpath.Configuration;
-import com.jayway.jsonpath.JsonPathException;
-import com.jayway.jsonpath.Option;
-import com.jayway.jsonpath.PathNotFoundException;
-import com.jayway.jsonpath.Predicate;
+import com.jayway.jsonpath.*;
 import com.jayway.jsonpath.internal.Path;
 import com.jayway.jsonpath.internal.Utils;
 import com.jayway.jsonpath.internal.path.PathCompiler;
@@ -23,6 +10,11 @@ import net.minidev.json.parser.JSONParser;
 import net.minidev.json.parser.ParseException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.math.BigDecimal;
+import java.time.OffsetDateTime;
+import java.util.*;
+import java.util.regex.Pattern;
 
 /**
  * Moved these nodes out of the ValueNode abstract class.
@@ -330,6 +322,58 @@ public interface ValueNodes {
             } else {
                 return number.compareTo(that.number) == 0;
             }
+        }
+    }
+    class DateNode extends ValueNode {
+
+
+        private final Date date;
+
+        DateNode(OffsetDateTime offsetDateTime) {
+            this.date = new Date(offsetDateTime.toInstant().getEpochSecond() * 1000 + offsetDateTime.getNano()/1000000);
+        }
+        DateNode(Date date) {
+            this.date = date;
+        }
+
+        @Override
+        public StringNode asStringNode() {
+            return new StringNode(date.toString(), false);
+        }
+
+
+
+        public Date getDate() {
+            return date;
+        }
+
+        @Override
+        public Class<?> type(Predicate.PredicateContext ctx) {
+            return Date.class;
+        }
+
+        public boolean isDateNode() {
+            return true;
+        }
+
+        public DateNode asDateNode() {
+            return this;
+        }
+
+
+        @Override
+        public String toString() {
+            return date.toString();
+        }
+
+        @Override
+        public boolean equals(Object o) {
+            if (this == o) return true;
+            if (!(o instanceof DateNode) && !(o instanceof StringNode)) return false;
+
+            DateNode that = ((DateNode)o).asDateNode();
+
+            return date.compareTo(that.date) == 0;
         }
     }
 
@@ -647,6 +691,8 @@ public interface ValueNodes {
                     else if (res instanceof String) return ValueNode.createStringNode(res.toString(), false);
                     else if (res instanceof Boolean) return ValueNode.createBooleanNode(res.toString());
                     else if (res == null) return NULL_NODE;
+                    else if (res instanceof OffsetDateTime) return ValueListNode.createDateNode((OffsetDateTime)res);
+                    else if (res instanceof Date) return ValueListNode.createDateNode((Date)res);
                     else if (ctx.configuration().jsonProvider().isArray(res)) return ValueNode.createJsonNode(ctx.configuration().mappingProvider().map(res, List.class, ctx.configuration()));
                     else if (ctx.configuration().jsonProvider().isMap(res)) return ValueNode.createJsonNode(ctx.configuration().mappingProvider().map(res, Map.class, ctx.configuration()));
                     else throw new JsonPathException("Could not convert " + res.toString() + " to a ValueNode");
