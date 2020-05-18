@@ -85,6 +85,7 @@ public class GsonJsonProvider extends AbstractJsonProvider {
 
     private static boolean isPrimitiveNumber(final Number n) {
         return n instanceof Integer ||
+                n instanceof Float ||
                 n instanceof Double ||
                 n instanceof Long ||
                 n instanceof BigDecimal ||
@@ -97,9 +98,9 @@ public class GsonJsonProvider extends AbstractJsonProvider {
         if (!isPrimitiveNumber(n)) {
             BigDecimal bigDecimal = new BigDecimal(n.toString());
             if (bigDecimal.scale() <= 0) {
-                if (bigDecimal.compareTo(new BigDecimal(Integer.MAX_VALUE)) <= 0) {
+                if (bigDecimal.abs().compareTo(new BigDecimal(Integer.MAX_VALUE)) <= 0) {
                     unwrapped = bigDecimal.intValue();
-                } else if (bigDecimal.compareTo(new BigDecimal(Long.MAX_VALUE)) <= 0){
+                } else if (bigDecimal.abs().compareTo(new BigDecimal(Long.MAX_VALUE)) <= 0){
                     unwrapped = bigDecimal.longValue();
                 } else {
                     unwrapped = bigDecimal;
