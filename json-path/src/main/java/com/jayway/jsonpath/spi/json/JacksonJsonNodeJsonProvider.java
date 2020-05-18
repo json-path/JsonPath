@@ -211,7 +211,8 @@ public class JacksonJsonNodeJsonProvider extends AbstractJsonProvider {
                 return element.size();
             }
         }
-        throw new JsonPathException("length operation can not applied to " + obj != null ? obj.getClass().getName() : "null");
+        throw new JsonPathException("length operation can not applied to " + (obj != null ? obj.getClass().getName()
+                : "null"));
     }
 
     @Override
