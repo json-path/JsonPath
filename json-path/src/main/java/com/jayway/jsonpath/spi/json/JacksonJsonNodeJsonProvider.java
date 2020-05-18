@@ -101,8 +101,8 @@ public class JacksonJsonNodeJsonProvider extends AbstractJsonProvider {
                 return e.asInt();
             } else if (e.isLong()) {
                 return e.asLong();
-            } else if (e.isBigDecimal()) {
-                return e.decimalValue();
+            } else if (e.isBigInteger()) {
+                return e.bigIntegerValue();
             } else if (e.isDouble()) {
                 return e.doubleValue();
             } else if (e.isFloat()) {
