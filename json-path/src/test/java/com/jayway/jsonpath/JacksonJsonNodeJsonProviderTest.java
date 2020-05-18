@@ -2,6 +2,7 @@ package com.jayway.jsonpath;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
@@ -14,6 +15,8 @@ import com.jayway.jsonpath.spi.mapper.MappingException;
 import org.junit.Test;
 
 import java.io.IOException;
+import java.math.BigDecimal;
+import java.math.BigInteger;
 import java.util.List;
 import java.util.UUID;
 
@@ -90,7 +93,6 @@ public class JacksonJsonNodeJsonProviderTest extends BaseTest {
         assertThat(unwrapped).isEqualTo(node.asLong());
     }
 
-
     @Test
     public void list_of_numbers() {
         ArrayNode objs = using(JACKSON_JSON_NODE_CONFIGURATION).parse(JSON_DOCUMENT).read("$.store.book[*].display-price");
@@ -99,6 +101,72 @@ public class JacksonJsonNodeJsonProviderTest extends BaseTest {
         assertThat(objs.get(1).asDouble()).isEqualTo(12.99D);
         assertThat(objs.get(2).asDouble()).isEqualTo(8.99D);
         assertThat(objs.get(3).asDouble()).isEqualTo(22.99D);
+    }
+
+    ObjectMapper objectMapperDecimal = new ObjectMapper().configure(DeserializationFeature.USE_BIG_DECIMAL_FOR_FLOATS, true);
+    Configuration JACKSON_JSON_NODE_CONFIGURATION_DECIMAL = Configuration
+            .builder()
+            .mappingProvider(new JacksonMappingProvider())
+            .jsonProvider(new JacksonJsonNodeJsonProvider(objectMapperDecimal))
+            .build();
+
+    @Test
+    public void bigdecimals_are_unwrapped() {
+        final BigDecimal bd = BigDecimal.valueOf(Long.MAX_VALUE).add(BigDecimal.valueOf(10.5));
+        final String json = "{\"bd-property\" : " + bd.toString() + "}";
+
+        JsonNode node =  using(JACKSON_JSON_NODE_CONFIGURATION_DECIMAL).parse(json).read("$.bd-property");
+        BigDecimal val =  using(JACKSON_JSON_NODE_CONFIGURATION_DECIMAL).parse(json).read("$.bd-property", BigDecimal.class);
+
+        assertThat(node.isBigDecimal()).isTrue();
+        assertThat(val).isEqualTo(bd);
+        assertThat(val).isEqualTo(node.decimalValue());
+    }
+
+    @Test
+    public void small_bigdecimals_are_unwrapped() {
+        final BigDecimal bd = BigDecimal.valueOf(10.5);
+        final String json = "{\"bd-property\" : " + bd.toString() + "}";
+
+        JsonNode node =  using(JACKSON_JSON_NODE_CONFIGURATION_DECIMAL).parse(json).read("$.bd-property");
+        BigDecimal val =  using(JACKSON_JSON_NODE_CONFIGURATION_DECIMAL).parse(json).read("$.bd-property", BigDecimal.class);
+
+        assertThat(node.isBigDecimal()).isTrue();
+        assertThat(val).isEqualTo(bd);
+        assertThat(val).isEqualTo(node.decimalValue());
+    }
+
+    ObjectMapper objectMapperBigInteger = new ObjectMapper().configure(DeserializationFeature.USE_BIG_INTEGER_FOR_INTS, true);
+    Configuration JACKSON_JSON_NODE_CONFIGURATION_Big_Integer = Configuration
+            .builder()
+            .mappingProvider(new JacksonMappingProvider())
+            .jsonProvider(new JacksonJsonNodeJsonProvider(objectMapperBigInteger))
+            .build();
+
+    @Test
+    public void bigintegers_are_unwrapped() {
+        final BigInteger bi = BigInteger.valueOf(Long.MAX_VALUE).add(BigInteger.TEN);
+        final String json = "{\"bi-property\" : " + bi.toString() + "}";
+
+        JsonNode node =  using(JACKSON_JSON_NODE_CONFIGURATION_Big_Integer).parse(json).read("$.bi-property");
+        BigInteger val =  using(JACKSON_JSON_NODE_CONFIGURATION_Big_Integer).parse(json).read("$.bi-property", BigInteger.class);
+
+        assertThat(node.isBigInteger()).isTrue();
+        assertThat(val).isEqualTo(bi);
+        assertThat(val).isEqualTo(node.bigIntegerValue());
+    }
+
+    @Test
+    public void small_bigintegers_are_unwrapped() {
+        final BigInteger bi = BigInteger.valueOf(Long.MAX_VALUE);
+        final String json = "{\"bi-property\" : " + bi.toString() + "}";
+
+        JsonNode node =  using(JACKSON_JSON_NODE_CONFIGURATION_Big_Integer).parse(json).read("$.bi-property");
+        BigInteger val =  using(JACKSON_JSON_NODE_CONFIGURATION_Big_Integer).parse(json).read("$.bi-property", BigInteger.class);
+
+        assertThat(node.isBigInteger()).isTrue();
+        assertThat(val).isEqualTo(bi);
+        assertThat(val).isEqualTo(node.bigIntegerValue());
     }
 
     @Test
