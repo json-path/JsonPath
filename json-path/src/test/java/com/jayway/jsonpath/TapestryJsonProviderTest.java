@@ -1,14 +1,14 @@
 package com.jayway.jsonpath;
 
-import static com.jayway.jsonpath.JsonPath.using;
-import static org.assertj.core.api.Assertions.assertThat;
+import org.apache.tapestry5.json.JSONArray;
+import org.apache.tapestry5.json.JSONObject;
+import org.junit.Test;
 
 import java.util.List;
 import java.util.Map;
 
-import org.apache.tapestry5.json.JSONArray;
-import org.apache.tapestry5.json.JSONObject;
-import org.junit.Test;
+import static com.jayway.jsonpath.JsonPath.using;
+import static org.assertj.core.api.Assertions.assertThat;
 
 public class TapestryJsonProviderTest extends BaseTest {
 

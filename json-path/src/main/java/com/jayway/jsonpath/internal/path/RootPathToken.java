@@ -14,6 +14,8 @@
  */
 package com.jayway.jsonpath.internal.path;
 
+import com.jayway.jsonpath.JsonLocation.AbstractJsonLocation;
+import com.jayway.jsonpath.JsonLocation.RootJsonLocation;
 import com.jayway.jsonpath.internal.PathRef;
 
 /**
@@ -54,12 +56,12 @@ public class RootPathToken extends PathToken {
     }
 
     @Override
-    public void evaluate(String currentPath, PathRef pathRef, Object model, EvaluationContextImpl ctx) {
+    public void evaluate(AbstractJsonLocation currentPath, PathRef pathRef, Object model, EvaluationContextImpl ctx) {
         if (isLeaf()) {
             PathRef op = ctx.forUpdate() ?  pathRef : PathRef.NO_OP;
-            ctx.addResult(rootToken, op, model);
+            ctx.addResult(new RootJsonLocation(), op, model);
         } else {
-            next().evaluate(rootToken, pathRef, model, ctx);
+            next().evaluate(new RootJsonLocation(), pathRef, model, ctx);
         }
     }
 

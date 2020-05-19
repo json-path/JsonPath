@@ -18,18 +18,14 @@ import com.jayway.jsonpath.Configuration;
 import com.jayway.jsonpath.EvaluationListener;
 import com.jayway.jsonpath.Option;
 import com.jayway.jsonpath.PathNotFoundException;
+import com.jayway.jsonpath.JsonLocation.AbstractJsonLocation;
 import com.jayway.jsonpath.internal.EvaluationAbortException;
 import com.jayway.jsonpath.internal.EvaluationContext;
 import com.jayway.jsonpath.internal.Path;
 import com.jayway.jsonpath.internal.PathRef;
 import com.jayway.jsonpath.spi.json.JsonProvider;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 import static com.jayway.jsonpath.internal.Utils.notNull;
 
@@ -43,7 +39,7 @@ public class EvaluationContextImpl implements EvaluationContext {
     private final Configuration configuration;
     private final Object valueResult;
     private final Object pathResult;
-    private final Path path;
+    public final Path path;
     private final Object rootDocument;
     private final List<PathRef> updateOperations;
     private final HashMap<Path, Object> documentEvalCache = new HashMap<Path, Object>();
@@ -72,19 +68,19 @@ public class EvaluationContextImpl implements EvaluationContext {
         return forUpdate;
     }
 
-    public void addResult(String path, PathRef operation, Object model) {
+    public void addResult(AbstractJsonLocation path, PathRef operation, Object model) {
 
         if(forUpdate) {
             updateOperations.add(operation);
         }
 
         configuration.jsonProvider().setArrayIndex(valueResult, resultIndex, model);
-        configuration.jsonProvider().setArrayIndex(pathResult, resultIndex, path);
+        configuration.jsonProvider().setArrayIndex(pathResult, resultIndex, path.toString());
         resultIndex++;
         if(!configuration().getEvaluationListeners().isEmpty()){
             int idx = resultIndex - 1;
             for (EvaluationListener listener : configuration().getEvaluationListeners()) {
-                EvaluationListener.EvaluationContinuation continuation = listener.resultFound(new FoundResultImpl(idx, path, model));
+                EvaluationListener.EvaluationContinuation continuation = listener.resultFound(new FoundResultImpl(idx, path.toString(), model));
                 if(EvaluationListener.EvaluationContinuation.ABORT == continuation){
                     throw ABORT_EVALUATION;
                 }
@@ -147,7 +143,7 @@ public class EvaluationContextImpl implements EvaluationContext {
     public <T> T getPath() {
         if(resultIndex == 0){
             throw new PathNotFoundException("No results for path: " + path.toString());
-        }
+                 }
         return (T)pathResult;
     }
 

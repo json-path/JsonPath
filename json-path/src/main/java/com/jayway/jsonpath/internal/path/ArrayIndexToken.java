@@ -14,9 +14,8 @@
  */
 package com.jayway.jsonpath.internal.path;
 
+import com.jayway.jsonpath.JsonLocation.AbstractJsonLocation;
 import com.jayway.jsonpath.internal.PathRef;
-
-import static java.lang.String.format;
 
 public class ArrayIndexToken extends ArrayPathToken {
 
@@ -27,7 +26,7 @@ public class ArrayIndexToken extends ArrayPathToken {
     }
 
     @Override
-    public void evaluate(String currentPath, PathRef parent, Object model, EvaluationContextImpl ctx) {
+    public void evaluate(AbstractJsonLocation currentPath, PathRef parent, Object model, EvaluationContextImpl ctx) {
         if (!checkArrayModel(currentPath, model, ctx))
             return;
         if (arrayIndexOperation.isSingleIndexOperation()) {

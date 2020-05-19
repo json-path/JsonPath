@@ -16,9 +16,7 @@ package com.jayway.jsonpath.internal.path;
 
 import com.jayway.jsonpath.InvalidPathException;
 import com.jayway.jsonpath.PathNotFoundException;
-import com.jayway.jsonpath.internal.PathRef;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import com.jayway.jsonpath.JsonLocation.AbstractJsonLocation;
 
 import static java.lang.String.format;
 
@@ -33,7 +31,7 @@ public abstract class ArrayPathToken extends PathToken {
      * @throws PathNotFoundException if model is null and evaluation must be interrupted
      * @throws InvalidPathException if model is not an array and evaluation must be interrupted
      */
-    protected boolean checkArrayModel(String currentPath, Object model, EvaluationContextImpl ctx) {
+    protected boolean checkArrayModel(AbstractJsonLocation currentPath, Object model, EvaluationContextImpl ctx) {
         if (model == null){
             if (! isUpstreamDefinite()) {
                 return false;

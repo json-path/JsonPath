@@ -15,6 +15,7 @@
 package com.jayway.jsonpath.internal.path;
 
 import com.jayway.jsonpath.Configuration;
+import com.jayway.jsonpath.JsonLocation.RootJsonLocation;
 import com.jayway.jsonpath.internal.EvaluationAbortException;
 import com.jayway.jsonpath.internal.EvaluationContext;
 import com.jayway.jsonpath.internal.Path;
@@ -30,7 +31,7 @@ public class CompiledPath implements Path {
 
     private static final Logger logger = LoggerFactory.getLogger(CompiledPath.class);
 
-    private final RootPathToken root;
+    final RootPathToken root;
 
     private final boolean isRootPath;
 
@@ -96,7 +97,7 @@ public class CompiledPath implements Path {
         EvaluationContextImpl ctx = new EvaluationContextImpl(this, rootDocument, configuration, forUpdate);
         try {
             PathRef op = ctx.forUpdate() ?  PathRef.createRoot(rootDocument) : PathRef.NO_OP;
-            root.evaluate("", op, document, ctx);
+             root.evaluate(new RootJsonLocation(), op, document, ctx);
         } catch (EvaluationAbortException abort) {}
 
         return ctx;

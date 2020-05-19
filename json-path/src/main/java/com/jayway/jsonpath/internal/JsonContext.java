@@ -14,18 +14,9 @@
  */
 package com.jayway.jsonpath.internal;
 
-import com.jayway.jsonpath.Configuration;
-import com.jayway.jsonpath.DocumentContext;
-import com.jayway.jsonpath.EvaluationListener;
-import com.jayway.jsonpath.JsonPath;
-import com.jayway.jsonpath.MapFunction;
-import com.jayway.jsonpath.Option;
-import com.jayway.jsonpath.Predicate;
-import com.jayway.jsonpath.ReadContext;
-import com.jayway.jsonpath.TypeRef;
+import com.jayway.jsonpath.*;
 import com.jayway.jsonpath.spi.cache.Cache;
 import com.jayway.jsonpath.spi.cache.CacheProvider;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

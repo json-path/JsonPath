@@ -1,7 +1,6 @@
 package com.jayway.jsonpath.internal.filter;
 
 import com.jayway.jsonpath.BaseTest;
-
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;

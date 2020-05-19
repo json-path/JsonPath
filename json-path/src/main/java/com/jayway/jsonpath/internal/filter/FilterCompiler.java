@@ -4,12 +4,14 @@ import com.jayway.jsonpath.Filter;
 import com.jayway.jsonpath.InvalidPathException;
 import com.jayway.jsonpath.Predicate;
 import com.jayway.jsonpath.internal.CharacterIndex;
-import static com.jayway.jsonpath.internal.filter.ValueNodes.*;
+import com.jayway.jsonpath.internal.Utils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import static com.jayway.jsonpath.internal.filter.ValueNodes.*;
 
 public class FilterCompiler  {
     private static final Logger logger = LoggerFactory.getLogger(FilterCompiler.class);
@@ -86,7 +88,7 @@ public class FilterCompiler  {
         } catch (InvalidPathException e){
             throw e;
         } catch (Exception e) {
-            throw new InvalidPathException("Failed to parse filter: " + filter + ", error on position: " + filter.position() + ", char: " + filter.currentChar());
+            throw new InvalidPathException("Failed to parse filter: " + filter + ", error on position: " + filter.position() + ", char: " + filter.currentChar(),e);
         }
     }
 
@@ -275,22 +277,7 @@ public class FilterCompiler  {
     }
 
     private PatternNode readPattern() {
-        int begin = filter.position();
-        int closingIndex = filter.nextIndexOfUnescaped(PATTERN);
-        if (closingIndex == -1) {
-            throw new InvalidPathException("Pattern not closed. Expected " + PATTERN + " in " + filter);
-        } else {
-            if(filter.inBounds(closingIndex+1)) {
-                int equalSignIndex = filter.nextIndexOf('=');
-                int endIndex = equalSignIndex > closingIndex ? equalSignIndex : filter.nextIndexOfUnescaped(CLOSE_PARENTHESIS);
-                CharSequence flags = filter.subSequence(closingIndex + 1, endIndex);
-                closingIndex += flags.length();
-            }
-            filter.setPosition(closingIndex + 1);
-        }
-        CharSequence pattern = filter.subSequence(begin, filter.position());
-        logger.trace("PatternNode from {} to {} -> [{}]", begin, filter.position(), pattern);
-        return ValueNode.createPatternNode(pattern);
+        return ValueNode.createPatternNode(Utils.readPattern(filter,PATTERN,CLOSE_PARENTHESIS));
     }
 
     private StringNode readStringLiteral(char endChar) {

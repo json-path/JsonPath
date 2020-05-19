@@ -13,11 +13,10 @@ import org.junit.runners.Parameterized;
 import java.util.Arrays;
 import java.util.HashMap;
 
+import static com.jayway.jsonpath.internal.filter.ValueNode.*;
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
-
-import static com.jayway.jsonpath.internal.filter.ValueNode.*;
 
 @RunWith(Parameterized.class)
 public class RegexpEvaluatorTest extends BaseTest {

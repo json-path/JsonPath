@@ -17,13 +17,13 @@ package com.jayway.jsonpath.internal.path;
 import com.jayway.jsonpath.Configuration;
 import com.jayway.jsonpath.InvalidPathException;
 import com.jayway.jsonpath.Predicate;
+import com.jayway.jsonpath.JsonLocation.AbstractJsonLocation;
 import com.jayway.jsonpath.internal.PathRef;
 
 import java.util.Collection;
 import java.util.Collections;
 
 import static java.lang.String.format;
-import static java.util.Arrays.asList;
 
 /**
  *
@@ -42,9 +42,9 @@ public class PredicatePathToken extends PathToken {
     }
 
     @Override
-    public void evaluate(String currentPath, PathRef ref, Object model, EvaluationContextImpl ctx) {
+    public void evaluate(AbstractJsonLocation currentPath, PathRef ref, Object model, EvaluationContextImpl ctx) {
         if (ctx.jsonProvider().isMap(model)) {
-            if (accept(model, ctx.rootDocument(), ctx.configuration(), ctx)) {
+            if (accept(currentPath,model, ctx.rootDocument(), ctx.configuration(), ctx)) {
                 PathRef op = ctx.forUpdate() ? ref : PathRef.NO_OP;
                 if (isLeaf()) {
                     ctx.addResult(currentPath, op, model);
@@ -57,7 +57,7 @@ public class PredicatePathToken extends PathToken {
             Iterable<?> objects = ctx.jsonProvider().toIterable(model);
 
             for (Object idxModel : objects) {
-                if (accept(idxModel, ctx.rootDocument(),  ctx.configuration(), ctx)) {
+                if (accept(currentPath,idxModel, ctx.rootDocument(),  ctx.configuration(), ctx)) {
                     handleArrayIndex(idx, currentPath, model, ctx);
                 }
                 idx++;
@@ -69,8 +69,8 @@ public class PredicatePathToken extends PathToken {
         }
     }
 
-    public boolean accept(final Object obj, final Object root, final Configuration configuration, EvaluationContextImpl evaluationContext) {
-        Predicate.PredicateContext ctx = new PredicateContextImpl(obj, root, configuration, evaluationContext.documentEvalCache());
+    public boolean accept(AbstractJsonLocation currentPath, final Object obj, final Object root, final Configuration configuration, EvaluationContextImpl evaluationContext) {
+        Predicate.PredicateContext ctx = new PredicateContextImpl(currentPath, obj, root, configuration, evaluationContext.documentEvalCache());
 
         for (Predicate predicate : predicates) {
             try {

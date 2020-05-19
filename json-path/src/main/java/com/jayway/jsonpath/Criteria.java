@@ -21,11 +21,7 @@ import com.jayway.jsonpath.internal.filter.RelationalOperator;
 import com.jayway.jsonpath.internal.filter.ValueNode;
 import com.jayway.jsonpath.internal.filter.ValueNodes;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.LinkedList;
-import java.util.List;
+import java.util.*;
 import java.util.regex.Pattern;
 
 import static com.jayway.jsonpath.internal.Utils.notNull;

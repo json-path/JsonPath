@@ -279,7 +279,11 @@ public class CharacterIndex {
     }
 
     public CharSequence subSequence(int start, int end) {
-        return charSequence.subSequence(start, end);
+        try {
+            return charSequence.subSequence(start, end);
+        }catch(StringIndexOutOfBoundsException e){
+            throw new IllegalArgumentException("Invalid paramters start="+start+" end="+end + " for String: '"+charSequence+"'",e);
+        }
     }
 
     public CharSequence charSequence() {

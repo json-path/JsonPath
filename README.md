@@ -66,6 +66,7 @@ Operators
 | `..`                      | Deep scan. Available anywhere a name is required.                  |
 | `.<name>`                 | Dot-notated child                                                  |
 | `['<name>' (, '<name>')]` | Bracket-notated child or children                                  |
+| `[<regex>]` | Regular-expression notated child, based on name.                         |
 | `[<number> (, <number>)]` | Array index or indexes                                             |
 | `[start:end]`             | Array slice operator                                               |
 | `[?(<expression>)]`       | Filter expression. Expression must evaluate to a boolean value.    |
@@ -174,7 +175,9 @@ Given the json
 | <a href="http://jsonpath.herokuapp.com/?path=$..book[?(@.author =~ /.*REES/i)]" target="_blank">$..book[?(@.author =~ /.*REES/i)]</a> | All books matching regex (ignore case)  |
 | <a href="http://jsonpath.herokuapp.com/?path=$..*" target="_blank">$..*</a>                        | Give me every thing   
 | <a href="http://jsonpath.herokuapp.com/?path=$..book.length()" target="_blank">$..book.length()</a>                 | The number of books                      |
-
+|`$..[/.*s.*/i]`           | `store` and the `isbn`s and `expensive` because the node names contain a `s` . (Case insensitive)                   |
+|`$.store.book[/.*t.*/i]`           | Category author and title fields of books, as they contain a `t`, and e.g. price does not.                 |
+    
 Reading a Document
 ------------------
 The simplest most straight forward way to use JsonPath is via the static read API.

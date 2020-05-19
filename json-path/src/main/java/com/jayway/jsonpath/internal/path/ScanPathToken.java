@@ -15,28 +15,37 @@
 package com.jayway.jsonpath.internal.path;
 
 import com.jayway.jsonpath.Option;
+import com.jayway.jsonpath.JsonLocation.AbstractJsonLocation;
+import com.jayway.jsonpath.JsonLocation.ArrayIndexJsonLocation;
+import com.jayway.jsonpath.JsonLocation.JsonLocation;
 import com.jayway.jsonpath.internal.PathRef;
 import com.jayway.jsonpath.spi.json.JsonProvider;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.Collection;
+import java.util.regex.Pattern;
 
 /**
  *
  */
 public class ScanPathToken extends PathToken {
 
+    private static final Logger logger = LoggerFactory.getLogger(ScanPathToken.class);
+
     ScanPathToken() {
     }
 
     @Override
-    public void evaluate(String currentPath, PathRef parent, Object model, EvaluationContextImpl ctx) {
+    public void evaluate(AbstractJsonLocation currentPath, PathRef parent, Object model, EvaluationContextImpl ctx) {
 
         PathToken pt = next();
 
         walk(pt, currentPath, parent,  model, ctx, createScanPredicate(pt, ctx));
     }
 
-    public static void walk(PathToken pt, String currentPath, PathRef parent, Object model, EvaluationContextImpl ctx, Predicate predicate) {
+    public static void walk(PathToken pt, AbstractJsonLocation currentPath, PathRef parent, Object model, EvaluationContextImpl ctx, Predicate predicate) {
+        logger.trace("ScanPathToken is walking on {} will apply to: {}",currentPath,pt.getClass().getSimpleName());
         if (ctx.jsonProvider().isMap(model)) {
             walkObject(pt, currentPath, parent, model, ctx, predicate);
         } else if (ctx.jsonProvider().isArray(model)) {
@@ -44,9 +53,9 @@ public class ScanPathToken extends PathToken {
         }
     }
 
-    public static void walkArray(PathToken pt, String currentPath, PathRef parent, Object model, EvaluationContextImpl ctx, Predicate predicate) {
+    public static void walkArray(PathToken pt, AbstractJsonLocation currentPath, PathRef parent, Object model, EvaluationContextImpl ctx, Predicate predicate) {
 
-        if (predicate.matches(model)) {
+        if (predicate.matches(currentPath,model)) {
             if (pt.isLeaf()) {
                 pt.evaluate(currentPath, parent, model, ctx);
             } else {
@@ -54,7 +63,7 @@ public class ScanPathToken extends PathToken {
                 Iterable<?> models = ctx.jsonProvider().toIterable(model);
                 int idx = 0;
                 for (Object evalModel : models) {
-                    String evalPath = currentPath + "[" + idx + "]";
+                    AbstractJsonLocation evalPath = new ArrayIndexJsonLocation(currentPath,idx);
                     next.evaluate(evalPath, parent, evalModel, ctx);
                     idx++;
                 }
@@ -64,21 +73,21 @@ public class ScanPathToken extends PathToken {
         Iterable<?> models = ctx.jsonProvider().toIterable(model);
         int idx = 0;
         for (Object evalModel : models) {
-            String evalPath = currentPath + "[" + idx + "]";
+            AbstractJsonLocation evalPath = new ArrayIndexJsonLocation(currentPath,idx);
             walk(pt, evalPath, PathRef.create(model, idx), evalModel, ctx, predicate);
             idx++;
         }
     }
 
-    public static void walkObject(PathToken pt, String currentPath, PathRef parent, Object model, EvaluationContextImpl ctx, Predicate predicate) {
+    public static void walkObject(PathToken pt, AbstractJsonLocation currentPath, PathRef parent, Object model, EvaluationContextImpl ctx, Predicate predicate) {
 
-        if (predicate.matches(model)) {
+        if (predicate.matches(currentPath,model)) {
             pt.evaluate(currentPath, parent, model, ctx);
         }
         Collection<String> properties = ctx.jsonProvider().getPropertyKeys(model);
 
         for (String property : properties) {
-            String evalPath = currentPath + "['" + property + "']";
+            AbstractJsonLocation evalPath = new JsonLocation(property,currentPath);
             Object propertyModel = ctx.jsonProvider().getMapValue(model, property);
             if (propertyModel != JsonProvider.UNDEFINED) {
                 walk(pt, evalPath, PathRef.create(model, property), propertyModel, ctx, predicate);
@@ -95,7 +104,9 @@ public class ScanPathToken extends PathToken {
             return new WildcardPathTokenPredicate();
         } else if (target instanceof PredicatePathToken) {
             return new FilterPathTokenPredicate(target, ctx);
-        } else {
+        } else if (target instanceof PatternPathToken) {
+        return new PatternPathTokenPredicate(target, ctx);
+    }else {
             return FALSE_PREDICATE;
         }
     }
@@ -112,13 +123,13 @@ public class ScanPathToken extends PathToken {
     }
 
     private interface Predicate {
-        boolean matches(Object model);
+        boolean matches(AbstractJsonLocation currentPath, Object model);
     }
 
     private static final Predicate FALSE_PREDICATE = new Predicate() {
 
         @Override
-        public boolean matches(Object model) {
+        public boolean matches(AbstractJsonLocation currentPath, Object model) {
             return false;
         }
     };
@@ -133,15 +144,31 @@ public class ScanPathToken extends PathToken {
         }
 
         @Override
-        public boolean matches(Object model) {
-            return predicatePathToken.accept(model, ctx.rootDocument(), ctx.configuration(), ctx);
+        public boolean matches(AbstractJsonLocation currentPath, Object model) {
+            return predicatePathToken.accept(currentPath,model, ctx.rootDocument(), ctx.configuration(), ctx);
+        }
+    }
+
+    private static final class PatternPathTokenPredicate implements Predicate {
+        private final EvaluationContextImpl ctx;
+
+        private PatternPathTokenPredicate(PathToken target, EvaluationContextImpl ctx) {
+            this.ctx = ctx;
+        }
+        @Override
+        public boolean matches(AbstractJsonLocation currentPath, Object model) {
+            if (! ctx.jsonProvider().isMap(model)) {
+                return false;
+            }
+            logger.trace("Applying PatternPathToken in scan on {}",currentPath);
+            return true;
         }
     }
 
     private static final class WildcardPathTokenPredicate implements Predicate {
 
         @Override
-        public boolean matches(Object model) {
+        public boolean matches(AbstractJsonLocation currentPath, Object model) {
             return true;
         }
     }
@@ -154,7 +181,7 @@ public class ScanPathToken extends PathToken {
         }
 
         @Override
-        public boolean matches(Object model) {
+        public boolean matches(AbstractJsonLocation currentPath, Object model) {
             return ctx.jsonProvider().isArray(model);
         }
     }
@@ -169,7 +196,7 @@ public class ScanPathToken extends PathToken {
         }
 
         @Override
-        public boolean matches(Object model) {
+        public boolean matches(AbstractJsonLocation currentPath, Object model) {
 
             if (! ctx.jsonProvider().isMap(model)) {
                 return false;

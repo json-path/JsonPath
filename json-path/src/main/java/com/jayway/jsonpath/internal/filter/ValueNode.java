@@ -1,13 +1,14 @@
 package com.jayway.jsonpath.internal.filter;
 
-import java.util.regex.Pattern;
-
 import com.jayway.jsonpath.InvalidPathException;
 import com.jayway.jsonpath.JsonPathException;
 import com.jayway.jsonpath.Predicate;
 import com.jayway.jsonpath.internal.Path;
 import com.jayway.jsonpath.internal.path.PathCompiler;
 import net.minidev.json.parser.JSONParser;
+
+import java.util.regex.Pattern;
+
 import static com.jayway.jsonpath.internal.filter.ValueNodes.*;
 
 public abstract class ValueNode {
@@ -27,7 +28,7 @@ public abstract class ValueNode {
     }
 
     public PathNode asPathNode() {
-        throw new InvalidPathException("Expected path node");
+        throw new InvalidPathException("Expected path node, not "+getClass().getSimpleName());
     }
 
     public boolean isNumberNode() {

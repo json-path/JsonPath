@@ -1,5 +1,7 @@
 package com.jayway.jsonpath.internal.path;
 
+import com.jayway.jsonpath.JsonLocation.AbstractJsonLocation;
+import com.jayway.jsonpath.JsonLocation.FunctionJsonLocation;
 import com.jayway.jsonpath.internal.PathRef;
 import com.jayway.jsonpath.internal.function.Parameter;
 import com.jayway.jsonpath.internal.function.PathFunction;
@@ -34,17 +36,17 @@ public class FunctionPathToken extends PathToken {
     }
 
     @Override
-    public void evaluate(String currentPath, PathRef parent, Object model, EvaluationContextImpl ctx) {
+    public void evaluate(AbstractJsonLocation currentPath, PathRef parent, Object model, EvaluationContextImpl ctx) {
         PathFunction pathFunction = PathFunctionFactory.newFunction(functionName);
         evaluateParameters(currentPath, parent, model, ctx);
         Object result = pathFunction.invoke(currentPath, parent, model, ctx, functionParams);
-        ctx.addResult(currentPath + "." + functionName, parent, result);
+        ctx.addResult(new FunctionJsonLocation(functionName,currentPath), parent, result);
         if (!isLeaf()) {
             next().evaluate(currentPath, parent, result, ctx);
         }
     }
 
-    private void evaluateParameters(String currentPath, PathRef parent, Object model, EvaluationContextImpl ctx) {
+    private void evaluateParameters(AbstractJsonLocation currentPath, PathRef parent, Object model, EvaluationContextImpl ctx) {
 
         if (null != functionParams) {
             for (Parameter param : functionParams) {
