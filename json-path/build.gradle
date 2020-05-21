@@ -18,6 +18,7 @@ dependencies {
     compile libs.jsonOrg, optional
     compile libs.tapestryJson, optional
     compile libs.jettison, optional
+    compile libs.fastjson, optional
 
     testCompile libs.test
 }
