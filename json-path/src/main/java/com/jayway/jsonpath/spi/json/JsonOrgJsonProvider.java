@@ -1,14 +1,12 @@
 package com.jayway.jsonpath.spi.json;
 
-import com.google.gson.JsonObject;
+import org.json.JSONObject;
 import com.jayway.jsonpath.InvalidJsonException;
 import com.jayway.jsonpath.JsonPathException;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.json.JSONTokener;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -18,8 +16,6 @@ import java.util.Collection;
 import java.util.List;
 
 public class JsonOrgJsonProvider extends AbstractJsonProvider {
-
-    private static final Logger logger = LoggerFactory.getLogger(GsonJsonProvider.class);
 
     @Override
     public Object parse(String json) throws InvalidJsonException {
@@ -62,7 +58,7 @@ public class JsonOrgJsonProvider extends AbstractJsonProvider {
 
     @Override
     public Object createMap() {
-        return new JsonObject();
+        return new JSONObject();
     }
 
     @Override
@@ -96,8 +92,8 @@ public class JsonOrgJsonProvider extends AbstractJsonProvider {
     public Object getMapValue(Object obj, String key) {
         try {
             JSONObject jsonObject = toJsonObject(obj);
-            Object o = jsonObject.get(key);
-            if (!jsonObject.has(key)) {
+            Object o = jsonObject.opt(key);
+            if (o == null) {
                 return UNDEFINED;
             } else {
                 return unwrap(o);
@@ -174,7 +170,8 @@ public class JsonOrgJsonProvider extends AbstractJsonProvider {
                 return ((String) obj).length();
             }
         }
-        throw new JsonPathException("length operation can not applied to " + obj != null ? obj.getClass().getName() : "null");
+        throw new JsonPathException("length operation can not applied to " + (obj != null ? obj.getClass().getName()
+                : "null"));
     }
 
     @Override

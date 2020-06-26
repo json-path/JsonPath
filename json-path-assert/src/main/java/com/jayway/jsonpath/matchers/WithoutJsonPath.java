@@ -6,8 +6,6 @@ import com.jayway.jsonpath.ReadContext;
 import org.hamcrest.Description;
 import org.hamcrest.TypeSafeDiagnosingMatcher;
 
-import static org.hamcrest.Matchers.empty;
-
 public class WithoutJsonPath extends TypeSafeDiagnosingMatcher<ReadContext> {
     private final JsonPath jsonPath;
 
@@ -23,7 +21,7 @@ public class WithoutJsonPath extends TypeSafeDiagnosingMatcher<ReadContext> {
                     .appendText(jsonPath.getPath())
                     .appendText(" was evaluated to ")
                     .appendValue(value);
-            return value == null || empty().matches(value);
+            return false;
         } catch (JsonPathException e) {
             return true;
         }

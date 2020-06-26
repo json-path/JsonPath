@@ -44,4 +44,12 @@ public class JsonOrgJsonProviderTest extends BaseTest {
 
         assertThat(books.size()).isEqualTo(4);
     }
+
+    @Test
+    public void read_books_with_isbn() {
+
+        JSONArray books = using(JSON_ORG_CONFIGURATION).parse(JSON_DOCUMENT).read("$..book[?(@.isbn)]");
+
+        assertThat(books.length()).isEqualTo(2);
+    }
 }

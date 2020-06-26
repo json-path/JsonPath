@@ -17,7 +17,11 @@ package com.jayway.jsonpath;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.URL;
 
+/**
+ * Parses JSON as specified by the used {@link com.jayway.jsonpath.spi.json.JsonProvider}.
+ */
 public interface ParseContext {
 
     DocumentContext parse(String json);
@@ -29,4 +33,7 @@ public interface ParseContext {
     DocumentContext parse(InputStream json, String charset);
 
     DocumentContext parse(File json) throws IOException;
+
+    @Deprecated
+    DocumentContext parse(URL json) throws IOException;
 }

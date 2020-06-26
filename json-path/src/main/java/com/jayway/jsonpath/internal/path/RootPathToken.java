@@ -27,7 +27,7 @@ public class RootPathToken extends PathToken {
 
 
     RootPathToken(char rootToken) {
-        this.rootToken = Character.toString(rootToken);;
+        this.rootToken = Character.toString(rootToken);
         this.tail = this;
         this.tokenCount = 1;
     }
@@ -75,5 +75,9 @@ public class RootPathToken extends PathToken {
 
     public boolean isFunctionPath() {
         return (tail instanceof FunctionPathToken);
+    }
+
+    public void setTail(PathToken token) {
+        this.tail = token;
     }
 }

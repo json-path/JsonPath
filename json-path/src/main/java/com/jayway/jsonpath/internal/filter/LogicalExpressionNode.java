@@ -10,6 +10,10 @@ public class LogicalExpressionNode extends ExpressionNode {
     protected List<ExpressionNode> chain = new ArrayList<ExpressionNode>();
     private final LogicalOperator operator;
 
+    public static ExpressionNode createLogicalNot(ExpressionNode op) {
+       return new LogicalExpressionNode(op, LogicalOperator.NOT, null);
+    }
+
     public static LogicalExpressionNode createLogicalOr(ExpressionNode left,ExpressionNode right){
         return new LogicalExpressionNode(left, LogicalOperator.OR, right);
     }
@@ -68,13 +72,17 @@ public class LogicalExpressionNode extends ExpressionNode {
                 }
             }
             return false;
-        } else {
+        } else if (operator == LogicalOperator.AND) {
             for (ExpressionNode expression : chain) {
                 if(!expression.apply(ctx)){
                     return false;
                 }
             }
             return true;
+        } else {
+            ExpressionNode expression = chain.get(0);
+            return !expression.apply(ctx);
         }
     }
+
 }

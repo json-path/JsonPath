@@ -1,5 +1,6 @@
 package com.jayway.jsonpath;
 
+import org.assertj.core.util.Lists;
 import org.junit.Test;
 
 import java.util.HashMap;
@@ -89,6 +90,13 @@ public class FilterTest extends BaseTest {
         assertThat(filter(where("string-key").eq(null)).apply(createPredicateContext(json))).isEqualTo(false);
     }
 
+    @Test
+    public void arr_eq_evals() {
+        assertThat(filter(where("arr-empty").eq("[]")).apply(createPredicateContext(json))).isEqualTo(true);
+        assertThat(filter(where("int-arr").eq("[0,1,2,3,4]")).apply(createPredicateContext(json))).isEqualTo(true);
+        assertThat(filter(where("int-arr").eq("[0,1,2,3]")).apply(createPredicateContext(json))).isEqualTo(false);
+        assertThat(filter(where("int-arr").eq("[0,1,2,3,4,5]")).apply(createPredicateContext(json))).isEqualTo(false);
+    }
     //----------------------------------------------------------------------------
     //
     // NE
@@ -270,7 +278,8 @@ public class FilterTest extends BaseTest {
         Filter farr = parse("[?(@.foo == " + arr + ")]");
         //Filter fobjF = parse("[?(@.foo == " + nest + ")]");
         //Filter fobjT = parse("[?(@.bar == " + nest + ")]");
-        assertThat(farr.apply(context)).isEqualTo(true);
+        boolean apply = farr.apply(context);
+        assertThat(apply).isEqualTo(true);
         //assertThat(fobjF.apply(context)).isEqualTo(false);
         //assertThat(fobjT.apply(context)).isEqualTo(true);
     }
@@ -353,6 +362,54 @@ public class FilterTest extends BaseTest {
 
     //----------------------------------------------------------------------------
     //
+    // SUBSETOF
+    //
+    //----------------------------------------------------------------------------
+    @Test
+    public void array_subsetof_evals() {
+        // list is a superset
+        List<String> list = Lists.newArrayList("a", "b", "c", "d", "e", "f", "g");
+        assertThat(filter(where("string-arr").subsetof(list)).apply(createPredicateContext(json))).isEqualTo(true);
+        // list is exactly the same set (but in a different order)
+        list = Lists.newArrayList("e", "d", "b", "c", "a");
+        assertThat(filter(where("string-arr").subsetof(list)).apply(createPredicateContext(json))).isEqualTo(true);
+        // list is missing one element
+        list = Lists.newArrayList("a", "b", "c", "d");
+        assertThat(filter(where("string-arr").subsetof(list)).apply(createPredicateContext(json))).isEqualTo(false);
+    }
+
+    //----------------------------------------------------------------------------
+    //
+    // ANYOF
+    //
+    //----------------------------------------------------------------------------
+    @Test
+    public void array_anyof_evals() {
+        List<String> list = Lists.newArrayList("a", "z");
+        assertThat(filter(where("string-arr").anyof(list)).apply(createPredicateContext(json))).isEqualTo(true);
+        list = Lists.newArrayList("z", "b", "a");
+        assertThat(filter(where("string-arr").anyof(list)).apply(createPredicateContext(json))).isEqualTo(true);
+        list = Lists.newArrayList("x", "y", "z");
+        assertThat(filter(where("string-arr").anyof(list)).apply(createPredicateContext(json))).isEqualTo(false);
+    }
+
+    //----------------------------------------------------------------------------
+    //
+    // NONEOF
+    //
+    //----------------------------------------------------------------------------
+    @Test
+    public void array_noneof_evals() {
+        List<String> list = Lists.newArrayList("a", "z");
+        assertThat(filter(where("string-arr").noneof(list)).apply(createPredicateContext(json))).isEqualTo(false);
+        list = Lists.newArrayList("z", "b", "a");
+        assertThat(filter(where("string-arr").noneof(list)).apply(createPredicateContext(json))).isEqualTo(false);
+        list = Lists.newArrayList("x", "y", "z");
+        assertThat(filter(where("string-arr").noneof(list)).apply(createPredicateContext(json))).isEqualTo(true);
+    }
+
+    //----------------------------------------------------------------------------
+    //
     // EXISTS
     //
     //----------------------------------------------------------------------------
@@ -390,13 +447,13 @@ public class FilterTest extends BaseTest {
     //----------------------------------------------------------------------------
     @Test
     public void not_empty_evals() {
-        assertThat(filter(where("string-key").notEmpty()).apply(createPredicateContext(json))).isEqualTo(true);
-        assertThat(filter(where("string-key-empty").notEmpty()).apply(createPredicateContext(json))).isEqualTo(false);
+        assertThat(filter(where("string-key").empty(false)).apply(createPredicateContext(json))).isEqualTo(true);
+        assertThat(filter(where("string-key-empty").empty(false)).apply(createPredicateContext(json))).isEqualTo(false);
 
-        assertThat(filter(where("int-arr").notEmpty()).apply(createPredicateContext(json))).isEqualTo(true);
-        assertThat(filter(where("arr-empty").notEmpty()).apply(createPredicateContext(json))).isEqualTo(false);
+        assertThat(filter(where("int-arr").empty(false)).apply(createPredicateContext(json))).isEqualTo(true);
+        assertThat(filter(where("arr-empty").empty(false)).apply(createPredicateContext(json))).isEqualTo(false);
 
-        assertThat(filter(where("null-key").notEmpty()).apply(createPredicateContext(json))).isEqualTo(false);
+        assertThat(filter(where("null-key").empty(false)).apply(createPredicateContext(json))).isEqualTo(false);
     }
 
     //----------------------------------------------------------------------------
@@ -488,11 +545,11 @@ public class FilterTest extends BaseTest {
     @Test
     public void criteria_can_be_parsed() {
 
-        Criteria criteria = Criteria.parse("@.foo == 'baar'");
-        assertThat(criteria.toString()).isEqualTo("@['foo'] == 'baar'");
+        Filter criteria = Filter.parse("[?(@.foo == 'baar')]");
+        assertThat(criteria.toString()).isEqualTo("[?(@['foo'] == 'baar')]");
 
-        criteria = Criteria.parse("@.foo");
-        assertThat(criteria.toString()).isEqualTo("@['foo']");
+        criteria = Filter.parse("[?(@.foo)]");
+        assertThat(criteria.toString()).isEqualTo("[?(@['foo'])]");
     }
 
 

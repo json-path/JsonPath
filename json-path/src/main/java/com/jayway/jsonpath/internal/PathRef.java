@@ -107,7 +107,7 @@ public abstract class PathRef implements Comparable<PathRef>  {
 
         @Override
         public void set(Object newVal, Configuration configuration) {
-            throw new InvalidModificationException("Invalid delete operation");
+            throw new InvalidModificationException("Invalid set operation");
         }
 
         public void convert(MapFunction mapFunction, Configuration configuration){
@@ -212,7 +212,7 @@ public abstract class PathRef implements Comparable<PathRef>  {
         public int compareTo(PathRef o) {
             if(o instanceof ArrayIndexPathRef){
                 ArrayIndexPathRef pf = (ArrayIndexPathRef) o;
-                return Integer.valueOf(pf.index).compareTo(this.index);
+                return Integer.compare(pf.index, this.index);
             }
             return super.compareTo(o);
         }
@@ -298,7 +298,9 @@ public abstract class PathRef implements Comparable<PathRef>  {
         public void convert(MapFunction mapFunction, Configuration configuration) {
             for (String property : properties) {
                 Object currentValue = configuration.jsonProvider().getMapValue(parent, property);
-                configuration.jsonProvider().setProperty(parent, property, mapFunction.map(currentValue, configuration));
+                if (currentValue != JsonProvider.UNDEFINED) {
+                    configuration.jsonProvider().setProperty(parent, property, mapFunction.map(currentValue, configuration));
+                }
             }
         }
 

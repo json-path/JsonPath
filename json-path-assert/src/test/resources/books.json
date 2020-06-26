@@ -1,6 +1,10 @@
 {
   "store": {
     "name": "Little Shop",
+    "none": null,
+    "switch": true,
+    "magazine": [],
+    "truck": {},
     "book": [
       {
         "category": "reference",

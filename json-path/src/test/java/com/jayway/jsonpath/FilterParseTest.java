@@ -3,6 +3,7 @@ package com.jayway.jsonpath;
 import org.assertj.core.api.Assertions;
 import org.junit.Test;
 
+import java.util.Collections;
 import java.util.regex.Pattern;
 
 import static com.jayway.jsonpath.Criteria.where;
@@ -138,6 +139,33 @@ public class FilterParseTest {
 
         String filter = filter(where("a").size(5)).toString();
         String parsed = parse("[?(@['a'] SIZE 5)]").toString();
+
+        assertThat(filter).isEqualTo(parsed);
+    }
+
+    @Test
+    public void a_subsetof_filter_can_be_serialized() {
+
+        String filter = filter(where("a").subsetof(Collections.emptyList())).toString();
+        String parsed = parse("[?(@['a'] SUBSETOF [])]").toString();
+
+        assertThat(filter).isEqualTo(parsed);
+    }
+
+    @Test
+    public void a_anyof_filter_can_be_serialized() {
+
+        String filter = filter(where("a").anyof(Collections.emptyList())).toString();
+        String parsed = parse("[?(@['a'] ANYOF [])]").toString();
+
+        assertThat(filter).isEqualTo(parsed);
+    }
+
+    @Test
+    public void a_noneof_filter_can_be_serialized() {
+
+        String filter = filter(where("a").noneof(Collections.emptyList())).toString();
+        String parsed = parse("[?(@['a'] NONEOF [])]").toString();
 
         assertThat(filter).isEqualTo(parsed);
     }

@@ -34,7 +34,7 @@ public class PathCompiler {
     private static final char SPACE = ' ';
     private static final char TAB = '\t';
     private static final char CR = '\r';
-    private static final char LF = '\r';
+    private static final char LF = '\n';
     private static final char BEGIN_FILTER = '?';
     private static final char COMMA = ',';
     private static final char SPLIT = ':';
@@ -45,9 +45,13 @@ public class PathCompiler {
     private final LinkedList<Predicate> filterStack;
     private final CharacterIndex path;
 
-    private PathCompiler(String path, LinkedList<Predicate> filterStack) {
+    private PathCompiler(String path, LinkedList<Predicate> filterStack){
+        this(new CharacterIndex(path), filterStack);
+    }
+
+    private PathCompiler(CharacterIndex path, LinkedList<Predicate> filterStack){
         this.filterStack = filterStack;
-        this.path = new CharacterIndex(path);
+        this.path = path;
     }
 
     private Path compile() {
@@ -57,16 +61,18 @@ public class PathCompiler {
 
     public static Path compile(String path, final Predicate... filters) {
         try {
-            path = path.trim();
+            CharacterIndex ci = new CharacterIndex(path);
+            ci.trim();
 
-            if(!(path.charAt(0) == DOC_CONTEXT)  && !(path.charAt(0) == EVAL_CONTEXT)){
-                path = "$." + path;
+            if(!( ci.charAt(0) == DOC_CONTEXT)  && !( ci.charAt(0) == EVAL_CONTEXT)){
+                ci = new CharacterIndex("$." + path);
+                ci.trim();
             }
-            if(path.endsWith(".")){
+            if(ci.lastCharIs('.')){
                 fail("Path must not end with a '.' or '..'");
             }
-            LinkedList filterStack = new LinkedList<Predicate>(asList(filters));
-            Path p = new PathCompiler(path.trim(), filterStack).compile();
+            LinkedList<Predicate> filterStack = new LinkedList<Predicate>(asList(filters));
+            Path p = new PathCompiler(ci, filterStack).compile();
             return p;
         } catch (Exception e) {
             InvalidPathException ipe;
@@ -103,7 +109,6 @@ public class PathCompiler {
         }
 
         RootPathToken pathToken = PathTokenFactory.createRootPathToken(path.currentChar());
-        PathTokenAppender appender = pathToken.getPathTokenAppender();
 
         if (path.currentIsTail()) {
             return pathToken;
@@ -112,9 +117,10 @@ public class PathCompiler {
         path.incrementPosition(1);
 
         if(path.currentChar() != PERIOD && path.currentChar() != OPEN_SQUARE_BRACKET){
-            fail("Illegal character at position " + path.position() + " expected '.' or '[");
+            fail("Illegal character at position " + path.position() + " expected '.' or '['");
         }
 
+        PathTokenAppender appender = pathToken.getPathTokenAppender();
         readNextToken(appender);
 
         return pathToken;
@@ -189,7 +195,7 @@ public class PathCompiler {
             }
             else if (c == OPEN_PARENTHESIS) {
                 isFunction = true;
-                endPosition = readPosition++;
+                endPosition = readPosition;
                 break;
             }
             readPosition++;
@@ -261,7 +267,6 @@ public class PathCompiler {
      *      an array.
      */
     private List<Parameter> parseFunctionParameters(String funcName) {
-        PathToken currentToken;
         ParamType type = null;
 
         // Parenthesis starts at 1 since we're marking the start of a function call, the close paren will denote the
@@ -270,7 +275,7 @@ public class PathCompiler {
         Boolean endOfStream = false;
         char priorChar = 0;
         List<Parameter> parameters = new ArrayList<Parameter>();
-        StringBuffer parameter = new StringBuffer();
+        StringBuilder parameter = new StringBuilder();
         while (path.inBounds() && !endOfStream) {
             char c = path.currentChar();
             path.incrementPosition(1);
@@ -479,7 +484,8 @@ public class PathCompiler {
         if (inBracket) {
             int wildCardIndex = path.indexOfNextSignificantChar(WILDCARD);
             if (!path.nextSignificantCharIs(wildCardIndex, CLOSE_SQUARE_BRACKET)) {
-                throw new InvalidPathException("Expected wildcard token to end with ']' on position " + wildCardIndex + 1);
+                int offset = wildCardIndex + 1;
+                throw new InvalidPathException("Expected wildcard token to end with ']' on position " + offset);
             }
             int bracketCloseIndex = path.indexOfNextSignificantChar(wildCardIndex, CLOSE_SQUARE_BRACKET);
             path.setPosition(bracketCloseIndex + 1);
@@ -575,7 +581,11 @@ public class PathCompiler {
                 }
                 break;
             } else if (c == potentialStringDelimiter) {
-                if (inProperty && !inEscape) {
+                if (inProperty) {
+                    char nextSignificantChar = path.nextSignificantChar(readPosition);
+                    if (nextSignificantChar != CLOSE_SQUARE_BRACKET && nextSignificantChar != COMMA) {
+                        fail("Property must be separated by comma or Property must be terminated close square bracket at index "+readPosition);
+                    }
                     endPosition = readPosition;
                     String prop = path.subSequence(startPosition, endPosition).toString();
                     properties.add(Utils.unescape(prop));
@@ -592,6 +602,10 @@ public class PathCompiler {
                 lastSignificantWasComma = true;
             }
             readPosition++;
+        }
+
+        if (inProperty){
+            fail("Property has not been closed - missing closing " + potentialStringDelimiter);
         }
 
         int endBracketIndex = path.indexOfNextSignificantChar(endPosition, CLOSE_SQUARE_BRACKET) + 1;

@@ -16,7 +16,7 @@ public class ReadContextTest extends BaseTest {
         String jsonString2 = using(JACKSON_CONFIGURATION).parse(JSON_BOOK_DOCUMENT).jsonString();
         String jsonString3 = using(JACKSON_JSON_NODE_CONFIGURATION).parse(JSON_BOOK_DOCUMENT).jsonString();
         String jsonString4 = using(GSON_CONFIGURATION).parse(JSON_BOOK_DOCUMENT).jsonString();
-
+        
         Assertions.assertThat(jsonString1).isEqualTo(expected);
         Assertions.assertThat(jsonString2).isEqualTo(expected);
         Assertions.assertThat(jsonString3).isEqualTo(expected);

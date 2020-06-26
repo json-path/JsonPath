@@ -21,7 +21,6 @@ import java.util.Map;
  * Leverages the function's name in order to determine which function to execute which is maintained internally
  * here via a static map
  *
- * Created by mattg on 6/27/15.
  */
 public class PathFunctionFactory {
 
@@ -67,7 +66,7 @@ public class PathFunctionFactory {
     public static PathFunction newFunction(String name) throws InvalidPathException {
         Class functionClazz = FUNCTIONS.get(name);
         if(functionClazz == null){
-            throw new InvalidPathException("Function with name: " + name + " does not exists.");
+            throw new InvalidPathException("Function with name: " + name + " does not exist.");
         } else {
             try {
                 return (PathFunction)functionClazz.newInstance();

@@ -1,16 +1,20 @@
-Jayway JsonPath 2.2.0
+Jayway JsonPath
 =====================
 
 **A Java DSL for reading JSON documents.**
 
-[![Build Status](https://travis-ci.org/jayway/JsonPath.svg?branch=master)](https://travis-ci.org/jayway/JsonPath)
+[![Build Status](https://travis-ci.org/json-path/JsonPath.svg?branch=master)](https://travis-ci.org/json-path/JsonPath)
 [![Maven Central](https://maven-badges.herokuapp.com/maven-central/com.jayway.jsonpath/json-path/badge.svg)](https://maven-badges.herokuapp.com/maven-central/com.jayway.jsonpath/json-path)
-[![Javadoc](https://javadoc-emblem.rhcloud.com/doc/com.jayway.jsonpath/json-path/badge.svg)](http://www.javadoc.io/doc/com.jayway.jsonpath/json-path)
+[![Javadoc](https://www.javadoc.io/badge/com.jayway.jsonpath/json-path.svg)](http://www.javadoc.io/doc/com.jayway.jsonpath/json-path)
 
 Jayway JsonPath is a Java port of [Stefan Goessner JsonPath implementation](http://goessner.net/articles/JsonPath/). 
 
 News
 ----
+05 Jul 2017 - Released JsonPath 2.4.0
+
+26 Jun 2017 - Released JsonPath 2.3.0
+
 29 Feb 2016 - Released JsonPath 2.2.0
 
 22 Nov 2015 - Released JsonPath 2.1.0
@@ -23,7 +27,6 @@ News
 
 26 Sep 2014 - Released JsonPath 1.0.0 
 
-For details see [change log](changelog.md).
 
 Getting Started
 ---------------
@@ -34,11 +37,11 @@ JsonPath is available at the Central Maven Repository. Maven users add this to y
 <dependency>
     <groupId>com.jayway.jsonpath</groupId>
     <artifactId>json-path</artifactId>
-    <version>2.1.0</version>
+    <version>2.4.0</version>
 </dependency>
 ```
 
-If you need help ask questions at the [google group](https://groups.google.com/forum/#!forum/jsonpath). 
+If you need help ask questions at [Stack Overflow](http://stackoverflow.com/questions/tagged/jsonpath). Tag the question 'jsonpath' and 'java'.
 
 JsonPath expressions always refer to a JSON structure in the same way as XPath expression are used in combination 
 with an XML document. The "root member object" in JsonPath is always referred to as `$` regardless if it is an 
@@ -74,13 +77,14 @@ Functions
 Functions can be invoked at the tail end of a path - the input to a function is the output of the path expression.
 The function output is dictated by the function itself.
 
-| Function                  | Description                                                        | Output    |
-| :------------------------ | :----------------------------------------------------------------- |-----------|
-| min()                    | Provides the min value of an array of numbers                       | Double    |
-| max()                    | Provides the max value of an array of numbers                       | Double    |
-| avg()                    | Provides the average value of an array of numbers                   | Double    |
-| stddev()                 | Provides the standard deviation value of an array of numbers        | Double    |
-| length()                 | Provides the length of an array                                     | Integer   |
+| Function                  | Description                                                         | Output    |
+| :------------------------ | :------------------------------------------------------------------ |-----------|
+| min()                     | Provides the min value of an array of numbers                       | Double    |
+| max()                     | Provides the max value of an array of numbers                       | Double    |
+| avg()                     | Provides the average value of an array of numbers                   | Double    |
+| stddev()                  | Provides the standard deviation value of an array of numbers        | Double    |
+| length()                  | Provides the length of an array                                     | Integer   |
+| sum()                     | Provides the sum value of an array of numbers                       | Double    |
 
 
 Filter Operators
@@ -88,19 +92,22 @@ Filter Operators
 
 Filters are logical expressions used to filter arrays. A typical filter would be `[?(@.age > 18)]` where `@` represents the current item being processed. More complex filters can be created with logical operators `&&` and `||`. String literals must be enclosed by single or double quotes (`[?(@.color == 'blue')]` or `[?(@.color == "blue")]`).   
 
-| Operator                 | Description                                                       |
-| :----------------------- | :---------------------------------------------------------------- |
-| ==                       | left is equal to right (note that 1 is not equal to '1')          |
-| !=                       | left is not equal to right                                        |
-| <                        | left is less than right                                           |
-| <=                       | left is less or equal to right                                    |
-| >                        | left is greater than right                                        |
-| >=                       | left is greater than or equal to right                            |
-| =~                       | left matches regular expression  [?(@.name =~ /foo.*?/i)]         |
-| in                       | left exists in right [?(@.size in ['S', 'M'])]                    |
-| nin                      | left does not exists in right                                     |
-| size                     | size of left (array or string) should match right                 |
-| empty                    | left (array or string) should be empty                            |
+| Operator                 | Description                                                           |
+| :----------------------- | :-------------------------------------------------------------------- |
+| ==                       | left is equal to right (note that 1 is not equal to '1')              |
+| !=                       | left is not equal to right                                            |
+| <                        | left is less than right                                               |
+| <=                       | left is less or equal to right                                        |
+| >                        | left is greater than right                                            |
+| >=                       | left is greater than or equal to right                                |
+| =~                       | left matches regular expression  [?(@.name =~ /foo.*?/i)]             |
+| in                       | left exists in right [?(@.size in ['S', 'M'])]                        |
+| nin                      | left does not exists in right                                         |
+| subsetof                 | left is a subset of right [?(@.sizes subsetof ['S', 'M', 'L'])]       |
+| anyof                    | left has an intersection with right [?(@.sizes anyof ['M', 'L'])]     |
+| noneof                   | left has no intersection with right [?(@.sizes noneof ['M', 'L'])]    |
+| size                     | size of left (array or string) should match right                     |
+| empty                    | left (array or string) should be empty                                |
 
 
 Path Examples
@@ -155,6 +162,7 @@ Given the json
 | <a href="http://jsonpath.herokuapp.com/?path=$.store.*" target="_blank">$.store.*</a>                  | All things, both books and bicycles  |
 | <a href="http://jsonpath.herokuapp.com/?path=$.store..price" target="_blank">$.store..price</a>             | The price of everything         |
 | <a href="http://jsonpath.herokuapp.com/?path=$..book[2]" target="_blank">$..book[2]</a>                 | The third book                      |
+| <a href="http://jsonpath.herokuapp.com/?path=$..book[2]" target="_blank">$..book[-2]</a>                 | The second to last book            |
 | <a href="http://jsonpath.herokuapp.com/?path=$..book[0,1]" target="_blank">$..book[0,1]</a>               | The first two books               |
 | <a href="http://jsonpath.herokuapp.com/?path=$..book[:2]" target="_blank">$..book[:2]</a>                | All books from index 0 (inclusive) until index 2 (exclusive) |
 | <a href="http://jsonpath.herokuapp.com/?path=$..book[1:2]" target="_blank">$..book[1:2]</a>                | All books from index 1 (inclusive) until index 2 (exclusive) |
@@ -234,17 +242,25 @@ String json = "{\"date_as_long\" : 1411455611975}";
 Date date = JsonPath.parse(json).read("$['date_as_long']", Date.class);
 ```
 
-If you configure JsonPath to use the `JacksonMappingProvider` you can even map your JsonPath output directly into POJO's.
+If you configure JsonPath to use `JacksonMappingProvider` or `GsonMappingProvider` you can even map your JsonPath output directly into POJO's.
 
 ```java
 Book book = JsonPath.parse(json).read("$.store.book[0]", Book.class);
+```
+
+To obtain full generics type information, use TypeRef.
+
+```java
+TypeRef<List<String>> typeRef = new TypeRef<List<String>>() {};
+
+List<String> titles = JsonPath.parse(JSON_DOCUMENT).read("$.store.book[*].title", typeRef);
 ```
 
 Predicates
 ----------
 There are three different ways to create filter predicates in JsonPath.
 
-###Inline Predicates
+### Inline Predicates
 
 Inline predicates are the ones defined in the path.
 
@@ -256,7 +272,9 @@ List<Map<String, Object>> books =  JsonPath.parse(json)
 You can use `&&` and `||` to combine multiple predicates `[?(@.price < 10 && @.category == 'fiction')]` , 
 `[?(@.category == 'reference' || @.price > 10)]`.
  
-###Filter Predicates
+You can use `!` to negate a predicate `[?(!(@.price < 10 && @.category == 'fiction'))]`.
+
+### Filter Predicates
  
 Predicates can be built using the Filter API as shown below:
 
@@ -289,7 +307,7 @@ Filter fooAndBar = filter(
 );
 ```
 
-###Roll Your Own
+### Roll Your Own
  
 Third option is to implement your own predicates
  
@@ -307,7 +325,7 @@ List<Map<String, Object>> books =
 
 Path vs Value
 -------------
-In the Goessner implementation a JsonPath can return either `Path` or `Value`. `Value` is the default and what all the examples above are returning. If you rather have the path of the elements our query is hitting this can be acheived with an option.
+In the Goessner implementation a JsonPath can return either `Path` or `Value`. `Value` is the default and what all the examples above are returning. If you rather have the path of the elements our query is hitting this can be achieved with an option.
 
 ```java
 Configuration conf = Configuration.builder()
@@ -322,11 +340,20 @@ assertThat(pathList).containsExactly(
     "$['store']['book'][3]['author']");
 ```
 
+Set a value 
+-----------
+The library offers the possibility to set a value.
+
+```java
+String newJson = JsonPath.parse(json).set("$['store']['book'][0]['author']", "Paul").jsonString();
+```
+
+
 
 Tweaking Configuration
 ----------------------
 
-###Options
+### Options
 When creating your Configuration there are a few option flags that can alter the default behaviour.
 
 **DEFAULT_PATH_LEAF_TO_NULL**
@@ -368,10 +395,13 @@ This option configures JsonPath to return a list even when the path is `definite
 ```java
 Configuration conf = Configuration.defaultConfiguration();
 
-//Works fine
+//ClassCastException thrown
 List<String> genders0 = JsonPath.using(conf).parse(json).read("$[0]['gender']");
-//PathNotFoundException thrown
-List<String> genders1 = JsonPath.using(conf).parse(json).read("$[1]['gender']");
+
+Configuration conf2 = conf.addOptions(Option.ALWAYS_RETURN_LIST);
+
+//Works fine
+List<String> genders0 = JsonPath.using(conf2).parse(json).read("$[0]['gender']");
 ``` 
 **SUPPRESS_EXCEPTIONS**
 <br/>
@@ -380,10 +410,25 @@ This option makes sure no exceptions are propagated from path evaluation. It fol
 * If option `ALWAYS_RETURN_LIST` is present an empty list will be returned
 * If option `ALWAYS_RETURN_LIST` is **NOT** present null returned 
 
+**REQUIRE_PROPERTIES**
+</br>
+This option configures JsonPath to require properties defined in path when an `indefinite` path is evaluated.
 
-###JsonProvider SPI
+```java
+Configuration conf = Configuration.defaultConfiguration();
 
-JsonPath is shipped with three different JsonProviders:
+//Works fine
+List<String> genders = JsonPath.using(conf).parse(json).read("$[*]['gender']");
+
+Configuration conf2 = conf.addOptions(Option.REQUIRE_PROPERTIES);
+
+//PathNotFoundException thrown
+List<String> genders = JsonPath.using(conf2).parse(json).read("$[*]['gender']");
+```
+
+### JsonProvider SPI
+
+JsonPath is shipped with five different JsonProviders:
 
 * [JsonSmartJsonProvider](https://code.google.com/p/json-smart/) (default)
 * [JacksonJsonProvider](https://github.com/FasterXML/jackson)
@@ -448,8 +493,6 @@ CacheProvider.setCache(new Cache() {
 
 
 
-## Sponsored by:
-[![JAYWAY](http://www.arctiquator.com/oppenkallkod/assets/images/jayway_logo.png)](http://www.jayway.com/)
+
 
 [![Analytics](https://ga-beacon.appspot.com/UA-54945131-1/jsonpath/index)](https://github.com/igrigorik/ga-beacon)
-

@@ -21,6 +21,7 @@ import net.minidev.json.writer.JsonReader;
 import net.minidev.json.writer.JsonReaderI;
 
 import java.math.BigDecimal;
+import java.math.BigInteger;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.util.Date;
@@ -42,6 +43,8 @@ public class JsonSmartMappingProvider implements MappingProvider {
         DEFAULT.registerReader(BigDecimal.class, new BigDecimalReader());
         DEFAULT.registerReader(String.class, new StringReader());
         DEFAULT.registerReader(Date.class, new DateReader());
+        DEFAULT.registerReader(BigInteger.class, new BigIntegerReader());
+        DEFAULT.registerReader(boolean.class, new BooleanReader());
     }
 
 
@@ -113,7 +116,7 @@ public class JsonSmartMappingProvider implements MappingProvider {
             if(Integer.class.isAssignableFrom(src.getClass())){
                return (Integer) src;
             } else if (Long.class.isAssignableFrom(src.getClass())) {
-                return ((Integer) src).intValue();
+                return ((Long) src).intValue();
             } else if (Double.class.isAssignableFrom(src.getClass())) {
                 return ((Double) src).intValue();
             } else if (BigDecimal.class.isAssignableFrom(src.getClass())) {
@@ -150,6 +153,7 @@ public class JsonSmartMappingProvider implements MappingProvider {
             throw new MappingException("can not map a " + src.getClass() + " to " + Long.class.getName());
         }
     }
+
     private static class DoubleReader extends JsonReaderI<Double> {
         public DoubleReader() {
             super(null);
@@ -209,6 +213,17 @@ public class JsonSmartMappingProvider implements MappingProvider {
             return new BigDecimal(src.toString());
         }
     }
+    private static class BigIntegerReader extends JsonReaderI<BigInteger> {
+        public BigIntegerReader() {
+            super(null);
+        }
+        public BigInteger convert(Object src) {
+            if(src == null){
+                return null;
+            }
+            return new BigInteger(src.toString());
+        }
+    }
     private static class DateReader extends JsonReaderI<Date> {
         public DateReader() {
             super(null);
@@ -229,6 +244,20 @@ public class JsonSmartMappingProvider implements MappingProvider {
                 }
             }
             throw new MappingException("can not map a " + src.getClass() + " to " + Date.class.getName());
+        }
+    }
+    private static class BooleanReader extends JsonReaderI<Boolean> {
+        public BooleanReader() {
+            super(null);
+        }
+        public Boolean convert(Object src) {
+            if(src == null){
+                return null;
+            }
+            if (Boolean.class.isAssignableFrom(src.getClass())) {
+                return (Boolean) src;
+            }
+            throw new MappingException("can not map a " + src.getClass() + " to " + Boolean.class.getName());
         }
     }
 }

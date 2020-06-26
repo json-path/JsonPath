@@ -3,10 +3,14 @@ package com.jayway.jsonpath;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
+import com.jayway.jsonpath.spi.json.GsonJsonProvider;
+import com.jayway.jsonpath.spi.mapper.GsonMappingProvider;
 import com.jayway.jsonpath.spi.mapper.MappingException;
 import org.junit.Test;
 
 import java.io.IOException;
+import java.math.BigDecimal;
+import java.math.BigInteger;
 import java.util.List;
 
 import static com.jayway.jsonpath.JsonPath.using;
@@ -70,6 +74,65 @@ public class GsonJsonProviderTest extends BaseTest {
     }
 
     @Test
+    public void doubles_are_unwrapped() {
+        final String json = "{double-property = 56.78}";
+
+        JsonElement node =  using(GSON_CONFIGURATION).parse(json).read("$.double-property");
+        Double val =  using(GSON_CONFIGURATION).parse(json).read("$.double-property", Double.class);
+
+        assertThat(val).isEqualTo(56.78);
+        assertThat(val).isEqualTo(node.getAsDouble());
+    }
+
+    @Test
+    public void bigdecimals_are_unwrapped() {
+        final BigDecimal bd = BigDecimal.valueOf(Long.MAX_VALUE).add(BigDecimal.valueOf(10.5));
+        final String json = "{bd-property = " + bd.toString() + "}";
+
+        JsonElement node =  using(GSON_CONFIGURATION).parse(json).read("$.bd-property");
+        BigDecimal val =  using(GSON_CONFIGURATION).parse(json).read("$.bd-property", BigDecimal.class);
+
+        assertThat(val).isEqualTo(bd);
+        assertThat(val).isEqualTo(node.getAsBigDecimal());
+    }
+
+    @Test
+    public void small_bigdecimals_are_unwrapped() {
+        final BigDecimal bd = BigDecimal.valueOf(10.5);
+        final String json = "{bd-property = " + bd.toString() + "}";
+
+        JsonElement node =  using(GSON_CONFIGURATION).parse(json).read("$.bd-property");
+        BigDecimal val =  using(GSON_CONFIGURATION).parse(json).read("$.bd-property", BigDecimal.class);
+
+        assertThat(val).isEqualTo(bd);
+        assertThat(val).isEqualTo(node.getAsBigDecimal());
+    }
+
+    @Test
+    public void bigintegers_are_unwrapped() {
+        final BigInteger bi = BigInteger.valueOf(Long.MAX_VALUE).add(BigInteger.TEN);
+        final String json = "{bi-property = " + bi.toString() + "}";
+
+        JsonElement node =  using(GSON_CONFIGURATION).parse(json).read("$.bi-property");
+        BigInteger val =  using(GSON_CONFIGURATION).parse(json).read("$.bi-property", BigInteger.class);
+
+        assertThat(val).isEqualTo(bi);
+        assertThat(val).isEqualTo(node.getAsBigInteger());
+    }
+
+    @Test
+    public void small_bigintegers_are_unwrapped() {
+        final BigInteger bi = BigInteger.valueOf(Long.MAX_VALUE);
+        final String json = "{bi-property = " + bi.toString() + "}";
+
+        JsonElement node =  using(GSON_CONFIGURATION).parse(json).read("$.bi-property");
+        BigInteger val =  using(GSON_CONFIGURATION).parse(json).read("$.bi-property", BigInteger.class);
+
+        assertThat(val).isEqualTo(bi);
+        assertThat(val).isEqualTo(node.getAsBigInteger());
+    }
+
+    @Test
     public void int_to_long_mapping() {
         assertThat(using(GSON_CONFIGURATION).parse("{\"val\": 1}").read("val", Long.class)).isEqualTo(1L);
     }
@@ -120,6 +183,25 @@ public class GsonJsonProviderTest extends BaseTest {
 
         using(GSON_CONFIGURATION).parse(JSON).read("$", typeRef);
     }
+    
+    @Test
+    // https://github.com/json-path/JsonPath/issues/351
+    public void no_error_when_mapping_null() throws IOException {
+      
+      Configuration configuration = Configuration
+          .builder()
+          .mappingProvider(new GsonMappingProvider())
+          .jsonProvider(new GsonJsonProvider())
+          .options(Option.DEFAULT_PATH_LEAF_TO_NULL, Option.SUPPRESS_EXCEPTIONS)
+          .build();
+      
+      String json = "{\"M\":[]}";
+
+      String result = JsonPath.using(configuration).parse(json).read("$.M[0].A[0]", String.class);
+
+      assertThat(result).isNull();
+    }
+
 
     public static class FooBarBaz<T> {
         public T gen;

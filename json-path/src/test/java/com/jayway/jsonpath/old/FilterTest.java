@@ -18,7 +18,7 @@ import java.util.regex.Pattern;
 import static com.jayway.jsonpath.Criteria.where;
 import static com.jayway.jsonpath.Filter.filter;
 import static java.util.Arrays.asList;
-import static junit.framework.Assert.*;
+import static org.junit.Assert.*;
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
 
@@ -409,10 +409,10 @@ public class FilterTest extends BaseTest {
 
         Object doc = Configuration.defaultConfiguration().jsonProvider().parse(json);
 
-        List<Map<String, Object>> result = JsonPath.read(doc, "$.fields[?]", filter(where("errors").notEmpty()));
+        List<Map<String, Object>> result = JsonPath.read(doc, "$.fields[?]", filter(where("errors").empty(false)));
         assertEquals(1, result.size());
 
-        List<Map<String, Object>> result2 = JsonPath.read(doc, "$.fields[?]", filter(where("name").notEmpty()));
+        List<Map<String, Object>> result2 = JsonPath.read(doc, "$.fields[?]", filter(where("name").empty(false)));
         assertEquals(2, result2.size());
     }
 
