@@ -8,7 +8,6 @@ buildscript {
         classpath 'me.champeau.gradle:gradle-javadoc-hotfix-plugin:0.1'
         classpath 'me.champeau.gradle:japicmp-gradle-plugin:0.1.0'
         classpath 'com.github.jengelman.gradle.plugins:shadow:5.1.0'
-        implementation 'com.github.User:Repo:Tag'
     }
 }
 
