@@ -1,11 +1,14 @@
 buildscript {
     repositories {
         jcenter()
+        maven { url 'https://jitpack.io' }
     }
+
     dependencies {
         classpath 'me.champeau.gradle:gradle-javadoc-hotfix-plugin:0.1'
         classpath 'me.champeau.gradle:japicmp-gradle-plugin:0.1.0'
         classpath 'com.github.jengelman.gradle.plugins:shadow:5.1.0'
+        implementation 'com.github.User:Repo:Tag'
     }
 }
 
@@ -35,8 +38,8 @@ allprojects {
     ext.displayName = null
     ext.buildTimestamp = new Date().format('yyyy-MM-dd HH:mm:ss')
 
-    group = 'com.jayway.jsonpath'
-    version = '2.4.0' + (snapshotVersion ? "-SNAPSHOT" : "")
+    group = 'com.github.xmppjingle'
+    version = '2.5.0' + (snapshotVersion ? "-SNAPSHOT" : "")
 
     if (JavaVersion.current().isJava8Compatible()) {
         tasks.withType(Javadoc) {
