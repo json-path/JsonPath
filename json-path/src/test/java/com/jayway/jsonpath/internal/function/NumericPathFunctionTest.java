@@ -2,6 +2,7 @@ package com.jayway.jsonpath.internal.function;
 
 import com.jayway.jsonpath.Configuration;
 import com.jayway.jsonpath.Configurations;
+import com.jayway.jsonpath.JsonPath;
 import com.jayway.jsonpath.JsonPathException;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -14,14 +15,14 @@ import static org.junit.runners.Parameterized.Parameters;
 
 /**
  * Defines functional tests around executing:
- *
+ * <p>
  * - sum
  * - avg
  * - stddev
- *
+ * <p>
  * for each of the above, executes the test and verifies that the results are as expected based on a static input
  * and static output.
- *
+ * <p>
  * Created by mattg on 6/26/15.
  */
 @RunWith(Parameterized.class)

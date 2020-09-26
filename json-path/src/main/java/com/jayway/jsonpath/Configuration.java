@@ -50,8 +50,9 @@ public class Configuration {
     private final MappingProvider mappingProvider;
     private final Set<Option> options;
     private final Collection<EvaluationListener> evaluationListeners;
+    private final NotFoundHandler notFoundHandler;
 
-    private Configuration(JsonProvider jsonProvider, MappingProvider mappingProvider, EnumSet<Option> options, Collection<EvaluationListener> evaluationListeners) {
+    private Configuration(JsonProvider jsonProvider, MappingProvider mappingProvider, EnumSet<Option> options, Collection<EvaluationListener> evaluationListeners, NotFoundHandler notFoundHandler) {
         notNull(jsonProvider, "jsonProvider can not be null");
         notNull(mappingProvider, "mappingProvider can not be null");
         notNull(options, "setOptions can not be null");
@@ -60,6 +61,7 @@ public class Configuration {
         this.mappingProvider = mappingProvider;
         this.options = Collections.unmodifiableSet(options);
         this.evaluationListeners = Collections.unmodifiableCollection(evaluationListeners);
+        this.notFoundHandler = notFoundHandler;
     }
 
     /**
@@ -78,6 +80,15 @@ public class Configuration {
      */
     public Configuration setEvaluationListeners(EvaluationListener... evaluationListener){
         return Configuration.builder().jsonProvider(jsonProvider).mappingProvider(mappingProvider).options(options).evaluationListener(evaluationListener).build();
+    }
+
+    /**
+     * Creates a new Configuration with the provided not found listener
+     * @param notFoundHandler listener
+     * @return a new configuration
+     */
+    public Configuration setNotFoundHandler(NotFoundHandler notFoundHandler){
+        return Configuration.builder().jsonProvider(jsonProvider).mappingProvider(mappingProvider).options(options).notFoundHandler(notFoundHandler).build();
     }
 
     /**
@@ -169,6 +180,10 @@ public class Configuration {
         return Configuration.builder().jsonProvider(defaults.jsonProvider()).options(defaults.options()).build();
     }
 
+    public NotFoundHandler getNotFoundHandler() {
+        return notFoundHandler;
+    }
+
     /**
      * Returns a new ConfigurationBuilder
      * @return a builder
@@ -186,6 +201,7 @@ public class Configuration {
         private MappingProvider mappingProvider;
         private EnumSet<Option> options = EnumSet.noneOf(Option.class);
         private Collection<EvaluationListener> evaluationListener = new ArrayList<EvaluationListener>();
+        private NotFoundHandler notFoundHandler = null;
 
         public ConfigurationBuilder jsonProvider(JsonProvider provider) {
             this.jsonProvider = provider;
@@ -214,6 +230,11 @@ public class Configuration {
             return this;
         }
 
+        public ConfigurationBuilder notFoundHandler(NotFoundHandler notFoundHandler){
+            this.notFoundHandler = notFoundHandler;
+            return this;
+        }
+
         public ConfigurationBuilder evaluationListener(Collection<EvaluationListener> listeners){
             this.evaluationListener = listeners == null ? Collections.<EvaluationListener>emptyList() : listeners;
             return this;
@@ -229,7 +250,7 @@ public class Configuration {
                     mappingProvider = defaults.mappingProvider();
                 }
             }
-            return new Configuration(jsonProvider, mappingProvider, options, evaluationListener);
+            return new Configuration(jsonProvider, mappingProvider, options, evaluationListener, notFoundHandler);
         }
     }
 
