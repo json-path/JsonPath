@@ -14,10 +14,10 @@ package com.jayway.jsonpath;/*
  */
 
 /**
- * A listener that can be registered on a {@link Configuration} that is notified when a
- * result is not found and allows the return value to be overwritten of this path evaluation.
+ * A handler that can be registered on a {@link Configuration} that is notified when a
+ * result is not found and allows the return value to be overwritten on this path evaluation.
  */
-public interface NotFoundListener {
+public interface NotFoundHandler {
 
     /**
      * Callback invoked when result is not found

@@ -9,10 +9,10 @@ import java.util.concurrent.Executors;
 
 import static org.junit.Assert.assertEquals;
 
-public class NotFoundListenerTest {
+public class NotFoundHandlerTest {
 
     @Test
-    public void testMixNotFoundListener() {
+    public void testMixNotFoundHandler() {
 
         Runnable r = () -> {
             for (int i = 0; i < 10; i++) {
@@ -30,7 +30,7 @@ public class NotFoundListenerTest {
                 Configuration conf1 = Configuration.builder()
                         .mappingProvider(new JsonSmartMappingProvider(new JsonReader()))
                         .jsonProvider(new GsonJsonProvider())
-                        .notFoundListener(notfound -> 0)
+                        .notFoundHandler(notfound -> 0)
                         .build();
                 Double result1 = (Double) JsonPath.using(conf1).parse(mixEntry).read(exp);
                 assertEquals(new Double(4.0), result1);
@@ -56,7 +56,7 @@ public class NotFoundListenerTest {
             Configuration conf1 = Configuration.builder()
                     .mappingProvider(new JsonSmartMappingProvider(new JsonReader()))
                     .jsonProvider(new GsonJsonProvider())
-                    .notFoundListener(notfound -> 0)
+                    .notFoundHandler(notfound -> 0)
                     .build();
             Double result1 = (Double) JsonPath.using(conf1).parse(mixEntry).read(exp);
             assertEquals(new Double(4.0), result1);
@@ -66,7 +66,7 @@ public class NotFoundListenerTest {
     }
 
     @Test
-    public void testEmptySumNotFoundListener() {
+    public void testEmptySumNotFoundHandler() {
 
         String exp = "$.sum($.transitModeDistance.walk, $.transitModeDistance.bicycle)  ";
 
@@ -77,14 +77,14 @@ public class NotFoundListenerTest {
                 "    }\n" +
                 "}";
 
-        Configuration conf2 = Configuration.defaultConfiguration().setNotFoundListeners(found -> 1);
+        Configuration conf2 = Configuration.defaultConfiguration().setNotFoundHandler(found -> 1);
         Double result2 = (Double) JsonPath.using(conf2).parse(emptyEntry).read(exp);
         assertEquals(new Double(2), result2);
 
     }
 
     @Test
-    public void testAbsentNotFoundListener() {
+    public void testAbsentNotFoundHandler() {
 
         String exp = "$.sum($.transitModeDistance.walk, $.transitModeDistance.bicycle)";
 
@@ -97,7 +97,7 @@ public class NotFoundListenerTest {
                 "    }\n" +
                 "}";
 
-        Configuration conf3 = Configuration.defaultConfiguration().setNotFoundListeners(found -> 10);
+        Configuration conf3 = Configuration.defaultConfiguration().setNotFoundHandler(found -> 10);
         Double result3 = (Double) JsonPath.using(conf3).parse(fullEntry).read(exp);
         assertEquals(new Double(8), result3);
 
@@ -108,7 +108,7 @@ public class NotFoundListenerTest {
                 "    }\n" +
                 "}";
 
-        Configuration conf2 = Configuration.defaultConfiguration().setNotFoundListeners(found -> 1);
+        Configuration conf2 = Configuration.defaultConfiguration().setNotFoundHandler(found -> 1);
         Double result2 = (Double) JsonPath.using(conf2).parse(emptyEntry).read(exp + "  ");
         assertEquals(new Double(2), result2);
 

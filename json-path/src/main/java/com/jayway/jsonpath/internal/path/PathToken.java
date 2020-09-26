@@ -14,7 +14,6 @@
  */
 package com.jayway.jsonpath.internal.path;
 
-import com.jayway.jsonpath.NotFoundListener;
 import com.jayway.jsonpath.NotFoundResult;
 import com.jayway.jsonpath.Option;
 import com.jayway.jsonpath.PathNotFoundException;
@@ -45,8 +44,9 @@ public abstract class PathToken {
             String evalPath = Utils.concat(currentPath, "['", property, "']");
             Object propertyVal = readObjectProperty(property, model, ctx);
 
-            if (propertyVal == JsonProvider.UNDEFINED && ctx.configuration().getNotFoundListener() != null) {
-                propertyVal = ctx.configuration().getNotFoundListener().resultNotFound(new NotFoundResult(currentPath, property));
+            // Allow values to be overridden in case of a notFoundHandler present on configuration
+            if (propertyVal == JsonProvider.UNDEFINED && ctx.configuration().getNotFoundHandler() != null) {
+                propertyVal = ctx.configuration().getNotFoundHandler().resultNotFound(new NotFoundResult(currentPath, property));
             }
 
             if (propertyVal == JsonProvider.UNDEFINED) {
