@@ -28,7 +28,7 @@ ext {
                     'org.slf4j:slf4j-simple:1.7.30'
             ]
     ]
-    snapshotVersion = false
+    snapshotVersion = true
 }
 
 allprojects {
@@ -36,7 +36,7 @@ allprojects {
     ext.buildTimestamp = new Date().format('yyyy-MM-dd HH:mm:ss')
 
     group = 'com.jayway.jsonpath'
-    version = '2.5.0' + (snapshotVersion ? "-SNAPSHOT" : "")
+    version = '2.6.0' + (snapshotVersion ? "-SNAPSHOT" : "")
 
     if (JavaVersion.current().isJava8Compatible()) {
         tasks.withType(Javadoc) {
