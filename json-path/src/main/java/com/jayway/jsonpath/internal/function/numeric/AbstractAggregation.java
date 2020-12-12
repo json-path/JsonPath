@@ -7,6 +7,7 @@ import com.jayway.jsonpath.internal.function.Parameter;
 import com.jayway.jsonpath.internal.function.PathFunction;
 
 import java.util.List;
+import java.util.regex.Pattern;
 
 /**
  * Defines the pattern for processing numerical values via an abstract implementation that iterates over the collection
@@ -16,6 +17,8 @@ import java.util.List;
  * Created by mattg on 6/26/15.
  */
 public abstract class AbstractAggregation implements PathFunction {
+
+    private final static Pattern NUMBERS_PATTERN = Pattern.compile("-?\\d+(\\.\\d+)?");
 
     /**
      * Defines the next value in the array to the mathmatical function
@@ -40,6 +43,11 @@ public abstract class AbstractAggregation implements PathFunction {
 
             Iterable<?> objects = ctx.configuration().jsonProvider().toIterable(model);
             for (Object obj : objects) {
+                if (obj instanceof String && isNumeric((String) obj)) {
+                    Number value = Double.parseDouble((String) obj);
+                    count++;
+                    next(value);
+                }
                 if (obj instanceof Number) {
                     Number value = (Number) obj;
                     count++;
@@ -57,5 +65,18 @@ public abstract class AbstractAggregation implements PathFunction {
             return getValue();
         }
         throw new JsonPathException("Aggregation function attempted to calculate value using empty array");
+    }
+
+    /**
+     * Returns true if specified string is numeric value.
+     *
+     * @param strNum string to check
+     * @return true if numeric
+     */
+    private boolean isNumeric(final String strNum) {
+        if (strNum == null) {
+            return false;
+        }
+        return NUMBERS_PATTERN.matcher(strNum).matches();
     }
 }

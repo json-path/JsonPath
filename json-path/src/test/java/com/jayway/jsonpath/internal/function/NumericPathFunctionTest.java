@@ -62,6 +62,11 @@ public class NumericPathFunctionTest extends BaseFunctionTest {
     }
 
     @Test
+    public void testSumOfStringDouble() {
+        verifyMathFunction(conf, "$.string_numbers.sum()", (10d * (10d + 1d)) / 2d);
+    }
+
+    @Test
     public void testSumOfEmptyListNegative() {
         try {
             verifyMathFunction(conf, "$.empty.sum()", null);
