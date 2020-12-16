@@ -42,7 +42,7 @@ public class PathFunctionFactory {
         map.put("concat", Concatenate.class);
 
         // JSON Entity Functions
-        map.put("length", Length.class);
+        map.put(Length.TOKEN_NAME, Length.class);
         map.put("size", Length.class);
         map.put("append", Append.class);
         map.put("keys", KeySetFunction.class);
