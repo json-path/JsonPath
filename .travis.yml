@@ -3,8 +3,12 @@ language: java
 sudo: false
 
 jdk:
- - oraclejdk8
+ - openjdk8
 
 cache:
   directories:
   - $HOME/.gradle
+
+arch:
+  - amd64
+  - ppc64le

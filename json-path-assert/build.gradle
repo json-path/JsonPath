@@ -11,8 +11,7 @@ jar {
 
 dependencies {
     compile project(':json-path')
-    compile libs.hamcrestCore
-    compile libs.hamcrestLibrary
+    compile libs.hamcrest
     compile libs.slf4jApi
 
     testCompile libs.test

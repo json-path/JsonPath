@@ -11,6 +11,8 @@ Jayway JsonPath is a Java port of [Stefan Goessner JsonPath implementation](http
 
 News
 ----
+10 Dec 2020 - Released JsonPath 2.5.0
+
 05 Jul 2017 - Released JsonPath 2.4.0
 
 26 Jun 2017 - Released JsonPath 2.3.0
@@ -37,7 +39,7 @@ JsonPath is available at the Central Maven Repository. Maven users add this to y
 <dependency>
     <groupId>com.jayway.jsonpath</groupId>
     <artifactId>json-path</artifactId>
-    <version>2.4.0</version>
+    <version>2.5.0</version>
 </dependency>
 ```
 
@@ -84,6 +86,7 @@ The function output is dictated by the function itself.
 | avg()                     | Provides the average value of an array of numbers                   | Double    |
 | stddev()                  | Provides the standard deviation value of an array of numbers        | Double    |
 | length()                  | Provides the length of an array                                     | Integer   |
+| sum()                     | Provides the sum value of an array of numbers                       | Double    |
 
 
 Filter Operators
@@ -247,7 +250,7 @@ If you configure JsonPath to use `JacksonMappingProvider` or `GsonMappingProvide
 Book book = JsonPath.parse(json).read("$.store.book[0]", Book.class);
 ```
 
-To obtainin full generics type information, use TypeRef.
+To obtain full generics type information, use TypeRef.
 
 ```java
 TypeRef<List<String>> typeRef = new TypeRef<List<String>>() {};
@@ -339,6 +342,15 @@ assertThat(pathList).containsExactly(
     "$['store']['book'][3]['author']");
 ```
 
+Set a value 
+-----------
+The library offers the possibility to set a value.
+
+```java
+String newJson = JsonPath.parse(json).set("$['store']['book'][0]['author']", "Paul").jsonString();
+```
+
+
 
 Tweaking Configuration
 ----------------------
@@ -385,10 +397,13 @@ This option configures JsonPath to return a list even when the path is `definite
 ```java
 Configuration conf = Configuration.defaultConfiguration();
 
-//Works fine
+//ClassCastException thrown
 List<String> genders0 = JsonPath.using(conf).parse(json).read("$[0]['gender']");
-//PathNotFoundException thrown
-List<String> genders1 = JsonPath.using(conf).parse(json).read("$[1]['gender']");
+
+Configuration conf2 = conf.addOptions(Option.ALWAYS_RETURN_LIST);
+
+//Works fine
+List<String> genders0 = JsonPath.using(conf2).parse(json).read("$[0]['gender']");
 ``` 
 **SUPPRESS_EXCEPTIONS**
 <br/>
@@ -397,6 +412,21 @@ This option makes sure no exceptions are propagated from path evaluation. It fol
 * If option `ALWAYS_RETURN_LIST` is present an empty list will be returned
 * If option `ALWAYS_RETURN_LIST` is **NOT** present null returned 
 
+**REQUIRE_PROPERTIES**
+</br>
+This option configures JsonPath to require properties defined in path when an `indefinite` path is evaluated.
+
+```java
+Configuration conf = Configuration.defaultConfiguration();
+
+//Works fine
+List<String> genders = JsonPath.using(conf).parse(json).read("$[*]['gender']");
+
+Configuration conf2 = conf.addOptions(Option.REQUIRE_PROPERTIES);
+
+//PathNotFoundException thrown
+List<String> genders = JsonPath.using(conf2).parse(json).read("$[*]['gender']");
+```
 
 ### JsonProvider SPI
 
@@ -468,4 +498,3 @@ CacheProvider.setCache(new Cache() {
 
 
 [![Analytics](https://ga-beacon.appspot.com/UA-54945131-1/jsonpath/index)](https://github.com/igrigorik/ga-beacon)
-

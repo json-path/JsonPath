@@ -11,6 +11,7 @@ import org.junit.Test;
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.math.BigInteger;
+import java.util.ArrayList;
 import java.util.List;
 
 import static com.jayway.jsonpath.JsonPath.using;
@@ -145,9 +146,11 @@ public class GsonJsonProviderTest extends BaseTest {
     @Test
     public void list_of_numbers() {
         JsonArray objs =  using(GSON_CONFIGURATION).parse(JSON_DOCUMENT).read("$.store.book[*].display-price");
-
-        assertThat(objs.iterator()).extracting("asDouble").containsExactly(8.95D, 12.99D, 8.99D, 22.99D);
-
+        List<Double> actual = new ArrayList<>();
+        for (JsonElement obj : objs) {
+            actual.add(obj.getAsDouble());
+        }
+        assertThat(actual).containsExactly(8.95D, 12.99D, 8.99D, 22.99D);
     }
 
     @Test
