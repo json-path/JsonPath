@@ -87,7 +87,7 @@ The function output is dictated by the function itself.
 | stddev()                  | Provides the standard deviation value of an array of numbers        | Double    |
 | length()                  | Provides the length of an array                                     | Integer   |
 | sum()                     | Provides the sum value of an array of numbers                       | Double    |
-
+| keys()                    | Provides the property keys (An alternative for terminal tilde `~`)  | `Set<E>`  |
 
 Filter Operators
 -----------------
