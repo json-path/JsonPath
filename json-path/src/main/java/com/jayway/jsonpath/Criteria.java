@@ -329,7 +329,7 @@ public class Criteria implements Predicate {
      * @return the criteria
      */
     public Criteria noneof(Object... o) {
-        return subsetof(Arrays.asList(o));
+        return noneof(Arrays.asList(o));
     }
 
     /**
