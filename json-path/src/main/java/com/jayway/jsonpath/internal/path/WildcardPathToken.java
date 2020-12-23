@@ -27,7 +27,7 @@ import static java.util.Arrays.asList;
  */
 public class WildcardPathToken extends PathToken {
 
-    WildcardPathToken() {
+    public WildcardPathToken() {
     }
 
     @Override

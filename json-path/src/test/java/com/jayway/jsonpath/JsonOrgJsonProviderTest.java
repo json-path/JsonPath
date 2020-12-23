@@ -52,4 +52,28 @@ public class JsonOrgJsonProviderTest extends BaseTest {
 
         assertThat(books.length()).isEqualTo(2);
     }
+
+    /**
+     * Functions take parameters, the length parameter for example takes an entire document which we anticipate
+     * will compute to a document that is an array of elements which can determine its length.
+     *
+     * Since we translate this query from $..books.length() to length($..books) verify that this particular translation
+     * works as anticipated.
+     */
+    @Test
+    public void read_book_length_using_translated_query() {
+        Integer result = using(Configuration.defaultConfiguration())
+                .parse(JSON_BOOK_STORE_DOCUMENT)
+                .read("$..book.length()");
+        assertThat(result).isEqualTo(4);
+    }
+
+    @Test
+    public void read_book_length() {
+        Object result = using(Configuration.defaultConfiguration())
+                .parse(JSON_BOOK_STORE_DOCUMENT)
+                .read("$.length($..book)");
+        assertThat(result).isEqualTo(4);
+    }
+
 }

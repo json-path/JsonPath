@@ -84,4 +84,11 @@ public class FunctionPathToken extends PathToken {
     public void setParameters(List<Parameter> parameters) {
         this.functionParams = parameters;
     }
+
+    public List<Parameter> getParameters() {
+        return this.functionParams;
+    }
+    public String getFunctionName() {
+        return this.functionName;
+    }
 }
