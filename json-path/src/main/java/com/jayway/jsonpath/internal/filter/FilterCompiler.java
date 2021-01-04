@@ -274,17 +274,32 @@ public class FilterCompiler  {
 
     }
 
+    private int endOfFlags(int position) {
+        int endIndex = position;
+        char[] currentChar = new char[1];
+        while (filter.inBounds(endIndex)) {
+            currentChar[0] = filter.charAt(endIndex);
+            if (PatternFlag.parseFlags(currentChar) > 0) {
+                endIndex++;
+                continue;
+            }
+            break;
+        }
+        return endIndex;
+    }
+
     private PatternNode readPattern() {
         int begin = filter.position();
         int closingIndex = filter.nextIndexOfUnescaped(PATTERN);
         if (closingIndex == -1) {
             throw new InvalidPathException("Pattern not closed. Expected " + PATTERN + " in " + filter);
         } else {
-            if(filter.inBounds(closingIndex+1)) {
-                int equalSignIndex = filter.nextIndexOf('=');
-                int endIndex = equalSignIndex > closingIndex ? equalSignIndex : filter.nextIndexOfUnescaped(CLOSE_PARENTHESIS);
-                CharSequence flags = filter.subSequence(closingIndex + 1, endIndex);
-                closingIndex += flags.length();
+            if (filter.inBounds(closingIndex+1)) {
+                int endFlagsIndex = endOfFlags(closingIndex + 1);
+                if (endFlagsIndex > closingIndex) {
+                    CharSequence flags = filter.subSequence(closingIndex + 1, endFlagsIndex);
+                    closingIndex += flags.length();
+                }
             }
             filter.setPosition(closingIndex + 1);
         }
