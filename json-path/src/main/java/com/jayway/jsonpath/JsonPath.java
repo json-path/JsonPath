@@ -481,6 +481,7 @@ public class JsonPath {
      */
     @SuppressWarnings({"unchecked"})
     public static <T> T read(Object json, String jsonPath, Predicate... filters) {
+        if (String.valueOf(json).equals("{}") ) return null;
         return parse(json).read(jsonPath, filters);
     }
 
