@@ -28,7 +28,8 @@ public class FilterTest extends BaseTest {
             "  \"char-key\" : \"c\", " +
             "  \"arr-empty\" : [], " +
             "  \"int-arr\" : [0,1,2,3,4], " +
-            "  \"string-arr\" : [\"a\",\"b\",\"c\",\"d\",\"e\"] " +
+            "  \"string-arr\" : [\"a\",\"b\",\"c\",\"d\",\"e\"], " +
+            "  \"obj\": {\"foo\": \"bar\"}" +
             "}"
     );
 
@@ -261,6 +262,17 @@ public class FilterTest extends BaseTest {
         assertThat(filter(where("string-key").regex(Pattern.compile("^tring$"))).apply(createPredicateContext(json))).isEqualTo(false);
         assertThat(filter(where("null-key").regex(Pattern.compile("^string$"))).apply(createPredicateContext(json))).isEqualTo(false);
         assertThat(filter(where("int-key").regex(Pattern.compile("^string$"))).apply(createPredicateContext(json))).isEqualTo(false);
+    }
+
+    @Test
+    public void list_regex_evals() {
+        assertThat(filter(where("string-arr").regex(Pattern.compile("^d$"))).apply(createPredicateContext(json))).isEqualTo(true);
+        assertThat(filter(where("string-arr").regex(Pattern.compile("^q$"))).apply(createPredicateContext(json))).isEqualTo(false);
+    }
+
+    @Test
+    public void obj_regex_doesnt_break() {
+        assertThat(filter(where("obj").regex(Pattern.compile("^foo$"))).apply(createPredicateContext(json))).isEqualTo(false);
     }
 
     //----------------------------------------------------------------------------
