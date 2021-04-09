@@ -3,6 +3,7 @@ package com.jayway.jsonpath;
 import org.assertj.core.util.Lists;
 import org.junit.Test;
 
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -31,7 +32,15 @@ public class FilterTest extends BaseTest {
             "  \"string-arr\" : [\"a\",\"b\",\"c\",\"d\",\"e\"] " +
             "}"
     );
+    Date now = new Date();
+    Date positiveDeltatNow = new Date(now.getTime() + 1000 * 60);
+    Date negativeDeltatNow = new Date(now.getTime() - 1000 * 60);
 
+    private Object addDateToObj(Object json) {
+        Map map = (Map) json;
+        map.put("date-key", now);
+        return map;
+    }
     //----------------------------------------------------------------------------
     //
     // EQ
@@ -42,6 +51,7 @@ public class FilterTest extends BaseTest {
         assertThat(filter(where("int-key").eq(1)).apply(createPredicateContext(json))).isEqualTo(true);
         assertThat(filter(where("int-key").eq(666)).apply(createPredicateContext(json))).isEqualTo(false);
     }
+
 
     @Test
     public void int_eq_string_evals() {
@@ -97,6 +107,13 @@ public class FilterTest extends BaseTest {
         assertThat(filter(where("int-arr").eq("[0,1,2,3]")).apply(createPredicateContext(json))).isEqualTo(false);
         assertThat(filter(where("int-arr").eq("[0,1,2,3,4,5]")).apply(createPredicateContext(json))).isEqualTo(false);
     }
+
+    @Test
+    public void date_eq_evals() {
+        assertThat(filter(where("date-key").eq(now)).apply(createPredicateContext(addDateToObj(json)))).isEqualTo(true);
+        assertThat(filter(where("date-key").eq(positiveDeltatNow)).apply(createPredicateContext(addDateToObj(json)))).isEqualTo(false);
+    }
+
     //----------------------------------------------------------------------------
     //
     // NE
@@ -140,6 +157,12 @@ public class FilterTest extends BaseTest {
         assertThat(filter(where("string-key").ne(null)).apply(createPredicateContext(json))).isEqualTo(true);
     }
 
+    @Test
+    public void date_ne_evals() {
+        assertThat(filter(where("date-key").ne(now)).apply(createPredicateContext(addDateToObj(json)))).isEqualTo(false);
+        assertThat(filter(where("date-key").ne(positiveDeltatNow)).apply(createPredicateContext(addDateToObj(json)))).isEqualTo(true);
+    }
+
     //----------------------------------------------------------------------------
     //
     // LT
@@ -169,6 +192,13 @@ public class FilterTest extends BaseTest {
         assertThat(filter(where("char-key").lt("a")).apply(createPredicateContext(json))).isEqualTo(false);
     }
 
+    @Test
+    public void date_lt_evals() {
+        assertThat(filter(where("date-key").lt(positiveDeltatNow)).apply(createPredicateContext(addDateToObj(json)))).isEqualTo(true);
+        assertThat(filter(where("date-key").lt(now)).apply(createPredicateContext(addDateToObj(json)))).isEqualTo(false);
+        assertThat(filter(where("date-key").lt(negativeDeltatNow)).apply(createPredicateContext(addDateToObj(json)))).isEqualTo(false);
+    }
+
     //----------------------------------------------------------------------------
     //
     // LTE
@@ -193,6 +223,13 @@ public class FilterTest extends BaseTest {
         assertThat(filter(where("double-key").lte(100.1D)).apply(createPredicateContext(json))).isEqualTo(true);
         assertThat(filter(where("double-key").lte(10.1D)).apply(createPredicateContext(json))).isEqualTo(true);
         assertThat(filter(where("double-key").lte(1.1D)).apply(createPredicateContext(json))).isEqualTo(false);
+    }
+
+    @Test
+    public void date_lte_evals() {
+        assertThat(filter(where("date-key").lte(positiveDeltatNow)).apply(createPredicateContext(addDateToObj(json)))).isEqualTo(true);
+        assertThat(filter(where("date-key").lte(now)).apply(createPredicateContext(addDateToObj(json)))).isEqualTo(true);
+        assertThat(filter(where("date-key").lte(negativeDeltatNow)).apply(createPredicateContext(addDateToObj(json)))).isEqualTo(false);
     }
 
     //----------------------------------------------------------------------------
@@ -224,6 +261,13 @@ public class FilterTest extends BaseTest {
         assertThat(filter(where("char-key").gt("a")).apply(createPredicateContext(json))).isEqualTo(true);
     }
 
+    @Test
+    public void date_gt_evals() {
+        assertThat(filter(where("date-key").gt(positiveDeltatNow)).apply(createPredicateContext(addDateToObj(json)))).isEqualTo(false);
+        assertThat(filter(where("date-key").gt(now)).apply(createPredicateContext(addDateToObj(json)))).isEqualTo(false);
+        assertThat(filter(where("date-key").gt(negativeDeltatNow)).apply(createPredicateContext(addDateToObj(json)))).isEqualTo(true);
+    }
+
     //----------------------------------------------------------------------------
     //
     // GTE
@@ -248,6 +292,13 @@ public class FilterTest extends BaseTest {
         assertThat(filter(where("double-key").gte(100.1D)).apply(createPredicateContext(json))).isEqualTo(false);
         assertThat(filter(where("double-key").gte(10.1D)).apply(createPredicateContext(json))).isEqualTo(true);
         assertThat(filter(where("double-key").gte(1.1D)).apply(createPredicateContext(json))).isEqualTo(true);
+    }
+
+    @Test
+    public void date_gte_evals() {
+        assertThat(filter(where("date-key").gte(positiveDeltatNow)).apply(createPredicateContext(addDateToObj(json)))).isEqualTo(false);
+        assertThat(filter(where("date-key").gte(now)).apply(createPredicateContext(addDateToObj(json)))).isEqualTo(true);
+        assertThat(filter(where("date-key").gte(negativeDeltatNow)).apply(createPredicateContext(addDateToObj(json)))).isEqualTo(true);
     }
 
     //----------------------------------------------------------------------------

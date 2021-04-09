@@ -101,6 +101,9 @@ public class EvaluatorFactory {
             } if(left.isStringNode() && right.isStringNode()){
                 return left.asStringNode().getString().compareTo(right.asStringNode().getString()) < 0;
             }
+            if(left.isDateNode() && right.isDateNode()){
+                return left.asDateNode().getDate().compareTo(right.asDateNode().getDate()) < 0;
+            }
             return false;
         }
     }
@@ -112,6 +115,9 @@ public class EvaluatorFactory {
                 return left.asNumberNode().getNumber().compareTo(right.asNumberNode().getNumber()) <= 0;
             } if(left.isStringNode() && right.isStringNode()){
                 return left.asStringNode().getString().compareTo(right.asStringNode().getString()) <= 0;
+            }
+            if(left.isDateNode() && right.isDateNode()){
+                return left.asDateNode().getDate().compareTo(right.asDateNode().getDate()) <= 0;
             }
             return false;
         }
@@ -125,6 +131,9 @@ public class EvaluatorFactory {
             } else if(left.isStringNode() && right.isStringNode()){
                 return left.asStringNode().getString().compareTo(right.asStringNode().getString()) > 0;
             }
+            if(left.isDateNode() && right.isDateNode()){
+                return left.asDateNode().getDate().compareTo(right.asDateNode().getDate()) > 0;
+            }
             return false;
         }
     }
@@ -136,6 +145,9 @@ public class EvaluatorFactory {
                 return left.asNumberNode().getNumber().compareTo(right.asNumberNode().getNumber()) >= 0;
             } else if(left.isStringNode() && right.isStringNode()){
                 return left.asStringNode().getString().compareTo(right.asStringNode().getString()) >= 0;
+            }
+            if(left.isDateNode() && right.isDateNode()){
+                return left.asDateNode().getDate().compareTo(right.asDateNode().getDate()) >= 0;
             }
             return false;
         }
