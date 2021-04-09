@@ -79,15 +79,17 @@ Functions
 Functions can be invoked at the tail end of a path - the input to a function is the output of the path expression.
 The function output is dictated by the function itself.
 
-| Function                  | Description                                                         | Output    |
-| :------------------------ | :------------------------------------------------------------------ |-----------|
-| min()                     | Provides the min value of an array of numbers                       | Double    |
-| max()                     | Provides the max value of an array of numbers                       | Double    |
-| avg()                     | Provides the average value of an array of numbers                   | Double    |
-| stddev()                  | Provides the standard deviation value of an array of numbers        | Double    |
-| length()                  | Provides the length of an array                                     | Integer   |
-| sum()                     | Provides the sum value of an array of numbers                       | Double    |
-| keys()                    | Provides the property keys (An alternative for terminal tilde `~`)  | `Set<E>`  |
+| Function                  | Description                                                         | Output type |
+| :------------------------ | :------------------------------------------------------------------ |:----------- |
+| min()                     | Provides the min value of an array of numbers                       | Double      |
+| max()                     | Provides the max value of an array of numbers                       | Double      |
+| avg()                     | Provides the average value of an array of numbers                   | Double      | 
+| stddev()                  | Provides the standard deviation value of an array of numbers        | Double      | 
+| length()                  | Provides the length of an array                                     | Integer     |
+| sum()                     | Provides the sum value of an array of numbers                       | Double      |
+| keys()                    | Provides the property keys (An alternative for terminal tilde `~`)  | `Set<E>`    |
+| concat(X)                 | Provides a concatinated version of the path output with a new item  | like input  |
+| append(X)                 | add an item to the json path output array                           | like input  |
 
 Filter Operators
 -----------------
