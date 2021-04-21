@@ -1,6 +1,7 @@
 package com.jayway.jsonpath.old;
 
 import com.fasterxml.jackson.databind.node.ObjectNode;
+import com.fasterxml.jackson.databind.node.TextNode;
 import com.google.gson.JsonObject;
 import com.jayway.jsonpath.BaseTest;
 import com.jayway.jsonpath.Configuration;
@@ -1115,5 +1116,86 @@ public class IssuesTest extends BaseTest {
         }
 
         assertTrue(thrown);
+    }
+    //CS304 (manually written) Issue link: https://github.com/json-path/JsonPath/issues/656
+    @Test
+    public void issue_656_1(){
+        String json = "{\n" +
+                "\"jsonArr\": [\n" +
+                "   {\n" +
+                "       \"name\":\"nOne\"\n" +
+                "   },\n" +
+                "   {\n" +
+                "       \"name\":\"nTwo\"\n" +
+                "   },\n" +
+                "  {\n" +
+                "    \"name\":\"nThree\"\n" +
+                "  }\n" +
+                "   ]\n" +
+                "}";
+
+        Configuration configuration = Configuration.builder()
+                .jsonProvider(new JacksonJsonNodeJsonProvider())
+                .mappingProvider(new JacksonMappingProvider())
+                .build();
+
+        ObjectNode obj = (ObjectNode) configuration.jsonProvider().parse(json);
+        ObjectNode newObj = (ObjectNode) configuration.jsonProvider().createMap();
+        newObj.set("one", obj);
+        newObj.set("two", obj);
+
+        DocumentContext ctx = JsonPath.parse(newObj, configuration);
+
+        String path = "$..jsonArr[?(@.name == 'nOne')]";
+        JsonPath jsonPath = JsonPath.compile(path);
+        ctx.delete(jsonPath);
+
+        assertEquals("nTwo", ((TextNode)ctx.read("$.one.jsonArr[0].name")).asText());
+        assertEquals("nThree", ((TextNode)ctx.read("$.one.jsonArr[1].name")).asText());
+        assertEquals("nTwo", ((TextNode)ctx.read("$.two.jsonArr[0].name")).asText());
+        assertEquals("nThree", ((TextNode)ctx.read("$.two.jsonArr[1].name")).asText());
+    }
+    //CS304 (manually written) Issue link: https://github.com/json-path/JsonPath/issues/656
+    @Test
+    public void issue_656_2(){
+        String json = "{\n" +
+                "\"jsonArr\": [\n" +
+                "   {\n" +
+                "       \"name\":\"nOne\"\n" +
+                "   },\n" +
+                "   {\n" +
+                "       \"name\":\"nTwo\"\n" +
+                "   },\n" +
+                "  {\n" +
+                "    \"name\":\"nThree\"\n" +
+                "  }\n" +
+                "   ]\n" +
+                "}";
+
+        Configuration configuration = Configuration.builder()
+                .jsonProvider(new JacksonJsonNodeJsonProvider())
+                .mappingProvider(new JacksonMappingProvider())
+                .build();
+
+        ObjectNode obj = (ObjectNode) configuration.jsonProvider().parse(json);
+        ObjectNode obj1 = (ObjectNode) configuration.jsonProvider().parse(json);
+        ObjectNode newObj = (ObjectNode) configuration.jsonProvider().createMap();
+        newObj.set("one", obj);
+        newObj.set("three", obj);
+        newObj.set("two", obj1);
+        newObj.set("four", obj1);
+        newObj.set("five",obj1);
+
+        DocumentContext ctx = JsonPath.parse(newObj, configuration);
+
+        String path = "$..jsonArr[?(@.name == 'nOne')]";
+        JsonPath jsonPath = JsonPath.compile(path);
+        ctx.delete(jsonPath);
+
+        assertEquals("nTwo", ((TextNode)ctx.read("$.one.jsonArr[0].name")).asText());
+        assertEquals("nTwo", ((TextNode)ctx.read("$.two.jsonArr[0].name")).asText());
+        assertEquals("nTwo", ((TextNode)ctx.read("$.three.jsonArr[0].name")).asText());
+        assertEquals("nTwo", ((TextNode)ctx.read("$.four.jsonArr[0].name")).asText());
+        assertEquals("nTwo", ((TextNode)ctx.read("$.five.jsonArr[0].name")).asText());
     }
 }
