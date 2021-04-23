@@ -24,12 +24,7 @@ import com.jayway.jsonpath.internal.Path;
 import com.jayway.jsonpath.internal.PathRef;
 import com.jayway.jsonpath.spi.json.JsonProvider;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 import static com.jayway.jsonpath.internal.Utils.notNull;
 
@@ -68,24 +63,24 @@ public class EvaluationContextImpl implements EvaluationContext {
         return documentEvalCache;
     }
 
-    public boolean forUpdate(){
+    public boolean forUpdate() {
         return forUpdate;
     }
 
     public void addResult(String path, PathRef operation, Object model) {
 
-        if(forUpdate) {
+        if (forUpdate) {
             updateOperations.add(operation);
         }
 
         configuration.jsonProvider().setArrayIndex(valueResult, resultIndex, model);
         configuration.jsonProvider().setArrayIndex(pathResult, resultIndex, path);
         resultIndex++;
-        if(!configuration().getEvaluationListeners().isEmpty()){
+        if (!configuration().getEvaluationListeners().isEmpty()) {
             int idx = resultIndex - 1;
             for (EvaluationListener listener : configuration().getEvaluationListeners()) {
                 EvaluationListener.EvaluationContinuation continuation = listener.resultFound(new FoundResultImpl(idx, path, model));
-                if(EvaluationListener.EvaluationContinuation.ABORT == continuation){
+                if (EvaluationListener.EvaluationContinuation.ABORT == continuation) {
                     throw ABORT_EVALUATION;
                 }
             }
@@ -111,7 +106,7 @@ public class EvaluationContextImpl implements EvaluationContext {
         return rootDocument;
     }
 
-    public Collection<PathRef> updateOperations(){
+    public Collection<PathRef> updateOperations() {
 
         Collections.sort(updateOperations);
 
@@ -129,35 +124,39 @@ public class EvaluationContextImpl implements EvaluationContext {
     @Override
     public <T> T getValue(boolean unwrap) {
         if (path.isDefinite()) {
-            if(resultIndex == 0){
+            if (resultIndex == 0) {
+                if (configuration.getOptions().contains(Option.SUPPRESS_EXCEPTIONS) ||
+                        !configuration.getOptions().contains(Option.REQUIRE_PROPERTIES)) {
+                    return null;
+                }
                 throw new PathNotFoundException("No results for path: " + path.toString());
             }
             int len = jsonProvider().length(valueResult);
-            Object value = (len > 0) ? jsonProvider().getArrayIndex(valueResult, len-1) : null;
-            if (value != null && unwrap){
-              value = jsonProvider().unwrap(value);
+            Object value = (len > 0) ? jsonProvider().getArrayIndex(valueResult, len - 1) : null;
+            if (value != null && unwrap) {
+                value = jsonProvider().unwrap(value);
             }
             return (T) value;
         }
-        return (T)valueResult;
+        return (T) valueResult;
     }
 
     @SuppressWarnings("unchecked")
     @Override
     public <T> T getPath() {
-        if(resultIndex == 0){
+        if (resultIndex == 0) {
             throw new PathNotFoundException("No results for path: " + path.toString());
         }
-        return (T)pathResult;
+        return (T) pathResult;
     }
 
     @Override
     public List<String> getPathList() {
         List<String> res = new ArrayList<String>();
-        if(resultIndex > 0){
+        if (resultIndex > 0) {
             Iterable<?> objects = configuration.jsonProvider().toIterable(pathResult);
             for (Object o : objects) {
-                res.add((String)o);
+                res.add((String) o);
             }
         }
         return res;
