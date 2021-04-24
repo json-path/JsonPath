@@ -25,6 +25,7 @@ import com.jayway.jsonpath.ReadContext;
 import com.jayway.jsonpath.TypeRef;
 import com.jayway.jsonpath.spi.cache.Cache;
 import com.jayway.jsonpath.spi.cache.CacheProvider;
+import com.jayway.jsonpath.spi.json.JsonProvider;
 
 import com.fasterxml.jackson.databind.node.ObjectNode;
 
@@ -55,19 +56,26 @@ public class JsonContext implements DocumentContext {
         this.configuration = configuration;
         //CS304 Issue link: https://github.com/json-path/JsonPath/issues/656
         Set<Object> set = new HashSet<>();
-        Collection<String> properties = configuration.jsonProvider().getPropertyKeys(json);
-        for (String property : properties) {
-            Object propertyModel = configuration.jsonProvider().getMapValue(json,property);
-            if(!set.contains(propertyModel)){
-                set.add(propertyModel);
-            }else{
-                ObjectNode obj_cast = (ObjectNode) propertyModel;
-                ObjectNode newobj = obj_cast.deepCopy();
-                ObjectNode objects_cast = (ObjectNode) json;
-                objects_cast.replace(property,newobj);
+        if (json instanceof ObjectNode){
+            Collection<String> properties = configuration.jsonProvider().getPropertyKeys(json);
+            for (String property : properties) {
+                Object propertyModel = configuration.jsonProvider().getMapValue(json, property);
+                if (!set.contains(propertyModel)) {
+                    set.add(propertyModel);
+                } else {
+                    if(propertyModel instanceof ObjectNode){
+                        ObjectNode obj_cast = (ObjectNode) propertyModel;
+                        ObjectNode newobj = obj_cast.deepCopy();
+                        ObjectNode objects_cast = (ObjectNode) json;
+                        objects_cast.replace(property, newobj);
+                    }
+
+                }
             }
+            this.json = json;
+        } else {
+            this.json = json;
         }
-        this.json = json;
     }
 
 
