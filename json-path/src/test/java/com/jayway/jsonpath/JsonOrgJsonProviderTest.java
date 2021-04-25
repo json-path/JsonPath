@@ -87,4 +87,14 @@ public class JsonOrgJsonProviderTest extends BaseTest {
         Object result = JsonPath.using(config).parse(json).read("$..foo");
         assertThat(result.toString()).isEqualTo("[\"bar\"]");
     }
+
+    @Test
+    public void Issue497_2() {
+        String json = "{\"foo\": \"bar\", \"emptyObject\": {\"emptyList\":[]},\"emptyList\":[]}";
+        Configuration config = Configuration.defaultConfiguration()
+                .jsonProvider(new JsonOrgJsonProvider())
+                .mappingProvider(new JsonOrgMappingProvider());
+        Object result = JsonPath.using(config).parse(json).read("$..foo");
+        assertThat(result.toString()).isEqualTo("[\"bar\"]");
+    }
 }
