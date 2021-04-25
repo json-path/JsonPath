@@ -1,5 +1,7 @@
 package com.jayway.jsonpath.internal.filter;
 
+import java.time.OffsetDateTime;
+import java.util.Date;
 import java.util.regex.Pattern;
 
 import com.jayway.jsonpath.InvalidPathException;
@@ -102,6 +104,16 @@ public abstract class ValueNode {
         throw new InvalidPathException("Expected class node");
     }
 
+    //workaround for issue: https://github.com/json-path/JsonPath/issues/613
+    public boolean isOffsetDateTimeNode(){
+        return false;
+    }
+
+    public OffsetDateTimeNode asOffsetDateTimeNode(){
+        throw new InvalidPathException("Expected json node");
+    }
+
+
     private static boolean isPath(Object o) {
         if(o == null || !(o instanceof String)){
             return false;
@@ -151,6 +163,7 @@ public abstract class ValueNode {
     //
     //----------------------------------------------------
     public static ValueNode toValueNode(Object o){
+
         if(o == null) return NULL_NODE;
         if(o instanceof ValueNode) return (ValueNode)o;
         if(o instanceof Class) return createClassNode((Class)o);
@@ -161,7 +174,9 @@ public abstract class ValueNode {
         else if(o instanceof Number) return createNumberNode(o.toString());
         else if(o instanceof Boolean) return createBooleanNode(o.toString());
         else if(o instanceof Pattern) return createPatternNode((Pattern)o);
+        else if (o instanceof OffsetDateTime) return createOffsetDateTimeNode(o.toString());  //workaround for issue: https://github.com/json-path/JsonPath/issues/613
         else throw new JsonPathException("Could not determine value type");
+
     }
 
     public static StringNode createStringNode(CharSequence charSequence, boolean escape){
@@ -200,6 +215,12 @@ public abstract class ValueNode {
         return new PatternNode(pattern);
     }
 
+    //workaround for issue: https://github.com/json-path/JsonPath/issues/613
+    public static OffsetDateTimeNode createOffsetDateTimeNode(CharSequence charSequence){
+        return new OffsetDateTimeNode(charSequence);
+    }
+
+
     public static UndefinedNode createUndefinedNode() {
         return UNDEFINED;
     }
@@ -211,6 +232,7 @@ public abstract class ValueNode {
     public static ValueNode createPathNode(Path path) {
         return new PathNode(path);
     }
+
 
 }
 

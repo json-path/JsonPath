@@ -1,12 +1,8 @@
 package com.jayway.jsonpath.internal.filter;
 
 import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
+import java.time.OffsetDateTime;
+import java.util.*;
 import java.util.regex.Pattern;
 
 import com.jayway.jsonpath.Configuration;
@@ -333,6 +329,58 @@ public interface ValueNodes {
         }
     }
 
+    //workaround for issue: https://github.com/json-path/JsonPath/issues/613
+    class OffsetDateTimeNode extends ValueNode {
+
+        private final OffsetDateTime dateTime;
+
+
+        OffsetDateTimeNode(OffsetDateTime dateTime) {
+            this.dateTime = dateTime;
+        }
+
+        OffsetDateTimeNode(CharSequence date) {
+            dateTime = OffsetDateTime.parse(date);
+        }
+
+        @Override
+        public StringNode asStringNode() {
+            return new StringNode(dateTime.toString(), false);
+        }
+
+        public OffsetDateTime getDate() {
+            return dateTime;
+        }
+
+        @Override
+        public Class<?> type(Predicate.PredicateContext ctx) {
+            return OffsetDateTimeNode.class;
+        }
+
+        public boolean isOffsetDateTimeNode() {
+            return true;
+        }
+
+        public OffsetDateTimeNode asOffsetDateTimeNode() {
+            return this;
+        }
+
+        @Override
+        public String toString() {
+            return dateTime.toString();
+        }
+
+        @Override
+        public boolean equals(Object o) {
+            if (this == o) return true;
+            if (!(o instanceof OffsetDateTimeNode) && !(o instanceof StringNode)) return false;
+            OffsetDateTimeNode that = ((ValueNode)o).asOffsetDateTimeNode();
+            return dateTime.compareTo(that.dateTime) == 0;
+        }
+    }
+
+
+
     class BooleanNode extends ValueNode {
         private final Boolean value;
 
@@ -372,6 +420,10 @@ public interface ValueNodes {
             return !(value != null ? !value.equals(that.value) : that.value != null);
         }
     }
+
+
+
+
 
     class ClassNode extends ValueNode {
         private final Class clazz;
@@ -646,16 +698,15 @@ public interface ValueNodes {
                     if (res instanceof Number) return ValueNode.createNumberNode(res.toString());
                     else if (res instanceof String) return ValueNode.createStringNode(res.toString(), false);
                     else if (res instanceof Boolean) return ValueNode.createBooleanNode(res.toString());
+                    else if (res instanceof OffsetDateTime) return ValueNode.createOffsetDateTimeNode(res.toString()); //workaround for issue: https://github.com/json-path/JsonPath/issues/613
                     else if (res == null) return NULL_NODE;
                     else if (ctx.configuration().jsonProvider().isArray(res)) return ValueNode.createJsonNode(ctx.configuration().mappingProvider().map(res, List.class, ctx.configuration()));
                     else if (ctx.configuration().jsonProvider().isMap(res)) return ValueNode.createJsonNode(ctx.configuration().mappingProvider().map(res, Map.class, ctx.configuration()));
-                    else throw new JsonPathException("Could not convert " + res.toString() + " to a ValueNode");
+                    else throw new JsonPathException("Could not convert " + res.getClass().toString()+":"+ res.toString() + " to a ValueNode");
                 } catch (PathNotFoundException e) {
                     return UNDEFINED;
                 }
             }
         }
-
-
     }
 }
