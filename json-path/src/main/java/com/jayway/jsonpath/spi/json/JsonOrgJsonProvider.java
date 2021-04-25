@@ -148,12 +148,16 @@ public class JsonOrgJsonProvider extends AbstractJsonProvider {
         JSONObject jsonObject = toJsonObject(obj);
         List<String> keys = new ArrayList<String>();
         try {
-            for (int i = 0; i < jsonObject.names().length(); i++) {
-                String key = (String) jsonObject.names().get(i);
-                keys.add(key);
+            if(jsonObject.names()==null)
+                return keys;
+            else {
+                for (int i = 0; i < jsonObject.names().length(); i++) {
+                    String key = (String) jsonObject.names().get(i);
+                    keys.add(key);
 
+                }
+                return keys;
             }
-            return keys;
         } catch (JSONException e) {
             throw new JsonPathException(e);
         }
