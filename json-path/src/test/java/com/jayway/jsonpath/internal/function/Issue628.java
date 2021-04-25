@@ -15,7 +15,7 @@ import static org.junit.Assert.assertNull;
 public class Issue628 {
 
     @Test
-    public void empty_property_returns_null_when_configured() {
+    public void testEmptyConfiguration() {
         String document = "{}";
         Configuration config = Configuration.builder().options(Option.SUPPRESS_EXCEPTIONS).build();
         String nonExistentPath = "$.doesNotExist";
@@ -24,7 +24,7 @@ public class Issue628 {
     }
 
     @Test
-    public void empty_array_can_be_filtered(){
+    public void testReadingEmptyMapWithFilter(){
         Map<String, Object> doc = new HashMap<String, Object>();
 
         Predicate customFilter = new Predicate() {
