@@ -57,7 +57,7 @@ public class Length implements PathFunction {
                     while (null != tail && null != tail.getNext()) {
                         tail = tail.getNext();
                     }
-                    if (null != tail) {
+                    if (ctx.configuration().jsonProvider().isMap(model) && null != tail) {
                         tail.setNext(new WildcardPathToken());
                     }
                 }
