@@ -254,4 +254,14 @@ public class Configuration {
         MappingProvider mappingProvider();
 
     }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Configuration that = (Configuration) o;
+        return jsonProvider.getClass() == that.jsonProvider.getClass() &&
+                mappingProvider.getClass() == that.mappingProvider.getClass() &&
+                Objects.equals(options, that.options);
+    }
 }
