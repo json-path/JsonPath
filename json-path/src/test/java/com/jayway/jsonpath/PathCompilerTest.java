@@ -323,4 +323,13 @@ public class PathCompilerTest {
     public void property_must_be_separated_by_commas() {
         compile("$['aaa'}'bbb']");
     }
+
+    @Test
+    // https://github.com/jayway/JsonPath/issues/677
+    public void scientificNotationTest(){
+        String asbsad="{ \"Product\": \"LAMOTRIGINE\", \"nrx_quantity\": 5.41422482E8, \"nrx_quantity_pct\": 100 }";
+        List<String> result = JsonPath.read(asbsad, "$..*");
+        Assert.assertEquals(result.get(1),5.41422482E8);
+        Assertions.assertThat(result.toString()).isEqualTo("[\"LAMOTRIGINE\",5.41422482E8,100]");
+    }
 }
