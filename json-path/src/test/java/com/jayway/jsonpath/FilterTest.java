@@ -558,4 +558,19 @@ public class FilterTest extends BaseTest {
         List list = JsonPath.read(JSON_DOCUMENT, "$.store.book[?(@.category in ['reference', 'fiction'])]");
         assertThat(list).hasSize(4);
     }
+
+    @Test
+    // https://github.com/jayway/JsonPath/issues/692
+    public void testFilterWithAndCondition() {
+        //String simpleJson = "{ \"a\":\"bcd\" }";
+        //ReadContext context = JsonPath.parse(simpleJson);
+        Filter filter1 = Filter.parse("[?((($.a == 'bcd') && ($.a =~ /b.*/)))]");   // Valid according to the issue;
+        Filter filter2 = Filter.parse("[?((($.a =~ /b.*/) && ($.a =~ /b.*/)))]");   // Invalid.
+        Filter filter3 = Filter.parse("[?((($.a == 'bcd') && ($.a == 'bcd')))]");
+        Filter filter4 = Filter.parse("[?((($.a =~ /b.*/) && ($.a == 'bcd')))]");
+        Filter filter5 = Filter.parse("[?((($.a == 'bcd') || ($.a =~ /b.*/)))]");
+        Filter filter6 = Filter.parse("[?((($.a =~ /b.*/) || ($.a =~ /b.*/)))]");
+        Filter filter7 = Filter.parse("[?((($.a == 'bcd') || ($.a == 'bcd')))]");
+        Filter filter8 = Filter.parse("[?((($.a =~ /b.*/) || ($.a == 'bcd')))]");
+    }
 }
