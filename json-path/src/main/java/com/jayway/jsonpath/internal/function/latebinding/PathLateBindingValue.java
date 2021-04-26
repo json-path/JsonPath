@@ -28,12 +28,14 @@ import java.util.Objects;
  */
 public class PathLateBindingValue implements ILateBindingValue {
     private final Path path;
-    private final Object rootDocument;
+    private final String rootDocument;
     private final Configuration configuration;
+    private final Object result;
     public PathLateBindingValue(final Path path, final Object rootDocument, final Configuration configuration) {
         this.path = path;
-        this.rootDocument = rootDocument;
+        this.rootDocument = rootDocument.toString();
         this.configuration = configuration;
+        this.result = path.evaluate(rootDocument, rootDocument, configuration).getValue();
     }
 
     /**
@@ -41,7 +43,7 @@ public class PathLateBindingValue implements ILateBindingValue {
      * @return the late value
      */
     public Object get() {
-        return path.evaluate(rootDocument, rootDocument, configuration).getValue();
+        return result;
     }
 
     @Override
