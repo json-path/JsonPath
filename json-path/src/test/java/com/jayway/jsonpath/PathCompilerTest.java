@@ -3,6 +3,7 @@ package com.jayway.jsonpath;
 import com.jayway.jsonpath.internal.ParseContextImpl;
 import org.junit.Ignore;
 import org.junit.Test;
+import org.junit.Assert;
 
 import java.util.List;
 
@@ -330,6 +331,6 @@ public class PathCompilerTest {
         String asbsad="{ \"Product\": \"LAMOTRIGINE\", \"nrx_quantity\": 5.41422482E8, \"nrx_quantity_pct\": 100 }";
         List<String> result = JsonPath.read(asbsad, "$..*");
         Assert.assertEquals(result.get(1),5.41422482E8);
-        Assertions.assertThat(result.toString()).isEqualTo("[\"LAMOTRIGINE\",5.41422482E8,100]");
+        assertThat(result.toString()).isEqualTo("[\"LAMOTRIGINE\",5.41422482E8,100]");
     }
 }
