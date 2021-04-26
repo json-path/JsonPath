@@ -35,11 +35,11 @@ public class Issue680 {
 
     @Test
     public void testIssue680concat_2() {
-        Map<String, String> context = new HashMap<>();
+        Map<String, String> context = new HashMap<String, String>();
         context.put("key", "first");
         Object value = JsonPath.read(context, "concat(\"/\", $.key)");
         assertThat(value).isEqualTo("/first");
-        Map<String, String> context2 = new HashMap<>();
+        Map<String, String> context2 = new HashMap<String, String>();
         context2.put("key", "second");
         value = JsonPath.read(context2, "concat(\"/\", $.key)");
         assertThat(value).isEqualTo("/second");
