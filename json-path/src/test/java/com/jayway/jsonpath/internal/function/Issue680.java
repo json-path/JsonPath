@@ -6,6 +6,9 @@ import com.jayway.jsonpath.spi.json.JsonSmartJsonProvider;
 import com.jayway.jsonpath.spi.mapper.JsonSmartMappingProvider;
 import org.junit.Test;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import static org.assertj.core.api.Assertions.assertThat;
 
 public class Issue680 {
@@ -28,5 +31,17 @@ public class Issue680 {
         json = "{ \"key\": 2}";
         value = JsonPath.read(json, "min($.key)");
         assertThat(value).isEqualTo(2d);
+    }
+
+    @Test
+    public void testIssue680concat_2() {
+        Map<String, String> context = new HashMap<>();
+        context.put("key", "first");
+        Object value = JsonPath.read(context, "concat(\"/\", $.key)");
+        assertThat(value).isEqualTo("/first");
+        Map<String, String> context2 = new HashMap<>();
+        context2.put("key", "second");
+        value = JsonPath.read(context2, "concat(\"/\", $.key)");
+        assertThat(value).isEqualTo("/second");
     }
 }
