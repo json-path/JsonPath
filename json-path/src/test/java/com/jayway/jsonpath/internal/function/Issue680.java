@@ -16,10 +16,10 @@ public class Issue680 {
     @Test
     public void testIssue680concat() {
         String json = "{ \"key\": \"first\"}";
-        Object value = JsonPath.read(json, "concat(\"/\", $.key, $.key)");
+        Object value = JsonPath.read(json, "concat(\"/\", $.key)");
         assertThat(value).isEqualTo("/first");
         json = "{ \"key\": \"second\"}";
-        value = JsonPath.read(json, "concat(\"/\", $.key, $.key)");
+        value = JsonPath.read(json, "concat(\"/\", $.key)");
         assertThat(value).isEqualTo("/second");
     }
 

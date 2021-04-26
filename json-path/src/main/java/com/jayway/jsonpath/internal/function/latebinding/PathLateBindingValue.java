@@ -30,12 +30,10 @@ public class PathLateBindingValue implements ILateBindingValue {
     private final Path path;
     private final Object rootDocument;
     private final Configuration configuration;
-    private Object result;
     public PathLateBindingValue(final Path path, final Object rootDocument, final Configuration configuration) {
         this.path = path;
         this.rootDocument = rootDocument;
         this.configuration = configuration;
-        result = null;
     }
 
     /**
@@ -43,10 +41,7 @@ public class PathLateBindingValue implements ILateBindingValue {
      * @return the late value
      */
     public Object get() {
-        if(result==null) {
-            this.result = path.evaluate(rootDocument, rootDocument, configuration).getValue();
-        }
-        return result;
+        return path.evaluate(rootDocument, rootDocument, configuration).getValue();
     }
 
     @Override
@@ -55,7 +50,7 @@ public class PathLateBindingValue implements ILateBindingValue {
         if (o == null || getClass() != o.getClass()) return false;
         PathLateBindingValue that = (PathLateBindingValue) o;
         return Objects.equals(path, that.path) &&
-                Objects.equals(rootDocument, that.rootDocument) &&
+                rootDocument.equals(that.rootDocument) &&
                 Objects.equals(configuration, that.configuration);
     }
 }
