@@ -60,14 +60,14 @@ public class CompiledPath implements Path {
      *      A function with the scanner as input, or if this situation doesn't exist just the input path
      */
     private RootPathToken invertScannerFunctionRelationship(final RootPathToken path) {
-        if (path.isFunctionPath() && path.next() instanceof ScanPathToken) {
+        if (path.isFunctionPath()) {
             PathToken token = path;
             PathToken prior = null;
             while (null != (token = token.next()) && !(token instanceof FunctionPathToken)) {
                 prior = token;
             }
             // Invert the relationship $..path.function() to $.function($..path)
-            if (token instanceof FunctionPathToken) {
+            if (path.next() instanceof ScanPathToken || (prior instanceof PredicatePathToken && prior.toString().equals("[?].length()") && token != null)) {
                 prior.setNext(null);
                 path.setTail(prior);
 
