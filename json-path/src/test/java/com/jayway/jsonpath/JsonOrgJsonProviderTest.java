@@ -69,6 +69,14 @@ public class JsonOrgJsonProviderTest extends BaseTest {
     }
 
     @Test
+    public void read_book_length_using_translated_query_with_filter() {
+        Object result = using(Configuration.defaultConfiguration())
+                .parse(JSON_BOOK_STORE_DOCUMENT)
+                .read("$..[?(@.category == \"fiction\")].length()");
+        assertThat(result).isEqualTo(3);
+    }
+
+    @Test
     public void read_book_length() {
         Object result = using(Configuration.defaultConfiguration())
                 .parse(JSON_BOOK_STORE_DOCUMENT)
@@ -76,4 +84,114 @@ public class JsonOrgJsonProviderTest extends BaseTest {
         assertThat(result).isEqualTo(4);
     }
 
+    @Test
+    public void test(){
+        String json = "[\n" +
+                "    {\n" +
+                "        \"author\": \"Nigel Rees\",\n" +
+                "        \"category\": \"reference\",\n" +
+                "        \"price\": 8.95,\n" +
+                "        \"title\": \"Sayings of the Century\"\n" +
+                "    },\n" +
+                "    {\n" +
+                "        \"author\": \"Evelyn Waugh\",\n" +
+                "        \"category\": \"fiction\",\n" +
+                "        \"price\": 12.99,\n" +
+                "        \"title\": \"Sword of Honour\"\n" +
+                "    },\n" +
+                "    {\n" +
+                "        \"author\": \"Herman Melville\",\n" +
+                "        \"category\": \"fiction\",\n" +
+                "        \"isbn\": \"0-553-21311-3\",\n" +
+                "        \"price\": 8.99,\n" +
+                "        \"title\": \"Moby Dick\"\n" +
+                "    },\n" +
+                "    {\n" +
+                "        \"author\": \"J. R. R. Tolkien\",\n" +
+                "        \"category\": \"fiction\",\n" +
+                "        \"isbn\": \"0-395-19395-8\",\n" +
+                "        \"price\": 22.99,\n" +
+                "        \"title\": \"The Lord of the Rings\"\n" +
+                "    }\n" +
+                "]";
+        Object result = JsonPath.read(json,"$..[?(@.price < 10)].length()");
+        assertThat(result).isEqualTo(2);
+    }
+
+    @Test
+    public void test2(){
+        String json = "[\n" +
+                "    {\n" +
+                "        \"author\": \"Nigel Rees\",\n" +
+                "        \"category\": \"reference\",\n" +
+                "        \"price\": 8.95,\n" +
+                "        \"title\": \"Sayings of the Century\"\n" +
+                "    },\n" +
+                "    {\n" +
+                "        \"author\": \"Evelyn Waugh\",\n" +
+                "        \"category\": \"fiction\",\n" +
+                "        \"price\": 12.99,\n" +
+                "        \"title\": \"Sword of Honour\"\n" +
+                "    },\n" +
+                "    {\n" +
+                "        \"author\": \"Herman Melville\",\n" +
+                "        \"category\": \"fiction\",\n" +
+                "        \"isbn\": \"0-553-21311-3\",\n" +
+                "        \"price\": 8.99,\n" +
+                "        \"title\": \"Moby Dick\"\n" +
+                "    },\n" +
+                "    {\n" +
+                "        \"author\": \"J. R. R. Tolkien\",\n" +
+                "        \"category\": \"fiction\",\n" +
+                "        \"isbn\": \"0-395-19395-8\",\n" +
+                "        \"price\": 22.99,\n" +
+                "        \"title\": \"The Lord of the Rings\"\n" +
+                "    }\n" +
+                "]";
+        Object result = JsonPath.read(json,"$..[?(@.price == 22.99)].length()");
+        assertThat(result).isEqualTo(1);
+    }
+	
+    @Test
+    public void test_issue_562() {
+        String json = "{\n" +
+                "    \"store\": {\n" +
+                "        \"book\": [\n" +
+                "            {\n" +
+                "                \"category\": \"reference\",\n" +
+                "                \"author\": \"Nigel Rees\",\n" +
+                "                \"title\": \"Sayings of the Century\",\n" +
+                "                \"price\": 8.95\n" +
+                "            },\n" +
+                "            {\n" +
+                "                \"category\": \"fiction\",\n" +
+                "                \"author\": \"Evelyn Waugh\",\n" +
+                "                \"title\": \"Sword of Honour\",\n" +
+                "                \"price\": 12.99\n" +
+                "            },\n" +
+                "            {\n" +
+                "                \"category\": \"fiction\",\n" +
+                "                \"author\": \"Herman Melville\",\n" +
+                "                \"title\": \"Moby Dick\",\n" +
+                "                \"isbn\": \"0-553-21311-3\",\n" +
+                "                \"price\": 8.99\n" +
+                "            },\n" +
+                "            {\n" +
+                "                \"category\": \"fiction\",\n" +
+                "                \"author\": \"J. R. R. Tolkien\",\n" +
+                "                \"title\": \"The Lord of the Rings\",\n" +
+                "                \"isbn\": \"0-395-19395-8\",\n" +
+                "                \"price\": 22.99\n" +
+                "            }\n" +
+                "        ],\n" +
+                "        \"bicycle\": {\n" +
+                "            \"color\": \"red\",\n" +
+                "            \"price\": 19.95\n" +
+                "        }\n" +
+                "    },\n" +
+                "    \"expensive\": 10\n" +
+                "}\n";
+        Object result = JsonPath.read(json,"$.store.book[?(@.price>10)].length()");
+        assertThat(result).isEqualTo(2);
+    }
 }
