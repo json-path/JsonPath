@@ -1,6 +1,7 @@
 package com.jayway.jsonpath.old;
 
 import com.fasterxml.jackson.databind.node.ObjectNode;
+import com.fasterxml.jackson.databind.node.TextNode;
 import com.google.gson.JsonObject;
 import com.jayway.jsonpath.BaseTest;
 import com.jayway.jsonpath.Configuration;
@@ -1021,7 +1022,7 @@ public class IssuesTest extends BaseTest {
         assertThat((String)doc.read("$.jsonArr[0].name")).isEqualTo("nOne");
         assertThat((String)doc.read("$.jsonArr[1].name")).isEqualTo("Jayway");
     }
-    
+
     @Test
     public void issue_378(){
 
@@ -1039,12 +1040,162 @@ public class IssuesTest extends BaseTest {
             .jsonProvider(new JacksonJsonNodeJsonProvider())
             .mappingProvider(new JacksonMappingProvider())
             .build();
-        
+
         DocumentContext ctx = JsonPath.using(configuration).parse(json);
 
         String path = "$.nodes[*][?(!([\"1.2.3.4\"] subsetof @.ntpServers))].ntpServers";
         JsonPath jsonPath = JsonPath.compile(path);
 
         ctx.read(jsonPath);
+    }
+
+    //CS304 (manually written) Issue link: https://github.com/json-path/JsonPath/issues/620
+    @Test
+    public void issue_620_1(){
+        String json = "{\n" +
+                "  \"complexText\": {\n" +
+                "    \"nestedFields\": [\n" +
+                "      {\n" +
+                "        \"index\": \"0\",\n" +
+                "        \"name\": \"A\"\n" +
+                "      },\n" +
+                "      {\n" +
+                "        \"index\": \"1\",\n" +
+                "        \"name\": \"B\"\n" +
+                "      },\n" +
+                "      {\n" +
+                "        \"index\": \"2\",\n" +
+                "        \"name\": \"C\"\n" +
+                "      }\n" +
+                "    ]\n" +
+                "  }\n" +
+                "}";
+
+        String path1 = "$.concat($.complexText.nestedFields[?(@.index == '2')].name," +
+                "$.complexText.nestedFields[?(@.index == '1')].name," +
+                "$.complexText.nestedFields[?(@.index == '0')].name)";
+        String path2 = "$.concat($.complexText.nestedFields[2].name," +
+                "$.complexText.nestedFields[1].name," +
+                "$.complexText.nestedFields[0].name)";
+
+        assertThat((String)JsonPath.read(json,path1)).isEqualTo("CBA");
+        assertThat((String)JsonPath.read(json,path2)).isEqualTo("CBA");
+    }
+    //CS304 (manually written) Issue link: https://github.com/json-path/JsonPath/issues/620
+    @Test
+    public void issue_620_2(){
+        String json = "{\n" +
+                "  \"complexText\": {\n" +
+                "    \"nestedFields\": [\n" +
+                "      {\n" +
+                "        \"index\": \"0\",\n" +
+                "        \"name\": \"A\"\n" +
+                "      },\n" +
+                "      {\n" +
+                "        \"index\": \"1\",\n" +
+                "        \"name\": \"B\"\n" +
+                "      },\n" +
+                "      {\n" +
+                "        \"index\": \"2\",\n" +
+                "        \"name\": \"C\"\n" +
+                "      }\n" +
+                "    ]\n" +
+                "  }\n" +
+                "}";
+
+        String path1 = "$.concat($.complexText.nestedFields[?(@.index == '2')].name," +
+                "$.complexText.nestedFields[?((@.index == '1')].name," +
+                "$.complexText.nestedFields[?(@.index == '0')].name)";
+
+        boolean thrown = false;
+
+        try {
+            Object result = (Object) JsonPath.read(json,path1);
+        } catch (Exception e) {
+            thrown = true;
+        }
+
+        assertTrue(thrown);
+    }
+    //CS304 (manually written) Issue link: https://github.com/json-path/JsonPath/issues/656
+    @Test
+    public void issue_656_1(){
+        String json = "{\n" +
+                "\"jsonArr\": [\n" +
+                "   {\n" +
+                "       \"name\":\"nOne\"\n" +
+                "   },\n" +
+                "   {\n" +
+                "       \"name\":\"nTwo\"\n" +
+                "   },\n" +
+                "  {\n" +
+                "    \"name\":\"nThree\"\n" +
+                "  }\n" +
+                "   ]\n" +
+                "}";
+
+        Configuration configuration = Configuration.builder()
+                .jsonProvider(new JacksonJsonNodeJsonProvider())
+                .mappingProvider(new JacksonMappingProvider())
+                .build();
+
+        ObjectNode obj = (ObjectNode) configuration.jsonProvider().parse(json);
+        ObjectNode newObj = (ObjectNode) configuration.jsonProvider().createMap();
+        newObj.set("one", obj);
+        newObj.set("two", obj);
+
+        DocumentContext ctx = JsonPath.parse(newObj, configuration);
+
+        String path = "$..jsonArr[?(@.name == 'nOne')]";
+        JsonPath jsonPath = JsonPath.compile(path);
+        ctx.delete(jsonPath);
+
+        assertEquals("nTwo", ((TextNode)ctx.read("$.one.jsonArr[0].name")).asText());
+        assertEquals("nThree", ((TextNode)ctx.read("$.one.jsonArr[1].name")).asText());
+        assertEquals("nTwo", ((TextNode)ctx.read("$.two.jsonArr[0].name")).asText());
+        assertEquals("nThree", ((TextNode)ctx.read("$.two.jsonArr[1].name")).asText());
+    }
+    //CS304 (manually written) Issue link: https://github.com/json-path/JsonPath/issues/656
+    @Test
+    public void issue_656_2(){
+        String json = "{\n" +
+                "\"jsonArr\": [\n" +
+                "   {\n" +
+                "       \"name\":\"nOne\"\n" +
+                "   },\n" +
+                "   {\n" +
+                "       \"name\":\"nTwo\"\n" +
+                "   },\n" +
+                "  {\n" +
+                "    \"name\":\"nThree\"\n" +
+                "  }\n" +
+                "   ]\n" +
+                "}";
+
+        Configuration configuration = Configuration.builder()
+                .jsonProvider(new JacksonJsonNodeJsonProvider())
+                .mappingProvider(new JacksonMappingProvider())
+                .build();
+
+        ObjectNode obj = (ObjectNode) configuration.jsonProvider().parse(json);
+        ObjectNode obj1 = (ObjectNode) configuration.jsonProvider().parse(json);
+        ObjectNode newObj = (ObjectNode) configuration.jsonProvider().createMap();
+        newObj.set("one", obj);
+        newObj.set("three", obj);
+        newObj.set("two", obj1);
+        newObj.set("four", obj1);
+        newObj.set("five",obj1);
+
+        DocumentContext ctx = JsonPath.parse(newObj, configuration);
+
+        String path = "$..jsonArr[?(@.name == 'nOne')]";
+        JsonPath jsonPath = JsonPath.compile(path);
+        ctx.delete(jsonPath);
+
+        assertEquals("nTwo", ((TextNode)ctx.read("$.one.jsonArr[0].name")).asText());
+        assertEquals("nTwo", ((TextNode)ctx.read("$.two.jsonArr[0].name")).asText());
+        assertEquals("nTwo", ((TextNode)ctx.read("$.three.jsonArr[0].name")).asText());
+        assertEquals("nTwo", ((TextNode)ctx.read("$.four.jsonArr[0].name")).asText());
+        assertEquals("nTwo", ((TextNode)ctx.read("$.five.jsonArr[0].name")).asText());
     }
 }
