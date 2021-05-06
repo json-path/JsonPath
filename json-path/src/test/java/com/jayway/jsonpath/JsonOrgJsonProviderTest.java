@@ -79,7 +79,7 @@ public class JsonOrgJsonProviderTest extends BaseTest {
     }
 
     @Test
-    public void Issue497() {
+    public void Test_getPropertyKeys_empty_object() {
         String json = "{\"foo\": \"bar\", \"emptyObject\": {},\"emptyList\":[]}";
         Configuration config = Configuration.defaultConfiguration()
                 .jsonProvider(new JsonOrgJsonProvider())
@@ -89,7 +89,7 @@ public class JsonOrgJsonProviderTest extends BaseTest {
     }
 
     @Test
-    public void Issue497_2() {
+    public void Test_getPropertyKeys_empty_nest_object() {
         String json = "{\"foo\": \"bar\", \"emptyObject\": {\"emptyList\":[]},\"emptyList\":[]}";
         Configuration config = Configuration.defaultConfiguration()
                 .jsonProvider(new JsonOrgJsonProvider())
