@@ -36,6 +36,7 @@ class PropertyPathToken extends PathToken {
         if (properties.isEmpty()) {
             throw new InvalidPathException("Empty properties");
         }
+        setDepth(depth + 1);
         this.properties = properties;
         this.stringDelimiter = Character.toString(stringDelimiter);
     }

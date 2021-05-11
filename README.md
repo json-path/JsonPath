@@ -65,6 +65,7 @@ Operators
 | `$`                       | The root element to query. This starts all path expressions.       |
 | `@`                       | The current node being processed by a filter predicate.            |
 | `*`                       | Wildcard. Available anywhere a name or numeric are required.       |
+| `^`                       | Carrot. Scan parent node.       |
 | `..`                      | Deep scan. Available anywhere a name is required.                  |
 | `.<name>`                 | Dot-notated child                                                  |
 | `['<name>' (, '<name>')]` | Bracket-notated child or children                                  |

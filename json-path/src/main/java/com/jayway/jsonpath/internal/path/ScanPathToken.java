@@ -95,6 +95,8 @@ public class ScanPathToken extends PathToken {
             return new WildcardPathTokenPredicate();
         } else if (target instanceof PredicatePathToken) {
             return new FilterPathTokenPredicate(target, ctx);
+        } else if ( target instanceof CaretPathToken ) {
+            return new CaretPathTokenPredicate();
         } else {
             return FALSE_PREDICATE;
         }
@@ -139,6 +141,14 @@ public class ScanPathToken extends PathToken {
     }
 
     private static final class WildcardPathTokenPredicate implements Predicate {
+
+        @Override
+        public boolean matches(Object model) {
+            return true;
+        }
+    }
+
+    private static final class CaretPathTokenPredicate implements Predicate {
 
         @Override
         public boolean matches(Object model) {
