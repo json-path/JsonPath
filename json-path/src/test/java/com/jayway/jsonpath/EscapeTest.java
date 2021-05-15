@@ -42,18 +42,5 @@ public class EscapeTest extends BaseTest {
 
     }
     
-    @Test
-    public void Test_Escape_character1() {
-        String JSON="{\"\\data\": \"a \\ b\"}";
-        assertThat((String)(((JsonPath.parse(JSON)
-                .read("$.\\data"))))).isEqualTo("a \\ b");
-
-    }
-
-    @Test
-    public void Test_Escape_character2() {
-        String JSON="{\"a\": [{\"data\"  : \"a \\ b\"}]}";
-        assertThat((String)(((net.minidev.json.JSONArray)(JsonPath.parse(JSON)
-                .read("$.a[*].data"))).get(0))).isEqualTo("a \\ b");
-    }
+    
 }
