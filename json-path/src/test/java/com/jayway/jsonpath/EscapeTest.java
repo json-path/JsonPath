@@ -41,6 +41,4 @@ public class EscapeTest extends BaseTest {
         assertThat(resAsString).contains("https://a/b/1");
 
     }
-    
-    
 }
