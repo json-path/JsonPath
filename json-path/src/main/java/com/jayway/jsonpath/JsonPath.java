@@ -592,6 +592,7 @@ public class JsonPath {
      * @return a read context
      */
     public static DocumentContext parse(String json) {
+        json=json.replace("\\", "\\\\");
         return new ParseContextImpl().parse(json);
     }
 
