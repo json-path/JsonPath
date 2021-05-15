@@ -1,4 +1,4 @@
-Jayway JsonPath
+Jayway JsonPath 
 =====================
 
 **A Java DSL for reading JSON documents.**
