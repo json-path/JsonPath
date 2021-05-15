@@ -29,7 +29,7 @@ public class JsonAsserterImpl implements JsonAsserter {
     @SuppressWarnings("unchecked")
     public <T> JsonAsserter assertThat(String path, Matcher<T> matcher) {
         T obj = null;
-        
+        path=path.replace("\\", "\\\\");
         try {
             obj = JsonPath.<T>read(jsonObject, path);
         } catch (Exception e) {
