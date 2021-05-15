@@ -593,7 +593,7 @@ public class JsonPath {
      */
     public static DocumentContext parse(String json) {
       
-        return new ParseContextImpl().parse(json.replace("\\", "\\\\"););
+        return new ParseContextImpl().parse(json.replace("\\", "\\\\"));
     }
 
     /**
