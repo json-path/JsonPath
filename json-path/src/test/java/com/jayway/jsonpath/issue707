@@ -12,7 +12,7 @@ import static com.jayway.jsonpath.Filter.filter;
 import static org.assertj.core.api.Assertions.assertThat;
 
 //test for issue: https://github.com/json-path/JsonPath/issues/707
-public class issue_613 extends BaseTest{
+public class issue707 extends BaseTest{
 @Test
     public void Test_Escape_character1() {
         String JSON="{\"\\data\": \"a \\ b\"}";
