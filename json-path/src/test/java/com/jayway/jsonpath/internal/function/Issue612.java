@@ -24,10 +24,5 @@ public class Issue612 {
         JsonPath query = JsonPath.compile("$.1.2.a.b.c");
         Assert.assertNull(documentContext.read(query));
         Assert.assertNull(documentContext.map(query, (object, configuration) -> object));
-        try {
-            documentContext.map(query, (object, configuration) -> object);
-        } catch (Exception e) {
-            fail("got exception: " + e);
-        }
     }
 }
