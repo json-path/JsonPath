@@ -18,6 +18,7 @@ import java.util.Collections;
 
 import com.jayway.jsonpath.Option;
 import com.jayway.jsonpath.PathNotFoundException;
+import com.jayway.jsonpath.internal.Path;
 import com.jayway.jsonpath.internal.PathRef;
 
 import static java.util.Arrays.asList;
@@ -45,6 +46,12 @@ public class WildcardPathToken extends PathToken {
                         throw p;
                     }
                 }
+            }
+        } else {
+            if (!isLeaf()) {
+                String m = model == null ? "null" : model.getClass().getName();
+                throw new PathNotFoundException(String.format("Expected to find an object or array in path %s " +
+                        "but found '%s'. ", currentPath, m));
             }
         }
     }
