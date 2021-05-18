@@ -5,7 +5,7 @@ description = "Assertions on Json using JsonPath"
 jar {
     baseName 'json-path-assert'
     manifest {
-        attributes 'Implementation-Title': 'json-path-assert', 'Implementation-Version': version
+        attributes 'Implementation-Title': 'json-path-assert', 'Implementation-Version': version, 'Automatic-Module-Name': 'jayway.jsonpath.pathassert'
     }
 }
 
