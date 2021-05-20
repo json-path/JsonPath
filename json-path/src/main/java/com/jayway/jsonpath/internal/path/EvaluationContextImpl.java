@@ -49,7 +49,16 @@ public class EvaluationContextImpl implements EvaluationContext {
     private final HashMap<Path, Object> documentEvalCache = new HashMap<Path, Object>();
     private final boolean forUpdate;
     private int resultIndex = 0;
+    private boolean root = false;
 
+
+    public boolean isRoot() {
+        return root;
+    }
+
+    public void setRoot() {
+        root = true;
+    }
 
     public EvaluationContextImpl(Path path, Object rootDocument, Configuration configuration, boolean forUpdate) {
         notNull(path, "path can not be null");

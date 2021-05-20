@@ -1,0 +1,75 @@
+{
+  "street": {
+    "store": {
+      "book": [
+        {
+          "category": "reference",
+          "authors": [
+            {
+              "firstName": "Nigel",
+              "lastName": "Rees"
+            },
+            {
+              "firstName": "Evelyn",
+              "lastName": "Waugh"
+            }
+          ],
+          "title": "Sayings of the Century",
+          "price": 8.95
+        },
+        {
+          "category": "fiction",
+          "authors": [
+            {
+              "firstName": "A",
+              "lastName": "B"
+            },
+            {
+              "firstName": "C",
+              "lastName": "D"
+            }
+          ],
+          "title": "Sword of Honour",
+          "price": 12.99
+        },
+        {
+          "category": "fiction",
+          "authors": [
+            {
+              "firstName": "A",
+              "lastName": "D"
+            },
+            {
+              "firstName": "Evelyn",
+              "lastName": "X"
+            }
+          ],
+          "title": "Moby Dick",
+          "isbn": "0-553-21311-3",
+          "price": 8.99
+        },
+        {
+          "category": "fiction",
+          "authors": [
+            {
+              "firstName": "Nigel",
+              "lastName": "Rees"
+            },
+            {
+              "firstName": "Evelyn",
+              "lastName": "X"
+            }
+          ],
+          "title": "The Lord of the Rings",
+          "isbn": "0-395-19395-8",
+          "price": 22.99
+        }
+      ],
+      "bicycle": {
+        "color": "red",
+        "price": 19.95
+      }
+    },
+    "expensive": 10
+  }
+}

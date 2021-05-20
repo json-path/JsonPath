@@ -94,6 +94,11 @@ public class CompiledPath implements Path {
         }
 
         EvaluationContextImpl ctx = new EvaluationContextImpl(this, rootDocument, configuration, forUpdate);
+
+        if (document == rootDocument){
+            ctx.setRoot();
+        }
+
         try {
             PathRef op = ctx.forUpdate() ?  PathRef.createRoot(rootDocument) : PathRef.NO_OP;
             root.evaluate("", op, document, ctx);

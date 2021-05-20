@@ -71,7 +71,9 @@ public class PredicatePathToken extends PathToken {
 
     public boolean accept(final Object obj, final Object root, final Configuration configuration, EvaluationContextImpl evaluationContext) {
         Predicate.PredicateContext ctx = new PredicateContextImpl(obj, root, configuration, evaluationContext.documentEvalCache());
-
+        if (evaluationContext.isRoot()){
+            ((PredicateContextImpl) ctx).setExtractingParentNode();
+        }
         for (Predicate predicate : predicates) {
             try {
                 if (!predicate.apply(ctx)) {
