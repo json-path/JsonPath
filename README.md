@@ -3,7 +3,7 @@ Jayway JsonPath
 
 **A Java DSL for reading JSON documents.**
 
-[![Build Status](https://travis-ci.org/TCrazylion/JsonPath)](https://travis-ci.org/TCrazylion/JsonPath)
+[![Build Status](https://travis-ci.org/TCrazylion/JsonPath.svg?branch=master)](https://travis-ci.org/TCrazylion/JsonPath)
 [![Maven Central](https://maven-badges.herokuapp.com/maven-central/com.jayway.jsonpath/json-path/badge.svg)](https://maven-badges.herokuapp.com/maven-central/com.jayway.jsonpath/json-path)
 [![Javadoc](https://www.javadoc.io/badge/com.jayway.jsonpath/json-path.svg)](http://www.javadoc.io/doc/com.jayway.jsonpath/json-path)
 
