@@ -15,7 +15,7 @@ ext {
             jacksonDatabind: 'com.fasterxml.jackson.core:jackson-databind:2.11.3',
             jettison: 'org.codehaus.jettison:jettison:1.4.1',
             jsonOrg: 'org.json:json:20140107',
-            jsonSmart: 'net.minidev:json-smart:2.4.2',
+            jsonSmart: 'net.minidev:json-smart:2.4.7',
             slf4jApi: 'org.slf4j:slf4j-api:1.7.30',
             tapestryJson: 'org.apache.tapestry:tapestry-json:5.6.1',
 
