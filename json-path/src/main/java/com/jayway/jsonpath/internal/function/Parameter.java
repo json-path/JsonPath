@@ -70,6 +70,10 @@ public class Parameter {
         this.json = json;
     }
 
+    public ILateBindingValue getILateBingValue(){
+        return lateBinding;
+    }
+
     /**
      * Translate the collection of parameters into a collection of values of type T.
      *
