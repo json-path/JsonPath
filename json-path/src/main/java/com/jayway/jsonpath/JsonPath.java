@@ -24,6 +24,8 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
+import java.util.ArrayList;
+import java.util.List;
 
 import static com.jayway.jsonpath.Option.ALWAYS_RETURN_LIST;
 import static com.jayway.jsonpath.Option.AS_PATH_LIST;
@@ -255,11 +257,24 @@ public class JsonPath {
     public <T> T delete(Object jsonObject, Configuration configuration) {
         notNull(jsonObject, "json can not be null");
         notNull(configuration, "configuration can not be null");
-        EvaluationContext evaluationContext = path.evaluate(jsonObject, jsonObject, configuration, true);
-        for (PathRef updateOperation : evaluationContext.updateOperations()) {
-            updateOperation.delete(configuration);
+
+        boolean optSuppressExceptions = configuration.containsOption(Option.SUPPRESS_EXCEPTIONS);
+
+        try {
+            EvaluationContext evaluationContext = path.evaluate(jsonObject, jsonObject, configuration, true);
+            for (PathRef updateOperation : evaluationContext.updateOperations()) {
+                updateOperation.delete(configuration);
+            }
+            return resultByConfiguration(jsonObject, configuration, evaluationContext);
+        } catch (RuntimeException e) {
+            if (!optSuppressExceptions) {
+                throw e;
+            } else {
+                List<String> list = new ArrayList<String>();  // the log messages
+                list.add("delete throws "+e.getMessage());  // TODO
+                return (T) list;
+            }
         }
-        return resultByConfiguration(jsonObject, configuration, evaluationContext);
     }
 
     /**
