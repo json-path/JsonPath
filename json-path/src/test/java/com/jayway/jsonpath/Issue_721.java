@@ -1,4 +1,4 @@
-package com.jayway.jsonpath.old;
+package com.jayway.jsonpath;
 
 import com.jayway.jsonpath.Configuration;
 import com.jayway.jsonpath.DocumentContext;
