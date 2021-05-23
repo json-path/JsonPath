@@ -37,6 +37,7 @@ public class RenameFilter {
         assertNotNull(context.read("$.newName.newName.newName"));
     }
 
+    //https://github.com/json-path/JsonPath/issues/565
     @Test
     public void issue565_2() {
         String json = "{\n" +
@@ -107,6 +108,7 @@ public class RenameFilter {
         assertThat(minPriceViaFilter).isEqualTo(minPriceWildcard);
     }
 
+    //https://github.com/json-path/JsonPath/issues/399
     @Test
     public void issue399_2() {
         String json = "{\n" +
