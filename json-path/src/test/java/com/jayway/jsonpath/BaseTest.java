@@ -5,6 +5,7 @@ import com.jayway.jsonpath.internal.path.PredicateContextImpl;
 import com.jayway.jsonpath.spi.json.GsonJsonProvider;
 import com.jayway.jsonpath.spi.json.JacksonJsonNodeJsonProvider;
 import com.jayway.jsonpath.spi.json.JacksonJsonProvider;
+import com.jayway.jsonpath.spi.json.JakartaJsonProvider;
 import com.jayway.jsonpath.spi.json.JettisonProvider;
 import com.jayway.jsonpath.spi.json.JsonOrgJsonProvider;
 import com.jayway.jsonpath.spi.json.JsonSmartJsonProvider;
@@ -53,11 +54,16 @@ public class BaseTest {
             .mappingProvider(new JsonSmartMappingProvider())
             .jsonProvider(new JsonSmartJsonProvider())
             .build();
-    
+
     public static final Configuration TAPESTRY_JSON_CONFIGURATION = Configuration
         .builder()
         .mappingProvider(new TapestryMappingProvider())
         .jsonProvider(TapestryJsonProvider.INSTANCE)
+        .build();
+
+    public static final Configuration JAKARTA_JSON_CONFIGURATION = Configuration
+        .builder()
+        .jsonProvider(new JakartaJsonProvider())
         .build();
 
     public static final String JSON_BOOK_DOCUMENT =

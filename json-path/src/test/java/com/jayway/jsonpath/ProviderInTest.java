@@ -5,6 +5,7 @@ import com.google.gson.JsonArray;
 import com.jayway.jsonpath.spi.json.GsonJsonProvider;
 import com.jayway.jsonpath.spi.json.JacksonJsonNodeJsonProvider;
 import com.jayway.jsonpath.spi.json.JacksonJsonProvider;
+import com.jayway.jsonpath.spi.json.JakartaJsonProvider;
 import com.jayway.jsonpath.spi.json.JsonOrgJsonProvider;
 import com.jayway.jsonpath.spi.json.JsonSmartJsonProvider;
 import com.jayway.jsonpath.spi.mapper.GsonMappingProvider;
@@ -118,6 +119,24 @@ public class ProviderInTest {
         assertEquals(doubleQuoteInResult, doubleQuoteEqualsResult);
 
         final net.minidev.json.JSONArray singleQuoteInResult = ctx.read(SINGLE_QUOTES_IN_FILTER);
+        assertEquals(doubleQuoteInResult, singleQuoteInResult);
+    }
+
+    @Test
+    public void testJsonPathQuotesJakarta() throws Exception {
+        final Configuration gson = Configuration.builder().jsonProvider(new JakartaJsonProvider()).mappingProvider(new JakartaMappingProvider()).build();
+        final DocumentContext ctx = JsonPath.using(gson).parse(JSON);
+
+        final JsonArray doubleQuoteEqualsResult = ctx.read(DOUBLE_QUOTES_EQUALS_FILTER);
+        assertEquals("bar", doubleQuoteEqualsResult.get(0).getAsString());
+
+        final JsonArray singleQuoteEqualsResult = ctx.read(SINGLE_QUOTES_EQUALS_FILTER);
+        assertEquals(doubleQuoteEqualsResult, singleQuoteEqualsResult);
+
+        final JsonArray doubleQuoteInResult = ctx.read(DOUBLE_QUOTES_IN_FILTER);
+        assertEquals(doubleQuoteInResult, doubleQuoteEqualsResult);
+
+        final JsonArray singleQuoteInResult = ctx.read(SINGLE_QUOTES_IN_FILTER);
         assertEquals(doubleQuoteInResult, singleQuoteInResult);
     }
 }
