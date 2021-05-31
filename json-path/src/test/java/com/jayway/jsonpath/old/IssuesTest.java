@@ -2,14 +2,7 @@ package com.jayway.jsonpath.old;
 
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.google.gson.JsonObject;
-import com.jayway.jsonpath.BaseTest;
-import com.jayway.jsonpath.Configuration;
-import com.jayway.jsonpath.DocumentContext;
-import com.jayway.jsonpath.Filter;
-import com.jayway.jsonpath.InvalidPathException;
-import com.jayway.jsonpath.JsonPath;
-import com.jayway.jsonpath.Option;
-import com.jayway.jsonpath.PathNotFoundException;
+import com.jayway.jsonpath.*;
 import com.jayway.jsonpath.internal.Utils;
 import com.jayway.jsonpath.spi.cache.LRUCache;
 import com.jayway.jsonpath.spi.json.GsonJsonProvider;
@@ -1046,5 +1039,62 @@ public class IssuesTest extends BaseTest {
         JsonPath jsonPath = JsonPath.compile(path);
 
         ctx.read(jsonPath);
+    }
+
+    @Test
+    public void issue_642(){
+
+        String jsonString = "{\n" +
+                "  \"reg\":\"0\",\n" +
+                "  \"ts\":1535108076,\n" +
+                "  \"r\":{\n" +
+                "    \"qd_loop[{news_platform_6}].qd\":[\n" +
+                "      {\n" +
+                "        \"v\":6\n" +
+                "      }\n" +
+                "    ],\n" +
+                "    \"qd_loop[{news_platform_5}].qd\":[\n" +
+                "      {\n" +
+                "        \"v\":5\n" +
+                "      }\n" +
+                "    ],\n" +
+                "    \"qd_loop[{news_platform_8}].qd\":[\n" +
+                "      {\n" +
+                "        \"v\":8\n" +
+                "      }\n" +
+                "    ],\n" +
+                "    \"qd_loop[{news_platform_1}].qd\":[\n" +
+                "      {\n" +
+                "        \"v\":1\n" +
+                "      }\n" +
+                "    ],\n" +
+                "    \"qd_loop[{news_platform_4}].qd\":[\n" +
+                "      {\n" +
+                "        \"v\":4\n" +
+                "      }\n" +
+                "    ],\n" +
+                "    \"qd_loop[{news_platform_7}].qd\":[\n" +
+                "      {\n" +
+                "        \"v\":7\n" +
+                "      }\n" +
+                "    ],\n" +
+                "    \"qd_loop[{news_platform_3}].qd\":[\n" +
+                "      {\n" +
+                "        \"v\":3\n" +
+                "      }\n" +
+                "    ],\n" +
+                "    \"qd_loop[{news_platform_2}].qd\":[\n" +
+                "      {\n" +
+                "        \"v\":2\n" +
+                "      }\n" +
+                "    ]\n" +
+                "  }\n" +
+                "}";
+
+        ReadContext context = JsonPath.parse(jsonString);
+
+        String path = " $['r']['qd_loop[{news_platform_6}].qd']";
+        Object object = context.read(path);
+        assertEquals("[{\"v\":6}]", object.toString());
     }
 }
