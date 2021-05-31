@@ -46,6 +46,11 @@ public class JacksonJsonNodeJsonProvider extends AbstractJsonProvider {
     }
 
     @Override
+    public Object parse(Object object) throws InvalidJsonException {
+        return object instanceof JsonNode ? object : objectMapper.valueToTree(object);
+    }
+
+    @Override
     public Object parse(String json) throws InvalidJsonException {
         try {
             return objectMapper.readTree(json);
