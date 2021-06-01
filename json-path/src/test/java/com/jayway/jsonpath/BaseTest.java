@@ -12,6 +12,7 @@ import com.jayway.jsonpath.spi.json.JsonSmartJsonProvider;
 import com.jayway.jsonpath.spi.json.TapestryJsonProvider;
 import com.jayway.jsonpath.spi.mapper.GsonMappingProvider;
 import com.jayway.jsonpath.spi.mapper.JacksonMappingProvider;
+import com.jayway.jsonpath.spi.mapper.JakartaMappingProvider;
 import com.jayway.jsonpath.spi.mapper.JsonOrgMappingProvider;
 import com.jayway.jsonpath.spi.mapper.JsonSmartMappingProvider;
 import com.jayway.jsonpath.spi.mapper.TapestryMappingProvider;
@@ -63,6 +64,7 @@ public class BaseTest {
 
     public static final Configuration JAKARTA_JSON_CONFIGURATION = Configuration
         .builder()
+        .mappingProvider(new JakartaMappingProvider())
         .jsonProvider(new JakartaJsonProvider())
         .build();
 

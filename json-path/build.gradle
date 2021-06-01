@@ -6,7 +6,7 @@ jar {
     baseName 'json-path'
     bnd (
         'Implementation-Title': 'json-path', 'Implementation-Version': version,
-        'Import-Package': 'org.json.*;resolution:=optional, com.google.gson.*;resolution:=optional, com.fasterxml.jackson.*;resolution:=optional, org.apache.tapestry5.json.*;resolution:=optional, org.codehaus.jettison.*;resolution:=optional, jakarta.json.*;resolution:=optional, org.glassfish.json.*;resolution:=optional, *',
+        'Import-Package': 'org.json.*;resolution:=optional, com.google.gson.*;resolution:=optional, com.fasterxml.jackson.*;resolution:=optional, org.apache.tapestry5.json.*;resolution:=optional, org.codehaus.jettison.*;resolution:=optional, jakarta.json.*;resolution:=optional, org.glassfish.json.*;resolution:=optional, org.eclipse.yasson.*;resolution:=optional, org.apache.johnzon.*;resolution:=optional, *',
         'Export-Package': 'com.jayway.jsonpath,com.jayway.jsonpath.spi,com.jayway.jsonpath.spi.cache,com.jayway.jsonpath.spi.json,com.jayway.jsonpath.spi.mapper'
     )
 }
@@ -20,6 +20,7 @@ dependencies {
     compile libs.tapestryJson, optional
     compile libs.jettison, optional
     compile libs.jakartaJsonP, optional
+    compile libs.jakartaJsonB, optional
 
     testCompile libs.test
 }
@@ -63,6 +64,7 @@ task distZip(type: Zip, dependsOn: assemble) {
     from(project.configurations.compile) {
         into 'lib-optional/jakartaJson'
         include { it.file.name.contains('jakarta.json') }
+    }
 }
 
 task distTar(type: Tar, dependsOn: assemble) {

@@ -5,16 +5,18 @@ import org.junit.Test;
 import jakarta.json.JsonArray;
 import jakarta.json.JsonObject;
 
+import java.util.List;
+import java.util.Map;
+
 import static com.jayway.jsonpath.JsonPath.using;
 import static org.assertj.core.api.Assertions.assertThat;
 
 public class JakartaJsonProviderTest extends BaseTest {
 
-
     @Test
     public void an_object_can_be_read() {
 
-        JsonObject book = using(JSON_ORG_CONFIGURATION).parse(JSON_DOCUMENT).read("$.store.book[0]");
+        JsonObject book = using(JAKARTA_JSON_CONFIGURATION).parse(JSON_DOCUMENT).read("$.store.book[0]");
 
         assertThat(book.get("author").toString()).isEqualTo("Nigel Rees");
     }
@@ -22,7 +24,7 @@ public class JakartaJsonProviderTest extends BaseTest {
     @Test
     public void a_property_can_be_read() {
 
-        String category = using(JSON_ORG_CONFIGURATION).parse(JSON_DOCUMENT).read("$.store.book[0].category");
+        String category = using(JAKARTA_JSON_CONFIGURATION).parse(JSON_DOCUMENT).read("$.store.book[0].category");
 
         assertThat(category).isEqualTo("reference");
     }
@@ -30,15 +32,23 @@ public class JakartaJsonProviderTest extends BaseTest {
     @Test
     public void a_filter_can_be_applied() {
 
-    	JsonArray fictionBooks = using(JSON_ORG_CONFIGURATION).parse(JSON_DOCUMENT).read("$.store.book[?(@.category == 'fiction')]");
+    	JsonArray fictionBooks = using(JAKARTA_JSON_CONFIGURATION).parse(JSON_DOCUMENT).read("$.store.book[?(@.category == 'fiction')]");
 
         assertThat(fictionBooks.size()).isEqualTo(3);
     }
 
     @Test
+    public void result_can_be_mapped_to_object() {
+
+        List<Map<String, Object>> books = using(JAKARTA_JSON_CONFIGURATION).parse(JSON_DOCUMENT).read("$.store.book", List.class);
+
+        assertThat(books.size()).isEqualTo(4);
+    }
+
+    @Test
     public void read_books_with_isbn() {
 
-    	JsonArray books = using(JSON_ORG_CONFIGURATION).parse(JSON_DOCUMENT).read("$..book[?(@.isbn)]");
+    	JsonArray books = using(JAKARTA_JSON_CONFIGURATION).parse(JSON_DOCUMENT).read("$..book[?(@.isbn)]");
 
         assertThat(books.size()).isEqualTo(2);
     }
