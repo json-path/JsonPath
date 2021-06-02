@@ -333,7 +333,8 @@ public class PathCompiler {
                 // we've encountered a COMMA do the same
                 case CLOSE_PARENTHESIS:
                     groupParen--;
-                    if (0 != groupParen) {
+                    //CS304 Issue link: https://github.com/json-path/JsonPath/issues/620
+                    if (0 > groupParen ) {
                         parameter.append(c);
                     }
                 case COMMA:
