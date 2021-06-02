@@ -323,7 +323,17 @@ public class JsonPath {
         notNull(configuration, "configuration can not be null");
         EvaluationContext evaluationContext = path.evaluate(jsonObject, jsonObject, configuration, true);
         for (PathRef updateOperation : evaluationContext.updateOperations()) {
-            updateOperation.renameKey(oldKeyName, newKeyName, configuration);
+            boolean optSuppressExceptions = configuration.containsOption(Option.SUPPRESS_EXCEPTIONS);
+            try {
+                updateOperation.renameKey(oldKeyName, newKeyName, configuration);
+            } catch (RuntimeException e) {
+                if(!optSuppressExceptions){
+                    throw e;
+                }else{
+                    // With option SUPPRESS_EXCEPTIONS,
+                    // the PathNotFoundException should be ignored and the other updateOperation should be continued.
+                }
+            }
         }
         return resultByConfiguration(jsonObject, configuration, evaluationContext);
     }
