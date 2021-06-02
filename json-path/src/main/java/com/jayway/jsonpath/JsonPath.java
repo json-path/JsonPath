@@ -239,11 +239,31 @@ public class JsonPath {
         notNull(jsonObject, "json can not be null");
         notNull(configuration, "configuration can not be null");
         notNull(mapFunction, "mapFunction can not be null");
-        EvaluationContext evaluationContext = path.evaluate(jsonObject, jsonObject, configuration, true);
-        for (PathRef updateOperation : evaluationContext.updateOperations()) {
-            updateOperation.convert(mapFunction, configuration);
+        boolean optAsPathList = configuration.containsOption(AS_PATH_LIST);
+        boolean optAlwaysReturnList = configuration.containsOption(Option.ALWAYS_RETURN_LIST);
+        boolean optSuppressExceptions = configuration.containsOption(Option.SUPPRESS_EXCEPTIONS);
+        try {
+            EvaluationContext evaluationContext = path.evaluate(jsonObject, jsonObject, configuration, true);
+            for (PathRef updateOperation : evaluationContext.updateOperations()) {
+                updateOperation.convert(mapFunction, configuration);
+            }
+            return resultByConfiguration(jsonObject, configuration, evaluationContext);
+        }catch (RuntimeException e) {
+            if (!optSuppressExceptions) {
+                throw e;
+            } else {
+                if (optAsPathList) {
+                    return (T) configuration.jsonProvider().createArray();
+                } else {
+                    if (optAlwaysReturnList) {
+                        return (T) configuration.jsonProvider().createArray();
+                    } else {
+                        return (T) (path.isDefinite() ? null : configuration.jsonProvider().createArray());
+                    }
+                }
+            }
         }
-        return resultByConfiguration(jsonObject, configuration, evaluationContext);
+
     }
 
     /**
