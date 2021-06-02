@@ -21,7 +21,10 @@ import groovy.text.markup.TemplateConfiguration
 buildscript {
     // this block should not be necessary, but for some reason it fails without!
     repositories {
-        jcenter()
+        mavenCentral()
+        maven {
+            url "https://plugins.gradle.org/m2/"
+        }
     }
 
     dependencies {
