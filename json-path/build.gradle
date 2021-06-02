@@ -4,10 +4,10 @@ description = "Java port of Stefan Goessner JsonPath."
 
 jar {
     baseName 'json-path'
-    manifest {
-        attributes 'Implementation-Title': 'json-path', 'Implementation-Version': version
-        instruction 'Import-Package', 'org.json.*;resolution:=optional', 'com.google.gson.*;resolution:=optional', 'com.fasterxml.jackson.*;resolution:=optional', 'org.apache.tapestry5.json.*;resolution:=optional', 'org.codehaus.jettison.*;resolution:=optional', '*'
-    }
+    bnd (
+        'Implementation-Title': 'json-path', 'Implementation-Version': version,
+        'Import-Package': 'org.json.*;resolution:=optional, com.google.gson.*;resolution:=optional, com.fasterxml.jackson.*;resolution:=optional, org.apache.tapestry5.json.*;resolution:=optional, org.codehaus.jettison.*;resolution:=optional, *'
+    )
 }
 
 dependencies {

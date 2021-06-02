@@ -8,6 +8,7 @@ buildscript {
     dependencies {
         classpath 'me.champeau.gradle:japicmp-gradle-plugin:0.1.0'
         classpath 'com.github.jengelman.gradle.plugins:shadow:5.2.0'
+        classpath 'biz.aQute.bnd:biz.aQute.bnd.gradle:5.3.0'
     }
 }
 
@@ -50,7 +51,7 @@ allprojects {
 subprojects {
     apply plugin: 'java'
     apply plugin: 'signing'
-    apply plugin: 'osgi'
+    apply plugin: 'biz.aQute.bnd.builder'
 
     sourceCompatibility = 1.8
     targetCompatibility = 1.8

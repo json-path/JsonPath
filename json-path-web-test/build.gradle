@@ -18,11 +18,11 @@ task createBuildInfoFile {
 jar {
     dependsOn createBuildInfoFile
     baseName 'json-path-web-test'
-    manifest {
-        attributes 'Implementation-Title': 'json-path-web-test',
-                   'Implementation-Version': version,
-                   'Main-Class': mainClassName
-    }
+    bnd (
+        'Implementation-Title': 'json-path-web-test',
+        'Implementation-Version': version,
+        'Main-Class': mainClassName
+    )
 }
 
 

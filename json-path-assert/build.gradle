@@ -4,9 +4,9 @@ description = "Assertions on Json using JsonPath"
 
 jar {
     baseName 'json-path-assert'
-    manifest {
-        attributes 'Implementation-Title': 'json-path-assert', 'Implementation-Version': version
-    }
+    bnd (
+        'Implementation-Title': 'json-path-assert', 'Implementation-Version': version
+    )
 }
 
 dependencies {
