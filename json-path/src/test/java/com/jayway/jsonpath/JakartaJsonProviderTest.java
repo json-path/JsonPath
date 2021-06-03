@@ -2,8 +2,8 @@ package com.jayway.jsonpath;
 
 import org.junit.Test;
 
-import jakarta.json.JsonArray;
 import jakarta.json.JsonObject;
+import jakarta.json.JsonString;
 
 import java.util.List;
 import java.util.Map;
@@ -15,31 +15,27 @@ public class JakartaJsonProviderTest extends BaseTest {
 
     @Test
     public void an_object_can_be_read() {
-
         JsonObject book = using(JAKARTA_JSON_CONFIGURATION).parse(JSON_DOCUMENT).read("$.store.book[0]");
 
-        assertThat(book.get("author").toString()).isEqualTo("Nigel Rees");
+        assertThat(((JsonString) book.get("author")).getChars()).isEqualTo("Nigel Rees");
     }
 
     @Test
     public void a_property_can_be_read() {
+        JsonString category = using(JAKARTA_JSON_CONFIGURATION).parse(JSON_DOCUMENT).read("$.store.book[0].category");
 
-        String category = using(JAKARTA_JSON_CONFIGURATION).parse(JSON_DOCUMENT).read("$.store.book[0].category");
-
-        assertThat(category).isEqualTo("reference");
+        assertThat(category.getString()).isEqualTo("reference");
     }
 
     @Test
     public void a_filter_can_be_applied() {
-
-    	JsonArray fictionBooks = using(JAKARTA_JSON_CONFIGURATION).parse(JSON_DOCUMENT).read("$.store.book[?(@.category == 'fiction')]");
+        List<Object> fictionBooks = using(JAKARTA_JSON_CONFIGURATION).parse(JSON_DOCUMENT).read("$.store.book[?(@.category == 'fiction')]");
 
         assertThat(fictionBooks.size()).isEqualTo(3);
     }
 
     @Test
     public void result_can_be_mapped_to_object() {
-
         List<Map<String, Object>> books = using(JAKARTA_JSON_CONFIGURATION).parse(JSON_DOCUMENT).read("$.store.book", List.class);
 
         assertThat(books.size()).isEqualTo(4);
@@ -48,7 +44,7 @@ public class JakartaJsonProviderTest extends BaseTest {
     @Test
     public void read_books_with_isbn() {
 
-    	JsonArray books = using(JAKARTA_JSON_CONFIGURATION).parse(JSON_DOCUMENT).read("$..book[?(@.isbn)]");
+        List<Object> books = using(JAKARTA_JSON_CONFIGURATION).parse(JSON_DOCUMENT).read("$..book[?(@.isbn)]");
 
         assertThat(books.size()).isEqualTo(2);
     }
