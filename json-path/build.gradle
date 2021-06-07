@@ -6,7 +6,8 @@ jar {
     baseName 'json-path'
     bnd (
         'Implementation-Title': 'json-path', 'Implementation-Version': version,
-        'Import-Package': 'org.json.*;resolution:=optional, com.google.gson.*;resolution:=optional, com.fasterxml.jackson.*;resolution:=optional, org.apache.tapestry5.json.*;resolution:=optional, org.codehaus.jettison.*;resolution:=optional, *'
+        'Import-Package': 'org.json.*;resolution:=optional, com.google.gson.*;resolution:=optional, com.fasterxml.jackson.*;resolution:=optional, org.apache.tapestry5.json.*;resolution:=optional, org.codehaus.jettison.*;resolution:=optional, *',
+        'Export-Package': 'com.jayway.jsonpath,com.jayway.jsonpath.spi,com.jayway.jsonpath.spi.cache,com.jayway.jsonpath.spi.json,com.jayway.jsonpath.spi.mapper'
     )
 }
 
