@@ -55,7 +55,7 @@ public class BaseTest {
             .mappingProvider(new JsonSmartMappingProvider())
             .jsonProvider(new JsonSmartJsonProvider())
             .build();
-
+    
     public static final Configuration TAPESTRY_JSON_CONFIGURATION = Configuration
         .builder()
         .mappingProvider(new TapestryMappingProvider())
