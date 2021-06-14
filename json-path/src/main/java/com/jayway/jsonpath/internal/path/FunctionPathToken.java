@@ -38,8 +38,11 @@ public class FunctionPathToken extends PathToken {
         PathFunction pathFunction = PathFunctionFactory.newFunction(functionName);
         evaluateParameters(currentPath, parent, model, ctx);
         Object result = pathFunction.invoke(currentPath, parent, model, ctx, functionParams);
-        ctx.addResult(currentPath + "." + functionName, parent, result);
-        if (!isLeaf()) {
+        // If the function is the leaf token, then its output is emitted as a result. Otherwise, there are still more
+        // tokens to evaluate, so its output is not a result.
+        if (isLeaf()) {
+            ctx.addResult(currentPath + "." + functionName, parent, result);
+        } else {
             next().evaluate(currentPath, parent, result, ctx);
         }
     }

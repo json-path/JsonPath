@@ -235,7 +235,8 @@ public class PathCompiler {
                     String functionName = path.subSequence(startPosition, endPosition).toString();
                     functionParameters = parseFunctionParameters(functionName);
                 } else {
-                    path.setPosition(readPosition + 1);
+                    // Consume the close parenthesis at readPosition + 1 by advancing the position to readPosition + 2.
+                    path.setPosition(readPosition + 2);
                 }
             }
             else {

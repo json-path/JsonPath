@@ -2,11 +2,17 @@ package com.jayway.jsonpath.internal.function;
 
 import com.jayway.jsonpath.Configuration;
 import com.jayway.jsonpath.Configurations;
+import com.jayway.jsonpath.DocumentContext;
+import com.jayway.jsonpath.InvalidJsonException;
+import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.util.Iterator;
+import java.util.List;
 
 import static com.jayway.jsonpath.JsonPath.using;
 import static org.junit.Assert.assertTrue;
@@ -125,4 +131,59 @@ public class NestedFunctionTest extends BaseFunctionTest {
         }
     }
 
+    @Test
+    public void testParseString() {
+        verifyTextFunction(conf, "$.parseable.parse().foo", "bar");
+        verifyTextFunction(conf, "$.parseable.parse().array.sum()", 7.0);
+    }
+
+    @Test
+    public void testIndefiniteParseString() {
+        String json = "{ \"array\": [ { \"document\": \"{\\\"name\\\": \\\"foo\\\"}\" }, { \"document\": \"{\\\"name\\\": \\\"bar\\\"}\" } ] }";
+        Object result = using(conf).parse(json).read("$.array[*].document.parse().name");
+        Assert.assertTrue(conf.jsonProvider().isArray(result));
+        Iterator<?> resultIter = conf.jsonProvider().toIterable(result).iterator();
+        Assert.assertTrue(resultIter.hasNext());
+        Assert.assertEquals("foo", conf.jsonProvider().unwrap(resultIter.next()));
+        Assert.assertTrue(resultIter.hasNext());
+        Assert.assertEquals("bar", conf.jsonProvider().unwrap(resultIter.next()));
+        Assert.assertFalse(resultIter.hasNext());
+    }
+
+    @Test
+    public void testParseOnNonStrings() {
+        String json = "{ \"boolean\": true, \"number\": 12.34, \"object\": { \"foo\" : \"bar\" }, \"array\": [ 1, 2 ] }";
+        DocumentContext doc = using(conf).parse(json);
+        Assert.assertTrue((boolean) conf.jsonProvider().unwrap(doc.read("$.boolean.parse()")));
+        Assert.assertEquals(12.34, (double) conf.jsonProvider().unwrap(doc.read("$.number.parse()")), 0.0);
+        Assert.assertEquals("bar", conf.jsonProvider().unwrap(doc.read("$.object.parse().foo")));
+        Assert.assertEquals(1, (int) conf.jsonProvider().unwrap(doc.read("$.array.parse()[0]")));
+        Assert.assertEquals(2, (int) conf.jsonProvider().unwrap(doc.read("$.array.parse()[1]")));
+    }
+
+    @Test
+    public void testParseOnMalformedJsonString() {
+        String json = "{\"malformed\": \"{]\"}";
+        try {
+            using(conf).parse(json).read("$.malformed.parse()");
+            Assert.fail("Should have thrown an InvalidJsonException");
+        } catch (InvalidJsonException e) {
+            Assert.assertEquals("String property at path $['malformed'] did not parse as valid JSON", e.getMessage());
+        }
+    }
+
+    @Test
+    public void testParseOnWellFormedJsonStringsThatAreNotObjects() {
+        String json = "{\"string\": \"\\\"foo\\\"\", \"number\": \"123\", \"boolean\": \"true\", \"array\": \"[1, 2]\"}";
+        DocumentContext doc = using(conf).parse(json);
+        Assert.assertEquals("foo", conf.jsonProvider().unwrap(doc.read("$.string.parse()")));
+        Assert.assertEquals(123, conf.jsonProvider().unwrap(doc.read("$.number.parse()")));
+        Assert.assertEquals(true, conf.jsonProvider().unwrap(doc.read("$.boolean.parse()")));
+        Iterator<?> arrayIter = conf.jsonProvider().toIterable(doc.read("$.array.parse()")).iterator();
+        Assert.assertTrue(arrayIter.hasNext());
+        Assert.assertEquals(1, arrayIter.next());
+        Assert.assertTrue(arrayIter.hasNext());
+        Assert.assertEquals(2, arrayIter.next());
+        Assert.assertFalse(arrayIter.hasNext());
+    }
 }
