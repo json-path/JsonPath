@@ -251,6 +251,7 @@ public class JakartaMappingProvider implements MappingProvider {
         }
         switch (((JsonValue) jsonValue).getValueType()) {
         case ARRAY:
+        	// TODO do we unwrap JsonObjectArray proxies?
             //return ((JsonArray) jsonValue).getValuesAs(JsonValue.class);
             return ((JsonArray) jsonValue).getValuesAs((JsonValue v) -> unwrapJsonValue(v));
         case OBJECT:
@@ -260,7 +261,11 @@ public class JakartaMappingProvider implements MappingProvider {
         case NUMBER:
             if (((JsonNumber) jsonValue).isIntegral()) {
                 //return ((JsonNumber) jsonValue).bigIntegerValueExact();
-                return ((JsonNumber) jsonValue).longValueExact();
+                try {
+                    return ((JsonNumber) jsonValue).intValueExact();
+                } catch (ArithmeticException e) {
+                    return ((JsonNumber) jsonValue).longValueExact();
+                }
             } else {
                 //return ((JsonNumber) jsonValue).bigDecimalValue();
                 return ((JsonNumber) jsonValue).doubleValue();

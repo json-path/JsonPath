@@ -57,16 +57,23 @@ public class BaseTest {
             .build();
     
     public static final Configuration TAPESTRY_JSON_CONFIGURATION = Configuration
-        .builder()
-        .mappingProvider(new TapestryMappingProvider())
-        .jsonProvider(TapestryJsonProvider.INSTANCE)
-        .build();
+            .builder()
+            .mappingProvider(new TapestryMappingProvider())
+            .jsonProvider(TapestryJsonProvider.INSTANCE)
+            .build();
 
     public static final Configuration JAKARTA_JSON_CONFIGURATION = Configuration
-        .builder()
-        .mappingProvider(new JakartaMappingProvider())
-        .jsonProvider(new JakartaJsonProvider())
-        .build();
+            .builder()
+            .mappingProvider(new JakartaMappingProvider())
+            .jsonProvider(new JakartaJsonProvider())
+            .build();
+
+    // extension to Jakarta EE 9 JSON-P with mutable objects and array
+    public static final Configuration JAKARTA_JSON_RW_CONFIGURATION = Configuration
+            .builder()
+            .mappingProvider(new JakartaMappingProvider())
+            .jsonProvider(new JakartaJsonProvider(true))
+            .build();
 
     public static final String JSON_BOOK_DOCUMENT =
             "{ " +
