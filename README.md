@@ -248,7 +248,7 @@ String json = "{\"date_as_long\" : 1411455611975}";
 Date date = JsonPath.parse(json).read("$['date_as_long']", Date.class);
 ```
 
-If you configure JsonPath to use `JacksonMappingProvider` or `GsonMappingProvider` you can even map your JsonPath output directly into POJO's.
+If you configure JsonPath to use `JacksonMappingProvider`, `GsonMappingProvider`, or `JakartaJsonProvider` you can even map your JsonPath output directly into POJO's.
 
 ```java
 Book book = JsonPath.parse(json).read("$.store.book[0]", Book.class);
@@ -440,11 +440,11 @@ JsonPath is shipped with five different JsonProviders:
 * [JacksonJsonProvider](https://github.com/FasterXML/jackson)
 * [JacksonJsonNodeJsonProvider](https://github.com/FasterXML/jackson)
 * [GsonJsonProvider](https://code.google.com/p/google-gson/) 
-* [JsonOrgJsonProvider](http://www.json.org/java/index.html)
+* [JsonOrgJsonProvider](https://github.com/stleary/JSON-java)
+* [JakartaJsonProvider](https://javaee.github.io/jsonp/)
 
 Changing the configuration defaults as demonstrated should only be done when your application is being initialized. Changes during runtime is strongly discouraged, especially in multi threaded applications.
   
-
 ```java
 Configuration.setDefaults(new Configuration.Defaults() {
 
@@ -469,6 +469,16 @@ Configuration.setDefaults(new Configuration.Defaults() {
 ```
 
 Note that the JacksonJsonProvider requires `com.fasterxml.jackson.core:jackson-databind:2.4.5` and the GsonJsonProvider requires `com.google.code.gson:gson:2.3.1` on your classpath. 
+
+Both of Jakarta EE 9 [JSON-P (JSR-342)](https://javaee.github.io/jsonp/) and [JSON-B (JSR-367)](http://json-b.net/) providers expect at least Java 8 and require compatible JSON API implementations (such as [Eclipse Glassfish](https://projects.eclipse.org/projects/ee4j.jsonp) and [Eclipse Yasson](https://projects.eclipse.org/projects/ee4j.yasson)) on application runtime classpath; such implementations may also be provided by Java EE application container. Please also note that Apache Johnzon is not classpath-compatible with Jakarta EE 9 specification yet, and if JSON-B mapping provider is chosen then JSON-P provider must be configured and used, too.
+
+One peculiarity of Jakarta EE 9 specifications for JSON processing and databinding (mapping) is immutability of Json arrays and objects as soon as they are fully parsed or written to. To respect the API specification, but allow JsonPath to modify Json documents through add, set/put, replace, and delete operations, `JakartaJsonProvider` has to be initiliazed with optional `true` argument:
+
+* `JsonProvider jsonProvider = new JakartaJsonProvider(true)` (enable mutable Json arrays and objects)
+* `JsonProvider jsonProvider = new JakartaJsonProvider()` (default, strict JSON-P API compliance)
+
+All lookup and read operations with JsonPath are supported regardless of initilization mode. Default mode also needs less memory and is more performant.
+  
 
 ### Cache SPI
 
