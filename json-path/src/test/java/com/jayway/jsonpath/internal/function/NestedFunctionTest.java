@@ -70,6 +70,11 @@ public class NestedFunctionTest extends BaseFunctionTest {
     }
 
     @Test
+    public void testStringAndNumberConcat() {
+        verifyTextAndNumberFunction(conf, "$.concat($.text[0], $.numbers[0])", "a1");
+    }
+
+    @Test
     public void testStringConcatWithJSONParameter() {
         verifyTextFunction(conf, "$.text.concat(\"-\", \"ghijk\")", "abcdef-ghijk");
     }
