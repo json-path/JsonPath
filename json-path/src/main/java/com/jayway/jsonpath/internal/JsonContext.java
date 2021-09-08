@@ -29,13 +29,12 @@ import com.jayway.jsonpath.spi.cache.CacheProvider;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.LinkedList;
+import java.util.Arrays;
 import java.util.List;
 
 import static com.jayway.jsonpath.JsonPath.compile;
 import static com.jayway.jsonpath.internal.Utils.notEmpty;
 import static com.jayway.jsonpath.internal.Utils.notNull;
-import static java.util.Arrays.asList;
 
 public class JsonContext implements DocumentContext {
 
@@ -216,7 +215,8 @@ public class JsonContext implements DocumentContext {
 
     private JsonPath pathFromCache(String path, Predicate[] filters) {
         Cache cache = CacheProvider.getCache();
-        String cacheKey = Utils.concat(path, new LinkedList<Predicate>(asList(filters)).toString());
+        String cacheKey = filters == null || filters.length == 0
+            ? path : Utils.concat(path, Arrays.toString(filters));
         JsonPath jsonPath = cache.get(cacheKey);
         if (jsonPath == null) {
             jsonPath = compile(path, filters);
