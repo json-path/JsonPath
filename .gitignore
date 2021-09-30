@@ -13,4 +13,7 @@ TODO
 gradle.properties
 build
 bin/
+json-path-assert/out
+json-path-web-test/out
+json-path/out
 out/
