@@ -37,7 +37,7 @@ public class ConfigurableFunctionTest {
         .addFunction("constant", MyFunction.class)
         .jsonProvider(new JsonOrgJsonProvider())
         .build();
-    assertThat(JsonPath.using(withFunction).parse("{}")
+    assertThat((String) JsonPath.using(withFunction).parse("{}")
         .read("$.constant()")).isEqualTo(CONSTANT);
     try {
       JsonPath.using(withoutFunction).parse("{}")
