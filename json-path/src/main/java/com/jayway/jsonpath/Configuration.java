@@ -20,7 +20,15 @@ import com.jayway.jsonpath.spi.cache.Cache;
 import com.jayway.jsonpath.spi.json.JsonProvider;
 import com.jayway.jsonpath.spi.mapper.MappingProvider;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.EnumSet;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Objects;
+import java.util.Set;
 
 import static com.jayway.jsonpath.internal.Utils.notNull;
 import static com.jayway.jsonpath.internal.function.PathFunctionFactory.FUNCTIONS;
