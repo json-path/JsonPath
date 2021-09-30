@@ -2,6 +2,8 @@ package com.jayway.jsonpath.internal.filter;
 
 import com.jayway.jsonpath.InvalidPathException;
 
+import java.util.Locale;
+
 public enum RelationalOperator {
 
     GTE(">="),
@@ -30,7 +32,9 @@ public enum RelationalOperator {
     TYPE("TYPE"),
     MATCHES("MATCHES"),
     EMPTY("EMPTY"),
-    SUBSETOF("SUBSETOF");
+    SUBSETOF("SUBSETOF"),
+    ANYOF("ANYOF"),
+    NONEOF("NONEOF");
 
     private final String operatorString;
 
@@ -38,9 +42,10 @@ public enum RelationalOperator {
         this.operatorString = operatorString;
     }
 
-    public static RelationalOperator fromString(String operatorString){
+    public static RelationalOperator fromString(String operatorString) {
+        String upperCaseOperatorString = operatorString.toUpperCase(Locale.ROOT);
         for (RelationalOperator operator : RelationalOperator.values()) {
-            if(operator.operatorString.equals(operatorString.toUpperCase()) ){
+            if(operator.operatorString.equals(upperCaseOperatorString) ){
                 return operator;
             }
         }

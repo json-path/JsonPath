@@ -16,7 +16,8 @@ package com.jayway.jsonpath.internal.function.latebinding;
 
 import com.jayway.jsonpath.Configuration;
 import com.jayway.jsonpath.internal.Path;
-import com.jayway.jsonpath.internal.function.ParamType;
+
+import java.util.Objects;
 
 /**
  * Defines the contract for late bindings, provides document state and enough context to perform the evaluation at a later
@@ -27,21 +28,31 @@ import com.jayway.jsonpath.internal.function.ParamType;
  */
 public class PathLateBindingValue implements ILateBindingValue {
     private final Path path;
-    private final Object rootDocument;
+    private final String rootDocument;
     private final Configuration configuration;
-
+    private final Object result;
     public PathLateBindingValue(final Path path, final Object rootDocument, final Configuration configuration) {
         this.path = path;
-        this.rootDocument = rootDocument;
+        this.rootDocument = rootDocument.toString();
         this.configuration = configuration;
+        this.result = path.evaluate(rootDocument, rootDocument, configuration).getValue();
     }
 
     /**
-     * Evaluate the expression at the point of need for Path type expressions
      *
-     * @return
+     * @return the late value
      */
     public Object get() {
-        return path.evaluate(rootDocument, rootDocument, configuration).getValue();
+        return result;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        PathLateBindingValue that = (PathLateBindingValue) o;
+        return Objects.equals(path, that.path) &&
+                rootDocument.equals(that.rootDocument) &&
+                Objects.equals(configuration, that.configuration);
     }
 }

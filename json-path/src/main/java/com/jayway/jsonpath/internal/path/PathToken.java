@@ -218,4 +218,8 @@ public abstract class PathToken {
     public void setNext(final PathToken next) {
         this.next = next;
     }
+
+    public PathToken getNext() {
+        return this.next;
+    }
 }

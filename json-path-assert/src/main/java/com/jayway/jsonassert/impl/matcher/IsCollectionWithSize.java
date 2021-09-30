@@ -30,7 +30,6 @@ DAMAGE.
 package com.jayway.jsonassert.impl.matcher;
 
 import org.hamcrest.Description;
-import org.hamcrest.Factory;
 import org.hamcrest.Matcher;
 
 import java.util.Collection;
@@ -52,6 +51,7 @@ public class IsCollectionWithSize<E> extends CollectionMatcher<Collection<? exte
         return sizeMatcher.matches(item.size());
     }
 
+    @Override
     public void describeTo(Description description) {
         description.appendText("a collection with size ")
             .appendDescriptionOf(sizeMatcher);
@@ -60,7 +60,6 @@ public class IsCollectionWithSize<E> extends CollectionMatcher<Collection<? exte
     /**
      * Does collection size satisfy a given matcher?
      */
-    @Factory
     public static <E> Matcher<? super Collection<? extends E>> hasSize(Matcher<? super Integer> size) {
         return new IsCollectionWithSize<E>(size);
     }
@@ -71,7 +70,6 @@ public class IsCollectionWithSize<E> extends CollectionMatcher<Collection<? exte
      * For example,  assertThat(hasSize(equal_to(x)))
      *          vs.  assertThat(hasSize(x))
      */
-    @Factory
     public static <E> Matcher<? super Collection<? extends E>> hasSize(int size) {
         Matcher<? super Integer> matcher = equalTo(size);
         return IsCollectionWithSize.<E>hasSize(matcher);

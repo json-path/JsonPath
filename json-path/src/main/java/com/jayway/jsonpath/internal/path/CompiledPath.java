@@ -97,7 +97,7 @@ public class CompiledPath implements Path {
         try {
             PathRef op = ctx.forUpdate() ?  PathRef.createRoot(rootDocument) : PathRef.NO_OP;
             root.evaluate("", op, document, ctx);
-        } catch (EvaluationAbortException abort){};
+        } catch (EvaluationAbortException abort) {}
 
         return ctx;
     }
@@ -120,5 +120,9 @@ public class CompiledPath implements Path {
     @Override
     public String toString() {
         return root.toString();
+    }
+
+    public RootPathToken getRoot() {
+        return root;
     }
 }

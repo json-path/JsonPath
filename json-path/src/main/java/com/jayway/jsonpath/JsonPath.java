@@ -15,11 +15,7 @@
 package com.jayway.jsonpath;
 
 
-import com.jayway.jsonpath.internal.EvaluationContext;
-import com.jayway.jsonpath.internal.ParseContextImpl;
-import com.jayway.jsonpath.internal.Path;
-import com.jayway.jsonpath.internal.PathRef;
-import com.jayway.jsonpath.internal.Utils;
+import com.jayway.jsonpath.internal.*;
 import com.jayway.jsonpath.internal.path.PathCompiler;
 import com.jayway.jsonpath.spi.json.JsonProvider;
 
@@ -28,6 +24,8 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
+import java.util.ArrayList;
+import java.util.List;
 
 import static com.jayway.jsonpath.Option.ALWAYS_RETURN_LIST;
 import static com.jayway.jsonpath.Option.AS_PATH_LIST;
@@ -241,11 +239,31 @@ public class JsonPath {
         notNull(jsonObject, "json can not be null");
         notNull(configuration, "configuration can not be null");
         notNull(mapFunction, "mapFunction can not be null");
-        EvaluationContext evaluationContext = path.evaluate(jsonObject, jsonObject, configuration, true);
-        for (PathRef updateOperation : evaluationContext.updateOperations()) {
-            updateOperation.convert(mapFunction, configuration);
+        boolean optAsPathList = configuration.containsOption(AS_PATH_LIST);
+        boolean optAlwaysReturnList = configuration.containsOption(Option.ALWAYS_RETURN_LIST);
+        boolean optSuppressExceptions = configuration.containsOption(Option.SUPPRESS_EXCEPTIONS);
+        try {
+            EvaluationContext evaluationContext = path.evaluate(jsonObject, jsonObject, configuration, true);
+            for (PathRef updateOperation : evaluationContext.updateOperations()) {
+                updateOperation.convert(mapFunction, configuration);
+            }
+            return resultByConfiguration(jsonObject, configuration, evaluationContext);
+        }catch (RuntimeException e) {
+            if (!optSuppressExceptions) {
+                throw e;
+            } else {
+                if (optAsPathList) {
+                    return (T) configuration.jsonProvider().createArray();
+                } else {
+                    if (optAlwaysReturnList) {
+                        return (T) configuration.jsonProvider().createArray();
+                    } else {
+                        return (T) (path.isDefinite() ? null : configuration.jsonProvider().createArray());
+                    }
+                }
+            }
         }
-        return resultByConfiguration(jsonObject, configuration, evaluationContext);
+
     }
 
     /**
@@ -259,11 +277,24 @@ public class JsonPath {
     public <T> T delete(Object jsonObject, Configuration configuration) {
         notNull(jsonObject, "json can not be null");
         notNull(configuration, "configuration can not be null");
-        EvaluationContext evaluationContext = path.evaluate(jsonObject, jsonObject, configuration, true);
-        for (PathRef updateOperation : evaluationContext.updateOperations()) {
-            updateOperation.delete(configuration);
+
+        boolean optSuppressExceptions = configuration.containsOption(Option.SUPPRESS_EXCEPTIONS);
+
+        try {
+            EvaluationContext evaluationContext = path.evaluate(jsonObject, jsonObject, configuration, true);
+            for (PathRef updateOperation : evaluationContext.updateOperations()) {
+                updateOperation.delete(configuration);
+            }
+            return resultByConfiguration(jsonObject, configuration, evaluationContext);
+        } catch (RuntimeException e) {
+            if (!optSuppressExceptions) {
+                throw e;
+            } else {
+                List<String> list = new ArrayList<String>();  // the log messages
+                list.add("delete throws "+e.getMessage());  // TODO
+                return (T) list;
+            }
         }
-        return resultByConfiguration(jsonObject, configuration, evaluationContext);
     }
 
     /**
@@ -289,7 +320,7 @@ public class JsonPath {
      * Adds or updates the Object this path points to in the provided jsonObject with a key with a value
      *
      * @param jsonObject    a json object
-     * @param value         the key to add or update
+     * @param key         the key to add or update
      * @param value         the new value
      * @param configuration configuration to use
      * @param <T>           expected return type
@@ -312,7 +343,17 @@ public class JsonPath {
         notNull(configuration, "configuration can not be null");
         EvaluationContext evaluationContext = path.evaluate(jsonObject, jsonObject, configuration, true);
         for (PathRef updateOperation : evaluationContext.updateOperations()) {
-            updateOperation.renameKey(oldKeyName, newKeyName, configuration);
+            boolean optSuppressExceptions = configuration.containsOption(Option.SUPPRESS_EXCEPTIONS);
+            try {
+                updateOperation.renameKey(oldKeyName, newKeyName, configuration);
+            } catch (RuntimeException e) {
+                if(!optSuppressExceptions){
+                    throw e;
+                }else{
+                    // With option SUPPRESS_EXCEPTIONS,
+                    // the PathNotFoundException should be ignored and the other updateOperation should be continued.
+                }
+            }
         }
         return resultByConfiguration(jsonObject, configuration, evaluationContext);
     }
@@ -628,6 +669,7 @@ public class JsonPath {
      * @param json url
      * @return a read context
      */
+    @Deprecated
     public static DocumentContext parse(URL json) throws IOException {
         return new ParseContextImpl().parse(json);
     }
@@ -683,6 +725,7 @@ public class JsonPath {
      * @param json input
      * @return a read context
      */
+    @Deprecated
     public static DocumentContext parse(URL json, Configuration configuration) throws IOException {
         return new ParseContextImpl(configuration).parse(json);
     }

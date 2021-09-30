@@ -18,7 +18,7 @@ public class ReturnTypeTest extends BaseTest {
 
     @Test
     public void assert_strings_can_be_read() {
-        assertThat(reader.read("$.string-property")).isEqualTo("string-value");
+        assertThat((String)reader.read("$.string-property")).isEqualTo("string-value");
     }
 
     @Test
@@ -28,17 +28,17 @@ public class ReturnTypeTest extends BaseTest {
 
     @Test
     public void assert_longs_can_be_read() {
-        assertThat(reader.read("$.long-max-property")).isEqualTo(Long.MAX_VALUE);
+        assertThat((Long)reader.read("$.long-max-property")).isEqualTo(Long.MAX_VALUE);
     }
 
     @Test
     public void assert_boolean_values_can_be_read() {
-        assertThat(reader.read("$.boolean-property")).isEqualTo(true);
+        assertThat((Boolean)reader.read("$.boolean-property")).isEqualTo(true);
     }
 
     @Test
     public void assert_null_values_can_be_read() {
-        assertThat(reader.read("$.null-property")).isNull();
+        assertThat((String)reader.read("$.null-property")).isNull();
     }
 
     @Test

@@ -165,7 +165,7 @@ public class Configuration {
     /**
      * Creates a new configuration with the provided options. Options in this configuration are discarded.
      * @param options
-     * @return
+     * @return the new configuration instance
      */
     public Configuration setOptions(Option... options) {
         return Configuration.builder()
@@ -200,7 +200,7 @@ public class Configuration {
 
     /**
      * Returns the options used by this configuration
-     * @return
+     * @return the new configuration instance
      */
     public Set<Option> getOptions() {
         return options;
@@ -340,5 +340,15 @@ public class Configuration {
          */
         MappingProvider mappingProvider();
 
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Configuration that = (Configuration) o;
+        return jsonProvider.getClass() == that.jsonProvider.getClass() &&
+                mappingProvider.getClass() == that.mappingProvider.getClass() &&
+                Objects.equals(options, that.options);
     }
 }

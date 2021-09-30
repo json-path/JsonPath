@@ -1,29 +1,37 @@
 buildscript {
     repositories {
-        jcenter()
+        mavenCentral()
+        maven {
+            url "https://plugins.gradle.org/m2/"
+        }
     }
     dependencies {
-        classpath 'me.champeau.gradle:gradle-javadoc-hotfix-plugin:0.1'
-        classpath 'com.github.jengelman.gradle.plugins:shadow:1.2.3'
         classpath 'me.champeau.gradle:japicmp-gradle-plugin:0.1.0'
+        classpath 'com.github.jengelman.gradle.plugins:shadow:5.2.0'
+        classpath 'biz.aQute.bnd:biz.aQute.bnd.gradle:5.3.0'
     }
 }
 
 ext {
     libs = [
-            slf4jApi: 'org.slf4j:slf4j-api:1.7.25',
-            jsonSmart: 'net.minidev:json-smart:2.3',
-            jacksonDatabind: 'com.fasterxml.jackson.core:jackson-databind:2.6.3',
-            gson: 'com.google.code.gson:gson:2.3.1',
-            jettison: 'org.codehaus.jettison:jettison:1.3.7',
+            gson: 'com.google.code.gson:gson:2.8.6',
+            hamcrest: 'org.hamcrest:hamcrest:2.2',
+            jacksonDatabind: 'com.fasterxml.jackson.core:jackson-databind:2.12.3',
+            jettison: 'org.codehaus.jettison:jettison:1.4.1',
             jsonOrg: 'org.json:json:20140107',
-            tapestryJson: 'org.apache.tapestry:tapestry-json:5.4.3',
-            hamcrestCore: 'org.hamcrest:hamcrest-core:1.3',
-            hamcrestLibrary: 'org.hamcrest:hamcrest-library:1.3',
+            jsonSmart: 'net.minidev:json-smart:2.4.7',
+            slf4jApi: 'org.slf4j:slf4j-api:1.7.30',
+            tapestryJson: 'org.apache.tapestry:tapestry-json:5.7.2',
 
-            test: ['org.slf4j:slf4j-simple:1.7.16', 'org.assertj:assertj-core:2.1.0', 'commons-io:commons-io:2.4','org.hamcrest:hamcrest-core:1.3', 'org.hamcrest:hamcrest-library:1.3', 'junit:junit:4.12']
+            test: [
+                    'commons-io:commons-io:2.8.0',
+                    'junit:junit:4.12',
+                    'org.assertj:assertj-core:3.18.1',
+                    'org.hamcrest:hamcrest:2.2',
+                    'org.slf4j:slf4j-simple:1.7.30'
+            ]
     ]
-    snapshotVersion = false
+    snapshotVersion = true
 }
 
 allprojects {
@@ -31,7 +39,7 @@ allprojects {
     ext.buildTimestamp = new Date().format('yyyy-MM-dd HH:mm:ss')
 
     group = 'com.jayway.jsonpath'
-    version = '2.4.0' + (snapshotVersion ? "-SNAPSHOT" : "")
+    version = '2.7.0' + (snapshotVersion ? "-SNAPSHOT" : "")
 
     if (JavaVersion.current().isJava8Compatible()) {
         tasks.withType(Javadoc) {
@@ -43,10 +51,10 @@ allprojects {
 subprojects {
     apply plugin: 'java'
     apply plugin: 'signing'
-    apply plugin: 'osgi'
+    apply plugin: 'biz.aQute.bnd.builder'
 
-    sourceCompatibility = 1.6
-    targetCompatibility = 1.6
+    sourceCompatibility = 1.8
+    targetCompatibility = 1.8
 
     repositories {
         mavenCentral()
@@ -72,8 +80,8 @@ subprojects {
     }
 }
 
-task wrapper(type: Wrapper) {
-    gradleVersion = '4.1'
+wrapper {
+    gradleVersion = '5.6.2'
 }
 
 //Task used by Heroku for staging

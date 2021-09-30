@@ -43,6 +43,7 @@ public abstract class AbstractJsonProvider implements JsonProvider {
         return ((List) obj).get(idx);
     }
 
+    @Deprecated
     public final Object getArrayIndex(Object obj, int idx, boolean unwrap){
         return getArrayIndex(obj, idx);
     }
@@ -152,7 +153,8 @@ public abstract class AbstractJsonProvider implements JsonProvider {
         } else if(obj instanceof String){
             return ((String)obj).length();
         }
-        throw new JsonPathException("length operation cannot be applied to " + obj!=null?obj.getClass().getName():"null");
+        throw new JsonPathException("length operation cannot be applied to " + (obj != null ? obj.getClass().getName()
+                : "null"));
     }
 
     /**
@@ -162,7 +164,7 @@ public abstract class AbstractJsonProvider implements JsonProvider {
      * @return an Iterable that iterates over the entries of an array
      */
     @SuppressWarnings("unchecked")
-    public Iterable<? extends Object> toIterable(Object obj) {
+    public Iterable<?> toIterable(Object obj) {
         if (isArray(obj))
             return ((Iterable) obj);
         else

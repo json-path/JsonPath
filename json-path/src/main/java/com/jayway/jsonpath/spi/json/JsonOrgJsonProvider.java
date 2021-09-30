@@ -7,8 +7,6 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.json.JSONTokener;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -16,10 +14,9 @@ import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import java.util.Objects;
 
 public class JsonOrgJsonProvider extends AbstractJsonProvider {
-
-    private static final Logger logger = LoggerFactory.getLogger(GsonJsonProvider.class);
 
     @Override
     public Object parse(String json) throws InvalidJsonException {
@@ -147,17 +144,14 @@ public class JsonOrgJsonProvider extends AbstractJsonProvider {
         return (obj instanceof JSONObject);
     }
 
+    @SuppressWarnings("unchecked")
     @Override
     public Collection<String> getPropertyKeys(Object obj) {
         JSONObject jsonObject = toJsonObject(obj);
-        List<String> keys = new ArrayList<String>();
         try {
-            for (int i = 0; i < jsonObject.names().length(); i++) {
-                String key = (String) jsonObject.names().get(i);
-                keys.add(key);
-
-            }
-            return keys;
+            if(Objects.isNull(jsonObject.names()))
+                return new ArrayList<>();
+            return jsonObject.keySet();
         } catch (JSONException e) {
             throw new JsonPathException(e);
         }
@@ -174,7 +168,8 @@ public class JsonOrgJsonProvider extends AbstractJsonProvider {
                 return ((String) obj).length();
             }
         }
-        throw new JsonPathException("length operation can not applied to " + obj != null ? obj.getClass().getName() : "null");
+        throw new JsonPathException("length operation can not applied to " + (obj != null ? obj.getClass().getName()
+                : "null"));
     }
 
     @Override

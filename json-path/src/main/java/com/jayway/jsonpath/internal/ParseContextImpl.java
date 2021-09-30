@@ -46,7 +46,7 @@ public class ParseContextImpl implements ParseContext {
     @Override
     public DocumentContext parse(InputStream json, String charset) {
         notNull(json, "json input stream can not be null");
-        notNull(json, "charset can not be null");
+        notNull(charset, "charset can not be null");
         try {
             Object obj = configuration.jsonProvider().parse(json, charset);
             return new JsonContext(obj, configuration);
@@ -68,6 +68,7 @@ public class ParseContextImpl implements ParseContext {
     }
 
     @Override
+    @Deprecated
     public DocumentContext parse(URL url) throws IOException {
         notNull(url, "url can not be null");
         InputStream fis = null;

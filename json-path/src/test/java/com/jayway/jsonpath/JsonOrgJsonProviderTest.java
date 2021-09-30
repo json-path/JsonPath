@@ -1,5 +1,7 @@
 package com.jayway.jsonpath;
 
+import com.jayway.jsonpath.spi.json.JsonOrgJsonProvider;
+import com.jayway.jsonpath.spi.mapper.JsonOrgMappingProvider;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.junit.Test;
@@ -51,5 +53,48 @@ public class JsonOrgJsonProviderTest extends BaseTest {
         JSONArray books = using(JSON_ORG_CONFIGURATION).parse(JSON_DOCUMENT).read("$..book[?(@.isbn)]");
 
         assertThat(books.length()).isEqualTo(2);
+    }
+
+    /**
+     * Functions take parameters, the length parameter for example takes an entire document which we anticipate
+     * will compute to a document that is an array of elements which can determine its length.
+     *
+     * Since we translate this query from $..books.length() to length($..books) verify that this particular translation
+     * works as anticipated.
+     */
+    @Test
+    public void read_book_length_using_translated_query() {
+        Integer result = using(Configuration.defaultConfiguration())
+                .parse(JSON_BOOK_STORE_DOCUMENT)
+                .read("$..book.length()");
+        assertThat(result).isEqualTo(4);
+    }
+
+    @Test
+    public void read_book_length() {
+        Object result = using(Configuration.defaultConfiguration())
+                .parse(JSON_BOOK_STORE_DOCUMENT)
+                .read("$.length($..book)");
+        assertThat(result).isEqualTo(4);
+    }
+
+    @Test
+    public void test_getPropertyKeys_empty_object() {
+        String json = "{\"foo\": \"bar\", \"emptyObject\": {},\"emptyList\":[]}";
+        Configuration config = Configuration.defaultConfiguration()
+                .jsonProvider(new JsonOrgJsonProvider())
+                .mappingProvider(new JsonOrgMappingProvider());
+        Object result = JsonPath.using(config).parse(json).read("$..foo");
+        assertThat(result.toString()).isEqualTo("[\"bar\"]");
+    }
+
+    @Test
+    public void test_getPropertyKeys_empty_nest_object() {
+        String json = "{\"foo\": \"bar\", \"emptyObject\": {\"emptyList\":[]},\"emptyList\":[]}";
+        Configuration config = Configuration.defaultConfiguration()
+                .jsonProvider(new JsonOrgJsonProvider())
+                .mappingProvider(new JsonOrgMappingProvider());
+        Object result = JsonPath.using(config).parse(json).read("$..foo");
+        assertThat(result.toString()).isEqualTo("[\"bar\"]");
     }
 }

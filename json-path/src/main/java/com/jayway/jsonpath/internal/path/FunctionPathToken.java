@@ -48,17 +48,20 @@ public class FunctionPathToken extends PathToken {
 
         if (null != functionParams) {
             for (Parameter param : functionParams) {
-                if (!param.hasEvaluated()) {
-                    switch (param.getType()) {
-                        case PATH:
-                            param.setLateBinding(new PathLateBindingValue(param.getPath(), ctx.rootDocument(), ctx.configuration()));
+                switch (param.getType()) {
+                    case PATH:
+                        PathLateBindingValue pathLateBindingValue = new PathLateBindingValue(param.getPath(), ctx.rootDocument(), ctx.configuration());
+                        if (!param.hasEvaluated()||!pathLateBindingValue.equals(param.getILateBingValue())) {
+                            param.setLateBinding(pathLateBindingValue);
                             param.setEvaluated(true);
-                            break;
-                        case JSON:
+                        }
+                        break;
+                    case JSON:
+                        if (!param.hasEvaluated()) {
                             param.setLateBinding(new JsonLateBindingValue(ctx.configuration().jsonProvider(), param));
                             param.setEvaluated(true);
-                            break;
-                    }
+                        }
+                        break;
                 }
             }
         }
@@ -68,7 +71,7 @@ public class FunctionPathToken extends PathToken {
      * Return the actual value by indicating true. If this return was false then we'd return the value in an array which
      * isn't what is desired - true indicates the raw value is returned.
      *
-     * @return
+     * @return true if token is definite
      */
     @Override
     public boolean isTokenDefinite() {
@@ -83,5 +86,12 @@ public class FunctionPathToken extends PathToken {
 
     public void setParameters(List<Parameter> parameters) {
         this.functionParams = parameters;
+    }
+
+    public List<Parameter> getParameters() {
+        return this.functionParams;
+    }
+    public String getFunctionName() {
+        return this.functionName;
     }
 }

@@ -14,6 +14,8 @@
  */
 package com.jayway.jsonpath.internal.path;
 
+import java.util.Collections;
+
 import com.jayway.jsonpath.Option;
 import com.jayway.jsonpath.PathNotFoundException;
 import com.jayway.jsonpath.internal.PathRef;
@@ -25,14 +27,14 @@ import static java.util.Arrays.asList;
  */
 public class WildcardPathToken extends PathToken {
 
-    WildcardPathToken() {
+    public WildcardPathToken() {
     }
 
     @Override
     public void evaluate(String currentPath, PathRef parent, Object model, EvaluationContextImpl ctx) {
         if (ctx.jsonProvider().isMap(model)) {
             for (String property : ctx.jsonProvider().getPropertyKeys(model)) {
-                handleObjectProperty(currentPath, model, ctx, asList(property));
+                handleObjectProperty(currentPath, model, ctx, Collections.singletonList(property));
             }
         } else if (ctx.jsonProvider().isArray(model)) {
             for (int idx = 0; idx < ctx.jsonProvider().length(model); idx++) {

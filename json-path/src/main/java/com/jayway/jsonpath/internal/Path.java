@@ -60,5 +60,4 @@ public interface Path {
      * @return true id this path is starts with '$' and false if the path starts with '@'
      */
     boolean isRootPath();
-
 }

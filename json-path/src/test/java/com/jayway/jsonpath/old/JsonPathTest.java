@@ -133,7 +133,7 @@ public class JsonPathTest extends BaseTest {
             Assertions.fail("Expected PathNotFoundException");
         } catch (PathNotFoundException e) {
         }
-        Assertions.assertThat(JsonPath.read(json, "$.data2.passes[0].id")).isEqualTo("1");
+        Assertions.assertThat((String)JsonPath.read(json, "$.data2.passes[0].id")).isEqualTo("1");
     }
 
     @Test
@@ -322,5 +322,10 @@ public class JsonPathTest extends BaseTest {
         }
     }
 
+    @Test(expected = InvalidPathException.class)
+    //see https://github.com/json-path/JsonPath/issues/428
+    public void prevent_stack_overflow_error_when_unclosed_property() {
+        JsonPath.compile("$['boo','foo][?(@ =~ /bar/)]");
+    }
 
 }

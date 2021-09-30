@@ -35,8 +35,8 @@ import static com.jayway.jsonpath.Criteria.where;
 import static com.jayway.jsonpath.Filter.filter;
 import static com.jayway.jsonpath.JsonPath.read;
 import static com.jayway.jsonpath.JsonPath.using;
-import static junit.framework.Assert.assertNull;
-import static junit.framework.Assert.assertTrue;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.failBecauseExceptionWasNotThrown;
 import static org.hamcrest.Matchers.is;
@@ -431,7 +431,7 @@ public class IssuesTest extends BaseTest {
                 "]";
 
 
-        assertEquals(1, read(json, "$[0].a"));
+        assertEquals(Integer.valueOf(1), read(json, "$[0].a"));
     }
 
     @Test(expected = PathNotFoundException.class)
@@ -471,9 +471,9 @@ public class IssuesTest extends BaseTest {
 
         String json = "{\"test\":null}";
 
-        assertThat(read(json, "test")).isNull();
+        assertThat((String)read(json, "test")).isNull();
 
-        assertThat(JsonPath.using(Configuration.defaultConfiguration().setOptions(Option.SUPPRESS_EXCEPTIONS)).parse(json).read("nonExistingProperty")).isNull();
+        assertThat((String)JsonPath.using(Configuration.defaultConfiguration().setOptions(Option.SUPPRESS_EXCEPTIONS)).parse(json).read("nonExistingProperty")).isNull();
 
         try {
             read(json, "nonExistingProperty");
@@ -498,7 +498,7 @@ public class IssuesTest extends BaseTest {
     public void issue_45() {
         String json = "{\"rootkey\":{\"sub.key\":\"value\"}}";
 
-        assertThat(read(json, "rootkey['sub.key']")).isEqualTo("value");
+        assertThat((String)read(json, "rootkey['sub.key']")).isEqualTo("value");
     }
 
     @Test
@@ -508,7 +508,7 @@ public class IssuesTest extends BaseTest {
         String json = "{\"a\": {}}";
 
         Configuration configuration = Configuration.defaultConfiguration().setOptions(Option.SUPPRESS_EXCEPTIONS);
-        assertThat(JsonPath.using(configuration).parse(json).read("a.x")).isNull();
+        assertThat((String)JsonPath.using(configuration).parse(json).read("a.x")).isNull();
 
         try {
             read(json, "a.x");
@@ -1018,10 +1018,10 @@ public class IssuesTest extends BaseTest {
 
         DocumentContext doc = JsonPath.parse(json).set("$.jsonArr[1].name", "Jayway");
 
-        assertThat(doc.read("$.jsonArr[0].name")).isEqualTo("nOne");
-        assertThat(doc.read("$.jsonArr[1].name")).isEqualTo("Jayway");
+        assertThat((String)doc.read("$.jsonArr[0].name")).isEqualTo("nOne");
+        assertThat((String)doc.read("$.jsonArr[1].name")).isEqualTo("Jayway");
     }
-    
+
     @Test
     public void issue_378(){
 
@@ -1039,12 +1039,81 @@ public class IssuesTest extends BaseTest {
             .jsonProvider(new JacksonJsonNodeJsonProvider())
             .mappingProvider(new JacksonMappingProvider())
             .build();
-        
+
         DocumentContext ctx = JsonPath.using(configuration).parse(json);
 
         String path = "$.nodes[*][?(!([\"1.2.3.4\"] subsetof @.ntpServers))].ntpServers";
         JsonPath jsonPath = JsonPath.compile(path);
 
         ctx.read(jsonPath);
+    }
+
+    //CS304 (manually written) Issue link: https://github.com/json-path/JsonPath/issues/620
+    @Test
+    public void issue_620_1(){
+        String json = "{\n" +
+                "  \"complexText\": {\n" +
+                "    \"nestedFields\": [\n" +
+                "      {\n" +
+                "        \"index\": \"0\",\n" +
+                "        \"name\": \"A\"\n" +
+                "      },\n" +
+                "      {\n" +
+                "        \"index\": \"1\",\n" +
+                "        \"name\": \"B\"\n" +
+                "      },\n" +
+                "      {\n" +
+                "        \"index\": \"2\",\n" +
+                "        \"name\": \"C\"\n" +
+                "      }\n" +
+                "    ]\n" +
+                "  }\n" +
+                "}";
+
+        String path1 = "$.concat($.complexText.nestedFields[?(@.index == '2')].name," +
+                "$.complexText.nestedFields[?(@.index == '1')].name," +
+                "$.complexText.nestedFields[?(@.index == '0')].name)";
+        String path2 = "$.concat($.complexText.nestedFields[2].name," +
+                "$.complexText.nestedFields[1].name," +
+                "$.complexText.nestedFields[0].name)";
+
+        assertThat((String)JsonPath.read(json,path1)).isEqualTo("CBA");
+        assertThat((String)JsonPath.read(json,path2)).isEqualTo("CBA");
+    }
+    //CS304 (manually written) Issue link: https://github.com/json-path/JsonPath/issues/620
+    @Test
+    public void issue_620_2(){
+        String json = "{\n" +
+                "  \"complexText\": {\n" +
+                "    \"nestedFields\": [\n" +
+                "      {\n" +
+                "        \"index\": \"0\",\n" +
+                "        \"name\": \"A\"\n" +
+                "      },\n" +
+                "      {\n" +
+                "        \"index\": \"1\",\n" +
+                "        \"name\": \"B\"\n" +
+                "      },\n" +
+                "      {\n" +
+                "        \"index\": \"2\",\n" +
+                "        \"name\": \"C\"\n" +
+                "      }\n" +
+                "    ]\n" +
+                "  }\n" +
+                "}";
+
+        String path1 = "$.concat($.complexText.nestedFields[?(@.index == '2')].name," +
+                "$.complexText.nestedFields[?((@.index == '1')].name," +
+                "$.complexText.nestedFields[?(@.index == '0')].name)";
+
+        boolean thrown = false;
+
+        try {
+            Object result = (Object) JsonPath.read(json,path1);
+        } catch (Exception e) {
+            thrown = true;
+        }
+
+        assertTrue(thrown);
     }
 }

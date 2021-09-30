@@ -20,6 +20,7 @@ import com.jayway.jsonpath.Predicate;
 import com.jayway.jsonpath.internal.PathRef;
 
 import java.util.Collection;
+import java.util.Collections;
 
 import static java.lang.String.format;
 import static java.util.Arrays.asList;
@@ -33,7 +34,7 @@ public class PredicatePathToken extends PathToken {
     private final Collection<Predicate> predicates;
 
     PredicatePathToken(Predicate filter) {
-        this.predicates = asList(filter);
+        this.predicates = Collections.singletonList(filter);
     }
 
     PredicatePathToken(Collection<Predicate> predicates) {

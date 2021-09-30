@@ -118,6 +118,26 @@ public class BaseTest {
             "   \"@id\" : \"ID\"\n" +
             "}";
 
+    public static String JSON_BOOK_STORE_DOCUMENT = "{\n" +
+            "    \"store\": {\n" +
+            "        \"book\": [\n" +
+            "            {\n" +
+            "                \"category\": \"reference\"\n" +
+            "            },\n" +
+            "            {\n" +
+            "                \"category\": \"fiction\"\n" +
+            "            },\n" +
+            "            {\n" +
+            "                \"category\": \"fiction\"\n" +
+            "            },\n" +
+            "            {\n" +
+            "                \"category\": \"fiction\"\n" +
+            "            }\n" +
+            "        ]\n" +
+            "    },\n" +
+            "    \"expensive\": 10\n" +
+            "}";
+
     public Predicate.PredicateContext createPredicateContext(final Object check) {
 
         return new PredicateContextImpl(check, check, Configuration.defaultConfiguration(), new HashMap<Path, Object>());

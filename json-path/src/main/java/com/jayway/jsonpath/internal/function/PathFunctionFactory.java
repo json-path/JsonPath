@@ -3,6 +3,7 @@ package com.jayway.jsonpath.internal.function;
 import com.jayway.jsonpath.Configuration;
 import com.jayway.jsonpath.InvalidPathException;
 import com.jayway.jsonpath.internal.function.json.Append;
+import com.jayway.jsonpath.internal.function.json.KeySetFunction;
 import com.jayway.jsonpath.internal.function.numeric.Average;
 import com.jayway.jsonpath.internal.function.numeric.Max;
 import com.jayway.jsonpath.internal.function.numeric.Min;
@@ -43,9 +44,10 @@ public class PathFunctionFactory {
         map.put("concat", Concatenate.class);
 
         // JSON Entity Functions
-        map.put("length", Length.class);
+        map.put(Length.TOKEN_NAME, Length.class);
         map.put("size", Length.class);
         map.put("append", Append.class);
+        map.put("keys", KeySetFunction.class);
 
 
         FUNCTIONS = Collections.unmodifiableMap(map);

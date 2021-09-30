@@ -22,11 +22,11 @@ public interface JsonAsserter {
     <T> JsonAsserter assertThat(String path, Matcher<T> matcher);
 
     /**
-     * @param path
-     * @param matcher
-     * @param message
-     * @param <T>
-     * @return
+     * @param path    the json path specifying the value being compared
+     * @param matcher an expression, built of Matchers, specifying allowed values
+     * @param message the explanation message
+     * @param <T>     the static type that should be returned by the path
+     * @return this to allow fluent assertion chains
      */
     <T> JsonAsserter assertThat(String path, Matcher<T> matcher, String message);
 
