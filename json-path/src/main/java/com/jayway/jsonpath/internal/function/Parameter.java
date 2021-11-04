@@ -129,6 +129,8 @@ public class Parameter {
         } else {
             if (value != null && expectedType.isAssignableFrom(value.getClass())) {
                 collection.add(value);
+            } else if (value != null && expectedType == String.class) {
+                collection.add(value.toString());
             }
         }
     }
