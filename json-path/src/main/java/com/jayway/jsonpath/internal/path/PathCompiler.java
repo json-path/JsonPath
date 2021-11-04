@@ -207,6 +207,21 @@ public class PathCompiler {
 
         List<Parameter> functionParameters = null;
         if (isFunction) {
+            int parenthesis_count = 1;
+            for(int i = readPosition + 1; i < path.length(); i++){
+                if (path.charAt(i) == CLOSE_PARENTHESIS)
+                    parenthesis_count--;
+                else if (path.charAt(i) == OPEN_PARENTHESIS)
+                    parenthesis_count++;
+                if (parenthesis_count == 0)
+                    break;
+            }
+
+            if (parenthesis_count != 0){
+                String functionName = path.subSequence(startPosition, endPosition).toString();
+                throw new InvalidPathException("Arguments to function: '" + functionName + "' are not closed properly.");
+            }
+
             if (path.inBounds(readPosition+1)) {
                 // read the next token to determine if we have a simple no-args function call
                 char c = path.charAt(readPosition + 1);
