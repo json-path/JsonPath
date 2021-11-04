@@ -30,4 +30,9 @@ public class PathNotFoundException extends InvalidPathException {
     public PathNotFoundException(Throwable cause) {
         super(cause);
     }
+
+    @Override
+    public synchronized Throwable fillInStackTrace() {
+        return this;
+    }
 }
