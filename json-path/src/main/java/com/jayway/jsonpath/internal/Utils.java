@@ -307,6 +307,25 @@ public final class Utils {
      * @param <T>     the object type
      * @param object  the object to check
      * @param message the {@link String#format(String, Object...)} exception message if invalid, not null
+     * @return the validated object (never {@code null} for method chaining)
+     * @throws NullPointerException if the object is {@code null}
+     */
+    public static <T> T notNull(T object, String message) {
+        if (object == null) {
+            throw new IllegalArgumentException(message);
+        }
+        return object;
+    }
+
+    /**
+     * <p>Validate that the specified argument is not {@code null};
+     * otherwise throwing an exception with the specified message.
+     * <p/>
+     * <pre>Validate.notNull(myObject, "The object must not be null");</pre>
+     *
+     * @param <T>     the object type
+     * @param object  the object to check
+     * @param message the {@link String#format(String, Object...)} exception message if invalid, not null
      * @param values  the optional values for the formatted exception message
      * @return the validated object (never {@code null} for method chaining)
      * @throws NullPointerException if the object is {@code null}
@@ -361,6 +380,27 @@ public final class Utils {
             }
         }
         return 1 == count;
+    }
+
+    /**
+     * <p>Validate that the specified argument character sequence is
+     * neither {@code null} nor a length of zero (no characters);
+     * otherwise throwing an exception with the specified message.
+     * <p/>
+     * <pre>Validate.notEmpty(myString, "The string must not be empty");</pre>
+     *
+     * @param <T>     the character sequence type
+     * @param chars   the character sequence to check, validated not null by this method
+     * @param message the {@link String#format(String, Object...)} exception message if invalid, not null
+     * @return the validated character sequence (never {@code null} method for chaining)
+     * @throws NullPointerException     if the character sequence is {@code null}
+     * @throws IllegalArgumentException if the character sequence is empty
+     */
+    public static <T extends CharSequence> T notEmpty(T chars, String message) {
+        if (chars == null || chars.length() == 0) {
+            throw new IllegalArgumentException(message);
+        }
+        return chars;
     }
 
     /**
