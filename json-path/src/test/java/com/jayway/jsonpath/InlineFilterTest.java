@@ -193,6 +193,10 @@ public class InlineFilterTest extends BaseTest {
         if(conf.jsonProvider().getClass().getSimpleName().startsWith("Jackson")){
             return;
         }
+        if(conf.jsonProvider().getClass().getSimpleName().startsWith("Jakarta")){
+            // single quotes are not valid in JSON; see json.org
+            return;
+        }
         assertHasOneResult("[\"\\'foo\"]", "$[?(@ == '\\'foo')]", conf);
     }
 

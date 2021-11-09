@@ -5,12 +5,14 @@ import com.jayway.jsonpath.internal.path.PredicateContextImpl;
 import com.jayway.jsonpath.spi.json.GsonJsonProvider;
 import com.jayway.jsonpath.spi.json.JacksonJsonNodeJsonProvider;
 import com.jayway.jsonpath.spi.json.JacksonJsonProvider;
+import com.jayway.jsonpath.spi.json.JakartaJsonProvider;
 import com.jayway.jsonpath.spi.json.JettisonProvider;
 import com.jayway.jsonpath.spi.json.JsonOrgJsonProvider;
 import com.jayway.jsonpath.spi.json.JsonSmartJsonProvider;
 import com.jayway.jsonpath.spi.json.TapestryJsonProvider;
 import com.jayway.jsonpath.spi.mapper.GsonMappingProvider;
 import com.jayway.jsonpath.spi.mapper.JacksonMappingProvider;
+import com.jayway.jsonpath.spi.mapper.JakartaMappingProvider;
 import com.jayway.jsonpath.spi.mapper.JsonOrgMappingProvider;
 import com.jayway.jsonpath.spi.mapper.JsonSmartMappingProvider;
 import com.jayway.jsonpath.spi.mapper.TapestryMappingProvider;
@@ -55,10 +57,23 @@ public class BaseTest {
             .build();
     
     public static final Configuration TAPESTRY_JSON_CONFIGURATION = Configuration
-        .builder()
-        .mappingProvider(new TapestryMappingProvider())
-        .jsonProvider(TapestryJsonProvider.INSTANCE)
-        .build();
+            .builder()
+            .mappingProvider(new TapestryMappingProvider())
+            .jsonProvider(TapestryJsonProvider.INSTANCE)
+            .build();
+
+    public static final Configuration JAKARTA_JSON_CONFIGURATION = Configuration
+            .builder()
+            .mappingProvider(new JakartaMappingProvider())
+            .jsonProvider(new JakartaJsonProvider())
+            .build();
+
+    // extension to Jakarta EE 9 JSON-P with mutable objects and array
+    public static final Configuration JAKARTA_JSON_RW_CONFIGURATION = Configuration
+            .builder()
+            .mappingProvider(new JakartaMappingProvider())
+            .jsonProvider(new JakartaJsonProvider(true))
+            .build();
 
     public static final String JSON_BOOK_DOCUMENT =
             "{ " +
