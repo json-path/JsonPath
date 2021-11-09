@@ -612,7 +612,7 @@ public class PathCompiler {
                     inProperty = true;
                     lastSignificantWasComma = false;
                 }
-            } else if (c == COMMA){
+            } else if (c == COMMA && !inProperty) {
                 if (lastSignificantWasComma){
                     fail("Found empty property at index "+readPosition);
                 }
