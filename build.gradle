@@ -40,19 +40,6 @@ ext {
 }
 
 allprojects {
-    tasks.withType(Test).configureEach {
-        maxParallelForks = 4
-    }
-
-    tasks.withType(Test).configureEach {
-        forkEvery = 100
-    }
-
-    tasks.withType(Test).configureEach {
-        reports.html.required = false
-        reports.junitXml.required = false
-    }
-
     ext.displayName = null
     ext.buildTimestamp = new Date().format('yyyy-MM-dd HH:mm:ss')
 
