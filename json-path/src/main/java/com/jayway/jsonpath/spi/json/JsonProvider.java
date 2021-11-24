@@ -15,9 +15,10 @@
 package com.jayway.jsonpath.spi.json;
 
 import com.jayway.jsonpath.InvalidJsonException;
-
 import java.io.InputStream;
+import java.nio.charset.StandardCharsets;
 import java.util.Collection;
+
 
 public interface JsonProvider {
 
@@ -31,6 +32,15 @@ public interface JsonProvider {
      */
     Object parse(String json) throws InvalidJsonException;
 
+    /**
+     * Parse the given json bytes in UTF-8 encoding
+     * @param json json bytes to parse
+     * @return Object representation of json
+     * @throws InvalidJsonException
+     */
+    default Object parse(byte[] json) throws InvalidJsonException {
+        return parse(new String(json, StandardCharsets.UTF_8));
+    }
     /**
      * Parse the given json string
      * @param jsonStream input stream to parse

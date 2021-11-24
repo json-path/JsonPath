@@ -18,14 +18,15 @@ import com.fasterxml.jackson.core.JsonGenerator;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.ObjectReader;
 import com.jayway.jsonpath.InvalidJsonException;
-
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.StringWriter;
+import java.nio.charset.StandardCharsets;
 import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.List;
+
 
 public class JacksonJsonProvider extends AbstractJsonProvider {
 
@@ -70,6 +71,16 @@ public class JacksonJsonProvider extends AbstractJsonProvider {
             return objectReader.readValue(json);
         } catch (IOException e) {
             throw new InvalidJsonException(e, json);
+        }
+    }
+
+    @Override
+    public Object parse(byte[] json)
+        throws InvalidJsonException {
+        try {
+            return objectReader.readValue(json);
+        } catch (IOException e) {
+            throw new InvalidJsonException(e, new String(json, StandardCharsets.UTF_8));
         }
     }
 

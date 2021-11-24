@@ -1,11 +1,12 @@
 package com.jayway.jsonpath;
 
+import java.util.Date;
 import org.junit.Test;
 
-import java.util.Date;
-
+import static java.nio.charset.StandardCharsets.UTF_8;
 import static java.util.Collections.singletonMap;
 import static org.assertj.core.api.Assertions.assertThat;
+
 
 public class JacksonTest extends BaseTest {
 
@@ -25,6 +26,12 @@ public class JacksonTest extends BaseTest {
         assertThat(fooBarBaz.bar).isEqualTo(10L);
         assertThat(fooBarBaz.baz).isEqualTo(true);
 
+        fooBarBaz = JsonPath.using(JACKSON_CONFIGURATION).parseUtf8(json.getBytes(UTF_8))
+            .read("$", FooBarBaz.class);
+
+        assertThat(fooBarBaz.foo).isEqualTo("foo");
+        assertThat(fooBarBaz.bar).isEqualTo(10L);
+        assertThat(fooBarBaz.baz).isEqualTo(true);
     }
 
     public static class FooBarBaz {
@@ -52,7 +59,11 @@ public class JacksonTest extends BaseTest {
         final Object readFromSingleQuote = JsonPath.using(JACKSON_CONFIGURATION).parse(jsonArray).read("$.[?(@.foo in ['bar'])].foo");
         final Object readFromDoubleQuote = JsonPath.using(JACKSON_CONFIGURATION).parse(jsonArray).read("$.[?(@.foo in [\"bar\"])].foo");
         assertThat(readFromSingleQuote).isEqualTo(readFromDoubleQuote);
-
+        final Object readFromSingleQuoteBytes = JsonPath.using(JACKSON_CONFIGURATION).parseUtf8(jsonArray.getBytes(UTF_8))
+            .read("$.[?(@.foo in ['bar'])].foo");
+        final Object readFromDoubleQuoteBytes = JsonPath.using(JACKSON_CONFIGURATION).parseUtf8(jsonArray.getBytes(UTF_8))
+            .read("$.[?(@.foo in [\"bar\"])].foo");
+        assertThat(readFromSingleQuoteBytes).isEqualTo(readFromDoubleQuoteBytes);
     }
 
 }

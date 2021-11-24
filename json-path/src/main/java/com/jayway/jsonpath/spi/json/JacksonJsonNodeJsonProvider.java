@@ -8,16 +8,17 @@ import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.fasterxml.jackson.databind.node.TextNode;
 import com.jayway.jsonpath.InvalidJsonException;
 import com.jayway.jsonpath.JsonPathException;
-
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.math.BigDecimal;
 import java.math.BigInteger;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
+
 
 public class JacksonJsonNodeJsonProvider extends AbstractJsonProvider {
 
@@ -51,6 +52,16 @@ public class JacksonJsonNodeJsonProvider extends AbstractJsonProvider {
             return objectMapper.readTree(json);
         } catch (IOException e) {
             throw new InvalidJsonException(e, json);
+        }
+    }
+
+    @Override
+    public Object parse(byte[] json)
+        throws InvalidJsonException {
+        try {
+            return objectMapper.readTree(json);
+        } catch (IOException e) {
+            throw new InvalidJsonException(e, new String(json, StandardCharsets.UTF_8));
         }
     }
 
