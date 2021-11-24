@@ -9,6 +9,7 @@ import com.jayway.jsonpath.internal.function.numeric.Min;
 import com.jayway.jsonpath.internal.function.numeric.StandardDeviation;
 import com.jayway.jsonpath.internal.function.numeric.Sum;
 import com.jayway.jsonpath.internal.function.text.Concatenate;
+import com.jayway.jsonpath.internal.function.text.Join;
 import com.jayway.jsonpath.internal.function.text.Length;
 
 import java.util.Collections;
@@ -40,6 +41,7 @@ public class PathFunctionFactory {
 
         // Text Functions
         map.put("concat", Concatenate.class);
+        map.put("join", Join.class);
 
         // JSON Entity Functions
         map.put(Length.TOKEN_NAME, Length.class);
