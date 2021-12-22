@@ -24,8 +24,6 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
-import java.util.ArrayList;
-import java.util.List;
 
 import static com.jayway.jsonpath.Option.ALWAYS_RETURN_LIST;
 import static com.jayway.jsonpath.Option.AS_PATH_LIST;
@@ -171,39 +169,40 @@ public class JsonPath {
         boolean optAlwaysReturnList = configuration.containsOption(Option.ALWAYS_RETURN_LIST);
         boolean optSuppressExceptions = configuration.containsOption(Option.SUPPRESS_EXCEPTIONS);
 
-        try {
-            if (path.isFunctionPath()) {
-                if (optAsPathList || optAlwaysReturnList) {
-                    throw new JsonPathException("Options " + AS_PATH_LIST + " and " + ALWAYS_RETURN_LIST + " are not allowed when using path functions!");
+        if (path.isFunctionPath()) {
+            if (optAsPathList || optAlwaysReturnList) {
+                if (optSuppressExceptions) {
+                    return (T) (path.isDefinite() ? null : configuration.jsonProvider().createArray());
                 }
-                return path.evaluate(jsonObject, jsonObject, configuration).getValue(true);
-
-            } else if (optAsPathList) {
-                return (T) path.evaluate(jsonObject, jsonObject, configuration).getPath();
-
-            } else {
-                Object res = path.evaluate(jsonObject, jsonObject, configuration).getValue(false);
-                if (optAlwaysReturnList && path.isDefinite()) {
-                    Object array = configuration.jsonProvider().createArray();
-                    configuration.jsonProvider().setArrayIndex(array, 0, res);
-                    return (T) array;
-                } else {
-                    return (T) res;
-                }
+                throw new JsonPathException("Options " + AS_PATH_LIST + " and " + ALWAYS_RETURN_LIST + " are not allowed when using path functions!");
             }
-        } catch (RuntimeException e) {
-            if (!optSuppressExceptions) {
-                throw e;
-            } else {
-                if (optAsPathList) {
+            EvaluationContext evaluationContext = path.evaluate(jsonObject, jsonObject, configuration);
+            if (optSuppressExceptions && evaluationContext.getPathList().isEmpty()) {
+                return (T) (path.isDefinite() ? null : configuration.jsonProvider().createArray());
+            }
+            return evaluationContext.getValue(true);
+        } else if (optAsPathList) {
+            EvaluationContext evaluationContext = path.evaluate(jsonObject, jsonObject, configuration);
+            if (optSuppressExceptions && evaluationContext.getPathList().isEmpty()) {
+                return (T) configuration.jsonProvider().createArray();
+            }
+            return (T) evaluationContext.getPath();
+        } else {
+            EvaluationContext evaluationContext = path.evaluate(jsonObject, jsonObject, configuration);
+            if (optSuppressExceptions && evaluationContext.getPathList().isEmpty()) {
+                if (optAlwaysReturnList) {
                     return (T) configuration.jsonProvider().createArray();
                 } else {
-                    if (optAlwaysReturnList) {
-                        return (T) configuration.jsonProvider().createArray();
-                    } else {
-                        return (T) (path.isDefinite() ? null : configuration.jsonProvider().createArray());
-                    }
+                    return (T) (path.isDefinite() ? null : configuration.jsonProvider().createArray());
                 }
+            }
+            Object res = evaluationContext.getValue(false);
+            if (optAlwaysReturnList && path.isDefinite()) {
+                Object array = configuration.jsonProvider().createArray();
+                configuration.jsonProvider().setArrayIndex(array, 0, res);
+                return (T) array;
+            } else {
+                return (T) res;
             }
         }
     }
@@ -220,6 +219,14 @@ public class JsonPath {
         notNull(jsonObject, "json can not be null");
         notNull(configuration, "configuration can not be null");
         EvaluationContext evaluationContext = path.evaluate(jsonObject, jsonObject, configuration, true);
+        if (evaluationContext.getPathList().isEmpty()) {
+            boolean optSuppressExceptions = configuration.containsOption(Option.SUPPRESS_EXCEPTIONS);
+            if (optSuppressExceptions) {
+                return handleMissingPathInContext(configuration);
+            } else {
+                throw new PathNotFoundException();
+            }
+        }
         for (PathRef updateOperation : evaluationContext.updateOperations()) {
             updateOperation.set(newVal, configuration);
         }
@@ -239,30 +246,19 @@ public class JsonPath {
         notNull(jsonObject, "json can not be null");
         notNull(configuration, "configuration can not be null");
         notNull(mapFunction, "mapFunction can not be null");
-        boolean optAsPathList = configuration.containsOption(AS_PATH_LIST);
-        boolean optAlwaysReturnList = configuration.containsOption(Option.ALWAYS_RETURN_LIST);
-        boolean optSuppressExceptions = configuration.containsOption(Option.SUPPRESS_EXCEPTIONS);
-        try {
-            EvaluationContext evaluationContext = path.evaluate(jsonObject, jsonObject, configuration, true);
-            for (PathRef updateOperation : evaluationContext.updateOperations()) {
-                updateOperation.convert(mapFunction, configuration);
-            }
-            return resultByConfiguration(jsonObject, configuration, evaluationContext);
-        }catch (RuntimeException e) {
-            if (!optSuppressExceptions) {
-                throw e;
+        EvaluationContext evaluationContext = path.evaluate(jsonObject, jsonObject, configuration, true);
+        if (evaluationContext.getPathList().isEmpty()) {
+            boolean optSuppressExceptions = configuration.containsOption(Option.SUPPRESS_EXCEPTIONS);
+            if (optSuppressExceptions) {
+                return handleMissingPathInContext(configuration);
             } else {
-                if (optAsPathList) {
-                    return (T) configuration.jsonProvider().createArray();
-                } else {
-                    if (optAlwaysReturnList) {
-                        return (T) configuration.jsonProvider().createArray();
-                    } else {
-                        return (T) (path.isDefinite() ? null : configuration.jsonProvider().createArray());
-                    }
-                }
+                throw new PathNotFoundException();
             }
         }
+        for (PathRef updateOperation : evaluationContext.updateOperations()) {
+            updateOperation.convert(mapFunction, configuration);
+        }
+        return resultByConfiguration(jsonObject, configuration, evaluationContext);
 
     }
 
@@ -277,24 +273,19 @@ public class JsonPath {
     public <T> T delete(Object jsonObject, Configuration configuration) {
         notNull(jsonObject, "json can not be null");
         notNull(configuration, "configuration can not be null");
-
-        boolean optSuppressExceptions = configuration.containsOption(Option.SUPPRESS_EXCEPTIONS);
-
-        try {
-            EvaluationContext evaluationContext = path.evaluate(jsonObject, jsonObject, configuration, true);
-            for (PathRef updateOperation : evaluationContext.updateOperations()) {
-                updateOperation.delete(configuration);
-            }
-            return resultByConfiguration(jsonObject, configuration, evaluationContext);
-        } catch (RuntimeException e) {
-            if (!optSuppressExceptions) {
-                throw e;
+        EvaluationContext evaluationContext = path.evaluate(jsonObject, jsonObject, configuration, true);
+        if (evaluationContext.getPathList().isEmpty()) {
+            boolean optSuppressExceptions = configuration.containsOption(Option.SUPPRESS_EXCEPTIONS);
+            if (optSuppressExceptions) {
+                return handleMissingPathInContext(configuration);
             } else {
-                List<String> list = new ArrayList<String>();  // the log messages
-                list.add("delete throws "+e.getMessage());  // TODO
-                return (T) list;
+                throw new PathNotFoundException();
             }
         }
+        for (PathRef updateOperation : evaluationContext.updateOperations()) {
+            updateOperation.delete(configuration);
+        }
+        return resultByConfiguration(jsonObject, configuration, evaluationContext);
     }
 
     /**
@@ -310,6 +301,14 @@ public class JsonPath {
         notNull(jsonObject, "json can not be null");
         notNull(configuration, "configuration can not be null");
         EvaluationContext evaluationContext = path.evaluate(jsonObject, jsonObject, configuration, true);
+        if (evaluationContext.getPathList().isEmpty()) {
+            boolean optSuppressExceptions = configuration.containsOption(Option.SUPPRESS_EXCEPTIONS);
+            if (optSuppressExceptions) {
+                return handleMissingPathInContext(configuration);
+            } else {
+                throw new PathNotFoundException();
+            }
+        }
         for (PathRef updateOperation : evaluationContext.updateOperations()) {
             updateOperation.add(value, configuration);
         }
@@ -320,7 +319,7 @@ public class JsonPath {
      * Adds or updates the Object this path points to in the provided jsonObject with a key with a value
      *
      * @param jsonObject    a json object
-     * @param key         the key to add or update
+     * @param key           the key to add or update
      * @param value         the new value
      * @param configuration configuration to use
      * @param <T>           expected return type
@@ -331,6 +330,14 @@ public class JsonPath {
         notEmpty(key, "key can not be null or empty");
         notNull(configuration, "configuration can not be null");
         EvaluationContext evaluationContext = path.evaluate(jsonObject, jsonObject, configuration, true);
+        if (evaluationContext.getPathList().isEmpty()) {
+            boolean optSuppressExceptions = configuration.containsOption(Option.SUPPRESS_EXCEPTIONS);
+            if (optSuppressExceptions) {
+                return handleMissingPathInContext(configuration);
+            } else {
+                throw new PathNotFoundException();
+            }
+        }
         for (PathRef updateOperation : evaluationContext.updateOperations()) {
             updateOperation.put(key, value, configuration);
         }
@@ -735,6 +742,20 @@ public class JsonPath {
             return (T)evaluationContext.getPathList();
         } else {
             return (T) jsonObject;
+        }
+    }
+
+    private <T> T handleMissingPathInContext(final Configuration configuration) {
+        boolean optAsPathList = configuration.containsOption(AS_PATH_LIST);
+        boolean optAlwaysReturnList = configuration.containsOption(Option.ALWAYS_RETURN_LIST);
+        if (optAsPathList) {
+            return (T) configuration.jsonProvider().createArray();
+        } else {
+            if (optAlwaysReturnList) {
+                return (T) configuration.jsonProvider().createArray();
+            } else {
+                return (T) (path.isDefinite() ? null : configuration.jsonProvider().createArray());
+            }
         }
     }
 }

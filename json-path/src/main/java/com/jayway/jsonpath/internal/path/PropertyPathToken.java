@@ -15,6 +15,7 @@
 package com.jayway.jsonpath.internal.path;
 
 import com.jayway.jsonpath.InvalidPathException;
+import com.jayway.jsonpath.Option;
 import com.jayway.jsonpath.PathNotFoundException;
 import com.jayway.jsonpath.internal.PathRef;
 import com.jayway.jsonpath.internal.Utils;
@@ -54,7 +55,7 @@ class PropertyPathToken extends PathToken {
 
     public boolean multiPropertyIterationCase() {
         // Semantics of this case is the same as semantics of ArrayPathToken with INDEX_SEQUENCE operation.
-        return ! isLeaf() && properties.size() > 1;
+        return !isLeaf() && properties.size() > 1;
     }
 
     @Override
@@ -63,14 +64,14 @@ class PropertyPathToken extends PathToken {
         assert onlyOneIsTrueNonThrow(singlePropertyCase(), multiPropertyMergeCase(), multiPropertyIterationCase());
 
         if (!ctx.jsonProvider().isMap(model)) {
-            if (! isUpstreamDefinite()) {
+            if (!isUpstreamDefinite()
+                    || ctx.options().contains(Option.SUPPRESS_EXCEPTIONS)) {
                 return;
             } else {
                 String m = model == null ? "null" : model.getClass().getName();
-
                 throw new PathNotFoundException(String.format(
                         "Expected to find an object with property %s in path %s but found '%s'. " +
-                        "This is not a json object according to the JsonProvider: '%s'.",
+                                "This is not a json object according to the JsonProvider: '%s'.",
                         getPathFragment(), currentPath, m, ctx.configuration().jsonProvider().getClass().getName()));
             }
         }
