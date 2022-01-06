@@ -19,6 +19,7 @@ import net.minidev.json.parser.JSONParser;
 import net.minidev.json.parser.ParseException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import net.minidev.json.JSONArray;
 
 /**
  * Moved these nodes out of the ValueNode abstract class.
@@ -678,7 +679,11 @@ public interface ValueNodes {
                 try {
                     Configuration c = Configuration.builder().jsonProvider(ctx.configuration().jsonProvider()).options(Option.REQUIRE_PROPERTIES).build();
                     Object result = path.evaluate(ctx.item(), ctx.root(), c).getValue(false);
-                    return result == JsonProvider.UNDEFINED ? FALSE : TRUE;
+                    if (((PredicateContextImpl)ctx).isExtractingParentNode() && result instanceof JSONArray) {
+                        return (result == JsonProvider.UNDEFINED) || (((JSONArray) result).size() == 0) ? FALSE : TRUE;
+                    } else {
+                        return result == JsonProvider.UNDEFINED ? FALSE : TRUE;
+                    }
                 } catch (PathNotFoundException e) {
                     return FALSE;
                 }

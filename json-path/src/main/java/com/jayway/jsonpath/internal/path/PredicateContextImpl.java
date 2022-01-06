@@ -31,12 +31,21 @@ public class PredicateContextImpl implements Predicate.PredicateContext {
     private final Object rootDocument;
     private final Configuration configuration;
     private final HashMap<Path, Object> documentPathCache;
+    private boolean isExtractingParentNode = false;
 
     public PredicateContextImpl(Object contextDocument, Object rootDocument, Configuration configuration, HashMap<Path, Object> documentPathCache) {
         this.contextDocument = contextDocument;
         this.rootDocument = rootDocument;
         this.configuration = configuration;
         this.documentPathCache = documentPathCache;
+    }
+
+    public boolean isExtractingParentNode(){
+        return isExtractingParentNode;
+    }
+
+    public void setExtractingParentNode(){
+        this.isExtractingParentNode = true;
     }
 
     public Object evaluate(Path path){
