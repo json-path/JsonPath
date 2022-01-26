@@ -506,7 +506,7 @@ CacheProvider.setCache(new Cache() {
 });
 ```
 
-### Custom PAth Functions
+### Custom Path Functions
 
 If you want to implement you own path functions, create your PathFunction implementation.
 Initializing PathFunctionFactory should only be done when your application is being initialized.
