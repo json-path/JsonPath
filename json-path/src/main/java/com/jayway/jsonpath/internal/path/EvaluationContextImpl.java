@@ -48,6 +48,7 @@ public class EvaluationContextImpl implements EvaluationContext {
     private final List<PathRef> updateOperations;
     private final HashMap<Path, Object> documentEvalCache = new HashMap<Path, Object>();
     private final boolean forUpdate;
+    private final boolean suppressExceptions;
     private int resultIndex = 0;
 
 
@@ -61,7 +62,8 @@ public class EvaluationContextImpl implements EvaluationContext {
         this.configuration = configuration;
         this.valueResult = configuration.jsonProvider().createArray();
         this.pathResult = configuration.jsonProvider().createArray();
-        this.updateOperations = new ArrayList<PathRef>();
+        this.updateOperations = new ArrayList<>();
+        this.suppressExceptions = configuration.containsOption(Option.SUPPRESS_EXCEPTIONS);
     }
 
     public HashMap<Path, Object> documentEvalCache() {
@@ -129,7 +131,10 @@ public class EvaluationContextImpl implements EvaluationContext {
     @Override
     public <T> T getValue(boolean unwrap) {
         if (path.isDefinite()) {
-            if(resultIndex == 0){
+            if(resultIndex == 0) {
+                if (suppressExceptions) {
+                    return null;
+                }
                 throw new PathNotFoundException("No results for path: " + path.toString());
             }
             int len = jsonProvider().length(valueResult);
@@ -145,7 +150,10 @@ public class EvaluationContextImpl implements EvaluationContext {
     @SuppressWarnings("unchecked")
     @Override
     public <T> T getPath() {
-        if(resultIndex == 0){
+        if(resultIndex == 0) {
+            if (suppressExceptions) {
+                return null;
+            }
             throw new PathNotFoundException("No results for path: " + path.toString());
         }
         return (T)pathResult;
