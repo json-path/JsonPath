@@ -11,6 +11,8 @@ Jayway JsonPath is a Java port of [Stefan Goessner JsonPath implementation](http
 
 News
 ----
+30 Jan 2022 - Released JsonPath 2.7.0
+
 02 Jun 2021 - Released JsonPath 2.6.0 
 
 10 Dec 2020 - Released JsonPath 2.5.0
@@ -41,7 +43,7 @@ JsonPath is available at the Central Maven Repository. Maven users add this to y
 <dependency>
     <groupId>com.jayway.jsonpath</groupId>
     <artifactId>json-path</artifactId>
-    <version>2.6.0</version>
+    <version>2.7.0</version>
 </dependency>
 ```
 
