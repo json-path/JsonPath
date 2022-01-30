@@ -32,6 +32,10 @@ public class RootPathToken extends PathToken {
         this.tokenCount = 1;
     }
 
+    public PathToken getTail(){
+        return this.tail;
+    }
+
     @Override
     public int getTokenCount() {
         return tokenCount;

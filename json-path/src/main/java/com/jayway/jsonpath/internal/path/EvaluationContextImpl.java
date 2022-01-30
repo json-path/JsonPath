@@ -52,6 +52,10 @@ public class EvaluationContextImpl implements EvaluationContext {
     private int resultIndex = 0;
 
 
+    public RootPathToken getRoot(){
+        return ((CompiledPath) path).getRoot();
+    }
+
     public EvaluationContextImpl(Path path, Object rootDocument, Configuration configuration, boolean forUpdate) {
         notNull(path, "path can not be null");
         notNull(rootDocument, "root can not be null");
