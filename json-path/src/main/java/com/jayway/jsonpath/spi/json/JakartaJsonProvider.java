@@ -817,17 +817,22 @@ public class JakartaJsonProvider extends AbstractJsonProvider {
 
 		@Override
 		public int hashCode() {
-			return arr.hashCode();
+			return arr != null ? arr.hashCode() : 0;
 		}
 
 		@Override
 	    public boolean equals(Object obj) {
+			if (obj == null) {
+				return this.arr == null;
+			} else if (obj instanceof JsonArrayProxy) {
+				return this.arr.equals(((JsonArrayProxy) obj).arr);
+			}
 			return arr.equals(obj);
 	    }
 
 		@Override
 	    public String toString() {
-			return arr.toString();
+			return arr != null ? arr.toString() : null;
 	    }
     }
 
@@ -1017,17 +1022,22 @@ public class JakartaJsonProvider extends AbstractJsonProvider {
 
 		@Override
 		public int hashCode() {
-			return obj.hashCode();
+			return obj != null ? obj.hashCode() : 0;
 		}
 
 		@Override
 	    public boolean equals(Object obj) {
-			return obj.equals(obj);
+			if (obj == null) {
+				return this.obj == null;
+			} else if (obj instanceof JsonObjectProxy) {
+				return this.obj.equals(((JsonObjectProxy) obj).obj);
+			}
+			return this.obj.equals(obj);
 	    }
 
 		@Override
 	    public String toString() {
-			return obj.toString();
+			return obj != null ? obj.toString() : null;
 	    }
     }
 }
