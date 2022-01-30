@@ -2,8 +2,12 @@ package com.jayway.jsonpath;
 
 import com.jayway.jsonpath.spi.json.JacksonJsonProvider;
 import com.jayway.jsonpath.spi.mapper.JacksonMappingProvider;
+import org.assertj.core.api.Assertions;
 import org.junit.Test;
 
+import java.util.List;
+
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.Assert.assertNull;
 
 
@@ -26,6 +30,8 @@ public class TestSuppressExceptions {
             .mappingProvider(new JacksonMappingProvider()).options(Option.SUPPRESS_EXCEPTIONS, Option.AS_PATH_LIST)
             .build());
     String json = "{}";
-    assertNull(parseContext.parse(json).read(JsonPath.compile("$.missing")));
+
+    List<String> result = parseContext.parse(json).read(JsonPath.compile("$.missing"));
+    assertThat(result).isEmpty();
   }
 }
