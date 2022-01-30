@@ -1,5 +1,20 @@
 package com.jayway.jsonpath.spi.json;
 
+import com.jayway.jsonpath.InvalidJsonException;
+import com.jayway.jsonpath.JsonPathException;
+import jakarta.json.JsonArray;
+import jakarta.json.JsonArrayBuilder;
+import jakarta.json.JsonBuilderFactory;
+import jakarta.json.JsonNumber;
+import jakarta.json.JsonObject;
+import jakarta.json.JsonObjectBuilder;
+import jakarta.json.JsonReader;
+import jakarta.json.JsonString;
+import jakarta.json.JsonStructure;
+import jakarta.json.JsonValue;
+import jakarta.json.spi.JsonProvider;
+import jakarta.json.stream.JsonParsingException;
+import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.Reader;
@@ -7,6 +22,7 @@ import java.io.StringReader;
 import java.io.UnsupportedEncodingException;
 import java.math.BigDecimal;
 import java.math.BigInteger;
+import java.nio.charset.StandardCharsets;
 import java.util.AbstractSet;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -19,22 +35,6 @@ import java.util.ListIterator;
 import java.util.Map;
 import java.util.Set;
 
-import com.jayway.jsonpath.InvalidJsonException;
-import com.jayway.jsonpath.JsonPathException;
-
-import jakarta.json.JsonArray;
-import jakarta.json.JsonArrayBuilder;
-import jakarta.json.JsonBuilderFactory;
-import jakarta.json.JsonException;
-import jakarta.json.JsonNumber;
-import jakarta.json.JsonObject;
-import jakarta.json.JsonObjectBuilder;
-import jakarta.json.JsonReader;
-import jakarta.json.JsonString;
-import jakarta.json.JsonStructure;
-import jakarta.json.JsonValue;
-import jakarta.json.spi.JsonProvider;
-import jakarta.json.stream.JsonParsingException;
 
 public class JakartaJsonProvider extends AbstractJsonProvider {
 
@@ -69,33 +69,33 @@ public class JakartaJsonProvider extends AbstractJsonProvider {
 
     @Override
     public Object parse(String json) throws InvalidJsonException {
-        Reader jsonInput = new StringReader(json);
-        try (JsonReader jsonReader = defaultJsonProvider.createReader(jsonInput)) {
-        	JsonStructure jsonStruct = jsonReader.read();
-        	return mutableJson ? proxyAll(jsonStruct) : jsonStruct;
-        } catch (JsonParsingException e) {
-            throw new InvalidJsonException(e);
-        }
-        // not catching a JsonException as it never happens here
+        return parse(new StringReader(json));
+    }
+
+    @Override
+    public Object parse(byte[] json)
+        throws InvalidJsonException {
+        return parse(new InputStreamReader(new ByteArrayInputStream(json), StandardCharsets.UTF_8));
     }
 
     @Override
     public Object parse(InputStream jsonStream, String charset) throws InvalidJsonException {
-        Reader jsonInput;
         try {
-            jsonInput = new InputStreamReader(jsonStream, charset);
+            return parse(new InputStreamReader(jsonStream, charset));
         } catch (UnsupportedEncodingException e) {
             throw new JsonPathException(e);
         }
-        try (JsonReader jsonReader = defaultJsonProvider.createReader(jsonInput)) {
-        	JsonStructure jsonStruct = jsonReader.read();
-        	return mutableJson ? proxyAll(jsonStruct) : jsonStruct;
-        } catch (JsonParsingException e) {
-            throw new InvalidJsonException(e);
-        } catch (JsonException e) {
-            throw new JsonPathException(e);
-        }
     }
+
+  private Object parse(Reader jsonInput) {
+    try (JsonReader jsonReader = defaultJsonProvider.createReader(jsonInput)) {
+        JsonStructure jsonStruct = jsonReader.read();
+        return mutableJson ? proxyAll(jsonStruct) : jsonStruct;
+    } catch (JsonParsingException e) {
+        throw new InvalidJsonException(e);
+    }
+    // not catching a JsonException as it never happens here
+  }
 
     @Override
     public String toJson(Object obj) {

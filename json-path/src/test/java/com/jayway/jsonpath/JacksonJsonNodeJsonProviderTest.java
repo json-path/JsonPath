@@ -12,6 +12,7 @@ import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.jayway.jsonpath.spi.json.JacksonJsonNodeJsonProvider;
 import com.jayway.jsonpath.spi.mapper.JacksonMappingProvider;
 import com.jayway.jsonpath.spi.mapper.MappingException;
+import java.nio.charset.StandardCharsets;
 import org.junit.Test;
 
 import java.io.IOException;
@@ -50,6 +51,13 @@ public class JacksonJsonNodeJsonProviderTest extends BaseTest {
     @Test
     public void json_can_be_parsed() {
         ObjectNode node = using(JACKSON_JSON_NODE_CONFIGURATION).parse(JSON_DOCUMENT).read("$");
+        assertThat(node.get("string-property").asText()).isEqualTo("string-value");
+    }
+
+    @Test
+    public void bytes_json_can_be_parsed() {
+        ObjectNode node = using(JACKSON_JSON_NODE_CONFIGURATION).parseUtf8(JSON_DOCUMENT.getBytes(StandardCharsets.UTF_8))
+            .read("$");
         assertThat(node.get("string-property").asText()).isEqualTo("string-value");
     }
 

@@ -1,19 +1,19 @@
 package com.jayway.jsonpath;
 
-import org.junit.Test;
-
 import jakarta.json.JsonObject;
 import jakarta.json.JsonString;
-
 import java.io.InputStream;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import org.junit.Test;
 
 import static com.jayway.jsonpath.JsonPath.parse;
 import static com.jayway.jsonpath.JsonPath.using;
+import static java.nio.charset.StandardCharsets.UTF_8;
 import static java.util.Collections.emptyMap;
 import static org.assertj.core.api.Assertions.assertThat;
+
 
 public class JakartaJsonProviderTest extends BaseTest {
 
@@ -27,6 +27,15 @@ public class JakartaJsonProviderTest extends BaseTest {
 
 		assertThat(((JsonString) book.get("author")).getChars()).isEqualTo("Nigel Rees");
 	}
+
+  @Test
+  public void an_object_can_be_read_from_bytes() {
+    JsonObject book = using(JAKARTA_JSON_CONFIGURATION)
+        .parseUtf8(JSON_DOCUMENT.getBytes(UTF_8))
+        .read("$.store.book[0]");
+
+    assertThat(((JsonString) book.get("author")).getChars()).isEqualTo("Nigel Rees");
+  }
 
 	@Test
 	public void a_property_can_be_read() {

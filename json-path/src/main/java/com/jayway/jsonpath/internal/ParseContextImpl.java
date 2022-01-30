@@ -39,6 +39,13 @@ public class ParseContextImpl implements ParseContext {
     }
 
     @Override
+    public DocumentContext parseUtf8(byte[] json) {
+        notEmpty(json, "json bytes can not be null or empty");
+        Object obj = configuration.jsonProvider().parse(json);
+        return new JsonContext(obj, configuration);
+    }
+
+    @Override
     public DocumentContext parse(InputStream json) {
         return parse(json, "UTF-8");
     }
