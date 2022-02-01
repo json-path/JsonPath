@@ -18,8 +18,10 @@ import com.google.gson.Gson;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
+import com.google.gson.JsonParseException;
 import com.google.gson.JsonParser;
 import com.google.gson.JsonPrimitive;
+import com.google.gson.stream.MalformedJsonException;
 import com.jayway.jsonpath.InvalidJsonException;
 import com.jayway.jsonpath.JsonPathException;
 
@@ -121,7 +123,11 @@ public class GsonJsonProvider extends AbstractJsonProvider {
 
     @Override
     public Object parse(final String json) throws InvalidJsonException {
-        return PARSER.parse(json);
+        try {
+            return PARSER.parse(json);
+        } catch (JsonParseException e) {
+            throw new InvalidJsonException(e);
+        }
     }
 
     @Override
@@ -131,6 +137,8 @@ public class GsonJsonProvider extends AbstractJsonProvider {
             return PARSER.parse(new InputStreamReader(jsonStream, charset));
         } catch (UnsupportedEncodingException e) {
             throw new JsonPathException(e);
+        } catch (JsonParseException e) {
+            throw new InvalidJsonException(e);
         }
     }
 
