@@ -93,7 +93,10 @@ public class JacksonJsonNodeJsonProvider extends AbstractJsonProvider {
     }
 
     public Object unwrap(Object o) {
+        return staticUnwrap(o);
+    }
 
+    public static Object staticUnwrap(Object o) {
         if (o == null) {
             return null;
         }
@@ -230,11 +233,7 @@ public class JacksonJsonNodeJsonProvider extends AbstractJsonProvider {
     @Override
     public Iterable<?> toIterable(Object obj) {
         ArrayNode arr = toJsonArray(obj);
-        List<Object> values = new ArrayList<Object>(arr.size());
-        for (Object o : arr) {
-            values.add(unwrap(o));
-        }
-        return values;
+        return new JacksonIterable(arr.iterator());
     }
 
     private JsonNode createJsonElement(Object o) {
