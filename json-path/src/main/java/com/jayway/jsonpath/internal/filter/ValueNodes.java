@@ -2,14 +2,12 @@ package com.jayway.jsonpath.internal.filter;
 
 import java.math.BigDecimal;
 import java.time.OffsetDateTime;
+import java.time.ZonedDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.*;
 import java.util.regex.Pattern;
 
-import com.jayway.jsonpath.Configuration;
-import com.jayway.jsonpath.JsonPathException;
-import com.jayway.jsonpath.Option;
-import com.jayway.jsonpath.PathNotFoundException;
-import com.jayway.jsonpath.Predicate;
+import com.jayway.jsonpath.*;
 import com.jayway.jsonpath.internal.Path;
 import com.jayway.jsonpath.internal.Utils;
 import com.jayway.jsonpath.internal.path.PathCompiler;
@@ -227,6 +225,17 @@ public interface ValueNodes {
             return new NumberNode(number);
         }
 
+        @Override
+        public DateNode asDateNode() {
+            DateNode node;
+            try {
+                node = new DateNode(string);
+            } catch (IllegalArgumentException e) {
+                throw new InvalidPathException("Expected Timestamp format: dd MMM yyyy HH:mm:ss VV");
+            }
+            return node;
+        }
+
         public String getString() {
             return string;
         }
@@ -379,7 +388,54 @@ public interface ValueNodes {
         }
     }
 
+    class DateNode extends ValueNode {
 
+        private final ZonedDateTime dateTime;
+        private final static DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd MMM yyyy HH:mm:ss VV");
+
+        DateNode(ZonedDateTime dateTime) {
+            this.dateTime = dateTime;
+        }
+
+        DateNode(String date) {
+            dateTime = ZonedDateTime.parse(date, formatter);
+        }
+
+        @Override
+        public StringNode asStringNode() {
+            return new StringNode(dateTime.format(formatter), false);
+        }
+
+        public ZonedDateTime getDate() {
+            return dateTime;
+        }
+
+        @Override
+        public Class<?> type(Predicate.PredicateContext ctx) {
+            return DateNode.class;
+        }
+
+        public boolean isDateNode() {
+            return true;
+        }
+
+        public DateNode asDateNode() {
+            return this;
+        }
+
+        @Override
+        public String toString() {
+            return dateTime.toString();
+        }
+
+        @Override
+        public boolean equals(Object o) {
+            if (this == o) return true;
+            if (!(o instanceof OffsetDateTimeNode) && !(o instanceof StringNode)) return false;
+            DateNode that = ((ValueNode) o).asDateNode();
+            return dateTime.compareTo(that.dateTime) == 0;
+        }
+    }
 
     class BooleanNode extends ValueNode {
         private final Boolean value;
