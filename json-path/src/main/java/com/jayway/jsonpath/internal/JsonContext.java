@@ -104,6 +104,11 @@ public class JsonContext implements DocumentContext {
     }
 
     @Override
+    public <T> T read(String path, TypeRef<T> type, Predicate... filters) {
+        return convert(read(path, filters), type, configuration);
+    }
+
+    @Override
     public ReadContext limit(int maxResults) {
         return withListeners(new LimitingEvaluationListener(maxResults));
     }
@@ -225,7 +230,7 @@ public class JsonContext implements DocumentContext {
         return jsonPath;
     }
 
-    private final static class LimitingEvaluationListener implements EvaluationListener {
+    private static final class LimitingEvaluationListener implements EvaluationListener {
         final int limit;
 
         private LimitingEvaluationListener(int limit) {
