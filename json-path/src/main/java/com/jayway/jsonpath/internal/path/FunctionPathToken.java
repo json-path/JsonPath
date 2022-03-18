@@ -1,5 +1,6 @@
 package com.jayway.jsonpath.internal.path;
 
+import com.jayway.jsonpath.internal.Path;
 import com.jayway.jsonpath.internal.PathRef;
 import com.jayway.jsonpath.internal.function.Parameter;
 import com.jayway.jsonpath.internal.function.PathFunction;
@@ -39,8 +40,26 @@ public class FunctionPathToken extends PathToken {
         evaluateParameters(currentPath, parent, model, ctx);
         Object result = pathFunction.invoke(currentPath, parent, model, ctx, functionParams);
         ctx.addResult(currentPath + "." + functionName, parent, result);
+        cleanWildcardPathToken();
         if (!isLeaf()) {
             next().evaluate(currentPath, parent, result, ctx);
+        }
+    }
+
+    private void cleanWildcardPathToken() {
+        if (null != functionParams && functionParams.size() > 0) {
+            Path path = functionParams.get(0).getPath();
+            if (null != path && !path.isFunctionPath() && path instanceof CompiledPath) {
+                RootPathToken root = ((CompiledPath) path).getRoot();
+                PathToken tail = root.getNext();
+                while (null != tail && null != tail.getNext() ) {
+                    if(tail.getNext() instanceof WildcardPathToken){
+                        tail.setNext(tail.getNext().getNext());
+                        break;
+                    }
+                    tail = tail.getNext();
+                }
+            }
         }
     }
 
