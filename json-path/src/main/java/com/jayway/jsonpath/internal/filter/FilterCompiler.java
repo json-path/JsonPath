@@ -395,11 +395,19 @@ public class FilterCompiler  {
         if(filter.currentChar() != CLOSE_PARENTHESIS){
             return false;
         }
-        int idx = filter.indexOfPreviousSignificantChar();
-        if(idx == -1 || filter.charAt(idx) != OPEN_PARENTHESIS){
+        int idx = filter.position() - 1;
+        int closedParenthesisNumber = 1;
+        while (filter.inBounds(idx) && idx > lowerBound && closedParenthesisNumber > 0) {
+            if (filter.charAt(idx) == CLOSE_PARENTHESIS) {
+                closedParenthesisNumber++;
+            } else if (filter.charAt(idx) == OPEN_PARENTHESIS) {
+                closedParenthesisNumber--;
+            }
+            idx--;
+        }
+        if(!filter.inBounds(idx) || closedParenthesisNumber != 0){
             return false;
         }
-        idx--;
         while(filter.inBounds(idx) && idx > lowerBound){
             if(filter.charAt(idx) == PERIOD){
                 return true;
