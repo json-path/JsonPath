@@ -1,4 +1,3 @@
-apply from: "$rootDir/gradle/publishMaven.gradle"
 
 description = "Java port of Stefan Goessner JsonPath."
 
@@ -12,17 +11,18 @@ jar {
 }
 
 dependencies {
-    compile libs.jsonSmart
-    compile libs.slf4jApi
-    compile libs.jacksonDatabind, optional
-    compile libs.gson, optional
-    compile libs.jsonOrg, optional
-    compile libs.tapestryJson, optional
-    compile libs.jettison, optional
-    compile libs.jakartaJsonP, optional
-    compile libs.jakartaJsonB, optional
+    implementation libs.jsonSmart
+    implementation libs.slf4jApi
+    implementation libs.jacksonDatabind // , optional
+    implementation libs.gson// , optional
+    implementation libs.jsonOrg// , optional
+    implementation libs.tapestryJson// , optional
+    implementation libs.jettison// , optional
+    implementation libs.jakartaJsonP// , optional
+    implementation libs.jakartaJsonB// , optional
 
-    testCompile libs.test
+    testImplementation libs.test
+    testRuntimeOnly 'org.junit.vintage:junit-vintage-engine'
 }
 
 task distZip(type: Zip, dependsOn: assemble) {
@@ -37,31 +37,31 @@ task distZip(type: Zip, dependsOn: assemble) {
     from(jar) {
         into 'lib'
     }
-    from(project.configurations.compile) {
+    from(project.configurations.implementation) {
         into 'lib'
         exclude { it.file.name.contains('gson') || it.file.name.contains('jackson') || it.file.name.contains('json-2') || it.file.name.contains('jettison') || it.file.name.contains('tapestry') || it.file.name.contains('jakarta.json') }
     }
-    from(project.configurations.compile) {
+    from(project.configurations.implementation) {
         into 'lib-optional/jackson'
         include { it.file.name.contains('jackson') }
     }
-    from(project.configurations.compile) {
+    from(project.configurations.implementation) {
         into 'lib-optional/gson'
         include { it.file.name.contains('gson') }
     }
-    from(project.configurations.compile) {
+    from(project.configurations.implementation) {
         into 'lib-optional/jettison'
         include { it.file.name.contains('jettison') }
     }
-    from(project.configurations.compile) {
+    from(project.configurations.implementation) {
         into 'lib-optional/jsonOrg'
         include { it.file.name.contains('json-2') }
     }
-    from(project.configurations.compile) {
+    from(project.configurations.implementation) {
         into 'lib-optional/tapestry'
         include { it.file.name.contains('tapestry') }
     }
-    from(project.configurations.compile) {
+    from(project.configurations.implementation) {
         into 'lib-optional/jakartaJson'
         include { it.file.name.contains('jakarta.json') }
     }
@@ -81,31 +81,31 @@ task distTar(type: Tar, dependsOn: assemble) {
     from(jar) {
         into 'lib'
     }
-    from(project.configurations.compile) {
+    from(project.configurations.implementation) {
         into 'lib'
         exclude { it.file.name.contains('gson') || it.file.name.contains('jackson') || it.file.name.contains('json-2') || it.file.name.contains('jettison') || it.file.name.contains('tapestry') || it.file.name.contains('jakarta.json') }
     }
-    from(project.configurations.compile) {
+    from(project.configurations.implementation) {
         into 'lib-optional/jackson'
         include { it.file.name.contains('jackson') }
     }
-    from(project.configurations.compile) {
+    from(project.configurations.implementation) {
         into 'lib-optional/gson'
         include { it.file.name.contains('gson') }
     }
-    from(project.configurations.compile) {
+    from(project.configurations.implementation) {
         into 'lib-optional/jettison'
         include { it.file.name.contains('jettison') }
     }
-    from(project.configurations.compile) {
+    from(project.configurations.implementation) {
         into 'lib-optional/jsonOrg'
         include { it.file.name.contains('json-2') }
     }
-    from(project.configurations.compile) {
+    from(project.configurations.implementation) {
         into 'lib-optional/tapestry'
         include { it.file.name.contains('tapestry') }
     }
-    from(project.configurations.compile) {
+    from(project.configurations.implementation) {
         into 'lib-optional/jakartaJson'
         include { it.file.name.contains('jakarta.json') }
     }
