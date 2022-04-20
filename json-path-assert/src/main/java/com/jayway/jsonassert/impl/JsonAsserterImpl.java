@@ -5,6 +5,7 @@ import com.jayway.jsonassert.JsonAssert;
 import com.jayway.jsonassert.JsonAsserter;
 import com.jayway.jsonpath.Configuration;
 import com.jayway.jsonpath.JsonPath;
+import com.jayway.jsonpath.Option;
 import com.jayway.jsonpath.PathNotFoundException;
 import org.hamcrest.Matcher;
 
@@ -71,12 +72,9 @@ public class JsonAsserterImpl implements JsonAsserter {
     public JsonAsserter assertNotDefined(String path) {
 
         try {
-            Configuration c = Configuration.defaultConfiguration();
-
-            Object obj = JsonPath.using(c).parse(jsonObject).read(path);
-            if (!JsonAssert.emptyCollection().matches(obj)) {
-                throw new AssertionError(format("Document contains the path <%s> but was expected not to.", path));
-            }
+            Configuration c = Configuration.defaultConfiguration().addOptions(Option.REQUIRE_PROPERTIES);
+            JsonPath.using(c).parse(jsonObject).read(path);
+            throw new AssertionError(format("Document contains the path <%s> but was expected not to.", path));
         } catch (PathNotFoundException e) {
         }
         return this;
@@ -85,7 +83,7 @@ public class JsonAsserterImpl implements JsonAsserter {
     @Override
     public JsonAsserter assertNotDefined(String path, String message) {
         try {
-            Configuration c = Configuration.defaultConfiguration();
+            Configuration c = Configuration.defaultConfiguration().addOptions(Option.REQUIRE_PROPERTIES);
 
             JsonPath.using(c).parse(jsonObject).read(path);
 

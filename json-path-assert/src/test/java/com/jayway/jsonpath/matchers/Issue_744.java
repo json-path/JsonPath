@@ -14,7 +14,6 @@ public class Issue_744 {
                 "        { \"name\": \"object2\" }\n" +
                 "    ]\n" +
                 "}";
-        JsonAssert.with(json).assertThat("array.*.fake", JsonAssert.emptyCollection());
         JsonAssert.with(json).assertNotDefined("array.*.fake");
     }
 
