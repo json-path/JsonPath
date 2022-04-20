@@ -1,6 +1,7 @@
 package com.jayway.jsonassert.impl;
 
 
+import com.jayway.jsonassert.JsonAssert;
 import com.jayway.jsonassert.JsonAsserter;
 import com.jayway.jsonpath.Configuration;
 import com.jayway.jsonpath.JsonPath;
@@ -72,8 +73,10 @@ public class JsonAsserterImpl implements JsonAsserter {
         try {
             Configuration c = Configuration.defaultConfiguration();
 
-            JsonPath.using(c).parse(jsonObject).read(path);
-            throw new AssertionError(format("Document contains the path <%s> but was expected not to.", path));
+            Object obj = JsonPath.using(c).parse(jsonObject).read(path);
+            if (!JsonAssert.emptyCollection().matches(obj)) {
+                throw new AssertionError(format("Document contains the path <%s> but was expected not to.", path));
+            }
         } catch (PathNotFoundException e) {
         }
         return this;
