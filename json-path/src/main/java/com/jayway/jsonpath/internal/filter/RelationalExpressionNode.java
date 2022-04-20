@@ -12,6 +12,20 @@ public class RelationalExpressionNode extends ExpressionNode {
     private final ValueNode right;
 
     public RelationalExpressionNode(ValueNode left, RelationalOperator relationalOperator, ValueNode right) {
+        try{
+            // if need change left and right, change them
+            if(needSwap(right)){
+                ValueNode tmp=left;
+                left=right;
+                right=tmp;
+                relationalOperator=reverseRelationOperator(relationalOperator);
+            }
+        }catch (Exception e){
+            // if can't change, restore them
+            ValueNode tmp=left;
+            left=right;
+            right=tmp;
+        }
         this.left = left;
         this.relationalOperator = relationalOperator;
         this.right = right;
@@ -44,5 +58,24 @@ public class RelationalExpressionNode extends ExpressionNode {
             return evaluator.evaluate(l, r, ctx);
         }
         return false;
+    }
+    boolean needSwap(ValueNode right){
+        return right.toString().charAt(0)=='@';
+    }
+    RelationalOperator reverseRelationOperator(RelationalOperator operator) throws Exception{
+        switch (operator){
+            case EQ:
+                return RelationalOperator.EQ;
+            case GTE:
+                return RelationalOperator.LTE;
+            case LTE:
+                return RelationalOperator.GTE;
+            case GT:
+                return RelationalOperator.LT;
+            case NE:
+                return RelationalOperator.NE;
+            default:
+                throw new Exception("Type can't change!");
+        }
     }
 }

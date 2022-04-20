@@ -3,7 +3,7 @@ import org.junit.Assert;
 import org.junit.Test;
 
 /**
- * test for issue 786
+ * test for issue 784
  */
 public class Issue_784 {
     @Test
