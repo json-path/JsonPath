@@ -327,7 +327,7 @@ public class JsonPath {
      */
     public <T> T put(Object jsonObject, String key, Object value, Configuration configuration) {
         notNull(jsonObject, "json can not be null");
-        notEmpty(key, "key can not be null or empty");
+        notNull(key, "key can not be null or empty");
         notNull(configuration, "configuration can not be null");
         EvaluationContext evaluationContext = path.evaluate(jsonObject, jsonObject, configuration, true);
         if (evaluationContext.getPathList().isEmpty()) {
@@ -346,7 +346,7 @@ public class JsonPath {
 
     public <T> T renameKey(Object jsonObject, String oldKeyName, String newKeyName, Configuration configuration) {
         notNull(jsonObject, "json can not be null");
-        notEmpty(newKeyName, "newKeyName can not be null or empty");
+        notNull(newKeyName, "newKeyName can not be null or empty");
         notNull(configuration, "configuration can not be null");
         EvaluationContext evaluationContext = path.evaluate(jsonObject, jsonObject, configuration, true);
         for (PathRef updateOperation : evaluationContext.updateOperations()) {
