@@ -7,6 +7,7 @@ public class Issue_777 {
 
     @Test
     public void test_01_nested_path_in_filter_value() {
+        // prepare the json to test
         String json = "{\n" +
                 "    \"store\": {\n" +
                 "        \"book\": [\n" +
@@ -44,15 +45,20 @@ public class Issue_777 {
                 "    },\n" +
                 "    \"expensive\": 10\n" +
                 "}";
+        // parse the json string with the default Configuration
         DocumentContext dc = JsonPath.using(jsonConf).parse(json);
+        // try to read the jsonpath and get the result
         String result = dc.read("$.store.book[?(@.price == $.max($.store.book[*].price))].author").toString();
         System.out.println(result);
     }
 
     @Test
     public void test_02_nested_path_in_filter_value() {
+        // prepare the json to test
         String json = "{\"list\": [{\"val\": 1, \"name\": \"val=1\"}, {\"val\": 2, \"name\": \"val=2\"}, {\"val\": 3,\"name\": \"val=3\"}]}";
+        // parse the json string with the default Configuration
         DocumentContext dc = JsonPath.using(jsonConf).parse(json);
+        // try to read the jsonpath and get the result
         String result = dc.read("$.list[?(@.val == $.max($.list[*].val))].name").toString();
         System.out.println(result);
     }
