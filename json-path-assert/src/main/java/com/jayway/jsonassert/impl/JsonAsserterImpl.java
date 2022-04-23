@@ -70,7 +70,6 @@ public class JsonAsserterImpl implements JsonAsserter {
      * {@inheritDoc}
      */
     public JsonAsserter assertNotDefined(String path) {
-
         try {
             Configuration c = Configuration.defaultConfiguration().addOptions(Option.REQUIRE_PROPERTIES);
             JsonPath.using(c).parse(jsonObject).read(path);
@@ -84,9 +83,7 @@ public class JsonAsserterImpl implements JsonAsserter {
     public JsonAsserter assertNotDefined(String path, String message) {
         try {
             Configuration c = Configuration.defaultConfiguration().addOptions(Option.REQUIRE_PROPERTIES);
-
             JsonPath.using(c).parse(jsonObject).read(path);
-
             throw new AssertionError(format("Document contains the path <%s> but was expected not to.", path));
         } catch (PathNotFoundException e) {
         }
