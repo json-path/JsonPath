@@ -11,6 +11,7 @@ public class Issue_744 {
                 "        { \"name\": \"object2\" }\n" +
                 "    ]\n" +
                 "}";
+        // test not defined path, it will not throw AssertionError
         JsonAssert.with(json).assertNotDefined("array.*.fake");
     }
 
@@ -22,6 +23,7 @@ public class Issue_744 {
                 "        { \"name\": \"object2\" }\n" +
                 "    ]\n" +
                 "}";
+        // test defined path, it will throw AssertionError
         JsonAssert.with(json).assertNotDefined("array.*.name");
     }
 }

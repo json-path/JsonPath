@@ -71,7 +71,10 @@ public class JsonAsserterImpl implements JsonAsserter {
      */
     public JsonAsserter assertNotDefined(String path) {
         try {
+            // create a configuration and add Option.REQUIRE_PROPERTIES. Because the default behaviour without
+            // this option will always not throw PathNotFoundException
             Configuration c = Configuration.defaultConfiguration().addOptions(Option.REQUIRE_PROPERTIES);
+            // if path is defined in jsonObject, read() will throw PathNotFoundException
             JsonPath.using(c).parse(jsonObject).read(path);
             throw new AssertionError(format("Document contains the path <%s> but was expected not to.", path));
         } catch (PathNotFoundException e) {
