@@ -3,7 +3,7 @@ package com.jayway.jsonassert;
 import org.junit.Test;
 
 public class Issue_744 {
-    @org.junit.Test
+    @Test
     public void test_assert_not_defined(){
         String json = "{\n" +
                 "    \"array\": [\n" +

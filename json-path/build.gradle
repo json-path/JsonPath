@@ -12,7 +12,6 @@ jar {
 }
 
 dependencies {
-    implementation 'org.testng:testng:7.1.0'
     compile libs.jsonSmart
     compile libs.slf4jApi
     compile libs.jacksonDatabind, optional
