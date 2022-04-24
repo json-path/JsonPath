@@ -2,6 +2,7 @@ package com.jayway.jsonassert;
 
 import org.junit.Test;
 
+//CS304 (manually written) Issue link: https://github.com/json-path/JsonPath/issues/744
 public class Issue_744 {
     @Test
     public void test_assert_not_defined(){
