@@ -2,6 +2,10 @@ package com.jayway.jsonpath;
 
 import org.junit.Test;
 
+/**
+ * Test for Issue 777
+ */
+//CS304 (manually written) Issue link: https://github.com/json-path/JsonPath/issues/777
 public class Issue_777 {
     public static final Configuration jsonConf = Configuration.defaultConfiguration();
 

@@ -399,6 +399,7 @@ public class FilterCompiler  {
      * @return current char is whether a closing function bracket
      */
     private boolean currentCharIsClosingFunctionBracket(int lowerBound){
+        //CS304 (manually written) Issue link: https://github.com/json-path/JsonPath/issues/777
         // if current char is not a close parenthesis, return false directly
         if(filter.currentChar() != CLOSE_PARENTHESIS){
             return false;
