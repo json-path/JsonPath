@@ -1,7 +1,6 @@
 package com.jayway.jsonassert.impl;
 
 
-import com.jayway.jsonassert.JsonAssert;
 import com.jayway.jsonassert.JsonAsserter;
 import com.jayway.jsonpath.Configuration;
 import com.jayway.jsonpath.JsonPath;
