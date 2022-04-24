@@ -2,9 +2,11 @@ package com.jayway.jsonpath;
 
 import org.junit.Test;
 
+import static com.jayway.jsonpath.BaseTest.JSON_DOCUMENT;
+
 
 /**
- * test for issue 782
+ * test for issue 762
  */
 
 public class Issue_762 {
