@@ -16,7 +16,7 @@ ext {
     libs = [
             gson: 'com.google.code.gson:gson:2.8.9',
             hamcrest: 'org.hamcrest:hamcrest:2.2',
-            jacksonDatabind: 'com.fasterxml.jackson.core:jackson-databind:2.13.1',
+            jacksonDatabind: 'com.fasterxml.jackson.core:jackson-databind:2.13.2.2',
             jettison: 'org.codehaus.jettison:jettison:1.4.1',
             jsonOrg: 'org.json:json:20140107',
             jsonSmart: 'net.minidev:json-smart:2.4.8',
