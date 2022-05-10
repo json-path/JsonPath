@@ -28,7 +28,7 @@ buildscript {
     }
 
     dependencies {
-        classpath 'me.champeau.gradle:japicmp-gradle-plugin:0.1.0'
+        classpath 'me.champeau.gradle:japicmp-gradle-plugin:0.4.0'
     }
 }
 
@@ -99,7 +99,8 @@ if (JavaVersion.current().isJava7Compatible()) {
 
     subprojects {
 
-        task japicmp(type: me.champeau.gradle.ArtifactJapicmpTask) {
+        tasks.register("japicmp", me.champeau.gradle.japicmp.JapicmpTask) {
+        //task japicmp(type: me.champeau.gradle.ArtifactJapicmpTask) {
             dependsOn jar
             //baseline = "com.jayway.jsonpath:${project.name}:+@jar"  //latest release
             baseline = 'com.jayway.jsonpath:json-path:2.0.0@jar'
@@ -129,7 +130,8 @@ if (JavaVersion.current().isJava7Compatible()) {
 
     subprojects {
         check.dependsOn(checkBinaryCompatibility)
-        tasks.withType(me.champeau.gradle.ArtifactJapicmpTask) { task ->
+
+        tasks.register("checkCompatibility", me.champeau.gradle.japicmp.JapicmpTask) { task ->
             checkBinaryCompatibility.dependsOn(task)
         }
     }

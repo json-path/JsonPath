@@ -20,23 +20,24 @@ ext {
             jettison: 'org.codehaus.jettison:jettison:1.4.1',
             jsonOrg: 'org.json:json:20140107',
             jsonSmart: 'net.minidev:json-smart:2.4.8',
-            slf4jApi: 'org.slf4j:slf4j-api:1.7.33',
+            slf4jApi: 'org.slf4j:slf4j-api:1.7.36',
             tapestryJson: 'org.apache.tapestry:tapestry-json:5.8.0',
             jakartaJsonP: 'jakarta.json:jakarta.json-api:2.0.1',
             jakartaJsonB: 'jakarta.json.bind:jakarta.json.bind-api:2.0.0',
 
             test: [
                     'commons-io:commons-io:2.11.0',
-                    'junit:junit:4.13.2',
+                    'junit:junit:4.13.+',
+                    'org.junit.vintage:junit-vintage-engine:5.8.+',
                     'org.assertj:assertj-core:3.22.0',
                     'org.hamcrest:hamcrest:2.2',
                     'org.glassfish:jakarta.json:2.0.1',
                     'org.eclipse:yasson:2.0.4',
                     //'org.apache.johnzon:johnzon-jsonb:1.2.12',
-                    'org.slf4j:slf4j-simple:1.7.35'
+                    'org.slf4j:slf4j-simple:1.7.36'
             ]
     ]
-    snapshotVersion = true
+    snapshotVersion = project.version.contains('SNAPSHOT')
 }
 
 allprojects {
@@ -46,15 +47,12 @@ allprojects {
     group = 'com.jayway.jsonpath'
     version = '2.8.0' + (snapshotVersion ? "-SNAPSHOT" : "")
 
-    if (JavaVersion.current().isJava8Compatible()) {
-        tasks.withType(Javadoc) {
-            options.addStringOption('Xdoclint:none', '-quiet')
-        }
-    }
 }
 
 subprojects {
     apply plugin: 'java'
+    apply plugin: 'java-library'
+    apply plugin: 'maven-publish'
     apply plugin: 'signing'
     apply plugin: 'biz.aQute.bnd.builder'
 
@@ -65,28 +63,78 @@ subprojects {
         mavenCentral()
     }
 
-    task javadocJar(type: Jar) {
-        classifier = 'javadoc'
-        from javadoc
+    java {
+        withJavadocJar()
+        withSourcesJar()
     }
 
-    task sourcesJar(type: Jar) {
-        classifier = 'sources'
-        from sourceSets.main.allSource
+    test {
+        useJUnitPlatform()
+
+        systemProperty("java.util.logging.manager", "org.apache.logging.log4j.jul.LogManager")
+
+        testLogging {
+            events "passed", "skipped", "failed"
+            //showStandardStreams = true
+        }
     }
 
     signing {
-        required { !snapshotVersion && gradle.taskGraph.hasTask("uploadArchives") }
-        sign configurations.archives
+        sign configurations.archives // sign publishing.publications.mavenJava
+        required { !snapshotVersion && gradle.taskGraph.hasTask("publish") } // uploadArchives is replaced by publish
     }
 
-    artifacts {
-        archives jar, javadocJar, sourcesJar
+    javadoc {
+        if (JavaVersion.current().isJava8Compatible()) {
+            options.addStringOption('Xdoclint:none', '-quiet')
+        }
+
+        if(JavaVersion.current().isJava9Compatible()) {
+            options.addBooleanOption('html5', true)
+        }
+    }
+
+    publishing {
+        publications {
+            mavenJava(MavenPublication) {
+                from components.java
+
+                artifactId = jar.baseName
+
+                pom {
+                    name = jar.baseName
+                    description = project.description
+                    url = 'https://github.com/jayway/JsonPath'
+
+                    licenses {
+                        license {
+                            name = "The Apache Software License, Version 2.0"
+                            url = "https://www.apache.org/licenses/LICENSE-2.0.txt"
+                            distribution = "repo"
+                        }
+                    }
+
+                    scm {
+                        url = 'scm:git:git://github.com/jayway/JsonPath.git'
+                        connection = 'scm:git:git://github.com/jayway/JsonPath.git'
+                        developerConnection = 'scm:git:git://github.com/jayway/JsonPath.git'
+                    }
+
+                    developers {
+                        developer {
+                            id = 'kalle.stenflo'
+                            name = 'Kalle Stenflo'
+                            email = 'kalle.stenflo (a) gmail.com'
+                        }
+                    }
+                }
+            }
+        }
     }
 }
 
 wrapper {
-    gradleVersion = '5.6.2'
+    gradleVersion = '7.4.2'
 }
 
 //Task used by Heroku for staging
