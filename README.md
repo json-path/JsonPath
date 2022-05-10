@@ -438,7 +438,7 @@ List<String> genders = JsonPath.using(conf2).parse(json).read("$[*]['gender']");
 
 JsonPath is shipped with five different JsonProviders:
 
-* [JsonSmartJsonProvider](https://code.google.com/p/json-smart/) (default)
+* [JsonSmartJsonProvider](https://github.com/netplex/json-smart-v2) (default)
 * [JacksonJsonProvider](https://github.com/FasterXML/jackson)
 * [JacksonJsonNodeJsonProvider](https://github.com/FasterXML/jackson)
 * [GsonJsonProvider](https://code.google.com/p/google-gson/) 
