@@ -103,6 +103,9 @@ public class PredicatePathToken extends PathToken {
         return false;
     }
 
+    public final Collection<Predicate> getPredicates(){
+        return predicates;
+    }
 
 
 }
