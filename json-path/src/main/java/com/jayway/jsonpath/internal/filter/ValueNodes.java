@@ -71,10 +71,12 @@ public interface ValueNodes {
             return Void.TYPE;
         }
 
+        @Override
         public boolean isPatternNode() {
             return true;
         }
 
+        @Override
         public PatternNode asPatternNode() {
             return this;
         }
@@ -91,8 +93,12 @@ public interface ValueNodes {
 
         @Override
         public boolean equals(Object o) {
-            if (this == o) return true;
-            if (!(o instanceof PatternNode)) return false;
+            if (this == o) {
+                return true;
+            }
+            if (!(o instanceof PatternNode)) {
+                return false;
+            }
 
             PatternNode that = (PatternNode) o;
 
@@ -117,18 +123,27 @@ public interface ValueNodes {
 
         @Override
         public Class<?> type(Predicate.PredicateContext ctx) {
-            if(isArray(ctx)) return List.class;
-            else if(isMap(ctx)) return Map.class;
-            else if(parse(ctx) instanceof Number) return Number.class;
-            else if(parse(ctx) instanceof String) return String.class;
-            else if(parse(ctx) instanceof Boolean) return Boolean.class;
-            else return Void.class;
+            if(isArray(ctx)) {
+                return List.class;
+            } else if(isMap(ctx)) {
+                return Map.class;
+            } else if(parse(ctx) instanceof Number) {
+                return Number.class;
+            } else if(parse(ctx) instanceof String) {
+                return String.class;
+            } else if(parse(ctx) instanceof Boolean) {
+                return Boolean.class;
+            } else {
+                return Void.class;
+            }
         }
 
+        @Override
         public boolean isJsonNode() {
             return true;
         }
 
+        @Override
         public JsonNode asJsonNode() {
             return this;
         }
@@ -170,8 +185,11 @@ public interface ValueNodes {
         }
 
         public boolean isEmpty(Predicate.PredicateContext ctx) {
-            if (isArray(ctx) || isMap(ctx)) return ((Collection<?>) parse(ctx)).size() == 0;
-            else if((parse(ctx) instanceof String)) return ((String)parse(ctx)).length() == 0;
+            if (isArray(ctx) || isMap(ctx)) {
+                return ((Collection<?>) parse(ctx)).size() == 0;
+            } else if((parse(ctx) instanceof String)) {
+                return ((String)parse(ctx)).length() == 0;
+            }
             return true;
         }
 
@@ -181,14 +199,20 @@ public interface ValueNodes {
         }
 
         public boolean equals(JsonNode jsonNode, Predicate.PredicateContext ctx) {
-            if (this == jsonNode) return true;
+            if (this == jsonNode) {
+                return true;
+            }
             return !(json != null ? !json.equals(jsonNode.parse(ctx)) : jsonNode.json != null);
         }
 
         @Override
         public boolean equals(Object o) {
-            if (this == o) return true;
-            if (!(o instanceof JsonNode)) return false;
+            if (this == o) {
+                return true;
+            }
+            if (!(o instanceof JsonNode)) {
+                return false;
+            }
 
             JsonNode jsonNode = (JsonNode) o;
 
@@ -248,10 +272,12 @@ public interface ValueNodes {
             return String.class;
         }
 
+        @Override
         public boolean isStringNode() {
             return true;
         }
 
+        @Override
         public StringNode asStringNode() {
             return this;
         }
@@ -264,8 +290,12 @@ public interface ValueNodes {
 
         @Override
         public boolean equals(Object o) {
-            if (this == o) return true;
-            if (!(o instanceof StringNode) && !(o instanceof NumberNode)) return false;
+            if (this == o) {
+                return true;
+            }
+            if (!(o instanceof StringNode) && !(o instanceof NumberNode)) {
+                return false;
+            }
 
             StringNode that = ((ValueNode) o).asStringNode();
 
@@ -301,10 +331,12 @@ public interface ValueNodes {
             return Number.class;
         }
 
+        @Override
         public boolean isNumberNode() {
             return true;
         }
 
+        @Override
         public NumberNode asNumberNode() {
             return this;
         }
@@ -316,8 +348,12 @@ public interface ValueNodes {
 
         @Override
         public boolean equals(Object o) {
-            if (this == o) return true;
-            if (!(o instanceof NumberNode) && !(o instanceof StringNode)) return false;
+            if (this == o) {
+                return true;
+            }
+            if (!(o instanceof NumberNode) && !(o instanceof StringNode)) {
+                return false;
+            }
 
             NumberNode that = ((ValueNode)o).asNumberNode();
 
@@ -357,10 +393,12 @@ public interface ValueNodes {
             return OffsetDateTimeNode.class;
         }
 
+        @Override
         public boolean isOffsetDateTimeNode() {
             return true;
         }
 
+        @Override
         public OffsetDateTimeNode asOffsetDateTimeNode() {
             return this;
         }
@@ -372,8 +410,12 @@ public interface ValueNodes {
 
         @Override
         public boolean equals(Object o) {
-            if (this == o) return true;
-            if (!(o instanceof OffsetDateTimeNode) && !(o instanceof StringNode)) return false;
+            if (this == o) {
+                return true;
+            }
+            if (!(o instanceof OffsetDateTimeNode) && !(o instanceof StringNode)) {
+                return false;
+            }
             OffsetDateTimeNode that = ((ValueNode)o).asOffsetDateTimeNode();
             return dateTime.compareTo(that.dateTime) == 0;
         }
@@ -393,10 +435,12 @@ public interface ValueNodes {
             return Boolean.class;
         }
 
+        @Override
         public boolean isBooleanNode() {
             return true;
         }
 
+        @Override
         public BooleanNode asBooleanNode() {
             return this;
         }
@@ -412,8 +456,12 @@ public interface ValueNodes {
 
         @Override
         public boolean equals(Object o) {
-            if (this == o) return true;
-            if (!(o instanceof BooleanNode)) return false;
+            if (this == o) {
+                return true;
+            }
+            if (!(o instanceof BooleanNode)) {
+                return false;
+            }
 
             BooleanNode that = (BooleanNode) o;
 
@@ -437,10 +485,12 @@ public interface ValueNodes {
             return Class.class;
         }
 
+        @Override
         public boolean isClassNode() {
             return true;
         }
 
+        @Override
         public ClassNode asClassNode() {
             return this;
         }
@@ -456,8 +506,12 @@ public interface ValueNodes {
 
         @Override
         public boolean equals(Object o) {
-            if (this == o) return true;
-            if (!(o instanceof ClassNode)) return false;
+            if (this == o) {
+                return true;
+            }
+            if (!(o instanceof ClassNode)) {
+                return false;
+            }
 
             ClassNode that = (ClassNode) o;
 
@@ -491,8 +545,12 @@ public interface ValueNodes {
 
         @Override
         public boolean equals(Object o) {
-            if (this == o) return true;
-            if (!(o instanceof NullNode)) return false;
+            if (this == o) {
+                return true;
+            }
+            if (!(o instanceof NullNode)) {
+                return false;
+            }
 
             return true;
         }
@@ -505,10 +563,12 @@ public interface ValueNodes {
             return Void.class;
         }
 
+        @Override
         public UndefinedNode asUndefinedNode() {
             return this;
         }
 
+        @Override
         public boolean isUndefinedNode() {
             return true;
         }
@@ -531,6 +591,7 @@ public interface ValueNodes {
             return predicate;
         }
 
+        @Override
         public PredicateNode asPredicateNode() {
             return this;
         }
@@ -540,6 +601,7 @@ public interface ValueNodes {
             return Void.class;
         }
 
+        @Override
         public boolean isPredicateNode() {
             return true;
         }
@@ -587,10 +649,12 @@ public interface ValueNodes {
             return List.class;
         }
 
+        @Override
         public boolean isValueListNode() {
             return true;
         }
 
+        @Override
         public ValueListNode asValueListNode() {
             return this;
         }
@@ -602,8 +666,12 @@ public interface ValueNodes {
 
         @Override
         public boolean equals(Object o) {
-            if (this == o) return true;
-            if (!(o instanceof ValueListNode)) return false;
+            if (this == o) {
+                return true;
+            }
+            if (!(o instanceof ValueListNode)) {
+                return false;
+            }
 
             ValueListNode that = (ValueListNode) o;
 
@@ -656,10 +724,12 @@ public interface ValueNodes {
             return Void.class;
         }
 
+        @Override
         public boolean isPathNode() {
             return true;
         }
 
+        @Override
         public PathNode asPathNode() {
             return this;
         }
@@ -695,14 +765,23 @@ public interface ValueNodes {
                     }
                     res = ctx.configuration().jsonProvider().unwrap(res);
 
-                    if (res instanceof Number) return ValueNode.createNumberNode(res.toString());
-                    else if (res instanceof String) return ValueNode.createStringNode(res.toString(), false);
-                    else if (res instanceof Boolean) return ValueNode.createBooleanNode(res.toString());
-                    else if (res instanceof OffsetDateTime) return ValueNode.createOffsetDateTimeNode(res.toString()); //workaround for issue: https://github.com/json-path/JsonPath/issues/613
-                    else if (res == null) return NULL_NODE;
-                    else if (ctx.configuration().jsonProvider().isArray(res)) return ValueNode.createJsonNode(ctx.configuration().mappingProvider().map(res, List.class, ctx.configuration()));
-                    else if (ctx.configuration().jsonProvider().isMap(res)) return ValueNode.createJsonNode(ctx.configuration().mappingProvider().map(res, Map.class, ctx.configuration()));
-                    else throw new JsonPathException("Could not convert " + res.getClass().toString()+":"+ res.toString() + " to a ValueNode");
+                    if (res instanceof Number) {
+                        return ValueNode.createNumberNode(res.toString());
+                    } else if (res instanceof String) {
+                        return ValueNode.createStringNode(res.toString(), false);
+                    } else if (res instanceof Boolean) {
+                        return ValueNode.createBooleanNode(res.toString());
+                    } else if (res instanceof OffsetDateTime) {
+                        return ValueNode.createOffsetDateTimeNode(res.toString()); //workaround for issue: https://github.com/json-path/JsonPath/issues/613
+                    } else if (res == null) {
+                        return NULL_NODE;
+                    } else if (ctx.configuration().jsonProvider().isArray(res)) {
+                        return ValueNode.createJsonNode(ctx.configuration().mappingProvider().map(res, List.class, ctx.configuration()));
+                    } else if (ctx.configuration().jsonProvider().isMap(res)) {
+                        return ValueNode.createJsonNode(ctx.configuration().mappingProvider().map(res, Map.class, ctx.configuration()));
+                    } else {
+                        throw new JsonPathException("Could not convert " + res.getClass().toString()+":"+ res.toString() + " to a ValueNode");
+                    }
                 } catch (PathNotFoundException e) {
                     return UNDEFINED;
                 }

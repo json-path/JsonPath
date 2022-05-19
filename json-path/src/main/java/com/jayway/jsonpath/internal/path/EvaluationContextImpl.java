@@ -117,6 +117,7 @@ public class EvaluationContextImpl implements EvaluationContext {
         return rootDocument;
     }
 
+    @Override
     public Collection<PathRef> updateOperations(){
 
         Collections.sort(updateOperations);

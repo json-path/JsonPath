@@ -34,6 +34,7 @@ public class LRUCache implements Cache {
         this.limit = limit;
     }
 
+    @Override
     public void put(String key, JsonPath value) {
         JsonPath oldValue = map.put(key, value);
         if (oldValue != null) {
@@ -46,6 +47,7 @@ public class LRUCache implements Cache {
         }
     }
 
+    @Override
     public JsonPath get(String key) {
         JsonPath jsonPath = map.get(key);
         if(jsonPath != null){
@@ -106,6 +108,7 @@ public class LRUCache implements Cache {
         return map.size();
     }
 
+    @Override
     public String toString() {
         return map.toString();
     }

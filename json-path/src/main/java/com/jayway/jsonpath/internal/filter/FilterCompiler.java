@@ -1,15 +1,23 @@
 package com.jayway.jsonpath.internal.filter;
 
+import java.util.ArrayList;
+import java.util.List;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.jayway.jsonpath.Filter;
 import com.jayway.jsonpath.InvalidPathException;
 import com.jayway.jsonpath.Predicate;
 import com.jayway.jsonpath.internal.CharacterIndex;
-import static com.jayway.jsonpath.internal.filter.ValueNodes.*;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
-import java.util.ArrayList;
-import java.util.List;
+import static com.jayway.jsonpath.internal.filter.ValueNodes.BooleanNode;
+import static com.jayway.jsonpath.internal.filter.ValueNodes.JsonNode;
+import static com.jayway.jsonpath.internal.filter.ValueNodes.NullNode;
+import static com.jayway.jsonpath.internal.filter.ValueNodes.NumberNode;
+import static com.jayway.jsonpath.internal.filter.ValueNodes.PathNode;
+import static com.jayway.jsonpath.internal.filter.ValueNodes.PatternNode;
+import static com.jayway.jsonpath.internal.filter.ValueNodes.StringNode;
 
 public class FilterCompiler  {
     private static final Logger logger = LoggerFactory.getLogger(FilterCompiler.class);
@@ -213,7 +221,7 @@ public class FilterCompiler  {
             throw new InvalidPathException("Expected boolean literal");
         }
         CharSequence logicalOperator = filter.subSequence(begin, end+1);
-        if(!logicalOperator.equals("||") && !logicalOperator.equals("&&")){
+        if(!"||".equals(logicalOperator) && !"&&".equals(logicalOperator)){
             throw new InvalidPathException("Expected logical operator");
         }
         filter.incrementPosition(logicalOperator.length());
@@ -341,7 +349,7 @@ public class FilterCompiler  {
             throw new InvalidPathException("Expected boolean literal");
         }
         CharSequence boolValue = filter.subSequence(begin, end+1);
-        if(!boolValue.equals("true") && !boolValue.equals("false")){
+        if(!"true".equals(boolValue) && !"false".equals(boolValue)){
             throw new InvalidPathException("Expected boolean literal");
         }
         filter.incrementPosition(boolValue.length());
@@ -374,7 +382,7 @@ public class FilterCompiler  {
             }
         }
 
-        boolean shouldExists = !(previousSignificantChar == NOT);
+        boolean shouldExists = (previousSignificantChar != NOT);
         CharSequence path = filter.subSequence(begin, filter.position());
         return ValueNode.createPathNode(path, false, shouldExists);
     }

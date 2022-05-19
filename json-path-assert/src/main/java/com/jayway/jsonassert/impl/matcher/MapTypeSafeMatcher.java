@@ -34,6 +34,7 @@ import org.hamcrest.BaseMatcher;
 import java.util.Map;
 
 public abstract class MapTypeSafeMatcher<M extends Map<?, ?>> extends BaseMatcher<M> {
+    @Override
     @SuppressWarnings("unchecked")
     public boolean matches(Object item) {
         return item instanceof Map && matchesSafely((M) item);

@@ -27,6 +27,7 @@ public class WithJsonPath<T> extends TypeSafeMatcher<ReadContext> {
         }
     }
 
+    @Override
     public void describeTo(Description description) {
         description
                 .appendText("with json path ")

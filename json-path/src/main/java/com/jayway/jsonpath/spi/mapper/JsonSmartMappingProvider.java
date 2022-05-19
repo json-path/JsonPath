@@ -98,6 +98,7 @@ public class JsonSmartMappingProvider implements MappingProvider {
         public StringReader() {
             super(null);
         }
+        @Override
         public String convert(Object src) {
             if(src == null){
                 return null;
@@ -109,6 +110,7 @@ public class JsonSmartMappingProvider implements MappingProvider {
         public IntegerReader() {
             super(null);
         }
+        @Override
         public Integer convert(Object src) {
             if(src == null){
                 return null;
@@ -133,6 +135,7 @@ public class JsonSmartMappingProvider implements MappingProvider {
         public LongReader() {
             super(null);
         }
+        @Override
         public Long convert(Object src) {
             if(src == null){
                 return null;
@@ -158,6 +161,7 @@ public class JsonSmartMappingProvider implements MappingProvider {
         public DoubleReader() {
             super(null);
         }
+        @Override
         public Double convert(Object src) {
             if(src == null){
                 return null;
@@ -182,6 +186,7 @@ public class JsonSmartMappingProvider implements MappingProvider {
         public FloatReader() {
             super(null);
         }
+        @Override
         public Float convert(Object src) {
             if(src == null){
                 return null;
@@ -206,6 +211,7 @@ public class JsonSmartMappingProvider implements MappingProvider {
         public BigDecimalReader() {
             super(null);
         }
+        @Override
         public BigDecimal convert(Object src) {
             if(src == null){
                 return null;
@@ -217,6 +223,7 @@ public class JsonSmartMappingProvider implements MappingProvider {
         public BigIntegerReader() {
             super(null);
         }
+        @Override
         public BigInteger convert(Object src) {
             if(src == null){
                 return null;
@@ -228,6 +235,7 @@ public class JsonSmartMappingProvider implements MappingProvider {
         public DateReader() {
             super(null);
         }
+        @Override
         public Date convert(Object src) {
             if(src == null){
                 return null;
@@ -250,6 +258,7 @@ public class JsonSmartMappingProvider implements MappingProvider {
         public BooleanReader() {
             super(null);
         }
+        @Override
         public Boolean convert(Object src) {
             if(src == null){
                 return null;

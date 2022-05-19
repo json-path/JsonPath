@@ -27,7 +27,9 @@ public class JsonFormatter {
     private static final int MODE_BETWEEN = 104;
 
     private static void appendIndent(StringBuilder sb, int count) {
-        for (; count > 0; --count) sb.append(INDENT);
+        for (; count > 0; --count) {
+            sb.append(INDENT);
+        }
     }
 
     public static String prettyPrint(String input) {

@@ -75,7 +75,7 @@ public class ArraySliceOperation {
 
     private static Integer tryRead(String[] tokens, int idx){
         if(tokens.length > idx){
-            if(tokens[idx].equals("")){
+            if("".equals(tokens[idx])){
                 return null;
             }
             return Integer.parseInt(tokens[idx]);

@@ -1,19 +1,5 @@
 package com.jayway.jsonpath.spi.json;
 
-import com.jayway.jsonpath.InvalidJsonException;
-import com.jayway.jsonpath.JsonPathException;
-import jakarta.json.JsonArray;
-import jakarta.json.JsonArrayBuilder;
-import jakarta.json.JsonBuilderFactory;
-import jakarta.json.JsonNumber;
-import jakarta.json.JsonObject;
-import jakarta.json.JsonObjectBuilder;
-import jakarta.json.JsonReader;
-import jakarta.json.JsonString;
-import jakarta.json.JsonStructure;
-import jakarta.json.JsonValue;
-import jakarta.json.spi.JsonProvider;
-import jakarta.json.stream.JsonParsingException;
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -34,6 +20,22 @@ import java.util.List;
 import java.util.ListIterator;
 import java.util.Map;
 import java.util.Set;
+
+import com.jayway.jsonpath.InvalidJsonException;
+import com.jayway.jsonpath.JsonPathException;
+
+import jakarta.json.JsonArray;
+import jakarta.json.JsonArrayBuilder;
+import jakarta.json.JsonBuilderFactory;
+import jakarta.json.JsonNumber;
+import jakarta.json.JsonObject;
+import jakarta.json.JsonObjectBuilder;
+import jakarta.json.JsonReader;
+import jakarta.json.JsonString;
+import jakarta.json.JsonStructure;
+import jakarta.json.JsonValue;
+import jakarta.json.spi.JsonProvider;
+import jakarta.json.stream.JsonParsingException;
 
 
 public class JakartaJsonProvider extends AbstractJsonProvider {
@@ -218,6 +220,7 @@ public class JakartaJsonProvider extends AbstractJsonProvider {
         }
     }
 
+    @Override
     @SuppressWarnings("rawtypes")
     public void removeProperty(Object obj, Object key) {
         if (obj instanceof JsonObjectBuilder) {

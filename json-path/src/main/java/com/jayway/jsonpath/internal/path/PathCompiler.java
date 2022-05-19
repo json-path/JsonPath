@@ -1,5 +1,10 @@
 package com.jayway.jsonpath.internal.path;
 
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.LinkedList;
+import java.util.List;
+
 import com.jayway.jsonpath.InvalidPathException;
 import com.jayway.jsonpath.Predicate;
 import com.jayway.jsonpath.internal.CharacterIndex;
@@ -8,11 +13,6 @@ import com.jayway.jsonpath.internal.Utils;
 import com.jayway.jsonpath.internal.filter.FilterCompiler;
 import com.jayway.jsonpath.internal.function.ParamType;
 import com.jayway.jsonpath.internal.function.Parameter;
-
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.LinkedList;
-import java.util.List;
 
 import static java.lang.Character.isDigit;
 import static java.util.Arrays.asList;
@@ -56,7 +56,7 @@ public class PathCompiler {
 
     private Path compile() {
         RootPathToken root = readContextToken();
-        return new CompiledPath(root, root.getPathFragment().equals("$"));
+        return new CompiledPath(root, "$".equals(root.getPathFragment()));
     }
 
     public static Path compile(String path, final Predicate... filters) {
@@ -64,7 +64,7 @@ public class PathCompiler {
             CharacterIndex ci = new CharacterIndex(path);
             ci.trim();
 
-            if(!( ci.charAt(0) == DOC_CONTEXT)  && !( ci.charAt(0) == EVAL_CONTEXT)){
+            if(( ci.charAt(0) != DOC_CONTEXT)  && ( ci.charAt(0) != EVAL_CONTEXT)){
                 ci = new CharacterIndex("$." + path);
                 ci.trim();
             }
@@ -213,12 +213,14 @@ public class PathCompiler {
         if (isFunction) {
             int parenthesis_count = 1;
             for(int i = readPosition + 1; i < path.length(); i++){
-                if (path.charAt(i) == CLOSE_PARENTHESIS)
+                if (path.charAt(i) == CLOSE_PARENTHESIS) {
                     parenthesis_count--;
-                else if (path.charAt(i) == OPEN_PARENTHESIS)
+                } else if (path.charAt(i) == OPEN_PARENTHESIS) {
                     parenthesis_count++;
-                if (parenthesis_count == 0)
+                }
+                if (parenthesis_count == 0) {
                     break;
+                }
             }
 
             if (parenthesis_count != 0){

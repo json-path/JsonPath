@@ -164,18 +164,33 @@ public abstract class ValueNode {
     //----------------------------------------------------
     public static ValueNode toValueNode(Object o){
 
-        if(o == null) return NULL_NODE;
-        if(o instanceof ValueNode) return (ValueNode)o;
-        if(o instanceof Class) return createClassNode((Class)o);
-        else if(isPath(o)) return new PathNode(o.toString(), false, false);
-        else if(isJson(o)) return createJsonNode(o.toString());
-        else if(o instanceof String) return createStringNode(o.toString(), true);
-        else if(o instanceof Character) return createStringNode(o.toString(), false);
-        else if(o instanceof Number) return createNumberNode(o.toString());
-        else if(o instanceof Boolean) return createBooleanNode(o.toString());
-        else if(o instanceof Pattern) return createPatternNode((Pattern)o);
-        else if (o instanceof OffsetDateTime) return createOffsetDateTimeNode(o.toString());  //workaround for issue: https://github.com/json-path/JsonPath/issues/613
-        else throw new JsonPathException("Could not determine value type");
+        if(o == null) {
+            return NULL_NODE;
+        }
+        if(o instanceof ValueNode) {
+            return (ValueNode)o;
+        }
+        if(o instanceof Class) {
+            return createClassNode((Class)o);
+        } else if(isPath(o)) {
+            return new PathNode(o.toString(), false, false);
+        } else if(isJson(o)) {
+            return createJsonNode(o.toString());
+        } else if(o instanceof String) {
+            return createStringNode(o.toString(), true);
+        } else if(o instanceof Character) {
+            return createStringNode(o.toString(), false);
+        } else if(o instanceof Number) {
+            return createNumberNode(o.toString());
+        } else if(o instanceof Boolean) {
+            return createBooleanNode(o.toString());
+        } else if(o instanceof Pattern) {
+            return createPatternNode((Pattern)o);
+        } else if (o instanceof OffsetDateTime) {
+            return createOffsetDateTimeNode(o.toString());  //workaround for issue: https://github.com/json-path/JsonPath/issues/613
+        } else {
+            throw new JsonPathException("Could not determine value type");
+        }
 
     }
 
