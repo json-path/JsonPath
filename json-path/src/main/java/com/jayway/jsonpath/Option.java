@@ -53,6 +53,43 @@ public enum Option {
     AS_PATH_LIST,
 
     /**
+     * Returns a list of leave path strings representing the path of the evaluation hits
+     *
+     * Using [*], it will return the root to leave path
+     * Otherwise, return the path like AS_PATH_LIST
+     *
+     * For issue 753
+     * Only return the path from root to leaves
+     * Eg.
+     * {
+     *   "name": "Martin",
+     *   "family": "Newman",
+     *   "phones": ["+48 612 34 56 78", "+49 12 34 56 78 90"],
+     *   "age": 18,
+     *   "married": true,
+     *   "salary": {"amount": 12.10, currency:"EURO"},
+     *   "kids": [{"name": "Lena"}, {"name": "Luna"}, {"name": "Lego"}]
+     * }
+     *
+     * Return:
+     *
+     *  "$['name']",
+     *  "$['family']",
+     *  "$['phones'][0]",
+     *  "$['phones'][1]",
+     *  "$['age']",
+     *  "$['married']",
+     *  "$['salary']['amount']",
+     *  "$['salary']['currency']",
+     *  "$['kids'][0]['name']",
+     *  "$['kids'][1]['name']",
+     *  "$['kids'][2]['name']"
+     *
+     * Created by XiaoLing12138 on 05/21/2022.
+     */
+    AS_LEAVE_PATH_LIST,
+
+    /**
      * Suppress all exceptions when evaluating path.
      * <br/>
      * If an exception is thrown and the option {@link Option#ALWAYS_RETURN_LIST} an empty list is returned.
