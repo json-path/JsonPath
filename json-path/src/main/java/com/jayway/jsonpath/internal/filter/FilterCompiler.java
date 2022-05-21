@@ -391,21 +391,44 @@ public class FilterCompiler  {
         return false;
     }
 
+    /**
+     * Check the current char is whether a closing function bracket.
+     * If yes, return true, else return false.
+     *
+     * @param lowerBound
+     * @return current char is whether a closing function bracket
+     */
     private boolean currentCharIsClosingFunctionBracket(int lowerBound){
+        //CS304 Issue link: https://github.com/json-path/JsonPath/issues/777
+        // if current char is not a close parenthesis, return false directly
         if(filter.currentChar() != CLOSE_PARENTHESIS){
             return false;
         }
-        int idx = filter.indexOfPreviousSignificantChar();
-        if(idx == -1 || filter.charAt(idx) != OPEN_PARENTHESIS){
+        // get the before one index
+        int idx = filter.position() - 1;
+        // record the closed parenthesis number during iteration, initial value is 1
+        int closedParenthesisNumber = 1;
+        // iterate each char before lowerBound, to find the index before the corresponding open parenthesis
+        while (filter.inBounds(idx) && idx > lowerBound && closedParenthesisNumber > 0) {
+            if (filter.charAt(idx) == CLOSE_PARENTHESIS) {
+                closedParenthesisNumber++;
+            } else if (filter.charAt(idx) == OPEN_PARENTHESIS) {
+                closedParenthesisNumber--;
+            }
+            idx--;
+        }
+        // check the invalid case
+        if(!filter.inBounds(idx) || closedParenthesisNumber != 0){
             return false;
         }
-        idx--;
+        // begin to check there is whether a period before (it means it is a function call)
         while(filter.inBounds(idx) && idx > lowerBound){
             if(filter.charAt(idx) == PERIOD){
                 return true;
             }
             idx--;
         }
+        // other case, return false
         return false;
     }
 
