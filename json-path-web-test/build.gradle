@@ -6,6 +6,7 @@ description = "Web app that compares different JsonPath implementations."
 mainClassName = 'com.jayway.jsonpath.web.boot.Main'
 
 task createBuildInfoFile {
+    dependsOn compileJava
     doLast {
 	    def buildInfoFile = new File("$buildDir/classes/java/main/build-info.properties")
 	    Properties props = new Properties()
@@ -27,17 +28,18 @@ jar {
 
 
 dependencies {
-    compile project(':json-path')
-    compile 'commons-io:commons-io:2.4'
-    compile libs.jacksonDatabind
-    compile libs.jsonSmart
-    compile 'io.fastjson:boon:0.33'
-    compile 'com.nebhale.jsonpath:jsonpath:1.2'
-    compile 'io.gatling:jsonpath_2.10:0.6.4'
-    compile 'org.eclipse.jetty:jetty-server:9.3.0.M1'
-    compile 'org.eclipse.jetty:jetty-webapp:9.3.0.M1'
-    compile 'org.glassfish.jersey.containers:jersey-container-servlet:2.20'
-    compile('org.glassfish.jersey.media:jersey-media-json-jackson:2.20'){
+    implementation project(':json-path')
+    implementation 'commons-io:commons-io:2.4'
+    implementation libs.slf4jApi
+    implementation libs.jacksonDatabind
+    implementation libs.jsonSmart
+    implementation 'io.fastjson:boon:0.33'
+    implementation 'com.nebhale.jsonpath:jsonpath:1.2'
+    implementation 'io.gatling:jsonpath_2.10:0.6.4'
+    implementation 'org.eclipse.jetty:jetty-server:9.3.0.M1'
+    implementation 'org.eclipse.jetty:jetty-webapp:9.3.0.M1'
+    implementation 'org.glassfish.jersey.containers:jersey-container-servlet:2.20'
+    implementation('org.glassfish.jersey.media:jersey-media-json-jackson:2.20'){
         exclude module: 'jackson-annotations:com.fasterxml.jackson.core'
         exclude module: 'jackson-core:com.fasterxml.jackson.core'
     }

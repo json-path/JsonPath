@@ -83,6 +83,8 @@ public class JsonSmartJsonProvider extends AbstractJsonProvider {
             return JSONObject.toJSONString((Map<String, ?>) obj, JSONStyle.LT_COMPRESS);
         } else if (obj instanceof List) {
             return JSONArray.toJSONString((List<?>) obj, JSONStyle.LT_COMPRESS);
+        } else if (obj instanceof Number ||  obj instanceof Boolean){
+            return JSONValue.toJSONString(obj);
         } else {
             throw new UnsupportedOperationException(obj.getClass().getName() + " can not be converted to JSON");
         }

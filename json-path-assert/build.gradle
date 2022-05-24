@@ -1,4 +1,3 @@
-apply from: "$rootDir/gradle/publishMaven.gradle"
 
 description = "Assertions on Json using JsonPath"
 
@@ -10,9 +9,11 @@ jar {
 }
 
 dependencies {
-    compile project(':json-path')
-    compile libs.hamcrest
-    compile libs.slf4jApi
+    implementation project(':json-path')
+    implementation libs.hamcrest
+    implementation libs.slf4jApi
 
-    testCompile libs.test
+    testImplementation libs.jsonSmart
+    testImplementation libs.test
+    testRuntimeOnly 'org.junit.vintage:junit-vintage-engine'
 }

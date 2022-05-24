@@ -18,6 +18,47 @@ public class InlineFilterTest extends BaseTest {
 
     private static int bookCount = 4;
 
+    public static final String MULTI_STORE_JSON_DOCUMENT = "{\n" +
+        "   \"store\" : [{\n" +
+        "      \"name\": \"First\"," +
+        "      \"book\" : [\n" +
+        "         {\n" +
+        "            \"category\" : \"reference\",\n" +
+        "            \"author\" : \"Nigel Rees\",\n" +
+        "            \"title\" : \"Sayings of the Century\",\n" +
+        "            \"display-price\" : 8.95\n" +
+        "         },\n" +
+        "         {\n" +
+        "            \"category\" : \"fiction\",\n" +
+        "            \"author\" : \"Evelyn Waugh\",\n" +
+        "            \"title\" : \"Sword of Honour\",\n" +
+        "            \"display-price\" : 12.99\n" +
+        "         },\n" +
+        "         {\n" +
+        "            \"category\" : \"fiction\",\n" +
+        "            \"author\" : \"Herman Melville\",\n" +
+        "            \"title\" : \"Moby Dick\",\n" +
+        "            \"isbn\" : \"0-553-21311-3\",\n" +
+        "            \"display-price\" : 8.99\n" +
+        "         },\n" +
+        "         {\n" +
+        "            \"category\" : \"fiction\",\n" +
+        "            \"author\" : \"J. R. R. Tolkien\",\n" +
+        "            \"title\" : \"The Lord of the Rings\",\n" +
+        "            \"isbn\" : \"0-395-19395-8\",\n" +
+        "            \"display-price\" : 22.99\n" +
+        "         }]\n" +
+        "      },\n" +
+        "      {\n" +
+        "       \"name\": \"Second\",\n" +
+        "       \"book\": [\n" +
+        "         {\n" +
+        "            \"category\" : \"fiction\",\n" +
+        "            \"author\" : \"Ernest Hemmingway\",\n" +
+        "            \"title\" : \"The Old Man and the Sea\",\n" +
+        "            \"display-price\" : 12.99\n" +
+        "         }]\n" +
+        "      }]}";
 
     private Configuration conf = Configurations.GSON_CONFIGURATION;
 
@@ -123,6 +164,12 @@ public class InlineFilterTest extends BaseTest {
 
         resLeft = JsonPath.parse(JSON_DOCUMENT).read("$.store.book[?(@.category =~ /REFERENCE/i)].author");
         assertThat(resLeft).containsExactly("Nigel Rees");
+    }
+
+    @Test
+    public void patterns_match_against_lists() {
+        List<String> haveRefBooks = JsonPath.parse(MULTI_STORE_JSON_DOCUMENT).read("$.store[?(@.book[*].category =~ /Reference/i)].name");
+        assertThat(haveRefBooks).containsExactly("First");
     }
 
     @Test
