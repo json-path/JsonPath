@@ -14,6 +14,7 @@
  */
 package com.jayway.jsonpath.internal;
 
+import com.google.gson.GsonBuilder;
 import com.jayway.jsonpath.Configuration;
 import com.jayway.jsonpath.DocumentContext;
 import com.jayway.jsonpath.EvaluationListener;
@@ -30,6 +31,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.Arrays;
+import java.util.LinkedHashMap;
 import java.util.List;
 
 import static com.jayway.jsonpath.JsonPath.compile;
@@ -79,7 +81,15 @@ public class JsonContext implements DocumentContext {
 
     @Override
     public <T> T read(String path, Class<T> type, Predicate... filters) {
-        return convert(read(path, filters), type, configuration);
+        Object obj = read(path, filters);
+        if (type == String.class && obj != null && obj.getClass() == LinkedHashMap.class) {
+            return (T) new GsonBuilder()
+                    .serializeNulls()
+                    .setPrettyPrinting()
+                    .create()
+                    .toJson(obj, LinkedHashMap.class);
+        }
+        return convert(obj, type, configuration);
     }
 
     @Override
@@ -90,7 +100,15 @@ public class JsonContext implements DocumentContext {
 
     @Override
     public <T> T read(JsonPath path, Class<T> type) {
-        return convert(read(path), type, configuration);
+        Object obj = read(path);
+        if (type == String.class && obj != null && obj.getClass() == LinkedHashMap.class) {
+            return (T) new GsonBuilder()
+                    .serializeNulls()
+                    .setPrettyPrinting()
+                    .create()
+                    .toJson(obj, LinkedHashMap.class);
+        }
+        return convert(obj, type, configuration);
     }
 
     @Override
