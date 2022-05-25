@@ -10,6 +10,7 @@ import static org.junit.Assert.fail;
 
 /**
  *
+ *
  */
 public class Issue_515 {
     @Test
