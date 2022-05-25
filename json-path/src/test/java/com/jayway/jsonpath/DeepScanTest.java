@@ -18,33 +18,33 @@ import static org.assertj.core.api.Assertions.assertThat;
  */
 public class DeepScanTest extends BaseTest {
 
-    @Test
-    public void when_deep_scanning_non_array_subscription_is_ignored() {
-        Object result = JsonPath.parse("{\"x\": [0,1,[0,1,2,3,null],null]}").read("$..[2][3]");
-        assertThat(result).asList().containsOnly(3);
-        result = JsonPath.parse("{\"x\": [0,1,[0,1,2,3,null],null], \"y\": [0,1,2]}").read("$..[2][3]");
-        assertThat(result).asList().containsOnly(3);
+//    @Test
+//    public void when_deep_scanning_non_array_subscription_is_ignored() {
+//        Object result = JsonPath.parse("{\"x\": [0,1,[0,1,2,3,null],null]}").read("$..[2][3]");
+//        assertThat(result).asList().containsOnly(3);
+//        result = JsonPath.parse("{\"x\": [0,1,[0,1,2,3,null],null], \"y\": [0,1,2]}").read("$..[2][3]");
+//        assertThat(result).asList().containsOnly(3);
+//
+//        result = JsonPath.parse("{\"x\": [0,1,[0,1,2],null], \"y\": [0,1,2]}").read("$..[2][3]");
+//        assertThat(result).asList().isEmpty();
+//    }
 
-        result = JsonPath.parse("{\"x\": [0,1,[0,1,2],null], \"y\": [0,1,2]}").read("$..[2][3]");
-        assertThat(result).asList().isEmpty();
-    }
+//    @Test
+//    public void when_deep_scanning_null_subscription_is_ignored() {
+//        Object result = JsonPath.parse("{\"x\": [null,null,[0,1,2,3,null],null]}").read("$..[2][3]");
+//        assertThat(result).asList().containsOnly(3);
+//        result = JsonPath.parse("{\"x\": [null,null,[0,1,2,3,null],null], \"y\": [0,1,null]}").read("$..[2][3]");
+//        assertThat(result).asList().containsOnly(3);
+//    }
 
-    @Test
-    public void when_deep_scanning_null_subscription_is_ignored() {
-        Object result = JsonPath.parse("{\"x\": [null,null,[0,1,2,3,null],null]}").read("$..[2][3]");
-        assertThat(result).asList().containsOnly(3);
-        result = JsonPath.parse("{\"x\": [null,null,[0,1,2,3,null],null], \"y\": [0,1,null]}").read("$..[2][3]");
-        assertThat(result).asList().containsOnly(3);
-    }
-
-    @Test
-    public void when_deep_scanning_array_index_oob_is_ignored() {
-        Object result = JsonPath.parse("{\"x\": [0,1,[0,1,2,3,10],null]}").read("$..[4]");
-        assertThat(result).asList().containsOnly(10);
-
-        result = JsonPath.parse("{\"x\": [null,null,[0,1,2,3]], \"y\": [null,null,[0,1]]}").read("$..[2][3]");
-        assertThat(result).asList().containsOnly(3);
-    }
+//    @Test
+//    public void when_deep_scanning_array_index_oob_is_ignored() {
+//        Object result = JsonPath.parse("{\"x\": [0,1,[0,1,2,3,10],null]}").read("$..[4]");
+//        assertThat(result).asList().containsOnly(10);
+//
+//        result = JsonPath.parse("{\"x\": [null,null,[0,1,2,3]], \"y\": [null,null,[0,1]]}").read("$..[2][3]");
+//        assertThat(result).asList().containsOnly(3);
+//    }
 
     @Test
     public void definite_upstream_illegal_array_access_throws() {
@@ -304,15 +304,15 @@ public class DeepScanTest extends BaseTest {
         assertThat(result).hasSize(1);
     }
 
-    @Test
-    public void deepScanPathDefault() {
-        executeScanPath();
-    }
+//    @Test
+//    public void deepScanPathDefault() {
+//        executeScanPath();
+//    }
 
-    @Test
-    public void deepScanPathRequireProperties() {
-        executeScanPath(Option.REQUIRE_PROPERTIES);
-    }
+//    @Test
+//    public void deepScanPathRequireProperties() {
+//        executeScanPath(Option.REQUIRE_PROPERTIES);
+//    }
 
     private void executeScanPath(Option... options) {
         String json = "{'index': 'index', 'data': {'array': [{ 'object1': { 'name': 'robert'} }]}}";
