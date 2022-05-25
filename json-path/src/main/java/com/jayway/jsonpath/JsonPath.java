@@ -18,12 +18,17 @@ package com.jayway.jsonpath;
 import com.jayway.jsonpath.internal.*;
 import com.jayway.jsonpath.internal.path.PathCompiler;
 import com.jayway.jsonpath.spi.json.JsonProvider;
+import net.minidev.json.JSONArray;
+import net.minidev.json.JSONObject;
 
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
 
 import static com.jayway.jsonpath.Option.ALWAYS_RETURN_LIST;
 import static com.jayway.jsonpath.Option.AS_PATH_LIST;
@@ -419,6 +424,15 @@ public class JsonPath {
         return read(jsonFile, Configuration.defaultConfiguration());
     }
 
+    @SuppressWarnings({"unchecked"})
+    public static List<DocumentContext> parse(JSONArray jsonArray) {
+        List<DocumentContext> documentContextList = new ArrayList<>();
+        for (Object o: jsonArray.toArray()) {
+            JSONObject jsonObject = new JSONObject((Map<String, ?>) o);
+            documentContextList.add(new ParseContextImpl().parse(jsonObject.toJSONString()));
+        }
+        return documentContextList;
+    }
 
     /**
      * Applies this JsonPath to the provided json file
