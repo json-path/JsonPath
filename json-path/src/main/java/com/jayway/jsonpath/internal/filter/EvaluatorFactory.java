@@ -2,6 +2,7 @@ package com.jayway.jsonpath.internal.filter;
 
 import com.jayway.jsonpath.JsonPathException;
 import com.jayway.jsonpath.Predicate;
+import com.jayway.jsonpath.internal.path.PredicateContextImpl;
 
 import java.util.HashMap;
 import java.util.Iterator;
@@ -246,7 +247,42 @@ public class EvaluatorFactory {
     private static class PredicateMatchEvaluator implements Evaluator {
         @Override
         public boolean evaluate(ValueNode left, ValueNode right, Predicate.PredicateContext ctx) {
-            return right.asPredicateNode().getPredicate().apply(ctx);
+            Predicate.PredicateContext predicateContext = new PredicateContextImpl(
+                    getNodeValue(left),
+                    ctx.root(),
+                    ctx.configuration(),
+                    null
+            );
+            return right.asPredicateNode().getPredicate().apply(predicateContext);
+        }
+
+        public Object getNodeValue(ValueNode node) {
+            if(node.isPatternNode()){
+                return ((ValueNodes.PatternNode) node).getCompiledPattern();
+            } else if(node.isPathNode()){
+                return ((ValueNodes.PathNode) node).getPath();
+            } else if(node.isNumberNode()){
+                return ((ValueNodes.NumberNode) node).getNumber();
+            } else if(node.isStringNode()){
+                return ((ValueNodes.StringNode) node).getString();
+            } else if(node.isBooleanNode()){
+                return ((ValueNodes.BooleanNode) node).getBoolean();
+            } else if(node.isJsonNode()){
+                return ((ValueNodes.JsonNode) node).getJson();
+            } else if(node.isPredicateNode()){
+                return ((ValueNodes.PredicateNode) node).getPredicate();
+            } else if(node.isValueListNode()){
+                return ((ValueNodes.ValueListNode) node).getNodes();
+            } else if(node.isNullNode()){
+                return node.toString();
+            } else if(node.isUndefinedNode()){
+                return "undefined";
+            } else if(node.isClassNode()){
+                return ((ValueNodes.ClassNode) node).getClazz();
+            } else if(node.isOffsetDateTimeNode()){
+                return ((ValueNodes.OffsetDateTimeNode) node).getDate();
+            }
+            return null;
         }
     }
 
