@@ -245,44 +245,25 @@ public class EvaluatorFactory {
     }
 
     private static class PredicateMatchEvaluator implements Evaluator {
+        /**
+         * Evaluate the match operation of predicate.
+         *
+         * @param left the ValueNode
+         * @param right the ValueNode
+         * @param ctx the PredicateContext
+         * @return boolean
+         */
         @Override
-        public boolean evaluate(ValueNode left, ValueNode right, Predicate.PredicateContext ctx) {
-            Predicate.PredicateContext predicateContext = new PredicateContextImpl(
-                    getNodeValue(left),
+        public boolean evaluate(final ValueNode left, final ValueNode right, final Predicate.PredicateContext ctx) {
+            // CS304 Issue link: https://github.com/json-path/JsonPath/issues/356
+            // Create new predicateContext according to the left ValueNode
+            final Predicate.PredicateContext predicateContext = new PredicateContextImpl(
+                    left.getValue(),
                     ctx.root(),
                     ctx.configuration(),
                     null
             );
-            return right.asPredicateNode().getPredicate().apply(predicateContext);
-        }
-
-        public Object getNodeValue(ValueNode node) {
-            if(node.isPatternNode()){
-                return ((ValueNodes.PatternNode) node).getCompiledPattern();
-            } else if(node.isPathNode()){
-                return ((ValueNodes.PathNode) node).getPath();
-            } else if(node.isNumberNode()){
-                return ((ValueNodes.NumberNode) node).getNumber();
-            } else if(node.isStringNode()){
-                return ((ValueNodes.StringNode) node).getString();
-            } else if(node.isBooleanNode()){
-                return ((ValueNodes.BooleanNode) node).getBoolean();
-            } else if(node.isJsonNode()){
-                return ((ValueNodes.JsonNode) node).getJson();
-            } else if(node.isPredicateNode()){
-                return ((ValueNodes.PredicateNode) node).getPredicate();
-            } else if(node.isValueListNode()){
-                return ((ValueNodes.ValueListNode) node).getNodes();
-            } else if(node.isNullNode()){
-                return node.toString();
-            } else if(node.isUndefinedNode()){
-                return "undefined";
-            } else if(node.isClassNode()){
-                return ((ValueNodes.ClassNode) node).getClazz();
-            } else if(node.isOffsetDateTimeNode()){
-                return ((ValueNodes.OffsetDateTimeNode) node).getDate();
-            }
-            return null;
+            return right.asPredicateNode().getPredicate().apply(predicateContext); //NOPMD - suppressed LawOfDemeter //NOPMD - suppressed LawOfDemeter
         }
     }
 
