@@ -32,7 +32,7 @@ public abstract class PathToken {
     private int upstreamArrayIndex = -1;
 
 
-    public void setUpstreamArrayIndex(int idx){
+    public void setUpstreamArrayIndex(int idx) {
         upstreamArrayIndex = idx;
     }
 
@@ -44,32 +44,32 @@ public abstract class PathToken {
 
     void handleObjectProperty(String currentPath, Object model, EvaluationContextImpl ctx, List<String> properties) {
 
-        if(properties.size() == 1) {
+        if (properties.size() == 1) {
             String property = properties.get(0);
             String evalPath = Utils.concat(currentPath, "['", property, "']");
             Object propertyVal = readObjectProperty(property, model, ctx);
-            if(propertyVal == JsonProvider.UNDEFINED){
+            if (propertyVal == JsonProvider.UNDEFINED) {
                 // Conditions below heavily depend on current token type (and its logic) and are not "universal",
                 // so this code is quite dangerous (I'd rather rewrite it & move to PropertyPathToken and implemented
                 // WildcardPathToken as a dynamic multi prop case of PropertyPathToken).
                 // Better safe than sorry.
                 assert this instanceof PropertyPathToken : "only PropertyPathToken is supported";
 
-                if(isLeaf()) {
-                    if(ctx.options().contains(Option.DEFAULT_PATH_LEAF_TO_NULL)){
-                        propertyVal =  null;
+                if (isLeaf()) {
+                    if (ctx.options().contains(Option.DEFAULT_PATH_LEAF_TO_NULL)) {
+                        propertyVal = null;
                     } else {
-                        if(ctx.options().contains(Option.SUPPRESS_EXCEPTIONS) ||
-                           !ctx.options().contains(Option.REQUIRE_PROPERTIES)){
+                        if (ctx.options().contains(Option.SUPPRESS_EXCEPTIONS) ||
+                                !ctx.options().contains(Option.REQUIRE_PROPERTIES)) {
                             return;
                         } else {
                             throw new PathNotFoundException("No results for path: " + evalPath);
                         }
                     }
                 } else {
-                    if (! (isUpstreamDefinite() && isTokenDefinite()) &&
-                       !ctx.options().contains(Option.REQUIRE_PROPERTIES) ||
-                       ctx.options().contains(Option.SUPPRESS_EXCEPTIONS)){
+                    if (!(isUpstreamDefinite() && isTokenDefinite()) &&
+                            !ctx.options().contains(Option.REQUIRE_PROPERTIES) ||
+                            ctx.options().contains(Option.SUPPRESS_EXCEPTIONS)) {
                         // If there is some indefiniteness in the path and properties are not required - we'll ignore
                         // absent property. And also in case of exception suppression - so that other path evaluation
                         // branches could be examined.
@@ -82,11 +82,11 @@ public abstract class PathToken {
             PathRef pathRef = ctx.forUpdate() ? PathRef.create(model, property) : PathRef.NO_OP;
             if (isLeaf()) {
                 String idx = "[" + String.valueOf(upstreamArrayIndex) + "]";
-                if(idx.equals("[-1]") || ctx.getRoot().getTail().prev().getPathFragment().equals(idx)){
+                if (idx.equals("[-1]") || ctx.getRoot().getTail().prev().getPathFragment().equals(idx) ||
+                        ctx.getRoot().getTail().prev().getPathFragment().equals("[*]")) {
                     ctx.addResult(evalPath, pathRef, propertyVal);
                 }
-            }
-            else {
+            } else {
                 next().evaluate(evalPath, pathRef, propertyVal, ctx);
             }
         } else {
@@ -97,17 +97,17 @@ public abstract class PathToken {
             Object merged = ctx.jsonProvider().createMap();
             for (String property : properties) {
                 Object propertyVal;
-                if(hasProperty(property, model, ctx)) {
+                if (hasProperty(property, model, ctx)) {
                     propertyVal = readObjectProperty(property, model, ctx);
-                    if(propertyVal == JsonProvider.UNDEFINED){
-                        if(ctx.options().contains(Option.DEFAULT_PATH_LEAF_TO_NULL)) {
+                    if (propertyVal == JsonProvider.UNDEFINED) {
+                        if (ctx.options().contains(Option.DEFAULT_PATH_LEAF_TO_NULL)) {
                             propertyVal = null;
                         } else {
                             continue;
                         }
                     }
                 } else {
-                    if(ctx.options().contains(Option.DEFAULT_PATH_LEAF_TO_NULL)){
+                    if (ctx.options().contains(Option.DEFAULT_PATH_LEAF_TO_NULL)) {
                         propertyVal = null;
                     } else if (ctx.options().contains(Option.REQUIRE_PROPERTIES)) {
                         throw new PathNotFoundException("Missing property in path " + evalPath);
@@ -146,7 +146,7 @@ public abstract class PathToken {
         }
     }
 
-    PathToken prev(){
+    PathToken prev() {
         return prev;
     }
 
@@ -162,7 +162,7 @@ public abstract class PathToken {
     }
 
     boolean isRoot() {
-        return  prev == null;
+        return prev == null;
     }
 
     boolean isUpstreamDefinite() {
@@ -176,7 +176,7 @@ public abstract class PathToken {
         int cnt = 1;
         PathToken token = this;
 
-        while (!token.isLeaf()){
+        while (!token.isLeaf()) {
             token = token.next();
             cnt++;
         }
@@ -184,7 +184,7 @@ public abstract class PathToken {
     }
 
     public boolean isPathDefinite() {
-        if(definite != null){
+        if (definite != null) {
             return definite.booleanValue();
         }
         boolean isDefinite = isTokenDefinite();
@@ -214,11 +214,12 @@ public abstract class PathToken {
         return super.equals(obj);
     }
 
-    public void invoke(PathFunction pathFunction, String currentPath, PathRef parent, Object model, EvaluationContextImpl ctx) {
+    public void invoke(PathFunction pathFunction, String currentPath, PathRef parent, Object model,
+                       EvaluationContextImpl ctx) {
         ctx.addResult(currentPath, parent, pathFunction.invoke(currentPath, parent, model, ctx, null));
     }
 
-    public abstract void evaluate(String currentPath, PathRef parent,  Object model, EvaluationContextImpl ctx);
+    public abstract void evaluate(String currentPath, PathRef parent, Object model, EvaluationContextImpl ctx);
 
     public abstract boolean isTokenDefinite();
 
