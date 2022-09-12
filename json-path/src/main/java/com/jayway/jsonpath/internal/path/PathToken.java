@@ -60,7 +60,7 @@ public abstract class PathToken {
                         propertyVal =  null;
                     } else {
                         if(ctx.options().contains(Option.SUPPRESS_EXCEPTIONS) ||
-                                !ctx.options().contains(Option.REQUIRE_PROPERTIES)){
+                           !ctx.options().contains(Option.REQUIRE_PROPERTIES)){
                             return;
                         } else {
                             throw new PathNotFoundException("No results for path: " + evalPath);
@@ -68,8 +68,8 @@ public abstract class PathToken {
                     }
                 } else {
                     if (! (isUpstreamDefinite() && isTokenDefinite()) &&
-                            !ctx.options().contains(Option.REQUIRE_PROPERTIES) ||
-                            ctx.options().contains(Option.SUPPRESS_EXCEPTIONS)){
+                       !ctx.options().contains(Option.REQUIRE_PROPERTIES) ||
+                       ctx.options().contains(Option.SUPPRESS_EXCEPTIONS)){
                         // If there is some indefiniteness in the path and properties are not required - we'll ignore
                         // absent property. And also in case of exception suppression - so that other path evaluation
                         // branches could be examined.
