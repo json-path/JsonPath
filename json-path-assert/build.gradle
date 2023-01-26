@@ -16,4 +16,6 @@ dependencies {
     testImplementation libs.jsonSmart
     testImplementation libs.test
     testRuntimeOnly 'org.junit.vintage:junit-vintage-engine'
+    testRuntimeOnly 'org.apache.logging.log4j:log4j-slf4j-impl'
+    testRuntimeOnly 'org.apache.logging.log4j:log4j-jul'
 }
