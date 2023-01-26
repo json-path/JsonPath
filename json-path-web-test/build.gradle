@@ -17,6 +17,11 @@ task createBuildInfoFile {
 }
 
 jar {
+    from('../') {
+        include 'LICENSE'
+        include 'COPYRIGHT'
+    }
+
     dependsOn createBuildInfoFile
     baseName 'json-path-web-test'
     bnd (
