@@ -1,0 +1,44 @@
+name: Validate Jsonpath WEB validator Dockerfile
+
+on:
+  push:
+    branches: [main, docker]
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+
+  build-and-push-docker-image:
+    name: Validate Dockerfile
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - uses: satackey/action-docker-layer-caching@v0.0.11
+        continue-on-error: true
+
+      - name: Dockerfile validation
+        uses: ghe-actions/dockerfile-validator@v1
+        with:
+          dockerfile: 'Dockerfile'
+          lint: 'hadolint'
+
+      - name: Set up Docker Buildx
+        id: buildx
+        uses: docker/setup-buildx-action@v2
+
+      - name: Build image
+        uses: docker/build-push-action@v4
+        id: build
+        with:
+          context: .
+          push: false
+          tags: jsonpath/web-validator:latest
+
+      - name: 'Deploy to render.com: https://jsonpath.onrender.com/'
+        if: github.ref == 'refs/heads/master'
+        env:
+          RENDER_COM_DEPLOY_HOOK_URL: ${{ secrets.RENDER_COM_DEPLOY_HOOK_URL }}
+        run: curl $RENDER_COM_DEPLOY_HOOK_URL
