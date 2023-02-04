@@ -99,10 +99,10 @@ subprojects {
             mavenJava(MavenPublication) {
                 from components.java
 
-                artifactId = jar.baseName
+                artifactId = jar.archiveBaseName
 
                 pom {
-                    name = jar.baseName
+                    name = jar.archiveBaseName
                     description = project.description
                     url = 'https://github.com/jayway/JsonPath'
 
