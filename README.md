@@ -97,6 +97,8 @@ The function output is dictated by the function itself.
 | first()   | Provides the first item of an array                                                  | Depends on the array |
 | last()    | Provides the last item of an array                                                   | Depends on the array |
 | index(X)  | Provides the item of an array of index: X, if the X is negative, take from backwards | Depends on the array |
+
+
 Filter Operators
 -----------------
 
