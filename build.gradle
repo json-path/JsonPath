@@ -45,7 +45,7 @@ ext {
 
             ]
     ]
-    snapshotVersion = true
+    snapshotVersion = false
 }
 
 allprojects {
@@ -122,7 +122,7 @@ subprojects {
 
                 pom {
                     name = jar.baseName
-                    description = project.description
+                    description = 'A library to query and verify JSON'
                     url = 'https://github.com/jayway/JsonPath'
 
                     licenses {

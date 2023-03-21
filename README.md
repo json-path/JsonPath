@@ -11,6 +11,8 @@ Jayway JsonPath is a Java port of [Stefan Goessner JsonPath implementation](http
 
 News
 ----
+22 Mar 2023 - Released JsonPath 2.8.0
+
 30 Jan 2022 - Released JsonPath 2.7.0
 
 02 Jun 2021 - Released JsonPath 2.6.0 
@@ -43,7 +45,7 @@ JsonPath is available at the Central Maven Repository. Maven users add this to y
 <dependency>
     <groupId>com.jayway.jsonpath</groupId>
     <artifactId>json-path</artifactId>
-    <version>2.7.0</version>
+    <version>2.8.0</version>
 </dependency>
 ```
 
@@ -165,25 +167,25 @@ Given the json
 }
 ```
 
-| JsonPath (click link to try)| Result |
-| :------- | :----- |
-| <a href="http://jsonpath.herokuapp.com/?path=$.store.book[*].author" target="_blank">$.store.book[*].author</a>| The authors of all books     |
-| <a href="http://jsonpath.herokuapp.com/?path=$..author" target="_blank">$..author</a>                   | All authors                         |
-| <a href="http://jsonpath.herokuapp.com/?path=$.store.*" target="_blank">$.store.*</a>                  | All things, both books and bicycles  |
-| <a href="http://jsonpath.herokuapp.com/?path=$.store..price" target="_blank">$.store..price</a>             | The price of everything         |
-| <a href="http://jsonpath.herokuapp.com/?path=$..book[2]" target="_blank">$..book[2]</a>                 | The third book                      |
-| <a href="http://jsonpath.herokuapp.com/?path=$..book[-2]" target="_blank">$..book[-2]</a>                 | The second to last book            |
-| <a href="http://jsonpath.herokuapp.com/?path=$..book[0,1]" target="_blank">$..book[0,1]</a>               | The first two books               |
-| <a href="http://jsonpath.herokuapp.com/?path=$..book[:2]" target="_blank">$..book[:2]</a>                | All books from index 0 (inclusive) until index 2 (exclusive) |
-| <a href="http://jsonpath.herokuapp.com/?path=$..book[1:2]" target="_blank">$..book[1:2]</a>                | All books from index 1 (inclusive) until index 2 (exclusive) |
-| <a href="http://jsonpath.herokuapp.com/?path=$..book[-2:]" target="_blank">$..book[-2:]</a>                | Last two books                   |
-| <a href="http://jsonpath.herokuapp.com/?path=$..book[2:]" target="_blank">$..book[2:]</a>                | All books from index 2 (inclusive) to last  |
-| <a href="http://jsonpath.herokuapp.com/?path=$..book[?(@.isbn)]" target="_blank">$..book[?(@.isbn)]</a>        | All books with an ISBN number         |
-| <a href="http://jsonpath.herokuapp.com/?path=$.store.book[?(@.price < 10)]" target="_blank">$.store.book[?(@.price < 10)]</a> | All books in store cheaper than 10  |
-| <a href="http://jsonpath.herokuapp.com/?path=$..book[?(@.price <= $['expensive'])]" target="_blank">$..book[?(@.price <= $['expensive'])]</a> | All books in store that are not "expensive"  |
-| <a href="http://jsonpath.herokuapp.com/?path=$..book[?(@.author =~ /.*REES/i)]" target="_blank">$..book[?(@.author =~ /.*REES/i)]</a> | All books matching regex (ignore case)  |
-| <a href="http://jsonpath.herokuapp.com/?path=$..*" target="_blank">$..*</a>                        | Give me every thing   
-| <a href="http://jsonpath.herokuapp.com/?path=$..book.length()" target="_blank">$..book.length()</a>                 | The number of books                      |
+| JsonPath                                       | Result |
+|:-------------------------------------------------------------------| :----- |
+| $.store.book[*].author | The authors of all books     |
+| $..author                           | All authors                         |
+| $.store.*                           | All things, both books and bicycles  |
+| $.store..price                 | The price of everything         |
+| $..book[2]                         | The third book                      |
+| $..book[-2]                       | The second to last book            |
+| $..book[0,1]                     | The first two books               |
+| $..book[:2]                       | All books from index 0 (inclusive) until index 2 (exclusive) |
+| $..book[1:2]                     | All books from index 1 (inclusive) until index 2 (exclusive) |
+| $..book[-2:]                     | Last two books                   |
+| $..book[2:]                     | All books from index 2 (inclusive) to last  |
+| $..book[?(@.isbn)]                                                 | All books with an ISBN number         |
+| $.store.book[?(@.price < 10)]                                      | All books in store cheaper than 10  |
+| $..book[?(@.price <= $['expensive'])]                              | All books in store that are not "expensive"  |
+| $..book[?(@.author =~ /.*REES/i)]                                  | All books matching regex (ignore case)  |
+| $..*                                                               | Give me every thing   
+| $..book.length()                                                   | The number of books                      |
 
 Reading a Document
 ------------------
