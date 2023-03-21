@@ -1,7 +1,5 @@
 package com.jayway.jsonpath.internal.function.text;
 
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
 import com.jayway.jsonpath.internal.EvaluationContext;
 import com.jayway.jsonpath.internal.Path;
 import com.jayway.jsonpath.internal.PathRef;

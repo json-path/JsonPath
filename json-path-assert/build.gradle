@@ -4,7 +4,7 @@ description = "Assertions on Json using JsonPath"
 jar {
     baseName 'json-path-assert'
     bnd (
-        'Implementation-Title': 'json-path-assert', 'Implementation-Version': version
+        'Implementation-Title': 'json-path-assert', 'Implementation-Version': archiveVersion
     )
 }
 

@@ -4,7 +4,7 @@ description = "Java port of Stefan Goessner JsonPath."
 jar {
     baseName 'json-path'
     bnd (
-        'Implementation-Title': 'json-path', 'Implementation-Version': version,
+        'Implementation-Title': 'json-path', 'Implementation-Version': archiveVersion,
         'Import-Package': 'org.json.*;resolution:=optional, com.google.gson.*;resolution:=optional, com.fasterxml.jackson.*;resolution:=optional, org.apache.tapestry5.json.*;resolution:=optional, org.codehaus.jettison.*;resolution:=optional, jakarta.json.*;resolution:=optional, *',
         'Export-Package': 'com.jayway.jsonpath,com.jayway.jsonpath.spi,com.jayway.jsonpath.spi.cache,com.jayway.jsonpath.spi.json,com.jayway.jsonpath.spi.mapper'
     )
@@ -13,106 +13,14 @@ jar {
 dependencies {
     implementation libs.jsonSmart
     implementation libs.slf4jApi
-    implementation libs.jacksonDatabind // , optional
-    implementation libs.gson// , optional
-    implementation libs.jsonOrg// , optional
-    implementation libs.tapestryJson// , optional
-    implementation libs.jettison// , optional
-    implementation libs.jakartaJsonP// , optional
-    implementation libs.jakartaJsonB// , optional
+    compileOnly libs.jacksonDatabind // , optional
+    compileOnly libs.gson// , optional
+    compileOnly libs.jsonOrg// , optional
+    compileOnly libs.tapestryJson// , optional
+    compileOnly libs.jettison// , optional
+    compileOnly libs.jakartaJsonP// , optional
+    compileOnly libs.jakartaJsonB// , optional
 
     testImplementation libs.test
     testRuntimeOnly 'org.junit.vintage:junit-vintage-engine'
 }
-
-task distZip(type: Zip, dependsOn: assemble) {
-    classifier = 'with-dependencies'
-
-    from('build/docs') {
-        into 'api'
-    }
-    from(sourcesJar) {
-        into 'source'
-    }
-    from(jar) {
-        into 'lib'
-    }
-    from(project.configurations.implementation) {
-        into 'lib'
-        exclude { it.file.name.contains('gson') || it.file.name.contains('jackson') || it.file.name.contains('json-2') || it.file.name.contains('jettison') || it.file.name.contains('tapestry') || it.file.name.contains('jakarta.json') }
-    }
-    from(project.configurations.implementation) {
-        into 'lib-optional/jackson'
-        include { it.file.name.contains('jackson') }
-    }
-    from(project.configurations.implementation) {
-        into 'lib-optional/gson'
-        include { it.file.name.contains('gson') }
-    }
-    from(project.configurations.implementation) {
-        into 'lib-optional/jettison'
-        include { it.file.name.contains('jettison') }
-    }
-    from(project.configurations.implementation) {
-        into 'lib-optional/jsonOrg'
-        include { it.file.name.contains('json-2') }
-    }
-    from(project.configurations.implementation) {
-        into 'lib-optional/tapestry'
-        include { it.file.name.contains('tapestry') }
-    }
-    from(project.configurations.implementation) {
-        into 'lib-optional/jakartaJson'
-        include { it.file.name.contains('jakarta.json') }
-    }
-}
-
-task distTar(type: Tar, dependsOn: assemble) {
-    classifier = 'with-dependencies'
-    compression = Compression.GZIP
-    extension = 'tar.gz'
-
-    from('build/docs') {
-        into 'api'
-    }
-    from(sourcesJar) {
-        into 'source'
-    }
-    from(jar) {
-        into 'lib'
-    }
-    from(project.configurations.implementation) {
-        into 'lib'
-        exclude { it.file.name.contains('gson') || it.file.name.contains('jackson') || it.file.name.contains('json-2') || it.file.name.contains('jettison') || it.file.name.contains('tapestry') || it.file.name.contains('jakarta.json') }
-    }
-    from(project.configurations.implementation) {
-        into 'lib-optional/jackson'
-        include { it.file.name.contains('jackson') }
-    }
-    from(project.configurations.implementation) {
-        into 'lib-optional/gson'
-        include { it.file.name.contains('gson') }
-    }
-    from(project.configurations.implementation) {
-        into 'lib-optional/jettison'
-        include { it.file.name.contains('jettison') }
-    }
-    from(project.configurations.implementation) {
-        into 'lib-optional/jsonOrg'
-        include { it.file.name.contains('json-2') }
-    }
-    from(project.configurations.implementation) {
-        into 'lib-optional/tapestry'
-        include { it.file.name.contains('tapestry') }
-    }
-    from(project.configurations.implementation) {
-        into 'lib-optional/jakartaJson'
-        include { it.file.name.contains('jakarta.json') }
-    }
-}
-
-task dist(){
-
-}
-dist.dependsOn distZip
-dist.dependsOn distTar
