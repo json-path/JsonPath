@@ -4,6 +4,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -73,9 +74,14 @@ public class InlineFilterTest extends BaseTest {
 
     @Test
     public void root_context_can_be_referred_in_predicate() {
-        List<Double> prices = using(conf).parse(JSON_DOCUMENT).read("store.book[?(@.display-price <= $.max-price)].display-price", List.class);
+        List<?> prices = using(conf).parse(JSON_DOCUMENT).read("store.book[?(@.display-price <= $.max-price)].display-price", List.class);
 
-        assertThat(prices).containsAll(asList(8.95D, 8.99D));
+        assertThat(prices.stream().map(this::asDouble)).containsAll(asList(8.95D, 8.99D));
+    }
+
+    private Double asDouble(Object object) {
+        // For json-org implementation returns a list of big decimals
+        return object instanceof BigDecimal ? ((BigDecimal) object).doubleValue() : (Double) object;
     }
 
     @Test
