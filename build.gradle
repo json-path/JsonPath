@@ -87,9 +87,8 @@ subprojects {
     }
 
     signing {
-        sign configurations.archives
-        //sign publishing.publications.mavenJava
-        required { !snapshotVersion && gradle.taskGraph.hasTask("publish") } // uploadArchives is replaced by publish
+        sign publishing.publications
+        required { !snapshotVersion && gradle.taskGraph.hasTask("publish") }
     }
 
     javadoc {
