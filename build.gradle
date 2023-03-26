@@ -19,7 +19,7 @@ ext {
             hamcrest: 'org.hamcrest:hamcrest:2.2',
             jacksonDatabind: 'com.fasterxml.jackson.core:jackson-databind:2.14.2',
             jettison: 'org.codehaus.jettison:jettison:1.5.4',
-            jsonOrg: 'org.json:json:20140107',
+            jsonOrg: 'org.json:json:20230227',
             tapestryJson: 'org.apache.tapestry:tapestry-json:5.8.1',
             jakartaJsonP: 'jakarta.json:jakarta.json-api:2.0.1',
             jakartaJsonB: 'jakarta.json.bind:jakarta.json.bind-api:2.0.0',
