@@ -3,11 +3,7 @@ package com.jayway.jsonpath.internal.function;
 import com.jayway.jsonpath.InvalidPathException;
 import com.jayway.jsonpath.internal.function.json.Append;
 import com.jayway.jsonpath.internal.function.json.KeySetFunction;
-import com.jayway.jsonpath.internal.function.numeric.Average;
-import com.jayway.jsonpath.internal.function.numeric.Max;
-import com.jayway.jsonpath.internal.function.numeric.Min;
-import com.jayway.jsonpath.internal.function.numeric.StandardDeviation;
-import com.jayway.jsonpath.internal.function.numeric.Sum;
+import com.jayway.jsonpath.internal.function.numeric.*;
 import com.jayway.jsonpath.internal.function.sequence.First;
 import com.jayway.jsonpath.internal.function.sequence.Index;
 import com.jayway.jsonpath.internal.function.sequence.Last;
@@ -40,6 +36,8 @@ public class PathFunctionFactory {
         map.put("sum", Sum.class);
         map.put("min", Min.class);
         map.put("max", Max.class);
+        map.put("mul", Multiply.class);
+        map.put("div", Divide.class);
 
         // Text Functions
         map.put("concat", Concatenate.class);

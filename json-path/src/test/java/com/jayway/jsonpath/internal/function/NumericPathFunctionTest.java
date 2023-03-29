@@ -105,6 +105,48 @@ public class NumericPathFunctionTest extends BaseFunctionTest {
     }
 
     @Test
+    public void testMultiplication() {
+        verifyMathFunction(conf, "$.numbers.mul()", 3628800d);
+    }
+
+    @Test
+    public void testMultiplicationEmptyListNegative() {
+        try {
+            verifyMathFunction(conf, "$.empty.mul()", null);
+        } catch (JsonPathException e) {
+            assertEquals(e.getMessage(), "Aggregation function attempted to calculate value using empty array");
+        }
+    }
+
+    @Test
+    public void testMultiplicationParameter() {
+        verifyFunction(conf, "mul($.left, $.right)", "{\"left\": 3, \"right\": 4}",12d);
+    }
+
+    @Test
+    public void testDivideNoParamsNegative() {
+        try {
+            verifyMathFunction(conf, "$.numbers.div()", null);
+        } catch (JsonPathException e) {
+            assertEquals(e.getMessage(), "Exactly 2 parameters are expected for divide operator");
+        }
+    }
+
+    @Test
+    public void testDivide() {
+        verifyFunction(conf, "div($.num, $.den)", "{\"num\": 1, \"den\": 2}", 0.5d);
+    }
+
+    @Test
+    public void testDivideByZeroNegative() {
+        try {
+            verifyFunction(conf, "div($.num, $.den)", "{\"num\": 1, \"den\": 0}", 0.5d);
+        } catch (JsonPathException e){
+            assertEquals(e.getMessage(), "Arithmetic error: Divide by zero");
+        }
+    }
+
+    @Test
     public void testStddevOfEmptyListNegative() {
         try {
             verifyMathFunction(conf, "$.empty.stddev()", null);
