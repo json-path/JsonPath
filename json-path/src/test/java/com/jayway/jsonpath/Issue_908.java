@@ -18,7 +18,7 @@ public class Issue_908 {
             .options(Option.SUPPRESS_EXCEPTIONS).build())
         .parse("{\"test\" : null }")
         .read("$.test[?(@ != null)]");
-    System.out.println(rs);
+   
     assert(rs.toString().equals("[]"));
   }
 
