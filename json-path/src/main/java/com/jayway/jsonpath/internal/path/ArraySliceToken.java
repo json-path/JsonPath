@@ -14,9 +14,10 @@
  */
 package com.jayway.jsonpath.internal.path;
 
-import com.jayway.jsonpath.internal.PathRef;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import com.jayway.jsonpath.internal.PathRef;
 
 public class ArraySliceToken extends ArrayPathToken {
 
@@ -30,8 +31,9 @@ public class ArraySliceToken extends ArrayPathToken {
 
     @Override
     public void evaluate(String currentPath, PathRef parent, Object model, EvaluationContextImpl ctx) {
-        if (!checkArrayModel(currentPath, model, ctx))
+        if (!checkArrayModel(currentPath, model, ctx)) {
             return;
+        }
         switch (operation.operation()) {
             case SLICE_FROM:
                 sliceFrom(currentPath, parent, model, ctx);

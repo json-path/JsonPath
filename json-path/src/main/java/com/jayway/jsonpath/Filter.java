@@ -102,6 +102,7 @@ public abstract class Filter implements Predicate {
             this(asList(left, right));
         }
 
+        @Override
         public Filter and(final Predicate other){
             Collection<Predicate> newPredicates = new ArrayList<Predicate>(predicates);
             newPredicates.add(other);
@@ -150,6 +151,7 @@ public abstract class Filter implements Predicate {
             this.right = right;
         }
 
+        @Override
         public Filter and(final Predicate other){
             return new OrFilter(left, new AndFilter(right, other));
         }

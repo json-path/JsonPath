@@ -82,7 +82,7 @@ public abstract class PathToken {
             PathRef pathRef = ctx.forUpdate() ? PathRef.create(model, property) : PathRef.NO_OP;
             if (isLeaf()) {
                 String idx = "[" + String.valueOf(upstreamArrayIndex) + "]";
-                if(idx.equals("[-1]") || ctx.getRoot().getTail().prev().getPathFragment().equals(idx)){
+                if("[-1]".equals(idx) || ctx.getRoot().getTail().prev().getPathFragment().equals(idx)){
                     ctx.addResult(evalPath, pathRef, propertyVal);
                 }
             }

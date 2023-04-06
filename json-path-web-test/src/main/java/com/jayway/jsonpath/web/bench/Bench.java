@@ -1,20 +1,22 @@
 package com.jayway.jsonpath.web.bench;
 
-import com.jayway.jsonpath.Configuration;
-import com.jayway.jsonpath.JsonPath;
-import com.jayway.jsonpath.Option;
-import com.jayway.jsonpath.spi.json.JacksonJsonProvider;
-import io.gatling.jsonpath.JsonPath$;
-import org.boon.json.JsonParser;
-import org.boon.json.ObjectMapper;
-import org.boon.json.implementation.JsonParserCharArray;
-import org.boon.json.implementation.ObjectMapperImpl;
-import scala.collection.Iterator;
-
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
+import org.boon.json.JsonParser;
+import org.boon.json.ObjectMapper;
+import org.boon.json.implementation.JsonParserCharArray;
+import org.boon.json.implementation.ObjectMapperImpl;
+
+import com.jayway.jsonpath.Configuration;
+import com.jayway.jsonpath.JsonPath;
+import com.jayway.jsonpath.Option;
+import com.jayway.jsonpath.spi.json.JacksonJsonProvider;
+
+import io.gatling.jsonpath.JsonPath$;
+import scala.collection.Iterator;
 
 public class Bench {
 
@@ -63,11 +65,6 @@ public class Bench {
         long now = System.currentTimeMillis();
         try {
             res = JsonPath.using(configuration).parse(json).read(path);
-        } catch (Exception e) {
-            error = getError(e);
-        } finally {
-            time = System.currentTimeMillis() - now;
-
             if (res instanceof String) {
                 result = "\"" + res + "\"";
             } else if (res instanceof Number) {
@@ -77,8 +74,12 @@ public class Bench {
             } else {
                 result = res != null ? Configuration.defaultConfiguration().jsonProvider().toJson(res) : "null";
             }
-            return new Result("jayway", time, result, error);
+        } catch (Exception e) {
+            error = getError(e);
+        } finally {
+            time = System.currentTimeMillis() - now;
         }
+        return new Result("jayway", time, result, error);
     }
 
     public Result runBoon() {

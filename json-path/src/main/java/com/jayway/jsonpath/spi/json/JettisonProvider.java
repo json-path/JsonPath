@@ -325,7 +325,8 @@ public class JettisonProvider extends AbstractJsonProvider
 
 	}
 
-	public Collection<String> getPropertyKeys(Object obj) 
+	@Override
+    public Collection<String> getPropertyKeys(Object obj)
 	{
 		List<String> keys = new ArrayList<String>(length(obj));
 		

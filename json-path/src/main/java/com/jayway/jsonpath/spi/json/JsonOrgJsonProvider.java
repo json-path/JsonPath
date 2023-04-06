@@ -107,9 +107,9 @@ public class JsonOrgJsonProvider extends AbstractJsonProvider {
     @Override
     public void setProperty(Object obj, Object key, Object value) {
         try {
-            if (isMap(obj))
+            if (isMap(obj)) {
                 toJsonObject(obj).put(key.toString(), createJsonElement(value));
-            else {
+            } else {
                 JSONArray array = toJsonArray(obj);
                 int index;
                 if (key != null) {
@@ -128,11 +128,12 @@ public class JsonOrgJsonProvider extends AbstractJsonProvider {
         }
     }
 
+    @Override
     @SuppressWarnings("unchecked")
     public void removeProperty(Object obj, Object key) {
-        if (isMap(obj))
+        if (isMap(obj)) {
             toJsonObject(obj).remove(key.toString());
-        else {
+        } else {
             JSONArray array = toJsonArray(obj);
             int index = key instanceof Integer ? (Integer) key : Integer.parseInt(key.toString());
             array.remove(index);
@@ -149,8 +150,9 @@ public class JsonOrgJsonProvider extends AbstractJsonProvider {
     public Collection<String> getPropertyKeys(Object obj) {
         JSONObject jsonObject = toJsonObject(obj);
         try {
-            if(Objects.isNull(jsonObject.names()))
+            if(Objects.isNull(jsonObject.names())) {
                 return new ArrayList<>();
+            }
             return jsonObject.keySet();
         } catch (JSONException e) {
             throw new JsonPathException(e);

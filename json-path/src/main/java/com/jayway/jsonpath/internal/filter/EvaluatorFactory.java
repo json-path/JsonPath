@@ -1,12 +1,12 @@
 package com.jayway.jsonpath.internal.filter;
 
-import com.jayway.jsonpath.JsonPathException;
-import com.jayway.jsonpath.Predicate;
-
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.regex.Pattern;
+
+import com.jayway.jsonpath.JsonPathException;
+import com.jayway.jsonpath.Predicate;
 
 import static com.jayway.jsonpath.internal.filter.ValueNodes.PatternNode;
 import static com.jayway.jsonpath.internal.filter.ValueNodes.ValueListNode;
@@ -233,8 +233,9 @@ public class EvaluatorFactory {
                 return left.asStringNode().contains(right.asStringNode().getString());
             } else if(left.isJsonNode()){
                 ValueNode valueNode = left.asJsonNode().asValueListNode(ctx);
-                if(valueNode.isUndefinedNode()) return false;
-                else {
+                if(valueNode.isUndefinedNode()) {
+                    return false;
+                } else {
                     boolean res = valueNode.asValueListNode().contains(right);
                     return res;
                 }

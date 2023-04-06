@@ -110,6 +110,7 @@ public abstract class PathRef implements Comparable<PathRef>  {
             throw new InvalidModificationException("Invalid set operation");
         }
 
+        @Override
         public void convert(MapFunction mapFunction, Configuration configuration){
             throw new InvalidModificationException("Invalid map operation");
         }
@@ -157,19 +158,23 @@ public abstract class PathRef implements Comparable<PathRef>  {
             this.index = index;
         }
 
+        @Override
         public void set(Object newVal, Configuration configuration){
             configuration.jsonProvider().setArrayIndex(parent, index, newVal);
         }
 
+        @Override
         public void convert(MapFunction mapFunction, Configuration configuration){
             Object currentValue = configuration.jsonProvider().getArrayIndex(parent, index);
             configuration.jsonProvider().setArrayIndex(parent, index, mapFunction.map(currentValue, configuration));
         }
 
+        @Override
         public void delete(Configuration configuration){
             configuration.jsonProvider().removeProperty(parent, index);
         }
 
+        @Override
         public void add(Object value, Configuration configuration){
             Object target = configuration.jsonProvider().getArrayIndex(parent, index);
             if(targetInvalid(target)){
@@ -182,6 +187,7 @@ public abstract class PathRef implements Comparable<PathRef>  {
             }
         }
 
+        @Override
         public void put(String key, Object value, Configuration configuration){
             Object target = configuration.jsonProvider().getArrayIndex(parent, index);
             if(targetInvalid(target)){
@@ -227,6 +233,7 @@ public abstract class PathRef implements Comparable<PathRef>  {
             this.property = property;
         }
 
+        @Override
         public void set(Object newVal, Configuration configuration){
             configuration.jsonProvider().setProperty(parent, property, newVal);
         }
@@ -238,10 +245,12 @@ public abstract class PathRef implements Comparable<PathRef>  {
         }
 
 
+        @Override
         public void delete(Configuration configuration){
             configuration.jsonProvider().removeProperty(parent, property);
         }
 
+        @Override
         public void add(Object value, Configuration configuration){
             Object target = configuration.jsonProvider().getMapValue(parent, property);
             if(targetInvalid(target)){
@@ -254,6 +263,7 @@ public abstract class PathRef implements Comparable<PathRef>  {
             }
         }
 
+        @Override
         public void put(String key, Object value, Configuration configuration){
             Object target = configuration.jsonProvider().getMapValue(parent, property);
             if(targetInvalid(target)){
@@ -290,11 +300,13 @@ public abstract class PathRef implements Comparable<PathRef>  {
             this.properties = properties;
         }
 
+        @Override
         public void set(Object newVal, Configuration configuration){
             for (String property : properties) {
                 configuration.jsonProvider().setProperty(parent, property, newVal);
             }
         }
+        @Override
         public void convert(MapFunction mapFunction, Configuration configuration) {
             for (String property : properties) {
                 Object currentValue = configuration.jsonProvider().getMapValue(parent, property);
@@ -304,6 +316,7 @@ public abstract class PathRef implements Comparable<PathRef>  {
             }
         }
 
+        @Override
         public void delete(Configuration configuration){
             for (String property : properties) {
                 configuration.jsonProvider().removeProperty(parent, property);

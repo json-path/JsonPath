@@ -185,8 +185,11 @@ public class CharacterIndex {
     }
 
     public char charAtOr(int postition, char defaultChar){
-        if(!inBounds(postition)) return defaultChar;
-        else return charAt(postition);
+        if(!inBounds(postition)) {
+            return defaultChar;
+        } else {
+            return charAt(postition);
+        }
     }
 
     public boolean nextSignificantCharIs(int startPosition, char c) {
@@ -255,8 +258,11 @@ public class CharacterIndex {
 
     public char previousSignificantChar(int startPosition) {
         int previousSignificantCharIndex = indexOfPreviousSignificantChar(startPosition);
-        if(previousSignificantCharIndex == -1) return ' ';
-        else return charAt(previousSignificantCharIndex);
+        if(previousSignificantCharIndex == -1) {
+            return ' ';
+        } else {
+            return charAt(previousSignificantCharIndex);
+        }
     }
 
     public char previousSignificantChar() {

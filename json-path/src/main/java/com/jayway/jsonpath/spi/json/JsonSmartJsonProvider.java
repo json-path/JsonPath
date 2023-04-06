@@ -49,14 +49,17 @@ public class JsonSmartJsonProvider extends AbstractJsonProvider {
         this.mapper = mapper;
     }
 
+    @Override
     public Object createArray() {
         return mapper.createArray();
     }
 
+    @Override
     public Object createMap() {
         return mapper.createObject();
     }
 
+    @Override
     public Object parse(String json) {
         try {
             return createParser().parse(json, mapper);

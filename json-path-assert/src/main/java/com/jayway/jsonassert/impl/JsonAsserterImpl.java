@@ -26,6 +26,7 @@ public class JsonAsserterImpl implements JsonAsserter {
     /**
      * {@inheritDoc}
      */
+    @Override
     @SuppressWarnings("unchecked")
     public <T> JsonAsserter assertThat(String path, Matcher<T> matcher) {
         T obj = null;
@@ -48,6 +49,7 @@ public class JsonAsserterImpl implements JsonAsserter {
     /**
      * {@inheritDoc}
      */
+    @Override
     @SuppressWarnings("unchecked")
     public <T> JsonAsserter assertThat(String path, Matcher<T> matcher, String message) {
         T obj = JsonPath.<T>read(jsonObject, path);
@@ -60,6 +62,7 @@ public class JsonAsserterImpl implements JsonAsserter {
     /**
      * {@inheritDoc}
      */
+    @Override
     public <T> JsonAsserter assertEquals(String path, T expected) {
         return assertThat(path, equalTo(expected));
     }
@@ -67,6 +70,7 @@ public class JsonAsserterImpl implements JsonAsserter {
     /**
      * {@inheritDoc}
      */
+    @Override
     public JsonAsserter assertNotDefined(String path) {
 
         try {
@@ -95,6 +99,7 @@ public class JsonAsserterImpl implements JsonAsserter {
     /**
      * {@inheritDoc}
      */
+    @Override
     public JsonAsserter assertNull(String path) {
         return assertThat(path, nullValue());
     }
@@ -112,6 +117,7 @@ public class JsonAsserterImpl implements JsonAsserter {
     /**
      * {@inheritDoc}
      */
+    @Override
     public <T> JsonAsserter assertNotNull(String path) {
         return assertThat(path, notNullValue());
     }
@@ -124,6 +130,7 @@ public class JsonAsserterImpl implements JsonAsserter {
     /**
      * {@inheritDoc}
      */
+    @Override
     public JsonAsserter and() {
         return this;
     }

@@ -28,8 +28,9 @@ public class ArrayIndexToken extends ArrayPathToken {
 
     @Override
     public void evaluate(String currentPath, PathRef parent, Object model, EvaluationContextImpl ctx) {
-        if (!checkArrayModel(currentPath, model, ctx))
+        if (!checkArrayModel(currentPath, model, ctx)) {
             return;
+        }
         if (arrayIndexOperation.isSingleIndexOperation()) {
             handleArrayIndex(arrayIndexOperation.indexes().get(0), currentPath, model, ctx);
         } else {

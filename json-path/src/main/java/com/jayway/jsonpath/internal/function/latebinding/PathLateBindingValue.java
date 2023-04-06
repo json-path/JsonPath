@@ -42,14 +42,19 @@ public class PathLateBindingValue implements ILateBindingValue {
      *
      * @return the late value
      */
+    @Override
     public Object get() {
         return result;
     }
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
         PathLateBindingValue that = (PathLateBindingValue) o;
         return Objects.equals(path, that.path) &&
                 rootDocument.equals(that.rootDocument) &&

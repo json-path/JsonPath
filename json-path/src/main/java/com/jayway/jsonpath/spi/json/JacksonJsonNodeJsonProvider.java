@@ -92,6 +92,7 @@ public class JacksonJsonNodeJsonProvider extends AbstractJsonProvider {
         return JsonNodeFactory.instance.objectNode();
     }
 
+    @Override
     public Object unwrap(Object o) {
         if (o == null) {
             return null;
@@ -184,6 +185,7 @@ public class JacksonJsonNodeJsonProvider extends AbstractJsonProvider {
         }
 	}
 
+    @Override
     public void removeProperty(Object obj, Object key) {
         if (isMap(obj)) {
             toJsonObject(obj).remove(key.toString());

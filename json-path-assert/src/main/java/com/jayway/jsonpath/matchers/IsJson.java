@@ -29,6 +29,7 @@ public class IsJson<T> extends TypeSafeMatcher<T> {
         }
     }
 
+    @Override
     public void describeTo(Description description) {
         description.appendText("is json ").appendDescriptionOf(jsonMatcher);
     }
