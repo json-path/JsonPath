@@ -60,6 +60,17 @@ public interface EvaluationContext {
      */
     <T> T getPath();
 
+    /**
+     * Returns the list of formalized paths that represent the result of the evaluation
+     * It will return the leave path if the user use [*]
+     * Otherwise it works as the same as getPath
+     *
+     * @return list of paths
+     *
+     * Created by XiaoLing12138 on 05/21/2022.
+     */
+    <T> T getLeavePath();
+
 
     /**
      * Convenience method to get list of hits as String path representations
@@ -67,6 +78,15 @@ public interface EvaluationContext {
      * @return list of path representations
      */
     List<String> getPathList();
+
+    /**
+     * Convenience method to get leaves list of hits as String path representations
+     * Used for returning root-leave path list
+     * @return list of leaves path representations
+     *
+     * Created by XiaoLing12138 on 05/21/2022.
+     */
+    List<String> getLeavePathList();
 
     Collection<PathRef> updateOperations();
 

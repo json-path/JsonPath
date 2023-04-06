@@ -25,8 +25,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
 
-import static com.jayway.jsonpath.Option.ALWAYS_RETURN_LIST;
-import static com.jayway.jsonpath.Option.AS_PATH_LIST;
+import static com.jayway.jsonpath.Option.*;
 import static com.jayway.jsonpath.internal.Utils.*;
 
 /**
@@ -162,19 +161,23 @@ public class JsonPath {
      * @param configuration configuration to use
      * @param <T>           expected return type
      * @return object(s) matched by the given path
+     *
+     * Here I add optAsLeavePathList option and corresponding interaction
+     * Created by XiaoLing12138 on 05/21/2022.
      */
     @SuppressWarnings("unchecked")
     public <T> T read(Object jsonObject, Configuration configuration) {
         boolean optAsPathList = configuration.containsOption(AS_PATH_LIST);
+        boolean optAsLeavePathList = configuration.containsOption(AS_LEAVE_PATH_LIST);
         boolean optAlwaysReturnList = configuration.containsOption(Option.ALWAYS_RETURN_LIST);
         boolean optSuppressExceptions = configuration.containsOption(Option.SUPPRESS_EXCEPTIONS);
 
         if (path.isFunctionPath()) {
-            if (optAsPathList || optAlwaysReturnList) {
+            if (optAsPathList || optAlwaysReturnList || optAsLeavePathList) {
                 if (optSuppressExceptions) {
                     return (T) (path.isDefinite() ? null : configuration.jsonProvider().createArray());
                 }
-                throw new JsonPathException("Options " + AS_PATH_LIST + " and " + ALWAYS_RETURN_LIST + " are not allowed when using path functions!");
+                throw new JsonPathException("Options " + AS_PATH_LIST + " and " + ALWAYS_RETURN_LIST + " and " + AS_LEAVE_PATH_LIST + " are not allowed when using path functions!");
             }
             EvaluationContext evaluationContext = path.evaluate(jsonObject, jsonObject, configuration);
             if (optSuppressExceptions && evaluationContext.getPathList().isEmpty()) {
@@ -187,6 +190,13 @@ public class JsonPath {
                 return (T) configuration.jsonProvider().createArray();
             }
             return (T) evaluationContext.getPath();
+        } else if (optAsLeavePathList) {
+            // Using root-leave path function instead of path function
+            EvaluationContext evaluationContext = path.evaluate(jsonObject, jsonObject, configuration);
+            if (optSuppressExceptions && evaluationContext.getLeavePathList().isEmpty()) {
+                return (T) configuration.jsonProvider().createArray();
+            }
+            return (T) evaluationContext.getLeavePath();
         } else {
             EvaluationContext evaluationContext = path.evaluate(jsonObject, jsonObject, configuration);
             if (optSuppressExceptions && evaluationContext.getPathList().isEmpty()) {
@@ -737,18 +747,33 @@ public class JsonPath {
         return new ParseContextImpl(configuration).parse(json);
     }
 
+    /**
+     * Here we deal with the option AS_LEAVE_PATH_LIST like AS_PATH_LIST
+     * It will return getLeavePathList
+     *
+     * Created by XiaoLing12138 on 05/21/2022.
+     */
     private <T> T resultByConfiguration(Object jsonObject, Configuration configuration, EvaluationContext evaluationContext) {
-        if(configuration.containsOption(AS_PATH_LIST)){
+        if(configuration.containsOption(AS_PATH_LIST)) {
             return (T)evaluationContext.getPathList();
+        } else if (configuration.containsOption(AS_LEAVE_PATH_LIST)) {
+            return (T)evaluationContext.getLeavePathList();
         } else {
             return (T) jsonObject;
         }
     }
 
+    /**
+     * Here we deal with the option AS_LEAVE_PATH_LIST like AS_PATH_LIST
+     * If the context is missing, it will return as AS_PATH_LIST
+     *
+     * Created by XiaoLing12138 on 05/21/2022.
+     */
     private <T> T handleMissingPathInContext(final Configuration configuration) {
         boolean optAsPathList = configuration.containsOption(AS_PATH_LIST);
+        boolean optAsLeavePathList = configuration.containsOption(AS_LEAVE_PATH_LIST);
         boolean optAlwaysReturnList = configuration.containsOption(Option.ALWAYS_RETURN_LIST);
-        if (optAsPathList) {
+        if (optAsPathList || optAsLeavePathList) {
             return (T) configuration.jsonProvider().createArray();
         } else {
             if (optAlwaysReturnList) {

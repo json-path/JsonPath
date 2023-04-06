@@ -34,7 +34,10 @@ import java.util.Set;
 import static com.jayway.jsonpath.internal.Utils.notNull;
 
 /**
+ * I add two variables leavePathResult and leaveResultIndex to implement the root-leave path function
+ * And two methods getLeavePath and getLeavePathList
  *
+ * Created by XiaoLing12138 on 05/21/2022.
  */
 public class EvaluationContextImpl implements EvaluationContext {
 
@@ -43,6 +46,7 @@ public class EvaluationContextImpl implements EvaluationContext {
     private final Configuration configuration;
     private final Object valueResult;
     private final Object pathResult;
+    private final Object leavePathResult;
     private final Path path;
     private final Object rootDocument;
     private final List<PathRef> updateOperations;
@@ -50,6 +54,7 @@ public class EvaluationContextImpl implements EvaluationContext {
     private final boolean forUpdate;
     private final boolean suppressExceptions;
     private int resultIndex = 0;
+    private int leaveResultIndex = 0;
 
 
     public RootPathToken getRoot(){
@@ -66,6 +71,7 @@ public class EvaluationContextImpl implements EvaluationContext {
         this.configuration = configuration;
         this.valueResult = configuration.jsonProvider().createArray();
         this.pathResult = configuration.jsonProvider().createArray();
+        this.leavePathResult = configuration.jsonProvider().createArray();
         this.updateOperations = new ArrayList<>();
         this.suppressExceptions = configuration.containsOption(Option.SUPPRESS_EXCEPTIONS);
     }
@@ -78,6 +84,15 @@ public class EvaluationContextImpl implements EvaluationContext {
         return forUpdate;
     }
 
+    /**
+     * Here we implement the leavePathResult function.
+     * It will check whether it is a leave node
+     * If it is a leave node, it will be added into leavePathResult
+     * Otherwise, ignore.
+     *
+     * Code is from "char bracket" to "leaveResultIndex++;"
+     * Created by XiaoLing12138 on 05/21/2022.
+     */
     public void addResult(String path, PathRef operation, Object model) {
 
         if(forUpdate) {
@@ -86,6 +101,13 @@ public class EvaluationContextImpl implements EvaluationContext {
 
         configuration.jsonProvider().setArrayIndex(valueResult, resultIndex, model);
         configuration.jsonProvider().setArrayIndex(pathResult, resultIndex, path);
+
+        char bracket = model.toString().trim().charAt(0);
+        if (bracket != '[' && bracket != '{') {
+            configuration.jsonProvider().setArrayIndex(leavePathResult, leaveResultIndex, path);
+            leaveResultIndex++;
+        }
+
         resultIndex++;
         if(!configuration().getEvaluationListeners().isEmpty()){
             int idx = resultIndex - 1;
@@ -163,6 +185,23 @@ public class EvaluationContextImpl implements EvaluationContext {
         return (T)pathResult;
     }
 
+    /**
+     * This will return the root-leave path list
+     * If it is empty, the user may use path like $..['book']
+     * This is not a root-leave path search, and it will return as getPath
+     * Which works the same as AS_PATH_LIST
+     *
+     * Created by XiaoLing12138 on 05/21/2022.
+     */
+    @SuppressWarnings("unchecked")
+    @Override
+    public <T> T getLeavePath() {
+        if(leaveResultIndex == 0) {
+            return getPath();
+        }
+        return (T)leavePathResult;
+    }
+
     @Override
     public List<String> getPathList() {
         List<String> res = new ArrayList<String>();
@@ -170,6 +209,33 @@ public class EvaluationContextImpl implements EvaluationContext {
             Iterable<?> objects = configuration.jsonProvider().toIterable(pathResult);
             for (Object o : objects) {
                 res.add((String)o);
+            }
+        }
+        return res;
+    }
+
+    /**
+     * This will return the root-leave path list
+     * If it is empty, the user may use path like $..['book']
+     * This is not a root-leave path search, and it will return as getPathList
+     * Which works the same as AS_PATH_LIST
+     *
+     * Created by XiaoLing12138 on 05/21/2022.
+     */
+    @Override
+    public List<String> getLeavePathList() {
+        List<String> res = new ArrayList<>();
+        if(leaveResultIndex > 0) {
+            Iterable<?> objects = configuration.jsonProvider().toIterable(leavePathResult);
+            for (Object o : objects) {
+                res.add((String)o);
+            }
+        } else {
+            if (resultIndex > 0) {
+                Iterable<?> objects = configuration.jsonProvider().toIterable(pathResult);
+                for (Object o : objects) {
+                    res.add((String)o);
+                }
             }
         }
         return res;
