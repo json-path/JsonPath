@@ -17,8 +17,12 @@ package com.jayway.jsonpath.internal.path;
 import com.jayway.jsonpath.Option;
 import com.jayway.jsonpath.internal.PathRef;
 import com.jayway.jsonpath.spi.json.JsonProvider;
+import net.minidev.json.JSONArray;
 
+import java.lang.reflect.Field;
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
 
 /**
  *
@@ -72,7 +76,22 @@ public class ScanPathToken extends PathToken {
     }
 
     public static void walkObject(PathToken pt, String currentPath, PathRef parent, Object model, EvaluationContextImpl ctx, Predicate predicate) {
-
+        List<Integer> indexList=null;
+        if((!pt.isLeaf()) && pt.next() instanceof ArrayIndexToken && pt.next().isLeaf()){
+            ArrayIndexToken token=(ArrayIndexToken)pt.next();
+            try {
+                Field arrayIndexOperation=token.getClass().getDeclaredField("arrayIndexOperation");
+                arrayIndexOperation.setAccessible(true);
+                ArrayIndexOperation operation=(ArrayIndexOperation) arrayIndexOperation.get(token);
+                Field indexField=operation.getClass().getDeclaredField("indexes");
+                indexField.setAccessible(true);
+                indexList=(List<Integer>) indexField.get(operation);
+                pt.setNext(null);
+            } catch (NoSuchFieldException | IllegalAccessException e) {
+                e.printStackTrace();
+            }
+//            token.arr
+        }
         if (predicate.matches(model)) {
             pt.evaluate(currentPath, parent, model, ctx);
         }
@@ -83,6 +102,25 @@ public class ScanPathToken extends PathToken {
             Object propertyModel = ctx.jsonProvider().getMapValue(model, property);
             if (propertyModel != JsonProvider.UNDEFINED) {
                 walk(pt, evalPath, PathRef.create(model, property), propertyModel, ctx, predicate);
+            }
+        }
+        if(indexList!=null){
+            Object result=ctx.getValueResult();
+            if(result instanceof JSONArray){
+                JSONArray actualValueRes=(JSONArray) result,actualPathResult=(JSONArray)ctx.getPathResult() ;
+                List<Object> valueStore=new ArrayList<>();
+                List<Object> pathStore=new ArrayList<>();
+                for(int i=0;i<indexList.size();i++){
+                    int index=indexList.get(i);
+                    if(index<actualValueRes.size()){
+                        valueStore.add(actualValueRes.get(index));
+                        pathStore.add(actualPathResult.get(index));
+                    }
+                }
+                actualValueRes.clear();
+                actualPathResult.clear();
+                actualValueRes.addAll(valueStore);
+                actualPathResult.addAll(pathStore);
             }
         }
     }

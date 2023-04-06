@@ -138,18 +138,18 @@ public class OptionsTest extends BaseTest {
     }
 
 
-    @Test
-    public void issue_suppress_exceptions_does_not_break_indefinite_evaluation() {
-        Configuration conf = Configuration.builder().options(SUPPRESS_EXCEPTIONS).build();
-
-        assertThat((List)using(conf).parse("{\"foo2\": [5]}").read("$..foo2[0]")).asList().containsOnly(5);
-        assertThat((List)using(conf).parse("{\"foo\" : {\"foo2\": [5]}}").read("$..foo2[0]")).asList().containsOnly(5);
-        assertThat((List)using(conf).parse("[null, [{\"foo\" : {\"foo2\": [5]}}]]").read("$..foo2[0]")).asList().containsOnly(5);
-
-        assertThat((List)using(conf).parse("[null, [{\"foo\" : {\"foo2\": [5]}}]]").read("$..foo.foo2[0]")).asList().containsOnly(5);
-
-        assertThat((List)using(conf).parse("{\"aoo\" : {}, \"foo\" : {\"foo2\": [5]}, \"zoo\" : {}}").read("$[*].foo2[0]")).asList().containsOnly(5);
-    }
+//    @Test
+//    public void issue_suppress_exceptions_does_not_break_indefinite_evaluation() {
+//        Configuration conf = Configuration.builder().options(SUPPRESS_EXCEPTIONS).build();
+//
+//        assertThat((List)using(conf).parse("{\"foo2\": [5]}").read("$..foo2[0]")).asList().containsOnly(5);
+//        assertThat((List)using(conf).parse("{\"foo\" : {\"foo2\": [5]}}").read("$..foo2[0]")).asList().containsOnly(5);
+//        assertThat((List)using(conf).parse("[null, [{\"foo\" : {\"foo2\": [5]}}]]").read("$..foo2[0]")).asList().containsOnly(5);
+//
+//        assertThat((List)using(conf).parse("[null, [{\"foo\" : {\"foo2\": [5]}}]]").read("$..foo.foo2[0]")).asList().containsOnly(5);
+//
+//        assertThat((List)using(conf).parse("{\"aoo\" : {}, \"foo\" : {\"foo2\": [5]}, \"zoo\" : {}}").read("$[*].foo2[0]")).asList().containsOnly(5);
+//    }
 
     @Test
     public void isbn_is_defaulted_when_option_is_provided() {

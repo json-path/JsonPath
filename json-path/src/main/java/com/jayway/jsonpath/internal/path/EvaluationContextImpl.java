@@ -24,12 +24,7 @@ import com.jayway.jsonpath.internal.Path;
 import com.jayway.jsonpath.internal.PathRef;
 import com.jayway.jsonpath.spi.json.JsonProvider;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 import static com.jayway.jsonpath.internal.Utils.notNull;
 
@@ -202,5 +197,10 @@ public class EvaluationContextImpl implements EvaluationContext {
             return result;
         }
     }
-
+    public Object getPathResult(){
+        return pathResult;
+    }
+    public Object getValueResult(){
+        return valueResult;
+    }
 }
