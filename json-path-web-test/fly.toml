@@ -1,0 +1,21 @@
+app = "jsonpath"
+primary_region = "sea"
+
+[build]
+  image = "registry.fly.io/jsonpath-eval"
+
+[http_service]
+  internal_port = 8080
+  force_https = true
+  auto_stop_machines = true
+  auto_start_machines = true
+
+[checks]
+  [checks.info]
+    port = 8080
+    type = "http"
+    interval = "15s"
+    timeout = "5s"
+    grace_period = "5s"
+    method = "get"
+    path = "/api/info"

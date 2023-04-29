@@ -8,6 +8,7 @@ buildscript {
     dependencies {
         classpath 'com.github.jengelman.gradle.plugins:shadow:5.2.0'
         classpath 'biz.aQute.bnd:biz.aQute.bnd.gradle:6.1.0'
+        classpath 'com.palantir.gradle.docker:gradle-docker:0.35.0'
     }
 }
 
