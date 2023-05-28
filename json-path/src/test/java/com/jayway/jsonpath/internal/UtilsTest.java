@@ -91,14 +91,12 @@ public class UtilsTest {
 
     @Test
     public void testNotNullThrow() {
-        thrown.expect(IllegalArgumentException.class);
-        Utils.notNull(null, "bar", "a", "b", "c");
+        assertNullWithMessage();
     }
 
     @Test
     public void testCloseQuietly() throws IllegalArgumentException {
-        thrown.expect(IllegalArgumentException.class);
-        Utils.notNull(null, "bar", "a", "b", "c");
+        assertNullWithMessage();
     }
 
     @Test
@@ -156,5 +154,10 @@ public class UtilsTest {
         Assert.assertEquals("", Utils.toString(""));
         Assert.assertEquals("foo", Utils.toString("foo"));
         Assert.assertEquals("123", Utils.toString(123));
+    }
+
+    private void assertNullWithMessage() {
+        thrown.expect(IllegalArgumentException.class);
+        Utils.notNull(null, "bar", "a", "b", "c");
     }
 }

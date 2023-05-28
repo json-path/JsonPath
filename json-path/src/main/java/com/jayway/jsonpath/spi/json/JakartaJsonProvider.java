@@ -553,20 +553,12 @@ public class JakartaJsonProvider extends AbstractJsonProvider {
 
                 @Override
                 public boolean hasNext() {
-                    if (refArr == arr) {
-                        return it.hasNext();
-                    } else {
-                        throw new ConcurrentModificationException();
-                    }
+                    return hasNextOrThrow();
                 }
 
                 @Override
                 public JsonValue next() {
-                    if (refArr == arr) {
-                        return it.next();
-                    } else {
-                        throw new ConcurrentModificationException();
-                    }
+                    return compareAndReturnNext();
                 }
             };
         }
@@ -742,20 +734,12 @@ public class JakartaJsonProvider extends AbstractJsonProvider {
 
                 @Override
                 public boolean hasNext() {
-                    if (refArr == arr) {
-                        return it.hasNext();
-                    } else {
-                        throw new ConcurrentModificationException();
-                    }
+                    return hasNextOrThrow();
                 }
 
                 @Override
                 public JsonValue next() {
-                    if (refArr == arr) {
-                        return it.next();
-                    } else {
-                        throw new ConcurrentModificationException();
-                    }
+                    return compareAndReturnNext();
                 }
 
                 @Override
@@ -837,6 +821,22 @@ public class JakartaJsonProvider extends AbstractJsonProvider {
         @Override
         public String toString() {
             return arr != null ? arr.toString() : null;
+        }
+
+        private boolean hasNextOrThrow() {
+            if (refArr == arr) {
+                return it.hasNext();
+            } else {
+                throw new ConcurrentModificationException();
+            }
+        }
+
+        private JsonValue compareAndReturnNext() {
+            if (refArr == arr) {
+                return it.next();
+            } else {
+                throw new ConcurrentModificationException();
+            }
         }
     }
 

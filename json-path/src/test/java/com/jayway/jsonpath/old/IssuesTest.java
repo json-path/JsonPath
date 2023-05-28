@@ -442,7 +442,7 @@ public class IssuesTest extends BaseTest {
 
             @Override
             public Object item() {
-                return map;
+                return getMapItems();
             }
 
             @Override
@@ -452,7 +452,7 @@ public class IssuesTest extends BaseTest {
 
             @Override
             public Object root() {
-                return map;
+                return getMapItems();
             }
 
             @Override
@@ -569,5 +569,9 @@ public class IssuesTest extends BaseTest {
             thrown = true;
         }
         assertTrue(thrown);
+    }
+
+    private Object getMapItems() {
+        return map;
     }
 }

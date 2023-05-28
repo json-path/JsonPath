@@ -15,7 +15,7 @@ public abstract class ValueNode {
     public abstract Class<?> type(Predicate.PredicateContext ctx);
 
     public boolean isPatternNode() {
-        return false;
+        return deny();
     }
 
     public PatternNode asPatternNode() {
@@ -23,7 +23,7 @@ public abstract class ValueNode {
     }
 
     public boolean isPathNode() {
-        return false;
+        return deny();
     }
 
     public PathNode asPathNode() {
@@ -31,7 +31,7 @@ public abstract class ValueNode {
     }
 
     public boolean isNumberNode() {
-        return false;
+        return deny();
     }
 
     public NumberNode asNumberNode() {
@@ -39,7 +39,7 @@ public abstract class ValueNode {
     }
 
     public boolean isStringNode() {
-        return false;
+        return deny();
     }
 
     public StringNode asStringNode() {
@@ -47,7 +47,7 @@ public abstract class ValueNode {
     }
 
     public boolean isBooleanNode() {
-        return false;
+        return deny();
     }
 
     public BooleanNode asBooleanNode() {
@@ -55,7 +55,7 @@ public abstract class ValueNode {
     }
 
     public boolean isJsonNode() {
-        return false;
+        return deny();
     }
 
     public JsonNode asJsonNode() {
@@ -63,7 +63,7 @@ public abstract class ValueNode {
     }
 
     public boolean isPredicateNode() {
-        return false;
+        return deny();
     }
 
     public PredicateNode asPredicateNode() {
@@ -71,7 +71,7 @@ public abstract class ValueNode {
     }
 
     public boolean isValueListNode() {
-        return false;
+        return deny();
     }
 
     public ValueListNode asValueListNode() {
@@ -79,7 +79,7 @@ public abstract class ValueNode {
     }
 
     public boolean isNullNode() {
-        return false;
+        return deny();
     }
 
     public NullNode asNullNode() {
@@ -91,11 +91,11 @@ public abstract class ValueNode {
     }
 
     public boolean isUndefinedNode() {
-        return false;
+        return deny();
     }
 
     public boolean isClassNode() {
-        return false;
+        return deny();
     }
 
     public ClassNode asClassNode() {
@@ -104,7 +104,7 @@ public abstract class ValueNode {
 
     //workaround for issue: https://github.com/json-path/JsonPath/issues/613
     public boolean isOffsetDateTimeNode() {
-        return false;
+        return deny();
     }
 
     public OffsetDateTimeNode asOffsetDateTimeNode() {
@@ -237,5 +237,9 @@ public abstract class ValueNode {
 
     public static ValueNode createPathNode(Path path) {
         return new PathNode(path);
+    }
+
+    private boolean deny() {
+        return false;
     }
 }

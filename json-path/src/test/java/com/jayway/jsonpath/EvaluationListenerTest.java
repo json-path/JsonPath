@@ -13,7 +13,7 @@ public class EvaluationListenerTest extends BaseTest {
 
             @Override
             public EvaluationContinuation resultFound(FoundResult found) {
-                return EvaluationContinuation.ABORT;
+                return Abort(found);
             }
         };
         List<String> title = JsonPath.parse(JSON_DOCUMENT).withListeners(firstResultListener).read("$..title", List.class);
@@ -26,7 +26,7 @@ public class EvaluationListenerTest extends BaseTest {
 
             @Override
             public EvaluationContinuation resultFound(FoundResult found) {
-                return EvaluationContinuation.ABORT;
+                return Abort(found);
             }
         };
         Configuration configuration = Configuration.builder().evaluationListener(firstResultListener).build();
@@ -97,5 +97,9 @@ public class EvaluationListenerTest extends BaseTest {
         Configuration configuration2 = configuration1.setEvaluationListeners();
         assertThat(configuration1.getEvaluationListeners()).hasSize(1);
         assertThat(configuration2.getEvaluationListeners()).hasSize(0);
+    }
+
+    private EvaluationContinuation Abort(FoundResult found) {
+        return EvaluationContinuation.ABORT;
     }
 }

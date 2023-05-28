@@ -13,12 +13,12 @@ public enum LogicalOperator {
     }
 
     public String getOperatorString() {
-        return operatorString;
+        return toStringValue();
     }
 
     @Override
     public String toString() {
-        return operatorString;
+        return toStringValue();
     }
 
     public static LogicalOperator fromString(String operatorString) {
@@ -30,5 +30,9 @@ public enum LogicalOperator {
             return OR;
         else
             throw new InvalidPathException("Failed to parse operator " + operatorString);
+    }
+
+    private String toStringValue() {
+        return operatorString;
     }
 }

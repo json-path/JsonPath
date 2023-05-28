@@ -69,7 +69,7 @@ public class Configuration {
      * @return a new configuration
      */
     public Configuration addEvaluationListeners(EvaluationListener... evaluationListener) {
-        return Configuration.builder().jsonProvider(jsonProvider).mappingProvider(mappingProvider).options(options).evaluationListener(evaluationListener).build();
+        return buildJsonConfiguration(evaluationListener);
     }
 
     /**
@@ -78,7 +78,7 @@ public class Configuration {
      * @return a new configuration
      */
     public Configuration setEvaluationListeners(EvaluationListener... evaluationListener) {
-        return Configuration.builder().jsonProvider(jsonProvider).mappingProvider(mappingProvider).options(options).evaluationListener(evaluationListener).build();
+        return buildJsonConfiguration(evaluationListener);
     }
 
     /**
@@ -267,5 +267,9 @@ public class Configuration {
             return false;
         Configuration that = (Configuration) o;
         return jsonProvider.getClass() == that.jsonProvider.getClass() && mappingProvider.getClass() == that.mappingProvider.getClass() && Objects.equals(options, that.options);
+    }
+
+    private Configuration buildJsonConfiguration(EvaluationListener... evaluationListener) {
+        return Configuration.builder().jsonProvider(jsonProvider).mappingProvider(mappingProvider).options(options).evaluationListener(evaluationListener).build();
     }
 }

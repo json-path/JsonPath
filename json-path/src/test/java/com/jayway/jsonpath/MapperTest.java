@@ -11,12 +11,12 @@ public class MapperTest extends BaseTest {
 
     @Test
     public void an_Integer_can_be_converted_to_a_Long() {
-        assertThat(parse("{\"val\": 1}").read("val", Long.class)).isEqualTo(1L);
+        assertThatReadIsEqualTo();
     }
 
     @Test
     public void an_String_can_be_converted_to_a_Long() {
-        assertThat(parse("{\"val\": 1}").read("val", Long.class)).isEqualTo(1L);
+        assertThatReadIsEqualTo();
     }
 
     @Test
@@ -54,5 +54,9 @@ public class MapperTest extends BaseTest {
     public void a_Boolean_can_be_converted_to_a_primitive_boolean() {
         assertThat(parse("{\"val\": true}").read("val", boolean.class)).isTrue();
         assertThat(parse("{\"val\": false}").read("val", boolean.class)).isFalse();
+    }
+
+    private void assertThatReadIsEqualTo() {
+        assertThat(parse("{\"val\": 1}").read("val", Long.class)).isEqualTo(1L);
     }
 }

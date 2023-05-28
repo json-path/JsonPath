@@ -276,7 +276,7 @@ public class Criteria implements Predicate {
      * @return the criteria
      */
     public Criteria subsetof(Object... o) {
-        return subsetof(Arrays.asList(o));
+        return subsetOfSingleObject(o);
     }
 
     /**
@@ -302,7 +302,7 @@ public class Criteria implements Predicate {
      * @return the criteria
      */
     public Criteria anyof(Object... o) {
-        return subsetof(Arrays.asList(o));
+        return subsetOfSingleObject(o);
     }
 
     /**
@@ -505,5 +505,9 @@ public class Criteria implements Predicate {
         if (!complete) {
             throw new JsonPathException("Criteria build exception. Complete on criteria before defining next.");
         }
+    }
+
+    private Criteria subsetOfSingleObject(Object... o) {
+        return subsetof(Arrays.asList(o));
     }
 }
