@@ -28,6 +28,7 @@ public interface EvaluationListener {
     EvaluationContinuation resultFound(FoundResult found);
 
     enum EvaluationContinuation {
+
         /**
          * Evaluation continues
          */
@@ -39,9 +40,9 @@ public interface EvaluationListener {
     }
 
     /**
-     *
      */
     interface FoundResult {
+
         /**
          * the index of this result. First result i 0
          * @return index

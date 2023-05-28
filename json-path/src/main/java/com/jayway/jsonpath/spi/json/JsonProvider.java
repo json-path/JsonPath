@@ -19,7 +19,6 @@ import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
 import java.util.Collection;
 
-
 public interface JsonProvider {
 
     static final Object UNDEFINED = new Object();
@@ -41,6 +40,7 @@ public interface JsonProvider {
     default Object parse(byte[] json) throws InvalidJsonException {
         return parse(new String(json, StandardCharsets.UTF_8));
     }
+
     /**
      * Parse the given json string
      * @param jsonStream input stream to parse
@@ -92,7 +92,6 @@ public interface JsonProvider {
      * @return an Iterable that iterates over the entries of an array
      */
     Iterable<?> toIterable(Object obj);
-
 
     /**
      * Returns the keys from the given object

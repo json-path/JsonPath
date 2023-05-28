@@ -5,13 +5,11 @@ import com.jayway.jsonpath.internal.EvaluationContext;
 import com.jayway.jsonpath.internal.PathRef;
 import com.jayway.jsonpath.internal.function.Parameter;
 import com.jayway.jsonpath.internal.function.PathFunction;
-
 import java.util.List;
 
 /**
  * Defines the pattern for processing numerical values via an abstract implementation that iterates over the collection
  * of JSONArray entities and verifies that each is a numerical value and then passes that along the abstract methods
- *
  *
  * Created by mattg on 6/26/15.
  */
@@ -36,8 +34,7 @@ public abstract class AbstractAggregation implements PathFunction {
     @Override
     public Object invoke(String currentPath, PathRef parent, Object model, EvaluationContext ctx, List<Parameter> parameters) {
         int count = 0;
-        if(ctx.configuration().jsonProvider().isArray(model)){
-
+        if (ctx.configuration().jsonProvider().isArray(model)) {
             Iterable<?> objects = ctx.configuration().jsonProvider().toIterable(model);
             for (Object obj : objects) {
                 if (obj instanceof Number) {

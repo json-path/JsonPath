@@ -6,6 +6,7 @@ package com.jayway.jsonpath.internal.function.numeric;
  * Created by mattg on 6/26/15.
  */
 public class Max extends AbstractAggregation {
+
     private Double max = Double.MIN_VALUE;
 
     @Override

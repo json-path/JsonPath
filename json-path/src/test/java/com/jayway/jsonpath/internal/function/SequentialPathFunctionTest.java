@@ -6,7 +6,7 @@ import org.junit.Test;
 
 /**
  * Test cases for functions
- * 
+ *
  * -first
  * -last
  * -index(X)
@@ -21,12 +21,12 @@ public class SequentialPathFunctionTest extends BaseFunctionTest {
     public void testFirstOfNumbers() throws Exception {
         verifyFunction(conf, "$.numbers.first()", NUMBER_SERIES, 1);
     }
-    
+
     @Test
     public void testLastOfNumbers() throws Exception {
         verifyFunction(conf, "$.numbers.last()", NUMBER_SERIES, 10);
     }
-    
+
     @Test
     public void testIndexOfNumbers() throws Exception {
         verifyFunction(conf, "$.numbers.index(0)", NUMBER_SERIES, 1);

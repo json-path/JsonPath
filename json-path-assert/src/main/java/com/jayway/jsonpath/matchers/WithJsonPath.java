@@ -9,7 +9,9 @@ import org.hamcrest.Matcher;
 import org.hamcrest.TypeSafeMatcher;
 
 public class WithJsonPath<T> extends TypeSafeMatcher<ReadContext> {
+
     private final JsonPath jsonPath;
+
     private final Matcher<T> resultMatcher;
 
     public WithJsonPath(JsonPath jsonPath, Matcher<T> resultMatcher) {
@@ -28,33 +30,18 @@ public class WithJsonPath<T> extends TypeSafeMatcher<ReadContext> {
     }
 
     public void describeTo(Description description) {
-        description
-                .appendText("with json path ")
-                .appendValue(jsonPath.getPath())
-                .appendText(" evaluated to ")
-                .appendDescriptionOf(resultMatcher);
+        description.appendText("with json path ").appendValue(jsonPath.getPath()).appendText(" evaluated to ").appendDescriptionOf(resultMatcher);
     }
 
     @Override
     protected void describeMismatchSafely(ReadContext context, Description mismatchDescription) {
         try {
             T value = jsonPath.read(context.jsonString());
-            mismatchDescription
-                    .appendText("json path ")
-                    .appendValue(jsonPath.getPath())
-                    .appendText(" was evaluated to ")
-                    .appendValue(value);
+            mismatchDescription.appendText("json path ").appendValue(jsonPath.getPath()).appendText(" was evaluated to ").appendValue(value);
         } catch (PathNotFoundException e) {
-            mismatchDescription
-                    .appendText("json path ")
-                    .appendValue(jsonPath.getPath())
-                    .appendText(" was not found in ")
-                    .appendValue(context.json());
+            mismatchDescription.appendText("json path ").appendValue(jsonPath.getPath()).appendText(" was not found in ").appendValue(context.json());
         } catch (JsonPathException e) {
-            mismatchDescription
-                    .appendText("was ")
-                    .appendValue(context.json());
+            mismatchDescription.appendText("was ").appendValue(context.json());
         }
     }
-
 }

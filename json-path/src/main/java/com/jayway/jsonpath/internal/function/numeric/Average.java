@@ -8,6 +8,7 @@ package com.jayway.jsonpath.internal.function.numeric;
 public class Average extends AbstractAggregation {
 
     private Double summation = 0d;
+
     private Double count = 0d;
 
     @Override

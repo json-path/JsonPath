@@ -13,44 +13,7 @@ import org.junit.Test;
  */
 public class JSONEntityPathFunctionTest extends BaseFunctionTest {
 
-
-    private static final String BATCH_JSON = "{\n" +
-            "  \"batches\": {\n" +
-            "    \"minBatchSize\": 10,\n" +
-            "    \"results\": [\n" +
-            "      {\n" +
-            "        \"productId\": 23,\n" +
-            "        \"values\": [\n" +
-            "          2,\n" +
-            "          45,\n" +
-            "          34,\n" +
-            "          23,\n" +
-            "          3,\n" +
-            "          5,\n" +
-            "          4,\n" +
-            "          3,\n" +
-            "          2,\n" +
-            "          1,\n" +
-            "        ]\n" +
-            "      },\n" +
-            "      {\n" +
-            "        \"productId\": 23,\n" +
-            "        \"values\": [\n" +
-            "          52,\n" +
-            "          3,\n" +
-            "          12,\n" +
-            "          11,\n" +
-            "          18,\n" +
-            "          22,\n" +
-            "          1\n" +
-            "        ]\n" +
-            "      }\n" +
-            "    ]\n" +
-            "  }\n" +
-            "}";
-
-
-
+    private static final String BATCH_JSON = "{\n" + "  \"batches\": {\n" + "    \"minBatchSize\": 10,\n" + "    \"results\": [\n" + "      {\n" + "        \"productId\": 23,\n" + "        \"values\": [\n" + "          2,\n" + "          45,\n" + "          34,\n" + "          23,\n" + "          3,\n" + "          5,\n" + "          4,\n" + "          3,\n" + "          2,\n" + "          1,\n" + "        ]\n" + "      },\n" + "      {\n" + "        \"productId\": 23,\n" + "        \"values\": [\n" + "          52,\n" + "          3,\n" + "          12,\n" + "          11,\n" + "          18,\n" + "          22,\n" + "          1\n" + "        ]\n" + "      }\n" + "    ]\n" + "  }\n" + "}";
 
     private Configuration conf = Configurations.JSON_SMART_CONFIGURATION;
 
@@ -60,13 +23,13 @@ public class JSONEntityPathFunctionTest extends BaseFunctionTest {
         verifyFunction(conf, "$['text'].length()", TEXT_SERIES, 6);
         verifyFunction(conf, "$['text'].size()", TEXT_SERIES, 6);
     }
+
     @Test
     public void testLengthOfNumberArray() {
         // The length of JSONArray is an integer
         verifyFunction(conf, "$.numbers.length()", NUMBER_SERIES, 10);
         verifyFunction(conf, "$.numbers.size()", NUMBER_SERIES, 10);
     }
-
 
     @Test
     public void testLengthOfStructure() {
@@ -86,7 +49,6 @@ public class JSONEntityPathFunctionTest extends BaseFunctionTest {
     @Test
     public void testPredicateWithFunctionCallSingleMatch() {
         String path = "$.batches.results[?(@.values.length() >= $.batches.minBatchSize)].values.avg()";
-
         // Its an array because in some use-cases the min size might match more than one batch and thus we'll get
         // the average out for each collection
         JSONArray values = new JSONArray();
@@ -97,7 +59,6 @@ public class JSONEntityPathFunctionTest extends BaseFunctionTest {
     @Test
     public void testPredicateWithFunctionCallTwoMatches() {
         String path = "$.batches.results[?(@.values.length() >= 3)].values.avg()";
-
         // Its an array because in some use-cases the min size might match more than one batch and thus we'll get
         // the average out for each collection
         JSONArray values = new JSONArray();
@@ -105,5 +66,4 @@ public class JSONEntityPathFunctionTest extends BaseFunctionTest {
         values.add(17d);
         verifyFunction(conf, path, BATCH_JSON, values);
     }
-
 }

@@ -15,15 +15,12 @@
 package com.jayway.jsonpath;
 
 import com.jayway.jsonpath.internal.filter.FilterCompiler;
-
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
-
 import static java.util.Arrays.asList;
 
 /**
- *
  */
 public abstract class Filter implements Predicate {
 
@@ -48,12 +45,11 @@ public abstract class Filter implements Predicate {
     @Override
     public abstract boolean apply(PredicateContext ctx);
 
-
-    public Filter or(final Predicate other){
+    public Filter or(final Predicate other) {
         return new OrFilter(this, other);
     }
 
-    public Filter and(final Predicate other){
+    public Filter and(final Predicate other) {
         return new AndFilter(this, other);
     }
 
@@ -62,7 +58,7 @@ public abstract class Filter implements Predicate {
      * @param filter filter string to parse
      * @return the filter
      */
-    public static Filter parse(String filter){
+    public static Filter parse(String filter) {
         return FilterCompiler.compile(filter);
     }
 
@@ -82,7 +78,7 @@ public abstract class Filter implements Predicate {
         @Override
         public String toString() {
             String predicateString = predicate.toString();
-            if(predicateString.startsWith("(")){
+            if (predicateString.startsWith("(")) {
                 return "[?" + predicateString + "]";
             } else {
                 return "[?(" + predicateString + ")]";
@@ -102,7 +98,7 @@ public abstract class Filter implements Predicate {
             this(asList(left, right));
         }
 
-        public Filter and(final Predicate other){
+        public Filter and(final Predicate other) {
             Collection<Predicate> newPredicates = new ArrayList<Predicate>(predicates);
             newPredicates.add(other);
             return new AndFilter(newPredicates);
@@ -111,7 +107,7 @@ public abstract class Filter implements Predicate {
         @Override
         public boolean apply(PredicateContext ctx) {
             for (Predicate predicate : predicates) {
-                if(!predicate.apply(ctx)){
+                if (!predicate.apply(ctx)) {
                     return false;
                 }
             }
@@ -123,15 +119,13 @@ public abstract class Filter implements Predicate {
             Iterator<Predicate> i = predicates.iterator();
             StringBuilder sb = new StringBuilder();
             sb.append("[?(");
-            while (i.hasNext()){
+            while (i.hasNext()) {
                 String p = i.next().toString();
-
-                if(p.startsWith("[?(")){
+                if (p.startsWith("[?(")) {
                     p = p.substring(3, p.length() - 2);
                 }
                 sb.append(p);
-
-                if(i.hasNext()){
+                if (i.hasNext()) {
                     sb.append(" && ");
                 }
             }
@@ -143,14 +137,15 @@ public abstract class Filter implements Predicate {
     private static final class OrFilter extends Filter {
 
         private final Predicate left;
+
         private final Predicate right;
-  
+
         private OrFilter(Predicate left, Predicate right) {
             this.left = left;
             this.right = right;
         }
 
-        public Filter and(final Predicate other){
+        public Filter and(final Predicate other) {
             return new OrFilter(left, new AndFilter(right, other));
         }
 
@@ -164,19 +159,15 @@ public abstract class Filter implements Predicate {
         public String toString() {
             StringBuilder sb = new StringBuilder();
             sb.append("[?(");
-
             String l = left.toString();
             String r = right.toString();
-
-            if(l.startsWith("[?(")){
+            if (l.startsWith("[?(")) {
                 l = l.substring(3, l.length() - 2);
             }
-            if(r.startsWith("[?(")){
+            if (r.startsWith("[?(")) {
                 r = r.substring(3, r.length() - 2);
             }
-
             sb.append(l).append(" || ").append(r);
-
             sb.append(")]");
             return sb.toString();
         }

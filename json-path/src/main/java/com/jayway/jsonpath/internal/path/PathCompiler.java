@@ -8,48 +8,64 @@ import com.jayway.jsonpath.internal.Utils;
 import com.jayway.jsonpath.internal.filter.FilterCompiler;
 import com.jayway.jsonpath.internal.function.ParamType;
 import com.jayway.jsonpath.internal.function.Parameter;
-
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.LinkedList;
 import java.util.List;
-
 import static java.lang.Character.isDigit;
 import static java.util.Arrays.asList;
 
 public class PathCompiler {
 
     private static final char DOC_CONTEXT = '$';
+
     private static final char EVAL_CONTEXT = '@';
 
     private static final char OPEN_SQUARE_BRACKET = '[';
+
     private static final char CLOSE_SQUARE_BRACKET = ']';
+
     private static final char OPEN_PARENTHESIS = '(';
+
     private static final char CLOSE_PARENTHESIS = ')';
+
     private static final char OPEN_BRACE = '{';
+
     private static final char CLOSE_BRACE = '}';
 
     private static final char WILDCARD = '*';
+
     private static final char PERIOD = '.';
+
     private static final char SPACE = ' ';
+
     private static final char TAB = '\t';
+
     private static final char CR = '\r';
+
     private static final char LF = '\n';
+
     private static final char BEGIN_FILTER = '?';
+
     private static final char COMMA = ',';
+
     private static final char SPLIT = ':';
+
     private static final char MINUS = '-';
+
     private static final char SINGLE_QUOTE = '\'';
+
     private static final char DOUBLE_QUOTE = '"';
 
     private final LinkedList<Predicate> filterStack;
+
     private final CharacterIndex path;
 
-    private PathCompiler(String path, LinkedList<Predicate> filterStack){
+    private PathCompiler(String path, LinkedList<Predicate> filterStack) {
         this(new CharacterIndex(path), filterStack);
     }
 
-    private PathCompiler(CharacterIndex path, LinkedList<Predicate> filterStack){
+    private PathCompiler(CharacterIndex path, LinkedList<Predicate> filterStack) {
         this.filterStack = filterStack;
         this.path = path;
     }
@@ -63,12 +79,11 @@ public class PathCompiler {
         try {
             CharacterIndex ci = new CharacterIndex(path);
             ci.trim();
-
-            if(!( ci.charAt(0) == DOC_CONTEXT)  && !( ci.charAt(0) == EVAL_CONTEXT)){
+            if (!(ci.charAt(0) == DOC_CONTEXT) && !(ci.charAt(0) == EVAL_CONTEXT)) {
                 ci = new CharacterIndex("$." + path);
                 ci.trim();
             }
-            if(ci.lastCharIs('.')){
+            if (ci.lastCharIs('.')) {
                 fail("Path must not end with a '.' or '..'");
             }
             LinkedList<Predicate> filterStack = new LinkedList<Predicate>(asList(filters));
@@ -100,28 +115,20 @@ public class PathCompiler {
 
     //[$ | @]
     private RootPathToken readContextToken() {
-
         readWhitespace();
-
         if (!isPathContext(path.currentChar())) {
             throw new InvalidPathException("Path must start with '$' or '@'");
         }
-
         RootPathToken pathToken = PathTokenFactory.createRootPathToken(path.currentChar());
-
         if (path.currentIsTail()) {
             return pathToken;
         }
-
         path.incrementPosition(1);
-
-        if(path.currentChar() != PERIOD && path.currentChar() != OPEN_SQUARE_BRACKET){
+        if (path.currentChar() != PERIOD && path.currentChar() != OPEN_SQUARE_BRACKET) {
             fail("Illegal character at position " + path.position() + " expected '.' or '['");
         }
-
         PathTokenAppender appender = pathToken.getPathTokenAppender();
         readNextToken(appender);
-
         return pathToken;
     }
 
@@ -129,13 +136,10 @@ public class PathCompiler {
     //
     //
     private boolean readNextToken(PathTokenAppender appender) {
-
         char c = path.currentChar();
-
-        switch (c) {
+        switch(c) {
             case OPEN_SQUARE_BRACKET:
-                if (!readBracketPropertyToken(appender) && !readArrayToken(appender) && !readWildCardToken(appender)
-                    && !readFilterToken(appender) && !readPlaceholderToken(appender)) {
+                if (!readBracketPropertyToken(appender) && !readArrayToken(appender) && !readWildCardToken(appender) && !readFilterToken(appender) && !readPlaceholderToken(appender)) {
                     fail("Could not parse token starting at position " + path.position() + ". Expected ?, ', 0-9, * ");
                 }
                 return true;
@@ -169,7 +173,7 @@ public class PathCompiler {
         } else {
             path.incrementPosition(1);
         }
-        if(path.currentCharIs(PERIOD)){
+        if (path.currentCharIs(PERIOD)) {
             throw new InvalidPathException("Character '.' on position " + path.position() + " is not valid.");
         }
         return readNextToken(appender);
@@ -185,19 +189,15 @@ public class PathCompiler {
         int startPosition = path.position();
         int readPosition = startPosition;
         int endPosition = 0;
-
         boolean isFunction = false;
-
         while (path.inBounds(readPosition)) {
             char c = path.charAt(readPosition);
             if (c == SPACE) {
                 throw new InvalidPathException("Use bracket notion ['my prop'] if your property contains blank characters. position: " + path.position());
-            }
-            else if (c == PERIOD || c == OPEN_SQUARE_BRACKET) {
+            } else if (c == PERIOD || c == OPEN_SQUARE_BRACKET) {
                 endPosition = readPosition;
                 break;
-            }
-            else if (c == OPEN_PARENTHESIS) {
+            } else if (c == OPEN_PARENTHESIS) {
                 isFunction = true;
                 endPosition = readPosition;
                 break;
@@ -207,12 +207,10 @@ public class PathCompiler {
         if (endPosition == 0) {
             endPosition = path.length();
         }
-
-
         List<Parameter> functionParameters = null;
         if (isFunction) {
             int parenthesis_count = 1;
-            for(int i = readPosition + 1; i < path.length(); i++){
+            for (int i = readPosition + 1; i < path.length(); i++) {
                 if (path.charAt(i) == CLOSE_PARENTHESIS)
                     parenthesis_count--;
                 else if (path.charAt(i) == OPEN_PARENTHESIS)
@@ -220,39 +218,33 @@ public class PathCompiler {
                 if (parenthesis_count == 0)
                     break;
             }
-
-            if (parenthesis_count != 0){
+            if (parenthesis_count != 0) {
                 String functionName = path.subSequence(startPosition, endPosition).toString();
                 throw new InvalidPathException("Arguments to function: '" + functionName + "' are not closed properly.");
             }
-
-            if (path.inBounds(readPosition+1)) {
+            if (path.inBounds(readPosition + 1)) {
                 // read the next token to determine if we have a simple no-args function call
                 char c = path.charAt(readPosition + 1);
                 if (c != CLOSE_PARENTHESIS) {
-                    path.setPosition(endPosition+1);
+                    path.setPosition(endPosition + 1);
                     // parse the arguments of the function - arguments that are inner queries or JSON document(s)
                     String functionName = path.subSequence(startPosition, endPosition).toString();
                     functionParameters = parseFunctionParameters(functionName);
                 } else {
                     path.setPosition(readPosition + 1);
                 }
-            }
-            else {
+            } else {
                 path.setPosition(readPosition);
             }
-        }
-        else {
+        } else {
             path.setPosition(endPosition);
         }
-
         String property = path.subSequence(startPosition, endPosition).toString();
-        if(isFunction){
+        if (isFunction) {
             appender.appendPathToken(PathTokenFactory.createFunctionPathToken(property, functionParameters));
         } else {
             appender.appendPathToken(PathTokenFactory.createSinglePropertyPathToken(property, SINGLE_QUOTE));
         }
-
         return path.currentIsTail() || readNextToken(appender);
     }
 
@@ -287,7 +279,6 @@ public class PathCompiler {
      */
     private List<Parameter> parseFunctionParameters(String funcName) {
         ParamType type = null;
-
         // Parenthesis starts at 1 since we're marking the start of a function call, the close paren will denote the
         // last parameter boundary
         int groupParen = 1, groupBracket = 0, groupBrace = 0, groupQuote = 0;
@@ -298,27 +289,23 @@ public class PathCompiler {
         while (path.inBounds() && !endOfStream) {
             char c = path.currentChar();
             path.incrementPosition(1);
-
             // we're at the start of the stream, and don't know what type of parameter we have
             if (type == null) {
                 if (isWhitespace(c)) {
                     continue;
                 }
-
                 if (c == OPEN_BRACE || isDigit(c) || DOUBLE_QUOTE == c || MINUS == c) {
                     type = ParamType.JSON;
-                }
-                else if (isPathContext(c)) {
-                    type = ParamType.PATH; // read until we reach a terminating comma and we've reset grouping to zero
+                } else if (isPathContext(c)) {
+                    // read until we reach a terminating comma and we've reset grouping to zero
+                    type = ParamType.PATH;
                 }
             }
-
-            switch (c) {
+            switch(c) {
                 case DOUBLE_QUOTE:
                     if (priorChar != '\\' && groupQuote > 0) {
                         groupQuote--;
-                    }
-                    else {
+                    } else {
                         groupQuote++;
                     }
                     break;
@@ -331,7 +318,6 @@ public class PathCompiler {
                 case OPEN_SQUARE_BRACKET:
                     groupBracket++;
                     break;
-
                 case CLOSE_BRACE:
                     if (0 == groupBrace) {
                         throw new InvalidPathException("Unexpected close brace '}' at character position: " + path.position());
@@ -344,7 +330,6 @@ public class PathCompiler {
                     }
                     groupBracket--;
                     break;
-
                 // In either the close paren case where we have zero paren groups left, capture the parameter, or where
                 // we've encountered a COMMA do the same
                 case CLOSE_PARENTHESIS:
@@ -356,13 +341,11 @@ public class PathCompiler {
                 case COMMA:
                     // In this state we've reach the end of a function parameter and we can pass along the parameter string
                     // to the parser
-                    if ((0 == groupQuote && 0 == groupBrace && 0 == groupBracket
-                            && ((0 == groupParen && CLOSE_PARENTHESIS == c) || 1 == groupParen))) {
+                    if ((0 == groupQuote && 0 == groupBrace && 0 == groupBracket && ((0 == groupParen && CLOSE_PARENTHESIS == c) || 1 == groupParen))) {
                         endOfStream = (0 == groupParen);
-
                         if (null != type) {
                             Parameter param = null;
-                            switch (type) {
+                            switch(type) {
                                 case JSON:
                                     // parse the json and set the value
                                     param = new Parameter(parameter.toString());
@@ -382,7 +365,6 @@ public class PathCompiler {
                     }
                     break;
             }
-
             if (type != null && !(c == COMMA && 0 == groupBrace && 0 == groupBracket && 1 == groupParen)) {
                 parameter.append(c);
             }
@@ -402,7 +384,6 @@ public class PathCompiler {
     // [?], [?,?, ..]
     //
     private boolean readPlaceholderToken(PathTokenAppender appender) {
-
         if (!path.currentCharIs(OPEN_SQUARE_BRACKET)) {
             return false;
         }
@@ -414,22 +395,16 @@ public class PathCompiler {
         if (nextSignificantChar != CLOSE_SQUARE_BRACKET && nextSignificantChar != COMMA) {
             return false;
         }
-
         int expressionBeginIndex = path.position() + 1;
         int expressionEndIndex = path.nextIndexOf(expressionBeginIndex, CLOSE_SQUARE_BRACKET);
-
         if (expressionEndIndex == -1) {
             return false;
         }
-
         String expression = path.subSequence(expressionBeginIndex, expressionEndIndex).toString();
-
         String[] tokens = expression.split(",");
-
         if (filterStack.size() < tokens.length) {
             throw new InvalidPathException("Not enough predicates supplied for filter [" + expression + "] at position " + path.position());
         }
-
         Collection<Predicate> predicates = new ArrayList<Predicate>();
         for (String token : tokens) {
             token = token != null ? token.trim() : null;
@@ -438,11 +413,8 @@ public class PathCompiler {
             }
             predicates.add(filterStack.pop());
         }
-
         appender.appendPathToken(PathTokenFactory.createPredicatePathToken(predicates));
-
         path.setPosition(expressionEndIndex + 1);
-
         return path.currentIsTail() || readNextToken(appender);
     }
 
@@ -453,7 +425,6 @@ public class PathCompiler {
         if (!path.currentCharIs(OPEN_SQUARE_BRACKET) && !path.nextSignificantCharIs(BEGIN_FILTER)) {
             return false;
         }
-
         int openStatementBracketIndex = path.position();
         int questionMarkIndex = path.indexOfNextSignificantChar(BEGIN_FILTER);
         if (questionMarkIndex == -1) {
@@ -471,17 +442,11 @@ public class PathCompiler {
             return false;
         }
         int closeStatementBracketIndex = path.indexOfNextSignificantChar(closeBracketIndex, CLOSE_SQUARE_BRACKET);
-
         String criteria = path.subSequence(openStatementBracketIndex, closeStatementBracketIndex + 1).toString();
-
-
         Predicate predicate = FilterCompiler.compile(criteria);
         appender.appendPathToken(PathTokenFactory.createPredicatePathToken(predicate));
-
         path.setPosition(closeStatementBracketIndex + 1);
-
         return path.currentIsTail() || readNextToken(appender);
-
     }
 
     //
@@ -489,9 +454,7 @@ public class PathCompiler {
     // *
     //
     private boolean readWildCardToken(PathTokenAppender appender) {
-
         boolean inBracket = path.currentCharIs(OPEN_SQUARE_BRACKET);
-
         if (inBracket && !path.nextSignificantCharIs(WILDCARD)) {
             return false;
         }
@@ -509,9 +472,7 @@ public class PathCompiler {
         } else {
             path.incrementPosition(1);
         }
-
         appender.appendPathToken(PathTokenFactory.createWildCardPathToken());
-
         return path.currentIsTail() || readNextToken(appender);
     }
 
@@ -519,7 +480,6 @@ public class PathCompiler {
     // [1], [1,2, n], [1:], [1:2], [:2]
     //
     private boolean readArrayToken(PathTokenAppender appender) {
-
         if (!path.currentCharIs(OPEN_SQUARE_BRACKET)) {
             return false;
         }
@@ -527,20 +487,15 @@ public class PathCompiler {
         if (!isDigit(nextSignificantChar) && nextSignificantChar != MINUS && nextSignificantChar != SPLIT) {
             return false;
         }
-
         int expressionBeginIndex = path.position() + 1;
         int expressionEndIndex = path.nextIndexOf(expressionBeginIndex, CLOSE_SQUARE_BRACKET);
-
         if (expressionEndIndex == -1) {
             return false;
         }
-
         String expression = path.subSequence(expressionBeginIndex, expressionEndIndex).toString().trim();
-
         if ("*".equals(expression)) {
             return false;
         }
-
         //check valid chars
         for (int i = 0; i < expression.length(); i++) {
             char c = expression.charAt(i);
@@ -548,9 +503,7 @@ public class PathCompiler {
                 return false;
             }
         }
-
         boolean isSliceOperation = expression.contains(":");
-
         if (isSliceOperation) {
             ArraySliceOperation arraySliceOperation = ArraySliceOperation.parse(expression);
             appender.appendPathToken(PathTokenFactory.createSliceArrayPathToken(arraySliceOperation));
@@ -558,9 +511,7 @@ public class PathCompiler {
             ArrayIndexOperation arrayIndexOperation = ArrayIndexOperation.parse(expression);
             appender.appendPathToken(PathTokenFactory.createIndexArrayPathToken(arrayIndexOperation));
         }
-
         path.setPosition(expressionEndIndex + 1);
-
         return path.currentIsTail() || readNextToken(appender);
     }
 
@@ -573,35 +524,31 @@ public class PathCompiler {
         }
         char potentialStringDelimiter = path.nextSignificantChar();
         if (potentialStringDelimiter != SINGLE_QUOTE && potentialStringDelimiter != DOUBLE_QUOTE) {
-          return false;
+            return false;
         }
-
         List<String> properties = new ArrayList<String>();
-
         int startPosition = path.position() + 1;
         int readPosition = startPosition;
         int endPosition = 0;
         boolean inProperty = false;
         boolean inEscape = false;
         boolean lastSignificantWasComma = false;
-
         while (path.inBounds(readPosition)) {
             char c = path.charAt(readPosition);
-
-            if(inEscape){
+            if (inEscape) {
                 inEscape = false;
-            } else if('\\' == c){
+            } else if ('\\' == c) {
                 inEscape = true;
             } else if (c == CLOSE_SQUARE_BRACKET && !inProperty) {
-                if (lastSignificantWasComma){
-                  fail("Found empty property at index "+readPosition);
+                if (lastSignificantWasComma) {
+                    fail("Found empty property at index " + readPosition);
                 }
                 break;
             } else if (c == potentialStringDelimiter) {
                 if (inProperty) {
                     char nextSignificantChar = path.nextSignificantChar(readPosition);
                     if (nextSignificantChar != CLOSE_SQUARE_BRACKET && nextSignificantChar != COMMA) {
-                        fail("Property must be separated by comma or Property must be terminated close square bracket at index "+readPosition);
+                        fail("Property must be separated by comma or Property must be terminated close square bracket at index " + readPosition);
                     }
                     endPosition = readPosition;
                     String prop = path.subSequence(startPosition, endPosition).toString();
@@ -613,24 +560,19 @@ public class PathCompiler {
                     lastSignificantWasComma = false;
                 }
             } else if (c == COMMA && !inProperty) {
-                if (lastSignificantWasComma){
-                    fail("Found empty property at index "+readPosition);
+                if (lastSignificantWasComma) {
+                    fail("Found empty property at index " + readPosition);
                 }
                 lastSignificantWasComma = true;
             }
             readPosition++;
         }
-
-        if (inProperty){
+        if (inProperty) {
             fail("Property has not been closed - missing closing " + potentialStringDelimiter);
         }
-
         int endBracketIndex = path.indexOfNextSignificantChar(endPosition, CLOSE_SQUARE_BRACKET) + 1;
-
         path.setPosition(endBracketIndex);
-
         appender.appendPathToken(PathTokenFactory.createPropertyPathToken(properties, potentialStringDelimiter));
-
         return path.currentIsTail() || readNextToken(appender);
     }
 

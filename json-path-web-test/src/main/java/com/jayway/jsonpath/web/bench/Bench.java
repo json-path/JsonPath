@@ -10,7 +10,6 @@ import org.boon.json.ObjectMapper;
 import org.boon.json.implementation.JsonParserCharArray;
 import org.boon.json.implementation.ObjectMapperImpl;
 import scala.collection.Iterator;
-
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -19,11 +18,17 @@ import java.util.Map;
 public class Bench {
 
     protected final String json;
+
     protected final String path;
+
     private final boolean optionAsValues;
+
     private final boolean flagWrap;
+
     private final boolean flagSuppress;
+
     private final boolean flagNullLeaf;
+
     private final boolean flagRequireProps;
 
     public Bench(String json, String path, boolean optionAsValues, boolean flagWrap, boolean flagSuppress, boolean flagNullLeaf, boolean flagRequireProps) {
@@ -41,25 +46,22 @@ public class Bench {
         String error = null;
         long time;
         Object res = null;
-
-
         Configuration configuration = Configuration.defaultConfiguration();
-        if(flagWrap){
+        if (flagWrap) {
             configuration = configuration.addOptions(Option.ALWAYS_RETURN_LIST);
         }
-        if(flagSuppress){
+        if (flagSuppress) {
             configuration = configuration.addOptions(Option.SUPPRESS_EXCEPTIONS);
         }
         if (!optionAsValues) {
             configuration = configuration.addOptions(Option.AS_PATH_LIST);
         }
-        if(flagNullLeaf){
+        if (flagNullLeaf) {
             configuration = configuration.addOptions(Option.DEFAULT_PATH_LEAF_TO_NULL);
         }
-        if(flagRequireProps){
+        if (flagRequireProps) {
             configuration = configuration.addOptions(Option.REQUIRE_PROPERTIES);
         }
-
         long now = System.currentTimeMillis();
         try {
             res = JsonPath.using(configuration).parse(json).read(path);
@@ -67,7 +69,6 @@ public class Bench {
             error = getError(e);
         } finally {
             time = System.currentTimeMillis() - now;
-
             if (res instanceof String) {
                 result = "\"" + res + "\"";
             } else if (res instanceof Number) {
@@ -85,7 +86,6 @@ public class Bench {
         String result = null;
         String error = null;
         long time;
-
         Iterator<Object> query = null;
         long now = System.currentTimeMillis();
         try {
@@ -93,16 +93,13 @@ public class Bench {
                 throw new UnsupportedOperationException("Not supported!");
             }
             io.gatling.jsonpath.JsonPath jsonPath = JsonPath$.MODULE$.compile(path).right().get();
-
             JsonParser jsonParser = new JsonParserCharArray();
             Object jsonModel = jsonParser.parse(json);
             query = jsonPath.query(jsonModel);
-
         } catch (Exception e) {
             error = getError(e);
         } finally {
             time = System.currentTimeMillis() - now;
-
             if (query != null) {
                 List<Object> res = new ArrayList<Object>();
                 while (query.hasNext()) {
@@ -121,7 +118,6 @@ public class Bench {
         long time;
         Object res = null;
         JacksonJsonProvider jacksonProvider = new JacksonJsonProvider();
-
         long now = System.currentTimeMillis();
         try {
             if (!optionAsValues) {

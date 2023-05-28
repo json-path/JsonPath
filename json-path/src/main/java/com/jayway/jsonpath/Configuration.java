@@ -17,9 +17,7 @@ package com.jayway.jsonpath;
 import com.jayway.jsonpath.internal.DefaultsImpl;
 import com.jayway.jsonpath.spi.json.JsonProvider;
 import com.jayway.jsonpath.spi.mapper.MappingProvider;
-
 import java.util.*;
-
 import static com.jayway.jsonpath.internal.Utils.notNull;
 import static java.util.Arrays.asList;
 
@@ -34,21 +32,24 @@ public class Configuration {
      * Set Default configuration
      * @param defaults default configuration settings
      */
-    public static synchronized void setDefaults(Defaults defaults){
+    public static synchronized void setDefaults(Defaults defaults) {
         DEFAULTS = defaults;
     }
 
-    private static Defaults getEffectiveDefaults(){
+    private static Defaults getEffectiveDefaults() {
         if (DEFAULTS == null) {
-          return DefaultsImpl.INSTANCE;
+            return DefaultsImpl.INSTANCE;
         } else {
-          return DEFAULTS;
+            return DEFAULTS;
         }
     }
 
     private final JsonProvider jsonProvider;
+
     private final MappingProvider mappingProvider;
+
     private final Set<Option> options;
+
     private final Collection<EvaluationListener> evaluationListeners;
 
     private Configuration(JsonProvider jsonProvider, MappingProvider mappingProvider, EnumSet<Option> options, Collection<EvaluationListener> evaluationListeners) {
@@ -67,8 +68,8 @@ public class Configuration {
      * @param evaluationListener listeners
      * @return a new configuration
      */
-    public Configuration addEvaluationListeners(EvaluationListener... evaluationListener){
-        return Configuration.builder().jsonProvider(jsonProvider).mappingProvider(mappingProvider).options(options).evaluationListener(evaluationListener).build();
+    public Configuration addEvaluationListeners(EvaluationListener... evaluationListener) {
+        return buildJsonConfiguration(evaluationListener);
     }
 
     /**
@@ -76,15 +77,15 @@ public class Configuration {
      * @param evaluationListener listeners
      * @return a new configuration
      */
-    public Configuration setEvaluationListeners(EvaluationListener... evaluationListener){
-        return Configuration.builder().jsonProvider(jsonProvider).mappingProvider(mappingProvider).options(options).evaluationListener(evaluationListener).build();
+    public Configuration setEvaluationListeners(EvaluationListener... evaluationListener) {
+        return buildJsonConfiguration(evaluationListener);
     }
 
     /**
      * Returns the evaluation listeners registered in this configuration
      * @return the evaluation listeners
      */
-    public Collection<EvaluationListener> getEvaluationListeners(){
+    public Collection<EvaluationListener> getEvaluationListeners() {
         return evaluationListeners;
     }
 
@@ -156,7 +157,7 @@ public class Configuration {
      * @param option option to check
      * @return true if configurations contains option
      */
-    public boolean containsOption(Option option){
+    public boolean containsOption(Option option) {
         return options.contains(option);
     }
 
@@ -183,8 +184,11 @@ public class Configuration {
     public static class ConfigurationBuilder {
 
         private JsonProvider jsonProvider;
+
         private MappingProvider mappingProvider;
+
         private EnumSet<Option> options = EnumSet.noneOf(Option.class);
+
         private Collection<EvaluationListener> evaluationListener = new ArrayList<EvaluationListener>();
 
         public ConfigurationBuilder jsonProvider(JsonProvider provider) {
@@ -198,7 +202,7 @@ public class Configuration {
         }
 
         public ConfigurationBuilder options(Option... flags) {
-            if(flags.length > 0) {
+            if (flags.length > 0) {
                 this.options.addAll(asList(flags));
             }
             return this;
@@ -209,12 +213,12 @@ public class Configuration {
             return this;
         }
 
-        public ConfigurationBuilder evaluationListener(EvaluationListener... listener){
+        public ConfigurationBuilder evaluationListener(EvaluationListener... listener) {
             this.evaluationListener = Arrays.asList(listener);
             return this;
         }
 
-        public ConfigurationBuilder evaluationListener(Collection<EvaluationListener> listeners){
+        public ConfigurationBuilder evaluationListener(Collection<EvaluationListener> listeners) {
             this.evaluationListener = listeners == null ? Collections.<EvaluationListener>emptyList() : listeners;
             return this;
         }
@@ -225,7 +229,7 @@ public class Configuration {
                 if (jsonProvider == null) {
                     jsonProvider = defaults.jsonProvider();
                 }
-                if (mappingProvider == null){
+                if (mappingProvider == null) {
                     mappingProvider = defaults.mappingProvider();
                 }
             }
@@ -234,6 +238,7 @@ public class Configuration {
     }
 
     public interface Defaults {
+
         /**
          * Returns the default {@link com.jayway.jsonpath.spi.json.JsonProvider}
          * @return default json provider
@@ -252,16 +257,19 @@ public class Configuration {
          * @return default mapping provider
          */
         MappingProvider mappingProvider();
-
     }
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+        if (this == o)
+            return true;
+        if (o == null || getClass() != o.getClass())
+            return false;
         Configuration that = (Configuration) o;
-        return jsonProvider.getClass() == that.jsonProvider.getClass() &&
-                mappingProvider.getClass() == that.mappingProvider.getClass() &&
-                Objects.equals(options, that.options);
+        return jsonProvider.getClass() == that.jsonProvider.getClass() && mappingProvider.getClass() == that.mappingProvider.getClass() && Objects.equals(options, that.options);
+    }
+
+    private Configuration buildJsonConfiguration(EvaluationListener... evaluationListener) {
+        return Configuration.builder().jsonProvider(jsonProvider).mappingProvider(mappingProvider).options(options).evaluationListener(evaluationListener).build();
     }
 }

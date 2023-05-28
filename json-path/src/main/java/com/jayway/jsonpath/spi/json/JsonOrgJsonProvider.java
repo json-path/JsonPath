@@ -7,7 +7,6 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.json.JSONTokener;
-
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.UnsupportedEncodingException;
@@ -29,7 +28,6 @@ public class JsonOrgJsonProvider extends AbstractJsonProvider {
 
     @Override
     public Object parse(InputStream jsonStream, String charset) throws InvalidJsonException {
-
         try {
             return new JSONTokener(new InputStreamReader(jsonStream, charset)).nextValue();
         } catch (UnsupportedEncodingException e) {
@@ -41,7 +39,7 @@ public class JsonOrgJsonProvider extends AbstractJsonProvider {
 
     @Override
     public Object unwrap(Object obj) {
-        if(obj == JSONObject.NULL){
+        if (obj == JSONObject.NULL) {
             return null;
         }
         return obj;
@@ -149,7 +147,7 @@ public class JsonOrgJsonProvider extends AbstractJsonProvider {
     public Collection<String> getPropertyKeys(Object obj) {
         JSONObject jsonObject = toJsonObject(obj);
         try {
-            if(Objects.isNull(jsonObject.names()))
+            if (Objects.isNull(jsonObject.names()))
                 return new ArrayList<>();
             return jsonObject.keySet();
         } catch (JSONException e) {
@@ -168,8 +166,7 @@ public class JsonOrgJsonProvider extends AbstractJsonProvider {
                 return ((String) obj).length();
             }
         }
-        throw new JsonPathException("length operation can not applied to " + (obj != null ? obj.getClass().getName()
-                : "null"));
+        throw new JsonPathException("length operation can not applied to " + (obj != null ? obj.getClass().getName() : "null"));
     }
 
     @Override
@@ -185,14 +182,11 @@ public class JsonOrgJsonProvider extends AbstractJsonProvider {
             } else {
                 JSONObject jsonObject = toJsonObject(obj);
                 List<Object> values = new ArrayList<Object>();
-
                 for (int i = 0; i < jsonObject.names().length(); i++) {
                     String key = (String) jsonObject.names().get(i);
                     Object val = jsonObject.get(key);
                     values.add(unwrap(val));
-
                 }
-
                 return values;
             }
         } catch (JSONException e) {
@@ -211,5 +205,4 @@ public class JsonOrgJsonProvider extends AbstractJsonProvider {
     private JSONObject toJsonObject(Object o) {
         return (JSONObject) o;
     }
-
 }

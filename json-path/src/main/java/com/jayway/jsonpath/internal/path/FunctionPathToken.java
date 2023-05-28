@@ -7,7 +7,6 @@ import com.jayway.jsonpath.internal.function.PathFunction;
 import com.jayway.jsonpath.internal.function.PathFunctionFactory;
 import com.jayway.jsonpath.internal.function.latebinding.JsonLateBindingValue;
 import com.jayway.jsonpath.internal.function.latebinding.PathLateBindingValue;
-
 import java.util.List;
 
 /**
@@ -20,12 +19,14 @@ import java.util.List;
 public class FunctionPathToken extends PathToken {
 
     private final String functionName;
+
     private final String pathFragment;
+
     private List<Parameter> functionParams;
 
     public FunctionPathToken(String pathFragment, List<Parameter> parameters) {
         this.pathFragment = pathFragment + ((parameters != null && parameters.size() > 0) ? "(...)" : "()");
-        if(null != pathFragment){
+        if (null != pathFragment) {
             functionName = pathFragment;
             functionParams = parameters;
         } else {
@@ -52,8 +53,8 @@ public class FunctionPathToken extends PathToken {
             if (null != path && !path.isFunctionPath() && path instanceof CompiledPath) {
                 RootPathToken root = ((CompiledPath) path).getRoot();
                 PathToken tail = root.getNext();
-                while (null != tail && null != tail.getNext() ) {
-                    if(tail.getNext() instanceof WildcardPathToken){
+                while (null != tail && null != tail.getNext()) {
+                    if (tail.getNext() instanceof WildcardPathToken) {
                         tail.setNext(tail.getNext().getNext());
                         break;
                     }
@@ -64,13 +65,12 @@ public class FunctionPathToken extends PathToken {
     }
 
     private void evaluateParameters(String currentPath, PathRef parent, Object model, EvaluationContextImpl ctx) {
-
         if (null != functionParams) {
             for (Parameter param : functionParams) {
-                switch (param.getType()) {
+                switch(param.getType()) {
                     case PATH:
                         PathLateBindingValue pathLateBindingValue = new PathLateBindingValue(param.getPath(), ctx.rootDocument(), ctx.configuration());
-                        if (!param.hasEvaluated()||!pathLateBindingValue.equals(param.getILateBingValue())) {
+                        if (!param.hasEvaluated() || !pathLateBindingValue.equals(param.getILateBingValue())) {
                             param.setLateBinding(pathLateBindingValue);
                             param.setEvaluated(true);
                         }
@@ -102,7 +102,6 @@ public class FunctionPathToken extends PathToken {
         return "." + pathFragment;
     }
 
-
     public void setParameters(List<Parameter> parameters) {
         this.functionParams = parameters;
     }
@@ -110,6 +109,7 @@ public class FunctionPathToken extends PathToken {
     public List<Parameter> getParameters() {
         return this.functionParams;
     }
+
     public String getFunctionName() {
         return this.functionName;
     }

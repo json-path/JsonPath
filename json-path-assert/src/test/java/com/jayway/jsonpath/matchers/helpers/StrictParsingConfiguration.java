@@ -7,13 +7,13 @@ import com.jayway.jsonpath.spi.json.JsonSmartJsonProvider;
 import com.jayway.jsonpath.spi.mapper.JsonSmartMappingProvider;
 import com.jayway.jsonpath.spi.mapper.MappingProvider;
 import net.minidev.json.parser.JSONParser;
-
 import java.util.EnumSet;
 import java.util.Set;
 
 public class StrictParsingConfiguration implements Configuration.Defaults {
 
     private final JsonProvider jsonProvider = new JsonSmartJsonProvider(JSONParser.MODE_STRICTEST);
+
     private final MappingProvider mappingProvider = new JsonSmartMappingProvider();
 
     public JsonProvider jsonProvider() {

@@ -15,7 +15,6 @@
 package com.jayway.jsonpath.internal.path;
 
 import com.jayway.jsonpath.internal.PathRef;
-
 import static java.lang.String.format;
 
 public class ArrayIndexToken extends ArrayPathToken {
@@ -34,7 +33,7 @@ public class ArrayIndexToken extends ArrayPathToken {
             handleArrayIndex(arrayIndexOperation.indexes().get(0), currentPath, model, ctx);
         } else {
             for (Integer index : arrayIndexOperation.indexes()) {
-                handleArrayIndex(index, currentPath,  model, ctx);
+                handleArrayIndex(index, currentPath, model, ctx);
             }
         }
     }
@@ -48,5 +47,4 @@ public class ArrayIndexToken extends ArrayPathToken {
     public boolean isTokenDefinite() {
         return arrayIndexOperation.isSingleIndexOperation();
     }
-
 }

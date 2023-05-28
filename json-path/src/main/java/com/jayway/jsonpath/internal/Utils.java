@@ -15,7 +15,6 @@
 package com.jayway.jsonpath.internal;
 
 import com.jayway.jsonpath.JsonPathException;
-
 import java.io.Closeable;
 import java.io.IOException;
 import java.io.StringWriter;
@@ -75,7 +74,6 @@ public final class Utils {
             sb.append(charSequence);
         }
         return sb.toString();
-
     }
 
     //---------------------------------------------------------
@@ -83,7 +81,6 @@ public final class Utils {
     // IO
     //
     //---------------------------------------------------------
-
     public static void closeQuietly(Closeable closeable) {
         try {
             if (closeable != null) {
@@ -99,10 +96,8 @@ public final class Utils {
         }
         int len = str.length();
         StringWriter writer = new StringWriter(len * 2);
-
         for (int i = 0; i < len; i++) {
             char ch = str.charAt(i);
-
             // handle unicode
             if (ch > 0xfff) {
                 writer.write("\\u" + hex(ch));
@@ -111,7 +106,7 @@ public final class Utils {
             } else if (ch > 0x7f) {
                 writer.write("\\u00" + hex(ch));
             } else if (ch < 32) {
-                switch (ch) {
+                switch(ch) {
                     case '\b':
                         writer.write('\\');
                         writer.write('b');
@@ -132,7 +127,7 @@ public final class Utils {
                         writer.write('\\');
                         writer.write('r');
                         break;
-                    default :
+                    default:
                         if (ch > 0xf) {
                             writer.write("\\u00" + hex(ch));
                         } else {
@@ -141,7 +136,7 @@ public final class Utils {
                         break;
                 }
             } else {
-                switch (ch) {
+                switch(ch) {
                     case '\'':
                         if (escapeSingleQuote) {
                             writer.write('\\');
@@ -160,7 +155,7 @@ public final class Utils {
                         writer.write('\\');
                         writer.write('/');
                         break;
-                    default :
+                    default:
                         writer.write(ch);
                         break;
                 }
@@ -197,7 +192,7 @@ public final class Utils {
             }
             if (hadSlash) {
                 hadSlash = false;
-                switch (ch) {
+                switch(ch) {
                     case '\\':
                         writer.write('\\');
                         break;
@@ -223,11 +218,11 @@ public final class Utils {
                         writer.write('\b');
                         break;
                     case 'u':
-                    {
-                        inUnicode = true;
-                        break;
-                    }
-                    default :
+                        {
+                            inUnicode = true;
+                            break;
+                        }
+                    default:
                         writer.write(ch);
                         break;
                 }
@@ -290,14 +285,11 @@ public final class Utils {
         return cs.toString().indexOf(searchChar.toString(), start);
     }
 
-
-
     //---------------------------------------------------------
     //
     // Validators
     //
     //---------------------------------------------------------
-
     /**
      * <p>Validate that the specified argument is not {@code null};
      * otherwise throwing an exception with the specified message.
@@ -444,7 +436,6 @@ public final class Utils {
         }
         return chars;
     }
-
 
     //---------------------------------------------------------
     //

@@ -2,10 +2,8 @@ package com.jayway.jsonpath.internal.path;
 
 import com.jayway.jsonpath.Predicate;
 import com.jayway.jsonpath.internal.function.Parameter;
-
 import java.util.Collection;
 import java.util.List;
-
 import static java.util.Collections.singletonList;
 
 public class PathTokenFactory {

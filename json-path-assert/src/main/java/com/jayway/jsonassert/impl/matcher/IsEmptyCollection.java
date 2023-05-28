@@ -31,7 +31,6 @@ package com.jayway.jsonassert.impl.matcher;
 
 import org.hamcrest.Description;
 import org.hamcrest.Matcher;
-
 import java.util.Collection;
 
 /**

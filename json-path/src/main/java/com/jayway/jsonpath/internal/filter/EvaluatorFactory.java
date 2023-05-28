@@ -2,12 +2,10 @@ package com.jayway.jsonpath.internal.filter;
 
 import com.jayway.jsonpath.JsonPathException;
 import com.jayway.jsonpath.Predicate;
-
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.regex.Pattern;
-
 import static com.jayway.jsonpath.internal.filter.ValueNodes.PatternNode;
 import static com.jayway.jsonpath.internal.filter.ValueNodes.ValueListNode;
 
@@ -39,14 +37,15 @@ public class EvaluatorFactory {
         evaluators.put(RelationalOperator.NONEOF, new NoneOfEvaluator());
     }
 
-    public static Evaluator createEvaluator(RelationalOperator operator){
+    public static Evaluator createEvaluator(RelationalOperator operator) {
         return evaluators.get(operator);
     }
 
     private static class ExistsEvaluator implements Evaluator {
+
         @Override
         public boolean evaluate(ValueNode left, ValueNode right, Predicate.PredicateContext ctx) {
-            if(!left.isBooleanNode() && !right.isBooleanNode()){
+            if (!left.isBooleanNode() && !right.isBooleanNode()) {
                 throw new JsonPathException("Failed to evaluate exists expression");
             }
             return left.asBooleanNode().getBoolean() == right.asBooleanNode().getBoolean();
@@ -54,6 +53,7 @@ public class EvaluatorFactory {
     }
 
     private static class NotEqualsEvaluator implements Evaluator {
+
         @Override
         public boolean evaluate(ValueNode left, ValueNode right, Predicate.PredicateContext ctx) {
             return !evaluators.get(RelationalOperator.EQ).evaluate(left, right, ctx);
@@ -61,6 +61,7 @@ public class EvaluatorFactory {
     }
 
     private static class TypeSafeNotEqualsEvaluator implements Evaluator {
+
         @Override
         public boolean evaluate(ValueNode left, ValueNode right, Predicate.PredicateContext ctx) {
             return !evaluators.get(RelationalOperator.TSEQ).evaluate(left, right, ctx);
@@ -68,9 +69,10 @@ public class EvaluatorFactory {
     }
 
     private static class EqualsEvaluator implements Evaluator {
+
         @Override
         public boolean evaluate(ValueNode left, ValueNode right, Predicate.PredicateContext ctx) {
-            if(left.isJsonNode() && right.isJsonNode()){
+            if (left.isJsonNode() && right.isJsonNode()) {
                 return left.asJsonNode().equals(right.asJsonNode(), ctx);
             } else {
                 return left.equals(right);
@@ -79,9 +81,10 @@ public class EvaluatorFactory {
     }
 
     private static class TypeSafeEqualsEvaluator implements Evaluator {
+
         @Override
         public boolean evaluate(ValueNode left, ValueNode right, Predicate.PredicateContext ctx) {
-            if(!left.getClass().equals(right.getClass())){
+            if (!left.getClass().equals(right.getClass())) {
                 return false;
             }
             return evaluators.get(RelationalOperator.EQ).evaluate(left, right, ctx);
@@ -89,6 +92,7 @@ public class EvaluatorFactory {
     }
 
     private static class TypeEvaluator implements Evaluator {
+
         @Override
         public boolean evaluate(ValueNode left, ValueNode right, Predicate.PredicateContext ctx) {
             return right.asClassNode().getClazz() == left.type(ctx);
@@ -96,13 +100,17 @@ public class EvaluatorFactory {
     }
 
     private static class LessThanEvaluator implements Evaluator {
+
         @Override
         public boolean evaluate(ValueNode left, ValueNode right, Predicate.PredicateContext ctx) {
-            if(left.isNumberNode() && right.isNumberNode()){
+            if (left.isNumberNode() && right.isNumberNode()) {
                 return left.asNumberNode().getNumber().compareTo(right.asNumberNode().getNumber()) < 0;
-            } if(left.isStringNode() && right.isStringNode()){
+            }
+            if (left.isStringNode() && right.isStringNode()) {
                 return left.asStringNode().getString().compareTo(right.asStringNode().getString()) < 0;
-            } if (left.isOffsetDateTimeNode() && right.isOffsetDateTimeNode()){ //workaround for issue: https://github.com/json-path/JsonPath/issues/613
+            }
+            if (left.isOffsetDateTimeNode() && right.isOffsetDateTimeNode()) {
+                //workaround for issue: https://github.com/json-path/JsonPath/issues/613
                 return left.asOffsetDateTimeNode().getDate().compareTo(right.asOffsetDateTimeNode().getDate()) < 0;
             }
             return false;
@@ -110,13 +118,17 @@ public class EvaluatorFactory {
     }
 
     private static class LessThanEqualsEvaluator implements Evaluator {
+
         @Override
         public boolean evaluate(ValueNode left, ValueNode right, Predicate.PredicateContext ctx) {
-            if(left.isNumberNode() && right.isNumberNode()){
+            if (left.isNumberNode() && right.isNumberNode()) {
                 return left.asNumberNode().getNumber().compareTo(right.asNumberNode().getNumber()) <= 0;
-            } if(left.isStringNode() && right.isStringNode()){
+            }
+            if (left.isStringNode() && right.isStringNode()) {
                 return left.asStringNode().getString().compareTo(right.asStringNode().getString()) <= 0;
-            } if (left.isOffsetDateTimeNode() && right.isOffsetDateTimeNode()){ //workaround for issue: https://github.com/json-path/JsonPath/issues/613
+            }
+            if (left.isOffsetDateTimeNode() && right.isOffsetDateTimeNode()) {
+                //workaround for issue: https://github.com/json-path/JsonPath/issues/613
                 return left.asOffsetDateTimeNode().getDate().compareTo(right.asOffsetDateTimeNode().getDate()) <= 0;
             }
             return false;
@@ -124,13 +136,15 @@ public class EvaluatorFactory {
     }
 
     private static class GreaterThanEvaluator implements Evaluator {
+
         @Override
         public boolean evaluate(ValueNode left, ValueNode right, Predicate.PredicateContext ctx) {
-            if(left.isNumberNode() && right.isNumberNode()){
+            if (left.isNumberNode() && right.isNumberNode()) {
                 return left.asNumberNode().getNumber().compareTo(right.asNumberNode().getNumber()) > 0;
-            } else if(left.isStringNode() && right.isStringNode()){
+            } else if (left.isStringNode() && right.isStringNode()) {
                 return left.asStringNode().getString().compareTo(right.asStringNode().getString()) > 0;
-            } else if (left.isOffsetDateTimeNode() && right.isOffsetDateTimeNode()){ //workaround for issue: https://github.com/json-path/JsonPath/issues/613
+            } else if (left.isOffsetDateTimeNode() && right.isOffsetDateTimeNode()) {
+                //workaround for issue: https://github.com/json-path/JsonPath/issues/613
                 return left.asOffsetDateTimeNode().getDate().compareTo(right.asOffsetDateTimeNode().getDate()) > 0;
             }
             return false;
@@ -138,13 +152,15 @@ public class EvaluatorFactory {
     }
 
     private static class GreaterThanEqualsEvaluator implements Evaluator {
+
         @Override
         public boolean evaluate(ValueNode left, ValueNode right, Predicate.PredicateContext ctx) {
-            if(left.isNumberNode() && right.isNumberNode()){
+            if (left.isNumberNode() && right.isNumberNode()) {
                 return left.asNumberNode().getNumber().compareTo(right.asNumberNode().getNumber()) >= 0;
-            } else if(left.isStringNode() && right.isStringNode()){
+            } else if (left.isStringNode() && right.isStringNode()) {
                 return left.asStringNode().getString().compareTo(right.asStringNode().getString()) >= 0;
-            } else if (left.isOffsetDateTimeNode() && right.isOffsetDateTimeNode()){ //workaround for issue: https://github.com/json-path/JsonPath/issues/613
+            } else if (left.isOffsetDateTimeNode() && right.isOffsetDateTimeNode()) {
+                //workaround for issue: https://github.com/json-path/JsonPath/issues/613
                 return left.asOffsetDateTimeNode().getDate().compareTo(right.asOffsetDateTimeNode().getDate()) >= 0;
             }
             return false;
@@ -152,16 +168,16 @@ public class EvaluatorFactory {
     }
 
     private static class SizeEvaluator implements Evaluator {
+
         @Override
         public boolean evaluate(ValueNode left, ValueNode right, Predicate.PredicateContext ctx) {
-            if (! right.isNumberNode()) {
+            if (!right.isNumberNode()) {
                 return false;
             }
             int expectedSize = right.asNumberNode().getNumber().intValue();
-
-            if(left.isStringNode()){
+            if (left.isStringNode()) {
                 return left.asStringNode().length() == expectedSize;
-            } else if(left.isJsonNode()){
+            } else if (left.isJsonNode()) {
                 return left.asJsonNode().length(ctx) == expectedSize;
             }
             return false;
@@ -169,11 +185,12 @@ public class EvaluatorFactory {
     }
 
     private static class EmptyEvaluator implements Evaluator {
+
         @Override
         public boolean evaluate(ValueNode left, ValueNode right, Predicate.PredicateContext ctx) {
-            if(left.isStringNode()){
+            if (left.isStringNode()) {
                 return left.asStringNode().isEmpty() == right.asBooleanNode().getBoolean();
-            } else if(left.isJsonNode()){
+            } else if (left.isJsonNode()) {
                 return left.asJsonNode().isEmpty(ctx) == right.asBooleanNode().getBoolean();
             }
             return false;
@@ -181,12 +198,13 @@ public class EvaluatorFactory {
     }
 
     private static class InEvaluator implements Evaluator {
+
         @Override
         public boolean evaluate(ValueNode left, ValueNode right, Predicate.PredicateContext ctx) {
             ValueListNode valueListNode;
-            if(right.isJsonNode()){
+            if (right.isJsonNode()) {
                 ValueNode vn = right.asJsonNode().asValueListNode(ctx);
-                if(vn.isUndefinedNode()){
+                if (vn.isUndefinedNode()) {
                     return false;
                 } else {
                     valueListNode = vn.asValueListNode();
@@ -199,6 +217,7 @@ public class EvaluatorFactory {
     }
 
     private static class NotInEvaluator implements Evaluator {
+
         @Override
         public boolean evaluate(ValueNode left, ValueNode right, Predicate.PredicateContext ctx) {
             return !evaluators.get(RelationalOperator.IN).evaluate(left, right, ctx);
@@ -206,16 +225,17 @@ public class EvaluatorFactory {
     }
 
     private static class AllEvaluator implements Evaluator {
+
         @Override
         public boolean evaluate(ValueNode left, ValueNode right, Predicate.PredicateContext ctx) {
             ValueListNode requiredValues = right.asValueListNode();
-
-            if(left.isJsonNode()){
-                ValueNode valueNode = left.asJsonNode().asValueListNode(ctx); //returns UndefinedNode if conversion is not possible
-                if(valueNode.isValueListNode()){
+            if (left.isJsonNode()) {
+                //returns UndefinedNode if conversion is not possible
+                ValueNode valueNode = left.asJsonNode().asValueListNode(ctx);
+                if (valueNode.isValueListNode()) {
                     ValueListNode shouldContainAll = valueNode.asValueListNode();
                     for (ValueNode required : requiredValues) {
-                        if(!shouldContainAll.contains(required)){
+                        if (!shouldContainAll.contains(required)) {
                             return false;
                         }
                     }
@@ -227,13 +247,15 @@ public class EvaluatorFactory {
     }
 
     private static class ContainsEvaluator implements Evaluator {
+
         @Override
         public boolean evaluate(ValueNode left, ValueNode right, Predicate.PredicateContext ctx) {
-            if(left.isStringNode() && right.isStringNode()){
+            if (left.isStringNode() && right.isStringNode()) {
                 return left.asStringNode().contains(right.asStringNode().getString());
-            } else if(left.isJsonNode()){
+            } else if (left.isJsonNode()) {
                 ValueNode valueNode = left.asJsonNode().asValueListNode(ctx);
-                if(valueNode.isUndefinedNode()) return false;
+                if (valueNode.isUndefinedNode())
+                    return false;
                 else {
                     boolean res = valueNode.asValueListNode().contains(right);
                     return res;
@@ -244,6 +266,7 @@ public class EvaluatorFactory {
     }
 
     private static class PredicateMatchEvaluator implements Evaluator {
+
         @Override
         public boolean evaluate(ValueNode left, ValueNode right, Predicate.PredicateContext ctx) {
             return right.asPredicateNode().getPredicate().apply(ctx);
@@ -251,12 +274,12 @@ public class EvaluatorFactory {
     }
 
     private static class RegexpEvaluator implements Evaluator {
+
         @Override
         public boolean evaluate(ValueNode left, ValueNode right, Predicate.PredicateContext ctx) {
-            if(!(left.isPatternNode() ^ right.isPatternNode())){
+            if (!(left.isPatternNode() ^ right.isPatternNode())) {
                 return false;
             }
-
             if (left.isPatternNode()) {
                 if (right.isValueListNode() || (right.isJsonNode() && right.asJsonNode().isArray(ctx))) {
                     return matchesAny(left.asPatternNode(), right.asJsonNode().asValueListNode(ctx));
@@ -280,10 +303,8 @@ public class EvaluatorFactory {
             if (!valueNode.isValueListNode()) {
                 return false;
             }
-
             ValueListNode listNode = valueNode.asValueListNode();
             Pattern pattern = patternNode.getCompiledPattern();
-
             for (Iterator<ValueNode> it = listNode.iterator(); it.hasNext(); ) {
                 String input = getInput(it.next());
                 if (pattern.matcher(input).matches()) {
@@ -295,47 +316,17 @@ public class EvaluatorFactory {
 
         private String getInput(ValueNode valueNode) {
             String input = "";
-
             if (valueNode.isStringNode() || valueNode.isNumberNode()) {
                 input = valueNode.asStringNode().getString();
             } else if (valueNode.isBooleanNode()) {
                 input = valueNode.asBooleanNode().toString();
             }
-
             return input;
         }
     }
 
     private static class SubsetOfEvaluator implements Evaluator {
-       @Override
-       public boolean evaluate(ValueNode left, ValueNode right, Predicate.PredicateContext ctx) {
-           ValueListNode rightValueListNode;
-           if(right.isJsonNode()){
-               ValueNode vn = right.asJsonNode().asValueListNode(ctx);
-               if(vn.isUndefinedNode()){
-                   return false;
-               } else {
-                   rightValueListNode = vn.asValueListNode();
-               }
-           } else {
-               rightValueListNode = right.asValueListNode();
-           }
-           ValueListNode leftValueListNode;
-           if(left.isJsonNode()){
-               ValueNode vn = left.asJsonNode().asValueListNode(ctx);
-               if(vn.isUndefinedNode()){
-                   return false;
-               } else {
-                  leftValueListNode = vn.asValueListNode();
-               }
-           } else {
-              leftValueListNode = left.asValueListNode();
-           }
-           return leftValueListNode.subsetof(rightValueListNode);
-       }
-   }
 
-    private static class AnyOfEvaluator implements Evaluator {
         @Override
         public boolean evaluate(ValueNode left, ValueNode right, Predicate.PredicateContext ctx) {
             ValueListNode rightValueListNode;
@@ -360,7 +351,36 @@ public class EvaluatorFactory {
             } else {
                 leftValueListNode = left.asValueListNode();
             }
+            return leftValueListNode.subsetof(rightValueListNode);
+        }
+    }
 
+    private static class AnyOfEvaluator implements Evaluator {
+
+        @Override
+        public boolean evaluate(ValueNode left, ValueNode right, Predicate.PredicateContext ctx) {
+            ValueListNode rightValueListNode;
+            if (right.isJsonNode()) {
+                ValueNode vn = right.asJsonNode().asValueListNode(ctx);
+                if (vn.isUndefinedNode()) {
+                    return false;
+                } else {
+                    rightValueListNode = vn.asValueListNode();
+                }
+            } else {
+                rightValueListNode = right.asValueListNode();
+            }
+            ValueListNode leftValueListNode;
+            if (left.isJsonNode()) {
+                ValueNode vn = left.asJsonNode().asValueListNode(ctx);
+                if (vn.isUndefinedNode()) {
+                    return false;
+                } else {
+                    leftValueListNode = vn.asValueListNode();
+                }
+            } else {
+                leftValueListNode = left.asValueListNode();
+            }
             for (ValueNode leftValueNode : leftValueListNode) {
                 for (ValueNode rightValueNode : rightValueListNode) {
                     if (leftValueNode.equals(rightValueNode)) {
@@ -373,6 +393,7 @@ public class EvaluatorFactory {
     }
 
     private static class NoneOfEvaluator implements Evaluator {
+
         @Override
         public boolean evaluate(ValueNode left, ValueNode right, Predicate.PredicateContext ctx) {
             ValueListNode rightValueListNode;
@@ -397,7 +418,6 @@ public class EvaluatorFactory {
             } else {
                 leftValueListNode = left.asValueListNode();
             }
-
             for (ValueNode leftValueNode : leftValueListNode) {
                 for (ValueNode rightValueNode : rightValueListNode) {
                     if (leftValueNode.equals(rightValueNode)) {

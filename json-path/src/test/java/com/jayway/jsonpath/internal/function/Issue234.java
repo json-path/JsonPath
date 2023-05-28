@@ -2,10 +2,8 @@ package com.jayway.jsonpath.internal.function;
 
 import com.jayway.jsonpath.JsonPath;
 import org.junit.Test;
-
 import java.util.HashMap;
 import java.util.Map;
-
 import static org.assertj.core.api.Assertions.assertThat;
 
 /**
@@ -21,7 +19,6 @@ import static org.assertj.core.api.Assertions.assertThat;
  * correctly.
  *
  * @see NestedFunctionTest for examples of where that is performed.
- *
  */
 public class Issue234 {
 

@@ -3,7 +3,6 @@ package com.jayway.jsonpath.internal.function;
 import com.jayway.jsonpath.internal.EvaluationContext;
 import com.jayway.jsonpath.internal.Path;
 import com.jayway.jsonpath.internal.function.latebinding.ILateBindingValue;
-
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -12,13 +11,19 @@ import java.util.List;
  * Defines a parameter as passed to a function with late binding support for lazy evaluation.
  */
 public class Parameter {
+
     private ParamType type;
+
     private Path path;
+
     private ILateBindingValue lateBinding;
+
     private Boolean evaluated = false;
+
     private String json;
 
-    public Parameter() {}
+    public Parameter() {
+    }
 
     public Parameter(String json) {
         this.json = json;
@@ -70,7 +75,7 @@ public class Parameter {
         this.json = json;
     }
 
-    public ILateBindingValue getILateBingValue(){
+    public ILateBindingValue getILateBingValue() {
         return lateBinding;
     }
 

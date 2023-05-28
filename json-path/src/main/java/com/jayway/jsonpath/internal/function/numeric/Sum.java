@@ -6,6 +6,7 @@ package com.jayway.jsonpath.internal.function.numeric;
  * Created by mattg on 6/26/15.
  */
 public class Sum extends AbstractAggregation {
+
     private Double summation = 0d;
 
     @Override

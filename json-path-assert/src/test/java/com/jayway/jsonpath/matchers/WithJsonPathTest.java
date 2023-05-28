@@ -7,10 +7,8 @@ import org.hamcrest.Description;
 import org.hamcrest.Matcher;
 import org.hamcrest.StringDescription;
 import org.junit.Test;
-
 import java.util.Collection;
 import java.util.List;
-
 import static com.jayway.jsonpath.JsonPath.compile;
 import static com.jayway.jsonpath.matchers.JsonPathMatchers.withJsonPath;
 import static com.jayway.jsonpath.matchers.helpers.ResourceHelpers.resource;
@@ -18,6 +16,7 @@ import static org.hamcrest.Matchers.*;
 import static org.junit.Assert.assertThat;
 
 public class WithJsonPathTest {
+
     private static final ReadContext BOOKS_JSON = JsonPath.parse(resource("books.json"));
 
     @Test
@@ -119,5 +118,4 @@ public class WithJsonPathTest {
         assertThat(description.toString(), containsString("not-here"));
         assertThat(description.toString(), containsString("was not found"));
     }
-
 }

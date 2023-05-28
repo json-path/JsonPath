@@ -7,7 +7,6 @@ import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
 import static com.jayway.jsonpath.JsonPath.using;
 import static org.junit.Assert.assertTrue;
 
@@ -16,6 +15,7 @@ import static org.junit.Assert.assertTrue;
  */
 @RunWith(Parameterized.class)
 public class NestedFunctionTest extends BaseFunctionTest {
+
     private static final Logger logger = LoggerFactory.getLogger(NumericPathFunctionTest.class);
 
     private Configuration conf = Configurations.GSON_CONFIGURATION;
@@ -96,9 +96,8 @@ public class NestedFunctionTest extends BaseFunctionTest {
     public void testErrantCloseBraceNegative() {
         try {
             using(conf).parse(this.NUMBER_SERIES).read("$.numbers.append(0, 1, 2}).avg()");
-            assert(false);
-        }
-        catch (Exception e) {
+            assert (false);
+        } catch (Exception e) {
             assertTrue(e.getMessage().startsWith("Unexpected close brace"));
         }
     }
@@ -107,9 +106,8 @@ public class NestedFunctionTest extends BaseFunctionTest {
     public void testErrantCloseBracketNegative() {
         try {
             using(conf).parse(this.NUMBER_SERIES).read("$.numbers.append(0, 1, 2]).avg()");
-            assert(false);
-        }
-        catch (Exception e) {
+            assert (false);
+        } catch (Exception e) {
             assertTrue(e.getMessage().startsWith("Unexpected close bracket"));
         }
     }
@@ -118,11 +116,9 @@ public class NestedFunctionTest extends BaseFunctionTest {
     public void testUnclosedFunctionCallNegative() {
         try {
             using(conf).parse(this.NUMBER_SERIES).read("$.numbers.append(0, 1, 2");
-            assert(false);
-        }
-        catch (Exception e) {
+            assert (false);
+        } catch (Exception e) {
             assertTrue(e.getMessage().startsWith("Arguments to function: 'append'"));
         }
     }
-
 }

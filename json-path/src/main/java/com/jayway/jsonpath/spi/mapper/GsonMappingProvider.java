@@ -22,7 +22,6 @@ import com.jayway.jsonpath.JsonPathException;
 import com.jayway.jsonpath.TypeRef;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
 import java.util.concurrent.Callable;
 
 public class GsonMappingProvider implements MappingProvider {
@@ -33,6 +32,7 @@ public class GsonMappingProvider implements MappingProvider {
 
     public GsonMappingProvider(final Gson gson) {
         this(new Callable<Gson>() {
+
             @Override
             public Gson call() {
                 return gson;
@@ -49,6 +49,7 @@ public class GsonMappingProvider implements MappingProvider {
         try {
             Class.forName("com.google.gson.Gson");
             this.factory = new Callable<Gson>() {
+
                 @Override
                 public Gson call() {
                     return new Gson();
@@ -62,24 +63,24 @@ public class GsonMappingProvider implements MappingProvider {
 
     @Override
     public <T> T map(Object source, Class<T> targetType, Configuration configuration) {
-        if(source == null){
+        if (source == null) {
             return null;
         }
         try {
             return factory.call().getAdapter(targetType).fromJsonTree((JsonElement) source);
-        } catch (Exception e){
+        } catch (Exception e) {
             throw new MappingException(e);
         }
     }
 
     @Override
     public <T> T map(Object source, TypeRef<T> targetType, Configuration configuration) {
-        if(source == null){
+        if (source == null) {
             return null;
         }
         try {
             return (T) factory.call().getAdapter(TypeToken.get(targetType.getType())).fromJsonTree((JsonElement) source);
-        } catch (Exception e){
+        } catch (Exception e) {
             throw new MappingException(e);
         }
     }

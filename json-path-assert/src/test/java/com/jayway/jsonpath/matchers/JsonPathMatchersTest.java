@@ -7,11 +7,9 @@ import com.jayway.jsonpath.matchers.helpers.StrictParsingConfiguration;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
-
 import java.io.File;
 import java.util.List;
 import java.util.Map;
-
 import static com.jayway.jsonpath.matchers.JsonPathMatchers.*;
 import static com.jayway.jsonpath.matchers.helpers.ResourceHelpers.resource;
 import static com.jayway.jsonpath.matchers.helpers.ResourceHelpers.resourceAsFile;
@@ -19,8 +17,11 @@ import static org.hamcrest.Matchers.*;
 import static org.junit.Assert.assertThat;
 
 public class JsonPathMatchersTest {
+
     private static final String BOOKS_JSON = resource("books.json");
+
     private static final String INVALID_JSON = "{ invalid-json }";
+
     private static final File BOOKS_JSON_FILE = resourceAsFile("books.json");
 
     @BeforeClass
@@ -37,12 +38,10 @@ public class JsonPathMatchersTest {
     @Test
     public void shouldMatchJsonPathToStringValue() {
         final String json = "{\"name\": \"Jessie\"}";
-
         assertThat(json, hasJsonPath("$.name"));
         assertThat(json, isJson(withJsonPath("$.name")));
         assertThat(json, hasJsonPath("$.name", equalTo("Jessie")));
         assertThat(json, isJson(withJsonPath("$.name", equalTo("Jessie"))));
-
         assertThat(json, not(hasJsonPath("$.name", equalTo("John"))));
         assertThat(json, not(isJson(withJsonPath("$.name", equalTo("John")))));
     }
@@ -50,12 +49,10 @@ public class JsonPathMatchersTest {
     @Test
     public void shouldMatchJsonPathToIntegerValue() {
         final String json = "{\"number\": 10}";
-
         assertThat(json, hasJsonPath("$.number"));
         assertThat(json, isJson(withJsonPath("$.number")));
         assertThat(json, hasJsonPath("$.number", equalTo(10)));
         assertThat(json, isJson(withJsonPath("$.number", equalTo(10))));
-
         assertThat(json, not(hasJsonPath("$.number", equalTo(3))));
         assertThat(json, not(isJson(withJsonPath("$.number", equalTo(3)))));
     }
@@ -63,12 +60,10 @@ public class JsonPathMatchersTest {
     @Test
     public void shouldMatchJsonPathToDoubleValue() {
         final String json = "{\"price\": 19.95}";
-
         assertThat(json, hasJsonPath("$.price"));
         assertThat(json, isJson(withJsonPath("$.price")));
         assertThat(json, hasJsonPath("$.price", equalTo(19.95)));
         assertThat(json, isJson(withJsonPath("$.price", equalTo(19.95))));
-
         assertThat(json, not(hasJsonPath("$.price", equalTo(3.3))));
         assertThat(json, not(isJson(withJsonPath("$.price", equalTo(42)))));
     }
@@ -76,12 +71,10 @@ public class JsonPathMatchersTest {
     @Test
     public void shouldMatchJsonPathToBooleanValue() {
         final String json = "{\"flag\": false}";
-
         assertThat(json, hasJsonPath("$.flag"));
         assertThat(json, isJson(withJsonPath("$.flag")));
         assertThat(json, hasJsonPath("$.flag", equalTo(false)));
         assertThat(json, isJson(withJsonPath("$.flag", equalTo(false))));
-
         assertThat(json, not(hasJsonPath("$.flag", equalTo(true))));
         assertThat(json, not(isJson(withJsonPath("$.flag", equalTo(true)))));
     }
@@ -89,12 +82,10 @@ public class JsonPathMatchersTest {
     @Test
     public void shouldMatchJsonPathToJsonObject() {
         final String json = "{\"object\": { \"name\":\"Oscar\"}}";
-
         assertThat(json, hasJsonPath("$.object"));
         assertThat(json, isJson(withJsonPath("$.object")));
         assertThat(json, hasJsonPath("$.object", instanceOf(Map.class)));
         assertThat(json, isJson(withJsonPath("$.object", instanceOf(Map.class))));
-
         assertThat(json, not(hasJsonPath("$.object", instanceOf(List.class))));
         assertThat(json, not(isJson(withJsonPath("$.object", instanceOf(List.class)))));
     }
@@ -102,12 +93,10 @@ public class JsonPathMatchersTest {
     @Test
     public void shouldMatchJsonPathToEmptyJsonObject() {
         final String json = "{\"empty_object\": {}}";
-
         assertThat(json, hasJsonPath("$.empty_object"));
         assertThat(json, isJson(withJsonPath("$.empty_object")));
         assertThat(json, hasJsonPath("$.empty_object", instanceOf(Map.class)));
         assertThat(json, isJson(withJsonPath("$.empty_object", instanceOf(Map.class))));
-
         assertThat(json, not(hasJsonPath("$.empty_object", instanceOf(List.class))));
         assertThat(json, not(isJson(withJsonPath("$.empty_object", instanceOf(List.class)))));
     }
@@ -115,14 +104,12 @@ public class JsonPathMatchersTest {
     @Test
     public void shouldMatchJsonPathToJsonArray() {
         final String json = "{\"list\": [ \"one\",\"two\",\"three\"]}";
-
         assertThat(json, hasJsonPath("$.list"));
         assertThat(json, hasJsonPath("$.list[*]"));
         assertThat(json, isJson(withJsonPath("$.list")));
         assertThat(json, isJson(withJsonPath("$.list[*]")));
         assertThat(json, hasJsonPath("$.list", contains("one", "two", "three")));
         assertThat(json, isJson(withJsonPath("$.list", hasItem("two"))));
-
         assertThat(json, not(hasJsonPath("$.list", hasSize(2))));
         assertThat(json, not(isJson(withJsonPath("$.list", contains("four")))));
     }
@@ -130,14 +117,12 @@ public class JsonPathMatchersTest {
     @Test
     public void shouldMatchJsonPathToEmptyJsonArray() {
         final String json = "{\"empty_list\": []}";
-
         assertThat(json, hasJsonPath("$.empty_list"));
         assertThat(json, hasJsonPath("$.empty_list[*]"));
         assertThat(json, isJson(withJsonPath("$.empty_list")));
         assertThat(json, isJson(withJsonPath("$.empty_list[*]")));
         assertThat(json, hasJsonPath("$.empty_list", empty()));
         assertThat(json, isJson(withJsonPath("$.empty_list", hasSize(0))));
-
         assertThat(json, not(hasJsonPath("$.empty_list", hasSize(2))));
         assertThat(json, not(isJson(withJsonPath("$.empty_list", contains("four")))));
     }
@@ -157,12 +142,10 @@ public class JsonPathMatchersTest {
     @Test
     public void shouldMatchJsonPathToNullValue() {
         final String json = "{\"none\": null}";
-
         assertThat(json, hasJsonPath("$.none"));
         assertThat(json, isJson(withJsonPath("$.none")));
         assertThat(json, hasJsonPath("$.none", nullValue()));
         assertThat(json, isJson(withJsonPath("$.none", nullValue())));
-
         assertThat(json, not(hasJsonPath("$.none", equalTo("something"))));
         assertThat(json, not(isJson(withJsonPath("$.none", empty()))));
     }
@@ -170,7 +153,6 @@ public class JsonPathMatchersTest {
     @Test
     public void shouldNotMatchNonExistingJsonPath() {
         final String json = "{}";
-
         assertThat(json, not(hasJsonPath("$.not_there")));
         assertThat(json, not(hasJsonPath("$.not_there", anything())));
         assertThat(json, not(hasJsonPath("$.not_there[*]")));

@@ -14,17 +14,14 @@
  */
 package com.jayway.jsonpath;
 
-
 import com.jayway.jsonpath.internal.*;
 import com.jayway.jsonpath.internal.path.PathCompiler;
 import com.jayway.jsonpath.spi.json.JsonProvider;
-
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
-
 import static com.jayway.jsonpath.Option.ALWAYS_RETURN_LIST;
 import static com.jayway.jsonpath.Option.AS_PATH_LIST;
 import static com.jayway.jsonpath.internal.Utils.*;
@@ -113,7 +110,6 @@ public class JsonPath {
         return compile(path).isDefinite();
     }
 
-
     /**
      * Checks if a path points to a single item or if it potentially returns multiple items
      * <p/>
@@ -148,7 +144,7 @@ public class JsonPath {
      * @param <T>        expected return type
      * @return object(s) matched by the given path
      */
-    @SuppressWarnings({"unchecked"})
+    @SuppressWarnings({ "unchecked" })
     public <T> T read(Object jsonObject) {
         return read(jsonObject, Configuration.defaultConfiguration());
     }
@@ -168,7 +164,6 @@ public class JsonPath {
         boolean optAsPathList = configuration.containsOption(AS_PATH_LIST);
         boolean optAlwaysReturnList = configuration.containsOption(Option.ALWAYS_RETURN_LIST);
         boolean optSuppressExceptions = configuration.containsOption(Option.SUPPRESS_EXCEPTIONS);
-
         if (path.isFunctionPath()) {
             if (optAsPathList || optAlwaysReturnList) {
                 if (optSuppressExceptions) {
@@ -233,7 +228,6 @@ public class JsonPath {
         return resultByConfiguration(jsonObject, configuration, evaluationContext);
     }
 
-
     /**
      * Replaces the value on the given path with the result of the {@link MapFunction}.
      *
@@ -259,7 +253,6 @@ public class JsonPath {
             updateOperation.convert(mapFunction, configuration);
         }
         return resultByConfiguration(jsonObject, configuration, evaluationContext);
-
     }
 
     /**
@@ -354,9 +347,9 @@ public class JsonPath {
             try {
                 updateOperation.renameKey(oldKeyName, newKeyName, configuration);
             } catch (RuntimeException e) {
-                if(!optSuppressExceptions){
+                if (!optSuppressExceptions) {
                     throw e;
-                }else{
+                } else {
                     // With option SUPPRESS_EXCEPTIONS,
                     // the PathNotFoundException should be ignored and the other updateOperation should be continued.
                 }
@@ -372,7 +365,7 @@ public class JsonPath {
      * @param <T>  expected return type
      * @return list of objects matched by the given path
      */
-    @SuppressWarnings({"unchecked"})
+    @SuppressWarnings({ "unchecked" })
     public <T> T read(String json) {
         return read(json, Configuration.defaultConfiguration());
     }
@@ -385,11 +378,10 @@ public class JsonPath {
      * @param <T>           expected return type
      * @return list of objects matched by the given path
      */
-    @SuppressWarnings({"unchecked"})
+    @SuppressWarnings({ "unchecked" })
     public <T> T read(String json, Configuration configuration) {
         notEmpty(json, "json can not be null or empty");
         notNull(configuration, "jsonProvider can not be null");
-
         return read(configuration.jsonProvider().parse(json), configuration);
     }
 
@@ -401,7 +393,7 @@ public class JsonPath {
      * @return list of objects matched by the given path
      * @throws IOException
      */
-    @SuppressWarnings({"unchecked"})
+    @SuppressWarnings({ "unchecked" })
     public <T> T read(URL jsonURL) throws IOException {
         return read(jsonURL, Configuration.defaultConfiguration());
     }
@@ -414,11 +406,10 @@ public class JsonPath {
      * @return list of objects matched by the given path
      * @throws IOException
      */
-    @SuppressWarnings({"unchecked"})
+    @SuppressWarnings({ "unchecked" })
     public <T> T read(File jsonFile) throws IOException {
         return read(jsonFile, Configuration.defaultConfiguration());
     }
-
 
     /**
      * Applies this JsonPath to the provided json file
@@ -429,12 +420,11 @@ public class JsonPath {
      * @return list of objects matched by the given path
      * @throws IOException
      */
-    @SuppressWarnings({"unchecked"})
+    @SuppressWarnings({ "unchecked" })
     public <T> T read(File jsonFile, Configuration configuration) throws IOException {
         notNull(jsonFile, "json file can not be null");
         isTrue(jsonFile.exists(), "json file does not exist");
         notNull(configuration, "jsonProvider can not be null");
-
         FileInputStream fis = null;
         try {
             fis = new FileInputStream(jsonFile);
@@ -452,7 +442,7 @@ public class JsonPath {
      * @return list of objects matched by the given path
      * @throws IOException
      */
-    @SuppressWarnings({"unchecked"})
+    @SuppressWarnings({ "unchecked" })
     public <T> T read(InputStream jsonInputStream) throws IOException {
         return read(jsonInputStream, Configuration.defaultConfiguration());
     }
@@ -466,11 +456,10 @@ public class JsonPath {
      * @return list of objects matched by the given path
      * @throws IOException
      */
-    @SuppressWarnings({"unchecked"})
+    @SuppressWarnings({ "unchecked" })
     public <T> T read(InputStream jsonInputStream, Configuration configuration) throws IOException {
         notNull(jsonInputStream, "json input stream can not be null");
         notNull(configuration, "configuration can not be null");
-
         return read(jsonInputStream, "UTF-8", configuration);
     }
 
@@ -483,12 +472,11 @@ public class JsonPath {
      * @return list of objects matched by the given path
      * @throws IOException
      */
-    @SuppressWarnings({"unchecked"})
+    @SuppressWarnings({ "unchecked" })
     public <T> T read(InputStream jsonInputStream, String charset, Configuration configuration) throws IOException {
         notNull(jsonInputStream, "json input stream can not be null");
         notNull(charset, "charset can not be null");
         notNull(configuration, "configuration can not be null");
-
         try {
             return read(configuration.jsonProvider().parse(jsonInputStream, charset), configuration);
         } finally {
@@ -501,7 +489,6 @@ public class JsonPath {
     // Static factory methods
     //
     // --------------------------------------------------------
-
     /**
      * Compiles a JsonPath
      *
@@ -511,17 +498,14 @@ public class JsonPath {
      */
     public static JsonPath compile(String jsonPath, Predicate... filters) {
         notEmpty(jsonPath, "json can not be null or empty");
-
         return new JsonPath(jsonPath, filters);
     }
-
 
     // --------------------------------------------------------
     //
     // Static utility functions
     //
     // --------------------------------------------------------
-
     /**
      * Creates a new JsonPath and applies it to the provided Json object
      *
@@ -531,7 +515,7 @@ public class JsonPath {
      * @param <T>      expected return type
      * @return list of objects matched by the given path
      */
-    @SuppressWarnings({"unchecked"})
+    @SuppressWarnings({ "unchecked" })
     public static <T> T read(Object json, String jsonPath, Predicate... filters) {
         return parse(json).read(jsonPath, filters);
     }
@@ -545,11 +529,10 @@ public class JsonPath {
      * @param <T>      expected return type
      * @return list of objects matched by the given path
      */
-    @SuppressWarnings({"unchecked"})
+    @SuppressWarnings({ "unchecked" })
     public static <T> T read(String json, String jsonPath, Predicate... filters) {
         return new ParseContextImpl().parse(json).read(jsonPath, filters);
     }
-
 
     /**
      * Creates a new JsonPath and applies it to the provided Json object
@@ -560,7 +543,7 @@ public class JsonPath {
      * @param <T>      expected return type
      * @return list of objects matched by the given path
      */
-    @SuppressWarnings({"unchecked"})
+    @SuppressWarnings({ "unchecked" })
     @Deprecated
     public static <T> T read(URL jsonURL, String jsonPath, Predicate... filters) throws IOException {
         return new ParseContextImpl().parse(jsonURL).read(jsonPath, filters);
@@ -575,7 +558,7 @@ public class JsonPath {
      * @param <T>      expected return type
      * @return list of objects matched by the given path
      */
-    @SuppressWarnings({"unchecked"})
+    @SuppressWarnings({ "unchecked" })
     public static <T> T read(File jsonFile, String jsonPath, Predicate... filters) throws IOException {
         return new ParseContextImpl().parse(jsonFile).read(jsonPath, filters);
     }
@@ -589,19 +572,16 @@ public class JsonPath {
      * @param <T>             expected return type
      * @return list of objects matched by the given path
      */
-    @SuppressWarnings({"unchecked"})
+    @SuppressWarnings({ "unchecked" })
     public static <T> T read(InputStream jsonInputStream, String jsonPath, Predicate... filters) throws IOException {
         return new ParseContextImpl().parse(jsonInputStream).read(jsonPath, filters);
     }
-
 
     // --------------------------------------------------------
     //
     // Static Fluent API
     //
     // --------------------------------------------------------
-
-
     /**
      * Creates a {@link ParseContext} that can be used to parse JSON input. The parse context
      * is as thread safe as the underlying {@link JsonProvider}. Note that not all JsonProvider are
@@ -738,8 +718,8 @@ public class JsonPath {
     }
 
     private <T> T resultByConfiguration(Object jsonObject, Configuration configuration, EvaluationContext evaluationContext) {
-        if(configuration.containsOption(AS_PATH_LIST)){
-            return (T)evaluationContext.getPathList();
+        if (configuration.containsOption(AS_PATH_LIST)) {
+            return (T) evaluationContext.getPathList();
         } else {
             return (T) jsonObject;
         }

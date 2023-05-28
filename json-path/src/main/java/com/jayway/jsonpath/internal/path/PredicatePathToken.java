@@ -18,18 +18,14 @@ import com.jayway.jsonpath.Configuration;
 import com.jayway.jsonpath.InvalidPathException;
 import com.jayway.jsonpath.Predicate;
 import com.jayway.jsonpath.internal.PathRef;
-
 import java.util.Collection;
 import java.util.Collections;
-
 import static java.lang.String.format;
 import static java.util.Arrays.asList;
 
 /**
- *
  */
 public class PredicatePathToken extends PathToken {
-
 
     private final Collection<Predicate> predicates;
 
@@ -52,12 +48,11 @@ public class PredicatePathToken extends PathToken {
                     next().evaluate(currentPath, op, model, ctx);
                 }
             }
-        } else if (ctx.jsonProvider().isArray(model)){
+        } else if (ctx.jsonProvider().isArray(model)) {
             int idx = 0;
             Iterable<?> objects = ctx.jsonProvider().toIterable(model);
-
             for (Object idxModel : objects) {
-                if (accept(idxModel, ctx.rootDocument(),  ctx.configuration(), ctx)) {
+                if (accept(idxModel, ctx.rootDocument(), ctx.configuration(), ctx)) {
                     handleArrayIndex(idx, currentPath, model, ctx);
                 }
                 idx++;
@@ -71,7 +66,6 @@ public class PredicatePathToken extends PathToken {
 
     public boolean accept(final Object obj, final Object root, final Configuration configuration, EvaluationContextImpl evaluationContext) {
         Predicate.PredicateContext ctx = new PredicateContextImpl(obj, root, configuration, evaluationContext.documentEvalCache());
-
         for (Predicate predicate : predicates) {
             try {
                 if (!predicate.apply(ctx)) {
@@ -88,8 +82,8 @@ public class PredicatePathToken extends PathToken {
     public String getPathFragment() {
         StringBuilder sb = new StringBuilder();
         sb.append("[");
-        for(int i = 0; i < predicates.size(); i++){
-            if(i != 0){
+        for (int i = 0; i < predicates.size(); i++) {
+            if (i != 0) {
                 sb.append(",");
             }
             sb.append("?");
@@ -102,7 +96,4 @@ public class PredicatePathToken extends PathToken {
     public boolean isTokenDefinite() {
         return false;
     }
-
-
-
 }

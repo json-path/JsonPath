@@ -1,6 +1,5 @@
 package com.jayway.jsonassert;
 
-
 import com.jayway.jsonassert.impl.JsonAsserterImpl;
 import com.jayway.jsonassert.impl.matcher.CollectionMatcher;
 import com.jayway.jsonassert.impl.matcher.IsCollectionWithSize;
@@ -9,7 +8,6 @@ import com.jayway.jsonassert.impl.matcher.IsMapContainingKey;
 import com.jayway.jsonassert.impl.matcher.IsMapContainingValue;
 import com.jayway.jsonpath.JsonPath;
 import org.hamcrest.Matcher;
-
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -42,7 +40,6 @@ public class JsonAssert {
      */
     public static JsonAsserter with(Reader reader) throws IOException {
         return new JsonAsserterImpl(JsonPath.parse(convertReaderToString(reader)).json());
-
     }
 
     /**
@@ -58,7 +55,6 @@ public class JsonAssert {
     }
 
     //Matchers
-
     public static CollectionMatcher collectionWithSize(Matcher<? super Integer> sizeMatcher) {
         return new IsCollectionWithSize(sizeMatcher);
     }
@@ -75,12 +71,9 @@ public class JsonAssert {
         return new IsEmptyCollection<Object>();
     }
 
-    private static String convertReaderToString(Reader reader)
-            throws IOException {
-
+    private static String convertReaderToString(Reader reader) throws IOException {
         if (reader != null) {
             Writer writer = new StringWriter();
-
             char[] buffer = new char[1024];
             try {
                 int n;
@@ -95,6 +88,4 @@ public class JsonAssert {
             return "";
         }
     }
-
-
 }

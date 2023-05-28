@@ -6,11 +6,11 @@ import com.jayway.jsonpath.ReadContext;
 import org.hamcrest.Description;
 import org.hamcrest.Matcher;
 import org.hamcrest.TypeSafeMatcher;
-
 import java.io.File;
 import java.io.IOException;
 
 public class IsJson<T> extends TypeSafeMatcher<T> {
+
     private final Matcher<? super ReadContext> jsonMatcher;
 
     public IsJson(Matcher<? super ReadContext> jsonMatcher) {
@@ -46,11 +46,7 @@ public class IsJson<T> extends TypeSafeMatcher<T> {
     }
 
     private static void buildMismatchDescription(Object json, Description mismatchDescription, Exception e) {
-        mismatchDescription
-                .appendText("was ")
-                .appendValue(json)
-                .appendText(" which failed with ")
-                .appendValue(e.getMessage());
+        mismatchDescription.appendText("was ").appendValue(json).appendText(" which failed with ").appendValue(e.getMessage());
     }
 
     private static ReadContext parse(Object object) throws IOException {

@@ -19,10 +19,11 @@ import com.jayway.jsonpath.spi.json.JsonProvider;
 
 /**
  * Defines the JSON document Late binding approach to function arguments.
- *
  */
 public class JsonLateBindingValue implements ILateBindingValue {
+
     private final JsonProvider jsonProvider;
+
     private final Parameter jsonParameter;
 
     public JsonLateBindingValue(JsonProvider jsonProvider, Parameter jsonParameter) {

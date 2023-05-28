@@ -15,7 +15,6 @@
 package com.jayway.jsonpath.spi.cache;
 
 import com.jayway.jsonpath.JsonPath;
-
 import java.util.Deque;
 import java.util.LinkedList;
 import java.util.Map;
@@ -27,7 +26,9 @@ public class LRUCache implements Cache {
     private final ReentrantLock lock = new ReentrantLock();
 
     private final Map<String, JsonPath> map = new ConcurrentHashMap<String, JsonPath>();
+
     private final Deque<String> queue = new LinkedList<String>();
+
     private final int limit;
 
     public LRUCache(int limit) {
@@ -48,7 +49,7 @@ public class LRUCache implements Cache {
 
     public JsonPath get(String key) {
         JsonPath jsonPath = map.get(key);
-        if(jsonPath != null){
+        if (jsonPath != null) {
             removeThenAddKey(key);
         }
         return jsonPath;
@@ -81,7 +82,6 @@ public class LRUCache implements Cache {
         } finally {
             lock.unlock();
         }
-
     }
 
     private void removeFirstOccurrence(String key) {

@@ -19,7 +19,6 @@ import com.jayway.jsonpath.TypeRef;
 import net.minidev.json.JSONValue;
 import net.minidev.json.writer.JsonReader;
 import net.minidev.json.writer.JsonReaderI;
-
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.text.DateFormat;
@@ -47,11 +46,11 @@ public class JsonSmartMappingProvider implements MappingProvider {
         DEFAULT.registerReader(boolean.class, new BooleanReader());
     }
 
-
     private final Callable<JsonReader> factory;
 
     public JsonSmartMappingProvider(final JsonReader jsonReader) {
         this(new Callable<JsonReader>() {
+
             @Override
             public JsonReader call() {
                 return jsonReader;
@@ -67,18 +66,16 @@ public class JsonSmartMappingProvider implements MappingProvider {
         this(DEFAULT);
     }
 
-
-
     @Override
     public <T> T map(Object source, Class<T> targetType, Configuration configuration) {
-        if(source == null){
+        if (source == null) {
             return null;
         }
         if (targetType.isAssignableFrom(source.getClass())) {
             return (T) source;
         }
         try {
-            if(!configuration.jsonProvider().isMap(source) && !configuration.jsonProvider().isArray(source)){
+            if (!configuration.jsonProvider().isMap(source) && !configuration.jsonProvider().isArray(source)) {
                 return factory.call().getMapper(targetType).convert(source);
             }
             String s = configuration.jsonProvider().toJson(source);
@@ -86,7 +83,6 @@ public class JsonSmartMappingProvider implements MappingProvider {
         } catch (Exception e) {
             throw new MappingException(e);
         }
-
     }
 
     @Override
@@ -95,26 +91,31 @@ public class JsonSmartMappingProvider implements MappingProvider {
     }
 
     private static class StringReader extends JsonReaderI<String> {
+
         public StringReader() {
             super(null);
         }
+
         public String convert(Object src) {
-            if(src == null){
+            if (src == null) {
                 return null;
             }
             return src.toString();
         }
     }
+
     private static class IntegerReader extends JsonReaderI<Integer> {
+
         public IntegerReader() {
             super(null);
         }
+
         public Integer convert(Object src) {
-            if(src == null){
+            if (src == null) {
                 return null;
             }
-            if(Integer.class.isAssignableFrom(src.getClass())){
-               return (Integer) src;
+            if (Integer.class.isAssignableFrom(src.getClass())) {
+                return (Integer) src;
             } else if (Long.class.isAssignableFrom(src.getClass())) {
                 return ((Long) src).intValue();
             } else if (Double.class.isAssignableFrom(src.getClass())) {
@@ -129,15 +130,18 @@ public class JsonSmartMappingProvider implements MappingProvider {
             throw new MappingException("can not map a " + src.getClass() + " to " + Integer.class.getName());
         }
     }
+
     private static class LongReader extends JsonReaderI<Long> {
+
         public LongReader() {
             super(null);
         }
+
         public Long convert(Object src) {
-            if(src == null){
+            if (src == null) {
                 return null;
             }
-            if(Long.class.isAssignableFrom(src.getClass())){
+            if (Long.class.isAssignableFrom(src.getClass())) {
                 return (Long) src;
             } else if (Integer.class.isAssignableFrom(src.getClass())) {
                 return ((Integer) src).longValue();
@@ -155,14 +159,16 @@ public class JsonSmartMappingProvider implements MappingProvider {
     }
 
     private static class DoubleReader extends JsonReaderI<Double> {
+
         public DoubleReader() {
             super(null);
         }
+
         public Double convert(Object src) {
-            if(src == null){
+            if (src == null) {
                 return null;
             }
-            if(Double.class.isAssignableFrom(src.getClass())){
+            if (Double.class.isAssignableFrom(src.getClass())) {
                 return (Double) src;
             } else if (Integer.class.isAssignableFrom(src.getClass())) {
                 return ((Integer) src).doubleValue();
@@ -178,15 +184,18 @@ public class JsonSmartMappingProvider implements MappingProvider {
             throw new MappingException("can not map a " + src.getClass() + " to " + Double.class.getName());
         }
     }
+
     private static class FloatReader extends JsonReaderI<Float> {
+
         public FloatReader() {
             super(null);
         }
+
         public Float convert(Object src) {
-            if(src == null){
+            if (src == null) {
                 return null;
             }
-            if(Float.class.isAssignableFrom(src.getClass())){
+            if (Float.class.isAssignableFrom(src.getClass())) {
                 return (Float) src;
             } else if (Integer.class.isAssignableFrom(src.getClass())) {
                 return ((Integer) src).floatValue();
@@ -202,41 +211,50 @@ public class JsonSmartMappingProvider implements MappingProvider {
             throw new MappingException("can not map a " + src.getClass() + " to " + Float.class.getName());
         }
     }
+
     private static class BigDecimalReader extends JsonReaderI<BigDecimal> {
+
         public BigDecimalReader() {
             super(null);
         }
+
         public BigDecimal convert(Object src) {
-            if(src == null){
+            if (src == null) {
                 return null;
             }
             return new BigDecimal(src.toString());
         }
     }
+
     private static class BigIntegerReader extends JsonReaderI<BigInteger> {
+
         public BigIntegerReader() {
             super(null);
         }
+
         public BigInteger convert(Object src) {
-            if(src == null){
+            if (src == null) {
                 return null;
             }
             return new BigInteger(src.toString());
         }
     }
+
     private static class DateReader extends JsonReaderI<Date> {
+
         public DateReader() {
             super(null);
         }
+
         public Date convert(Object src) {
-            if(src == null){
+            if (src == null) {
                 return null;
             }
-            if(Date.class.isAssignableFrom(src.getClass())){
+            if (Date.class.isAssignableFrom(src.getClass())) {
                 return (Date) src;
-            } else if(Long.class.isAssignableFrom(src.getClass())){
+            } else if (Long.class.isAssignableFrom(src.getClass())) {
                 return new Date((Long) src);
-            } else if(String.class.isAssignableFrom(src.getClass())){
+            } else if (String.class.isAssignableFrom(src.getClass())) {
                 try {
                     return DateFormat.getInstance().parse(src.toString());
                 } catch (ParseException e) {
@@ -246,12 +264,15 @@ public class JsonSmartMappingProvider implements MappingProvider {
             throw new MappingException("can not map a " + src.getClass() + " to " + Date.class.getName());
         }
     }
+
     private static class BooleanReader extends JsonReaderI<Boolean> {
+
         public BooleanReader() {
             super(null);
         }
+
         public Boolean convert(Object src) {
-            if(src == null){
+            if (src == null) {
                 return null;
             }
             if (Boolean.class.isAssignableFrom(src.getClass())) {

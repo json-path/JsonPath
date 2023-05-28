@@ -4,11 +4,9 @@ import com.jayway.jsonpath.JsonPath;
 import com.jayway.jsonpath.Predicate;
 import com.jayway.jsonpath.ReadContext;
 import org.hamcrest.Matcher;
-
 import java.io.File;
 import java.util.List;
 import java.util.Map;
-
 import static org.hamcrest.Matchers.*;
 
 public class JsonPathMatchers {
@@ -18,9 +16,7 @@ public class JsonPathMatchers {
     }
 
     public static Matcher<? super Object> hasJsonPath(String jsonPath) {
-        return describedAs("has json path %0",
-                isJson(withJsonPath(jsonPath)),
-                jsonPath);
+        return describedAs("has json path %0", isJson(withJsonPath(jsonPath)), jsonPath);
     }
 
     public static <T> Matcher<? super Object> hasJsonPath(String jsonPath, Matcher<T> resultMatcher) {
@@ -52,9 +48,7 @@ public class JsonPathMatchers {
     }
 
     public static Matcher<? super ReadContext> withJsonPath(JsonPath jsonPath) {
-        return describedAs("with json path %0",
-                withJsonPath(jsonPath, anything()),
-                jsonPath.getPath());
+        return describedAs("with json path %0", withJsonPath(jsonPath, anything()), jsonPath.getPath());
     }
 
     public static Matcher<? super ReadContext> withoutJsonPath(String jsonPath, Predicate... filters) {

@@ -17,7 +17,6 @@ package com.jayway.jsonpath;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
 
-
 /**
  * Used to specify generic type information in {@link com.jayway.jsonpath.ReadContext}
  *
@@ -28,10 +27,10 @@ import java.lang.reflect.Type;
  * @param <T>
  */
 public abstract class TypeRef<T> implements Comparable<TypeRef<T>> {
+
     protected final Type type;
-    
-    protected TypeRef()
-    {
+
+    protected TypeRef() {
         Type superClass = getClass().getGenericSuperclass();
         if (superClass instanceof Class<?>) {
             throw new IllegalArgumentException("No type info in TypeRef");
@@ -39,8 +38,10 @@ public abstract class TypeRef<T> implements Comparable<TypeRef<T>> {
         type = ((ParameterizedType) superClass).getActualTypeArguments()[0];
     }
 
-    public Type getType() { return type; }
-    
+    public Type getType() {
+        return type;
+    }
+
     /**
      * The only reason we define this method (and require implementation
      * of <code>Comparable</code>) is to prevent constructing a
@@ -51,4 +52,3 @@ public abstract class TypeRef<T> implements Comparable<TypeRef<T>> {
         return 0;
     }
 }
-

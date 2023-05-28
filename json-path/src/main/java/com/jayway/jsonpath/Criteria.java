@@ -20,27 +20,27 @@ import com.jayway.jsonpath.internal.filter.RelationalExpressionNode;
 import com.jayway.jsonpath.internal.filter.RelationalOperator;
 import com.jayway.jsonpath.internal.filter.ValueNode;
 import com.jayway.jsonpath.internal.filter.ValueNodes;
-
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.regex.Pattern;
-
 import static com.jayway.jsonpath.internal.Utils.notNull;
 import static com.jayway.jsonpath.internal.filter.ValueNodes.PredicateNode;
 import static com.jayway.jsonpath.internal.filter.ValueNodes.ValueListNode;
 
 /**
- *
  */
 @SuppressWarnings("unchecked")
 public class Criteria implements Predicate {
 
     private final List<Criteria> criteriaChain;
+
     private ValueNode left;
+
     private RelationalOperator criteriaType;
+
     private ValueNode right;
 
     private Criteria(List<Criteria> criteriaChain, ValueNode left) {
@@ -56,7 +56,7 @@ public class Criteria implements Predicate {
     @Override
     public boolean apply(PredicateContext ctx) {
         for (RelationalExpressionNode expressionNode : toRelationalExpressionNodes()) {
-            if(!expressionNode.apply(ctx)){
+            if (!expressionNode.apply(ctx)) {
                 return false;
             }
         }
@@ -68,7 +68,7 @@ public class Criteria implements Predicate {
         return Utils.join(" && ", toRelationalExpressionNodes());
     }
 
-    private Collection<RelationalExpressionNode> toRelationalExpressionNodes(){
+    private Collection<RelationalExpressionNode> toRelationalExpressionNodes() {
         List<RelationalExpressionNode> nodes = new ArrayList<RelationalExpressionNode>(criteriaChain.size());
         for (Criteria criteria : criteriaChain) {
             nodes.add(new RelationalExpressionNode(criteria.left, criteria.criteriaType, criteria.right));
@@ -83,11 +83,10 @@ public class Criteria implements Predicate {
      * @return the new criteria
      */
     @Deprecated
-    //This should be private.It exposes internal classes
-    public static Criteria where(Path key) {
+    public static //This should be private.It exposes internal classes
+    Criteria where(Path key) {
         return new Criteria(ValueNode.createPathNode(key));
     }
-
 
     /**
      * Static factory method to create a Criteria using the provided key
@@ -95,7 +94,6 @@ public class Criteria implements Predicate {
      * @param key filed name
      * @return the new criteria
      */
-
     public static Criteria where(String key) {
         return new Criteria(ValueNode.toValueNode(prefixPath(key)));
     }
@@ -278,7 +276,7 @@ public class Criteria implements Predicate {
      * @return the criteria
      */
     public Criteria subsetof(Object... o) {
-        return subsetof(Arrays.asList(o));
+        return subsetOfSingleObject(o);
     }
 
     /**
@@ -304,7 +302,7 @@ public class Criteria implements Predicate {
      * @return the criteria
      */
     public Criteria anyof(Object... o) {
-        return subsetof(Arrays.asList(o));
+        return subsetOfSingleObject(o);
     }
 
     /**
@@ -467,13 +465,13 @@ public class Criteria implements Predicate {
      */
     @Deprecated
     public static Criteria parse(String criteria) {
-        if(criteria == null){
+        if (criteria == null) {
             throw new InvalidPathException("Criteria can not be null");
         }
         String[] split = criteria.trim().split(" ");
-        if(split.length == 3){
+        if (split.length == 3) {
             return create(split[0], split[1], split[2]);
-        } else if(split.length == 1){
+        } else if (split.length == 1) {
             return create(split[0], "EXISTS", "true");
         } else {
             throw new InvalidPathException("Could not parse criteria");
@@ -495,19 +493,21 @@ public class Criteria implements Predicate {
         return criteria;
     }
 
-
-    private static String prefixPath(String key){
+    private static String prefixPath(String key) {
         if (!key.startsWith("$") && !key.startsWith("@")) {
             key = "@." + key;
         }
         return key;
     }
 
-    private void checkComplete(){
+    private void checkComplete() {
         boolean complete = (left != null && criteriaType != null && right != null);
-        if(!complete){
+        if (!complete) {
             throw new JsonPathException("Criteria build exception. Complete on criteria before defining next.");
         }
     }
 
+    private Criteria subsetOfSingleObject(Object... o) {
+        return subsetof(Arrays.asList(o));
+    }
 }

@@ -25,13 +25,10 @@ import com.jayway.jsonpath.ReadContext;
 import com.jayway.jsonpath.TypeRef;
 import com.jayway.jsonpath.spi.cache.Cache;
 import com.jayway.jsonpath.spi.cache.CacheProvider;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
 import java.util.Arrays;
 import java.util.List;
-
 import static com.jayway.jsonpath.JsonPath.compile;
 import static com.jayway.jsonpath.internal.Utils.notEmpty;
 import static com.jayway.jsonpath.internal.Utils.notNull;
@@ -41,6 +38,7 @@ public class JsonContext implements DocumentContext {
     private static final Logger logger = LoggerFactory.getLogger(JsonContext.class);
 
     private final Configuration configuration;
+
     private final Object json;
 
     JsonContext(Object json, Configuration configuration) {
@@ -49,7 +47,6 @@ public class JsonContext implements DocumentContext {
         this.configuration = configuration;
         this.json = json;
     }
-
 
     @Override
     public Configuration configuration() {
@@ -146,7 +143,7 @@ public class JsonContext implements DocumentContext {
     @Override
     public DocumentContext map(JsonPath path, MapFunction mapFunction) {
         Object obj = path.map(json, mapFunction, configuration);
-        return obj==null ? null:this;
+        return obj == null ? null : this;
     }
 
     @Override
@@ -215,8 +212,7 @@ public class JsonContext implements DocumentContext {
 
     private JsonPath pathFromCache(String path, Predicate[] filters) {
         Cache cache = CacheProvider.getCache();
-        String cacheKey = filters == null || filters.length == 0
-            ? path : Utils.concat(path, Arrays.toString(filters));
+        String cacheKey = filters == null || filters.length == 0 ? path : Utils.concat(path, Arrays.toString(filters));
         JsonPath jsonPath = cache.get(cacheKey);
         if (jsonPath == null) {
             jsonPath = compile(path, filters);
@@ -226,6 +222,7 @@ public class JsonContext implements DocumentContext {
     }
 
     private final static class LimitingEvaluationListener implements EvaluationListener {
+
         final int limit;
 
         private LimitingEvaluationListener(int limit) {
@@ -241,5 +238,4 @@ public class JsonContext implements DocumentContext {
             }
         }
     }
-
 }

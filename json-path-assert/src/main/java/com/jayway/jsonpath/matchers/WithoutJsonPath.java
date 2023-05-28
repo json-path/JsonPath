@@ -7,6 +7,7 @@ import org.hamcrest.Description;
 import org.hamcrest.TypeSafeDiagnosingMatcher;
 
 public class WithoutJsonPath extends TypeSafeDiagnosingMatcher<ReadContext> {
+
     private final JsonPath jsonPath;
 
     public WithoutJsonPath(JsonPath jsonPath) {
@@ -17,10 +18,7 @@ public class WithoutJsonPath extends TypeSafeDiagnosingMatcher<ReadContext> {
     protected boolean matchesSafely(ReadContext actual, Description mismatchDescription) {
         try {
             Object value = actual.read(jsonPath);
-            mismatchDescription
-                    .appendText(jsonPath.getPath())
-                    .appendText(" was evaluated to ")
-                    .appendValue(value);
+            mismatchDescription.appendText(jsonPath.getPath()).appendText(" was evaluated to ").appendValue(value);
             return false;
         } catch (JsonPathException e) {
             return true;

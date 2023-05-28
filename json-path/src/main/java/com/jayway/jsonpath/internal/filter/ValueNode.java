@@ -6,10 +6,8 @@ import com.jayway.jsonpath.Predicate;
 import com.jayway.jsonpath.internal.Path;
 import com.jayway.jsonpath.internal.path.PathCompiler;
 import net.minidev.json.parser.JSONParser;
-
 import java.time.OffsetDateTime;
 import java.util.regex.Pattern;
-
 import static com.jayway.jsonpath.internal.filter.ValueNodes.*;
 
 public abstract class ValueNode {
@@ -17,7 +15,7 @@ public abstract class ValueNode {
     public abstract Class<?> type(Predicate.PredicateContext ctx);
 
     public boolean isPatternNode() {
-        return false;
+        return deny();
     }
 
     public PatternNode asPatternNode() {
@@ -25,7 +23,7 @@ public abstract class ValueNode {
     }
 
     public boolean isPathNode() {
-        return false;
+        return deny();
     }
 
     public PathNode asPathNode() {
@@ -33,7 +31,7 @@ public abstract class ValueNode {
     }
 
     public boolean isNumberNode() {
-        return false;
+        return deny();
     }
 
     public NumberNode asNumberNode() {
@@ -41,7 +39,7 @@ public abstract class ValueNode {
     }
 
     public boolean isStringNode() {
-        return false;
+        return deny();
     }
 
     public StringNode asStringNode() {
@@ -49,7 +47,7 @@ public abstract class ValueNode {
     }
 
     public boolean isBooleanNode() {
-        return false;
+        return deny();
     }
 
     public BooleanNode asBooleanNode() {
@@ -57,7 +55,7 @@ public abstract class ValueNode {
     }
 
     public boolean isJsonNode() {
-        return false;
+        return deny();
     }
 
     public JsonNode asJsonNode() {
@@ -65,7 +63,7 @@ public abstract class ValueNode {
     }
 
     public boolean isPredicateNode() {
-        return false;
+        return deny();
     }
 
     public PredicateNode asPredicateNode() {
@@ -73,7 +71,7 @@ public abstract class ValueNode {
     }
 
     public boolean isValueListNode() {
-        return false;
+        return deny();
     }
 
     public ValueListNode asValueListNode() {
@@ -81,7 +79,7 @@ public abstract class ValueNode {
     }
 
     public boolean isNullNode() {
-        return false;
+        return deny();
     }
 
     public NullNode asNullNode() {
@@ -93,11 +91,11 @@ public abstract class ValueNode {
     }
 
     public boolean isUndefinedNode() {
-        return false;
+        return deny();
     }
 
     public boolean isClassNode() {
-        return false;
+        return deny();
     }
 
     public ClassNode asClassNode() {
@@ -105,17 +103,16 @@ public abstract class ValueNode {
     }
 
     //workaround for issue: https://github.com/json-path/JsonPath/issues/613
-    public boolean isOffsetDateTimeNode(){
-        return false;
+    public boolean isOffsetDateTimeNode() {
+        return deny();
     }
 
-    public OffsetDateTimeNode asOffsetDateTimeNode(){
+    public OffsetDateTimeNode asOffsetDateTimeNode() {
         throw new InvalidPathException("Expected offsetDateTime node");
     }
 
-
     private static boolean isPath(Object o) {
-        if(o == null || !(o instanceof String)){
+        if (o == null || !(o instanceof String)) {
             return false;
         }
         String str = o.toString().trim();
@@ -123,11 +120,11 @@ public abstract class ValueNode {
             return false;
         }
         char c0 = str.charAt(0);
-        if(c0 == '@' || c0 == '$'){
+        if (c0 == '@' || c0 == '$') {
             try {
                 PathCompiler.compile(str);
                 return true;
-            } catch(Exception e){
+            } catch (Exception e) {
                 return false;
             }
         }
@@ -135,7 +132,7 @@ public abstract class ValueNode {
     }
 
     private static boolean isJson(Object o) {
-        if(o == null || !(o instanceof String)){
+        if (o == null || !(o instanceof String)) {
             return false;
         }
         String str = o.toString().trim();
@@ -144,58 +141,68 @@ public abstract class ValueNode {
         }
         char c0 = str.charAt(0);
         char c1 = str.charAt(str.length() - 1);
-        if ((c0 == '[' && c1 == ']') || (c0 == '{' && c1 == '}')){
+        if ((c0 == '[' && c1 == ']') || (c0 == '{' && c1 == '}')) {
             try {
                 new JSONParser(JSONParser.MODE_PERMISSIVE).parse(str);
                 return true;
-            } catch(Exception e){
+            } catch (Exception e) {
                 return false;
             }
         }
         return false;
     }
 
-
-
     //----------------------------------------------------
     //
     // Factory methods
     //
     //----------------------------------------------------
-    public static ValueNode toValueNode(Object o){
-
-        if(o == null) return NULL_NODE;
-        if(o instanceof ValueNode) return (ValueNode)o;
-        if(o instanceof Class) return createClassNode((Class)o);
-        else if(isPath(o)) return new PathNode(o.toString(), false, false);
-        else if(isJson(o)) return createJsonNode(o.toString());
-        else if(o instanceof String) return createStringNode(o.toString(), true);
-        else if(o instanceof Character) return createStringNode(o.toString(), false);
-        else if(o instanceof Number) return createNumberNode(o.toString());
-        else if(o instanceof Boolean) return createBooleanNode(o.toString());
-        else if(o instanceof Pattern) return createPatternNode((Pattern)o);
-        else if (o instanceof OffsetDateTime) return createOffsetDateTimeNode(o.toString());  //workaround for issue: https://github.com/json-path/JsonPath/issues/613
-        else throw new JsonPathException("Could not determine value type");
-
+    public static ValueNode toValueNode(Object o) {
+        if (o == null)
+            return NULL_NODE;
+        if (o instanceof ValueNode)
+            return (ValueNode) o;
+        if (o instanceof Class)
+            return createClassNode((Class) o);
+        else if (isPath(o))
+            return new PathNode(o.toString(), false, false);
+        else if (isJson(o))
+            return createJsonNode(o.toString());
+        else if (o instanceof String)
+            return createStringNode(o.toString(), true);
+        else if (o instanceof Character)
+            return createStringNode(o.toString(), false);
+        else if (o instanceof Number)
+            return createNumberNode(o.toString());
+        else if (o instanceof Boolean)
+            return createBooleanNode(o.toString());
+        else if (o instanceof Pattern)
+            return createPatternNode((Pattern) o);
+        else if (//workaround for issue: https://github.com/json-path/JsonPath/issues/613
+        o instanceof OffsetDateTime)
+            //workaround for issue: https://github.com/json-path/JsonPath/issues/613
+            return createOffsetDateTimeNode(o.toString());
+        else
+            throw new JsonPathException("Could not determine value type");
     }
 
-    public static StringNode createStringNode(CharSequence charSequence, boolean escape){
+    public static StringNode createStringNode(CharSequence charSequence, boolean escape) {
         return new StringNode(charSequence, escape);
     }
 
-    public static ClassNode createClassNode(Class<?> clazz){
+    public static ClassNode createClassNode(Class<?> clazz) {
         return new ClassNode(clazz);
     }
 
-    public static NumberNode createNumberNode(CharSequence charSequence){
+    public static NumberNode createNumberNode(CharSequence charSequence) {
         return new NumberNode(charSequence);
     }
 
-    public static BooleanNode createBooleanNode(CharSequence charSequence){
+    public static BooleanNode createBooleanNode(CharSequence charSequence) {
         return Boolean.parseBoolean(charSequence.toString()) ? TRUE : FALSE;
     }
 
-    public static NullNode createNullNode(){
+    public static NullNode createNullNode() {
         return NULL_NODE;
     }
 
@@ -216,10 +223,9 @@ public abstract class ValueNode {
     }
 
     //workaround for issue: https://github.com/json-path/JsonPath/issues/613
-    public static OffsetDateTimeNode createOffsetDateTimeNode(CharSequence charSequence){
+    public static OffsetDateTimeNode createOffsetDateTimeNode(CharSequence charSequence) {
         return new OffsetDateTimeNode(charSequence);
     }
-
 
     public static UndefinedNode createUndefinedNode() {
         return UNDEFINED;
@@ -233,6 +239,7 @@ public abstract class ValueNode {
         return new PathNode(path);
     }
 
-
+    private boolean deny() {
+        return false;
+    }
 }
-

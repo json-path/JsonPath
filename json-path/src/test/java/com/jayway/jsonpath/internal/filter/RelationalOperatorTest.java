@@ -1,11 +1,9 @@
 package com.jayway.jsonpath.internal.filter;
 
 import static org.junit.Assert.*;
-
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
-
 import java.util.Locale;
 
 public class RelationalOperatorTest {
@@ -35,5 +33,4 @@ public class RelationalOperatorTest {
         assertEquals(RelationalOperator.IN, RelationalOperator.fromString("in"));
         assertEquals(RelationalOperator.IN, RelationalOperator.fromString("IN"));
     }
-
 }

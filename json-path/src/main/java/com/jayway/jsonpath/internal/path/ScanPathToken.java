@@ -17,11 +17,9 @@ package com.jayway.jsonpath.internal.path;
 import com.jayway.jsonpath.Option;
 import com.jayway.jsonpath.internal.PathRef;
 import com.jayway.jsonpath.spi.json.JsonProvider;
-
 import java.util.Collection;
 
 /**
- *
  */
 public class ScanPathToken extends PathToken {
 
@@ -30,10 +28,8 @@ public class ScanPathToken extends PathToken {
 
     @Override
     public void evaluate(String currentPath, PathRef parent, Object model, EvaluationContextImpl ctx) {
-
         PathToken pt = next();
-
-        walk(pt, currentPath, parent,  model, ctx, createScanPredicate(pt, ctx));
+        walk(pt, currentPath, parent, model, ctx, createScanPredicate(pt, ctx));
     }
 
     public static void walk(PathToken pt, String currentPath, PathRef parent, Object model, EvaluationContextImpl ctx, Predicate predicate) {
@@ -45,7 +41,6 @@ public class ScanPathToken extends PathToken {
     }
 
     public static void walkArray(PathToken pt, String currentPath, PathRef parent, Object model, EvaluationContextImpl ctx, Predicate predicate) {
-
         if (predicate.matches(model)) {
             if (pt.isLeaf()) {
                 pt.evaluate(currentPath, parent, model, ctx);
@@ -61,7 +56,6 @@ public class ScanPathToken extends PathToken {
                 }
             }
         }
-
         Iterable<?> models = ctx.jsonProvider().toIterable(model);
         int idx = 0;
         for (Object evalModel : models) {
@@ -72,12 +66,10 @@ public class ScanPathToken extends PathToken {
     }
 
     public static void walkObject(PathToken pt, String currentPath, PathRef parent, Object model, EvaluationContextImpl ctx, Predicate predicate) {
-
         if (predicate.matches(model)) {
             pt.evaluate(currentPath, parent, model, ctx);
         }
         Collection<String> properties = ctx.jsonProvider().getPropertyKeys(model);
-
         for (String property : properties) {
             String evalPath = currentPath + "['" + property + "']";
             Object propertyModel = ctx.jsonProvider().getMapValue(model, property);
@@ -101,7 +93,6 @@ public class ScanPathToken extends PathToken {
         }
     }
 
-
     @Override
     public boolean isTokenDefinite() {
         return false;
@@ -113,6 +104,7 @@ public class ScanPathToken extends PathToken {
     }
 
     private interface Predicate {
+
         boolean matches(Object model);
     }
 
@@ -125,7 +117,9 @@ public class ScanPathToken extends PathToken {
     };
 
     private static final class FilterPathTokenPredicate implements Predicate {
+
         private final EvaluationContextImpl ctx;
+
         private PredicatePathToken predicatePathToken;
 
         private FilterPathTokenPredicate(PathToken target, EvaluationContextImpl ctx) {
@@ -148,6 +142,7 @@ public class ScanPathToken extends PathToken {
     }
 
     private static final class ArrayPathTokenPredicate implements Predicate {
+
         private final EvaluationContextImpl ctx;
 
         private ArrayPathTokenPredicate(EvaluationContextImpl ctx) {
@@ -161,7 +156,9 @@ public class ScanPathToken extends PathToken {
     }
 
     private static final class PropertyPathTokenPredicate implements Predicate {
+
         private final EvaluationContextImpl ctx;
+
         private PropertyPathToken propertyPathToken;
 
         private PropertyPathTokenPredicate(PathToken target, EvaluationContextImpl ctx) {
@@ -171,35 +168,30 @@ public class ScanPathToken extends PathToken {
 
         @Override
         public boolean matches(Object model) {
-
-            if (! ctx.jsonProvider().isMap(model)) {
+            if (!ctx.jsonProvider().isMap(model)) {
                 return false;
             }
-
-//
-// The commented code below makes it really hard understand, use and predict the result
-// of deep scanning operations. It might be correct but was decided to be
-// left out until the behavior of REQUIRE_PROPERTIES is more strictly defined
-// in a deep scanning scenario. For details read conversation in commit
-// https://github.com/jayway/JsonPath/commit/1a72fc078deb16995e323442bfb681bd715ce45a#commitcomment-14616092
-//
-//            if (ctx.options().contains(Option.REQUIRE_PROPERTIES)) {
-//                // Have to require properties defined in path when an indefinite path is evaluated,
-//                // so have to go there and search for it.
-//                return true;
-//            }
-
-            if (! propertyPathToken.isTokenDefinite()) {
+            //
+            // The commented code below makes it really hard understand, use and predict the result
+            // of deep scanning operations. It might be correct but was decided to be
+            // left out until the behavior of REQUIRE_PROPERTIES is more strictly defined
+            // in a deep scanning scenario. For details read conversation in commit
+            // https://github.com/jayway/JsonPath/commit/1a72fc078deb16995e323442bfb681bd715ce45a#commitcomment-14616092
+            //
+            //            if (ctx.options().contains(Option.REQUIRE_PROPERTIES)) {
+            //                // Have to require properties defined in path when an indefinite path is evaluated,
+            //                // so have to go there and search for it.
+            //                return true;
+            //            }
+            if (!propertyPathToken.isTokenDefinite()) {
                 // It's responsibility of PropertyPathToken code to handle indefinite scenario of properties,
                 // so we'll allow it to do its job.
                 return true;
             }
-
             if (propertyPathToken.isLeaf() && ctx.options().contains(Option.DEFAULT_PATH_LEAF_TO_NULL)) {
                 // In case of DEFAULT_PATH_LEAF_TO_NULL missing properties is not a problem.
                 return true;
             }
-
             Collection<String> keys = ctx.jsonProvider().getPropertyKeys(model);
             return keys.containsAll(propertyPathToken.getProperties());
         }

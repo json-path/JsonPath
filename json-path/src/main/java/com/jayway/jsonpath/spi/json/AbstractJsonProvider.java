@@ -15,7 +15,6 @@
 package com.jayway.jsonpath.spi.json;
 
 import com.jayway.jsonpath.JsonPathException;
-
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
@@ -44,7 +43,7 @@ public abstract class AbstractJsonProvider implements JsonProvider {
     }
 
     @Deprecated
-    public final Object getArrayIndex(Object obj, int idx, boolean unwrap){
+    public final Object getArrayIndex(Object obj, int idx, boolean unwrap) {
         return getArrayIndex(obj, idx);
     }
 
@@ -53,14 +52,13 @@ public abstract class AbstractJsonProvider implements JsonProvider {
             throw new UnsupportedOperationException();
         } else {
             List l = (List) array;
-            if (index == l.size()){
+            if (index == l.size()) {
                 l.add(newValue);
-            }else {
+            } else {
                 l.set(index, newValue);
             }
         }
     }
-
 
     /**
      * Extracts a value from an map
@@ -69,9 +67,9 @@ public abstract class AbstractJsonProvider implements JsonProvider {
      * @param key property key
      * @return the map entry or {@link com.jayway.jsonpath.spi.json.JsonProvider#UNDEFINED} for missing properties
      */
-    public Object getMapValue(Object obj, String key){
+    public Object getMapValue(Object obj, String key) {
         Map m = (Map) obj;
-        if(!m.containsKey(key)){
+        if (!m.containsKey(key)) {
             return JsonProvider.UNDEFINED;
         } else {
             return m.get(key);
@@ -90,11 +88,9 @@ public abstract class AbstractJsonProvider implements JsonProvider {
         if (isMap(obj))
             ((Map) obj).put(key.toString(), value);
         else {
-            throw new JsonPathException("setProperty operation cannot be used with " + obj!=null?obj.getClass().getName():"null");
+            throw new JsonPathException("setProperty operation cannot be used with " + obj != null ? obj.getClass().getName() : "null");
         }
     }
-
-
 
     /**
      * Removes a value in an object or array
@@ -112,7 +108,6 @@ public abstract class AbstractJsonProvider implements JsonProvider {
             list.remove(index);
         }
     }
-
 
     /**
      * checks if object is a map (i.e. no array)
@@ -133,7 +128,7 @@ public abstract class AbstractJsonProvider implements JsonProvider {
     @SuppressWarnings("unchecked")
     public Collection<String> getPropertyKeys(Object obj) {
         if (isArray(obj)) {
-          throw new UnsupportedOperationException();
+            throw new UnsupportedOperationException();
         } else {
             return ((Map) obj).keySet();
         }
@@ -148,13 +143,12 @@ public abstract class AbstractJsonProvider implements JsonProvider {
     public int length(Object obj) {
         if (isArray(obj)) {
             return ((List) obj).size();
-        } else if (isMap(obj)){
+        } else if (isMap(obj)) {
             return getPropertyKeys(obj).size();
-        } else if(obj instanceof String){
-            return ((String)obj).length();
+        } else if (obj instanceof String) {
+            return ((String) obj).length();
         }
-        throw new JsonPathException("length operation cannot be applied to " + (obj != null ? obj.getClass().getName()
-                : "null"));
+        throw new JsonPathException("length operation cannot be applied to " + (obj != null ? obj.getClass().getName() : "null"));
     }
 
     /**
@@ -168,12 +162,11 @@ public abstract class AbstractJsonProvider implements JsonProvider {
         if (isArray(obj))
             return ((Iterable) obj);
         else
-            throw new JsonPathException("Cannot iterate over " + obj!=null?obj.getClass().getName():"null");
+            throw new JsonPathException("Cannot iterate over " + obj != null ? obj.getClass().getName() : "null");
     }
 
     @Override
     public Object unwrap(Object obj) {
         return obj;
     }
-
 }

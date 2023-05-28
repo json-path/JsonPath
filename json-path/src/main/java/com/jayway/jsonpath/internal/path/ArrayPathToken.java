@@ -17,7 +17,6 @@ package com.jayway.jsonpath.internal.path;
 import com.jayway.jsonpath.InvalidPathException;
 import com.jayway.jsonpath.Option;
 import com.jayway.jsonpath.PathNotFoundException;
-
 import static java.lang.String.format;
 
 public abstract class ArrayPathToken extends PathToken {
@@ -32,17 +31,15 @@ public abstract class ArrayPathToken extends PathToken {
      * @throws InvalidPathException if model is not an array and evaluation must be interrupted
      */
     protected boolean checkArrayModel(String currentPath, Object model, EvaluationContextImpl ctx) {
-        if (model == null){
-            if (!isUpstreamDefinite()
-                    || ctx.options().contains(Option.SUPPRESS_EXCEPTIONS)) {
+        if (model == null) {
+            if (!isUpstreamDefinite() || ctx.options().contains(Option.SUPPRESS_EXCEPTIONS)) {
                 return false;
             } else {
                 throw new PathNotFoundException("The path " + currentPath + " is null");
             }
         }
         if (!ctx.jsonProvider().isArray(model)) {
-            if (!isUpstreamDefinite()
-                    || ctx.options().contains(Option.SUPPRESS_EXCEPTIONS)) {
+            if (!isUpstreamDefinite() || ctx.options().contains(Option.SUPPRESS_EXCEPTIONS)) {
                 return false;
             } else {
                 throw new PathNotFoundException(format("Filter: %s can only be applied to arrays. Current context is: %s", toString(), model));

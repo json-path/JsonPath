@@ -9,9 +9,7 @@ import org.hamcrest.StringDescription;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
-
 import java.io.File;
-
 import static com.jayway.jsonpath.matchers.JsonPathMatchers.isJson;
 import static com.jayway.jsonpath.matchers.helpers.ResourceHelpers.resource;
 import static com.jayway.jsonpath.matchers.helpers.ResourceHelpers.resourceAsFile;
@@ -20,10 +18,15 @@ import static org.hamcrest.Matchers.*;
 import static org.junit.Assert.assertThat;
 
 public class IsJsonTest {
+
     private static final String VALID_JSON = resource("example.json");
+
     private static final String INVALID_JSON = "{ invalid-json }";
+
     private static final String BOOKS_JSON_STRING = resource("books.json");
+
     private static final File BOOKS_JSON_FILE = resourceAsFile("books.json");
+
     private static final Object BOOKS_JSON_PARSED = parseJson(BOOKS_JSON_STRING);
 
     @BeforeClass
@@ -66,7 +69,7 @@ public class IsJsonTest {
     public void shouldNotMatchInvalidJson() {
         assertThat(INVALID_JSON, not(isJson()));
         assertThat(new Object(), not(isJson()));
-        assertThat(new Object[]{}, not(isJson()));
+        assertThat(new Object[] {}, not(isJson()));
         assertThat("hi there", not(isJson()));
         assertThat(new Integer(42), not(isJson()));
         assertThat(Boolean.TRUE, not(isJson()));
@@ -138,5 +141,4 @@ public class IsJsonTest {
     private static Object parseJson(String json) {
         return Configuration.defaultConfiguration().jsonProvider().parse(json);
     }
-
 }

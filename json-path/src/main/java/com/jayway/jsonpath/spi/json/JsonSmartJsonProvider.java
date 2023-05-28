@@ -23,7 +23,6 @@ import net.minidev.json.JSONValue;
 import net.minidev.json.parser.JSONParser;
 import net.minidev.json.parser.ParseException;
 import net.minidev.json.writer.JsonReaderI;
-
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.UnsupportedEncodingException;
@@ -33,18 +32,18 @@ import java.util.Map;
 public class JsonSmartJsonProvider extends AbstractJsonProvider {
 
     private final int parseMode;
+
     private final JsonReaderI<?> mapper;
 
     public JsonSmartJsonProvider() {
         this(JSONParser.MODE_PERMISSIVE, JSONValue.defaultReader.DEFAULT_ORDERED);
     }
 
-    public JsonSmartJsonProvider(int parseMode){
+    public JsonSmartJsonProvider(int parseMode) {
         this(parseMode, JSONValue.defaultReader.DEFAULT_ORDERED);
-
     }
 
-    public JsonSmartJsonProvider(int parseMode, JsonReaderI<?> mapper){
+    public JsonSmartJsonProvider(int parseMode, JsonReaderI<?> mapper) {
         this.parseMode = parseMode;
         this.mapper = mapper;
     }
@@ -78,12 +77,11 @@ public class JsonSmartJsonProvider extends AbstractJsonProvider {
 
     @Override
     public String toJson(Object obj) {
-
         if (obj instanceof Map) {
             return JSONObject.toJSONString((Map<String, ?>) obj, JSONStyle.LT_COMPRESS);
         } else if (obj instanceof List) {
             return JSONArray.toJSONString((List<?>) obj, JSONStyle.LT_COMPRESS);
-        } else if (obj instanceof Number ||  obj instanceof Boolean){
+        } else if (obj instanceof Number || obj instanceof Boolean) {
             return JSONValue.toJSONString(obj);
         } else {
             throw new UnsupportedOperationException(obj.getClass().getName() + " can not be converted to JSON");
