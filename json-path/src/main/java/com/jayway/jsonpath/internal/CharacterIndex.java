@@ -116,14 +116,12 @@ public class CharacterIndex {
                     readPosition++;
                 }
             }
-            if (skipRegex) {
-                if (charAt(readPosition) == REGEX) {
-                    readPosition = nextIndexOfUnescaped(readPosition, REGEX);
-                    if (readPosition == -1) {
-                        throw new InvalidPathException("Could not find matching close for " + REGEX + " when parsing regex in : " + charSequence);
-                    }
-                    readPosition++;
+            if (skipRegex && charAt(readPosition) == REGEX) {
+                readPosition = nextIndexOfUnescaped(readPosition, REGEX);
+                if (readPosition == -1) {
+                    throw new InvalidPathException("Could not find matching close for " + REGEX + " when parsing regex in : " + charSequence);
                 }
+                readPosition++;
             }
             if (charAt(readPosition) == openChar) {
                 opened++;
