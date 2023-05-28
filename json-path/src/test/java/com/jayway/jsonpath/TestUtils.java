@@ -5,10 +5,11 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.fail;
 
 public final class TestUtils {
-    private TestUtils() {}
 
-    public static void assertEvaluationThrows(final String json, final String path,
-                                              Class<? extends JsonPathException> expected) {
+    private TestUtils() {
+    }
+
+    public static void assertEvaluationThrows(final String json, final String path, Class<? extends JsonPathException> expected) {
         assertEvaluationThrows(json, path, expected, Configuration.defaultConfiguration());
     }
 
@@ -20,8 +21,7 @@ public final class TestUtils {
      * @param expected expected exception class (reference comparison, not an instanceof)
      * @param conf conf to use during evaluation
      */
-    public static void assertEvaluationThrows(final String json, final String path,
-                                              Class<? extends JsonPathException> expected, final Configuration conf) {
+    public static void assertEvaluationThrows(final String json, final String path, Class<? extends JsonPathException> expected, final Configuration conf) {
         try {
             using(conf).parse(json).read(path);
             fail("Should throw " + expected.getName());

@@ -31,10 +31,9 @@ public class JacksonMappingProvider implements MappingProvider {
         this.objectMapper = objectMapper;
     }
 
-
     @Override
     public <T> T map(Object source, Class<T> targetType, Configuration configuration) {
-        if(source == null){
+        if (source == null) {
             return null;
         }
         try {
@@ -42,21 +41,18 @@ public class JacksonMappingProvider implements MappingProvider {
         } catch (Exception e) {
             throw new MappingException(e);
         }
-
     }
 
     @Override
     public <T> T map(Object source, final TypeRef<T> targetType, Configuration configuration) {
-        if(source == null){
+        if (source == null) {
             return null;
         }
         JavaType type = objectMapper.getTypeFactory().constructType(targetType.getType());
-
         try {
-            return (T)objectMapper.convertValue(source, type);
+            return (T) objectMapper.convertValue(source, type);
         } catch (Exception e) {
             throw new MappingException(e);
         }
-
     }
 }

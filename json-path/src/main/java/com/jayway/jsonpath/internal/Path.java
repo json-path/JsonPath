@@ -17,10 +17,8 @@ package com.jayway.jsonpath.internal;
 import com.jayway.jsonpath.Configuration;
 
 /**
- *
  */
 public interface Path {
-
 
     /**
      * Evaluates this path
@@ -44,19 +42,16 @@ public interface Path {
     EvaluationContext evaluate(Object document, Object rootDocument, Configuration configuration, boolean forUpdate);
 
     /**
-     *
      * @return true id this path is definite
      */
     boolean isDefinite();
 
     /**
-     *
      * @return true id this path is a function
      */
     boolean isFunctionPath();
 
     /**
-     *
      * @return true id this path is starts with '$' and false if the path starts with '@'
      */
     boolean isRootPath();

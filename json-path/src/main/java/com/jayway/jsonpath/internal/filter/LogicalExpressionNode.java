@@ -1,32 +1,33 @@
 package com.jayway.jsonpath.internal.filter;
 
 import com.jayway.jsonpath.internal.Utils;
-
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
 public class LogicalExpressionNode extends ExpressionNode {
+
     protected List<ExpressionNode> chain = new ArrayList<ExpressionNode>();
+
     private final LogicalOperator operator;
 
     public static ExpressionNode createLogicalNot(ExpressionNode op) {
-       return new LogicalExpressionNode(op, LogicalOperator.NOT, null);
+        return new LogicalExpressionNode(op, LogicalOperator.NOT, null);
     }
 
-    public static LogicalExpressionNode createLogicalOr(ExpressionNode left,ExpressionNode right){
+    public static LogicalExpressionNode createLogicalOr(ExpressionNode left, ExpressionNode right) {
         return new LogicalExpressionNode(left, LogicalOperator.OR, right);
     }
 
-    public static LogicalExpressionNode createLogicalOr(Collection<ExpressionNode> operands){
+    public static LogicalExpressionNode createLogicalOr(Collection<ExpressionNode> operands) {
         return new LogicalExpressionNode(LogicalOperator.OR, operands);
     }
 
-    public static LogicalExpressionNode createLogicalAnd(ExpressionNode left,ExpressionNode right){
+    public static LogicalExpressionNode createLogicalAnd(ExpressionNode left, ExpressionNode right) {
         return new LogicalExpressionNode(left, LogicalOperator.AND, right);
     }
 
-    public static LogicalExpressionNode createLogicalAnd(Collection<ExpressionNode> operands){
+    public static LogicalExpressionNode createLogicalAnd(Collection<ExpressionNode> operands) {
         return new LogicalExpressionNode(LogicalOperator.AND, operands);
     }
 
@@ -41,11 +42,11 @@ public class LogicalExpressionNode extends ExpressionNode {
         this.operator = operator;
     }
 
-    public LogicalExpressionNode and(LogicalExpressionNode other){
+    public LogicalExpressionNode and(LogicalExpressionNode other) {
         return createLogicalAnd(this, other);
     }
 
-    public LogicalExpressionNode or(LogicalExpressionNode other){
+    public LogicalExpressionNode or(LogicalExpressionNode other) {
         return createLogicalOr(this, other);
     }
 
@@ -65,16 +66,16 @@ public class LogicalExpressionNode extends ExpressionNode {
 
     @Override
     public boolean apply(PredicateContext ctx) {
-        if(operator == LogicalOperator.OR){
+        if (operator == LogicalOperator.OR) {
             for (ExpressionNode expression : chain) {
-                if(expression.apply(ctx)){
+                if (expression.apply(ctx)) {
                     return true;
                 }
             }
             return false;
         } else if (operator == LogicalOperator.AND) {
             for (ExpressionNode expression : chain) {
-                if(!expression.apply(ctx)){
+                if (!expression.apply(ctx)) {
                     return false;
                 }
             }
@@ -84,5 +85,4 @@ public class LogicalExpressionNode extends ExpressionNode {
             return !expression.apply(ctx);
         }
     }
-
 }

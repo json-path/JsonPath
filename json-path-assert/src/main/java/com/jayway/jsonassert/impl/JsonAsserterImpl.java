@@ -1,12 +1,10 @@
 package com.jayway.jsonassert.impl;
 
-
 import com.jayway.jsonassert.JsonAsserter;
 import com.jayway.jsonpath.Configuration;
 import com.jayway.jsonpath.JsonPath;
 import com.jayway.jsonpath.PathNotFoundException;
 import org.hamcrest.Matcher;
-
 import static java.lang.String.format;
 import static org.hamcrest.Matchers.*;
 
@@ -29,7 +27,6 @@ public class JsonAsserterImpl implements JsonAsserter {
     @SuppressWarnings("unchecked")
     public <T> JsonAsserter assertThat(String path, Matcher<T> matcher) {
         T obj = null;
-        
         try {
             obj = JsonPath.<T>read(jsonObject, path);
         } catch (Exception e) {
@@ -37,9 +34,7 @@ public class JsonAsserterImpl implements JsonAsserter {
             assertionError.initCause(e);
             throw assertionError;
         }
-
         if (!matcher.matches(obj)) {
-
             throw new AssertionError(String.format("JSON path [%s] doesn't match.\nExpected:\n%s\nActual:\n%s", path, matcher.toString(), obj));
         }
         return this;
@@ -68,10 +63,8 @@ public class JsonAsserterImpl implements JsonAsserter {
      * {@inheritDoc}
      */
     public JsonAsserter assertNotDefined(String path) {
-
         try {
             Configuration c = Configuration.defaultConfiguration();
-
             JsonPath.using(c).parse(jsonObject).read(path);
             throw new AssertionError(format("Document contains the path <%s> but was expected not to.", path));
         } catch (PathNotFoundException e) {
@@ -83,9 +76,7 @@ public class JsonAsserterImpl implements JsonAsserter {
     public JsonAsserter assertNotDefined(String path, String message) {
         try {
             Configuration c = Configuration.defaultConfiguration();
-
             JsonPath.using(c).parse(jsonObject).read(path);
-
             throw new AssertionError(format("Document contains the path <%s> but was expected not to.", path));
         } catch (PathNotFoundException e) {
         }
@@ -106,7 +97,7 @@ public class JsonAsserterImpl implements JsonAsserter {
 
     @Override
     public <T> JsonAsserter assertEquals(String path, T expected, String message) {
-        return assertThat(path, equalTo(expected),message);
+        return assertThat(path, equalTo(expected), message);
     }
 
     /**
@@ -127,5 +118,4 @@ public class JsonAsserterImpl implements JsonAsserter {
     public JsonAsserter and() {
         return this;
     }
-
 }

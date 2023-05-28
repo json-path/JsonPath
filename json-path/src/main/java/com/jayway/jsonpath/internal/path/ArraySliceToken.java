@@ -32,7 +32,7 @@ public class ArraySliceToken extends ArrayPathToken {
     public void evaluate(String currentPath, PathRef parent, Object model, EvaluationContextImpl ctx) {
         if (!checkArrayModel(currentPath, model, ctx))
             return;
-        switch (operation.operation()) {
+        switch(operation.operation()) {
             case SLICE_FROM:
                 sliceFrom(currentPath, parent, model, ctx);
                 break;
@@ -53,9 +53,7 @@ public class ArraySliceToken extends ArrayPathToken {
             from = length + from;
         }
         from = Math.max(0, from);
-
         logger.debug("Slice from index on array with length: {}. From index: {} to: {}. Input: {}", length, from, length - 1, toString());
-
         if (length == 0 || from >= length) {
             return;
         }
@@ -68,15 +66,11 @@ public class ArraySliceToken extends ArrayPathToken {
         int length = ctx.jsonProvider().length(model);
         int from = operation.from();
         int to = operation.to();
-
         to = Math.min(length, to);
-
         if (from >= to || length == 0) {
             return;
         }
-
         logger.debug("Slice between indexes on array with length: {}. From index: {} to: {}. Input: {}", length, from, to, toString());
-
         for (int i = from; i < to; i++) {
             handleArrayIndex(i, currentPath, model, ctx);
         }
@@ -93,9 +87,7 @@ public class ArraySliceToken extends ArrayPathToken {
             to = length + to;
         }
         to = Math.min(length, to);
-
         logger.debug("Slice to index on array with length: {}. From index: 0 to: {}. Input: {}", length, to, toString());
-
         for (int i = 0; i < to; i++) {
             handleArrayIndex(i, currentPath, model, ctx);
         }
@@ -110,5 +102,4 @@ public class ArraySliceToken extends ArrayPathToken {
     public boolean isTokenDefinite() {
         return false;
     }
-
 }

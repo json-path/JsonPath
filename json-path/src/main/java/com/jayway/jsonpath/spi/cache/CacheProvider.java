@@ -1,21 +1,21 @@
 package com.jayway.jsonpath.spi.cache;
 
 import com.jayway.jsonpath.JsonPathException;
-
 import java.util.concurrent.atomic.AtomicReferenceFieldUpdater;
-
 import static com.jayway.jsonpath.internal.Utils.notNull;
 
 public class CacheProvider {
 
-    private static final AtomicReferenceFieldUpdater<CacheProvider, Cache> UPDATER =
-        AtomicReferenceFieldUpdater.newUpdater(CacheProvider.class, Cache.class, "cache");
+    private static final AtomicReferenceFieldUpdater<CacheProvider, Cache> UPDATER = AtomicReferenceFieldUpdater.newUpdater(CacheProvider.class, Cache.class, "cache");
+
     private static final CacheProvider instance = new CacheProvider();
 
     private volatile Cache cache;
 
     private static class CacheHolder {
+
         static final Cache CACHE;
+
         static {
             Cache cache = CacheProvider.instance.cache;
             // the application is trying to use the cache
@@ -34,7 +34,7 @@ public class CacheProvider {
         }
     }
 
-    public static void setCache(Cache cache){
+    public static void setCache(Cache cache) {
         notNull(cache, "Cache may not be null");
         if (!UPDATER.compareAndSet(instance, null, cache)) {
             throw new JsonPathException("Cache provider must be configured before cache is accessed and must not be registered twice.");
@@ -45,8 +45,7 @@ public class CacheProvider {
         return CacheHolder.CACHE;
     }
 
-
-    private static Cache getDefaultCache(){
+    private static Cache getDefaultCache() {
         return new LRUCache(400);
         //return new NOOPCache();
     }

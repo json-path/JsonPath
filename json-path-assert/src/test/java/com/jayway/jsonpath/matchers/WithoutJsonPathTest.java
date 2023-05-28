@@ -3,20 +3,15 @@ package com.jayway.jsonpath.matchers;
 import com.jayway.jsonpath.JsonPath;
 import com.jayway.jsonpath.ReadContext;
 import org.junit.Test;
-
 import static com.jayway.jsonpath.JsonPath.compile;
 import static com.jayway.jsonpath.matchers.JsonPathMatchers.withoutJsonPath;
 import static org.hamcrest.Matchers.*;
 import static org.junit.Assert.assertThat;
 
 public class WithoutJsonPathTest {
-    private static final String JSON_STRING = "{" +
-            "\"name\": \"Jessie\"," +
-            "\"flag\": false," +
-            "\"empty_array\": []," +
-            "\"empty_object\": {}," +
-            "\"none\": null" +
-            "}";
+
+    private static final String JSON_STRING = "{" + "\"name\": \"Jessie\"," + "\"flag\": false," + "\"empty_array\": []," + "\"empty_object\": {}," + "\"none\": null" + "}";
+
     private static final ReadContext JSON = JsonPath.parse(JSON_STRING);
 
     @Test
@@ -37,8 +32,6 @@ public class WithoutJsonPathTest {
 
     @Test
     public void shouldBeDescriptive() {
-        assertThat(withoutJsonPath("$.name"),
-                hasToString(equalTo("without json path \"$['name']\"")));
+        assertThat(withoutJsonPath("$.name"), hasToString(equalTo("without json path \"$['name']\"")));
     }
-
 }

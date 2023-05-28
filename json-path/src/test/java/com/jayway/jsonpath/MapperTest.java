@@ -1,16 +1,13 @@
 package com.jayway.jsonpath;
 
 import org.junit.Test;
-
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.util.Date;
-
 import static com.jayway.jsonpath.JsonPath.parse;
 import static org.assertj.core.api.Assertions.assertThat;
 
 public class MapperTest extends BaseTest {
-
 
     @Test
     public void an_Integer_can_be_converted_to_a_Long() {
@@ -40,7 +37,7 @@ public class MapperTest extends BaseTest {
     @Test
     public void a_Long_can_be_converted_to_a_Date() {
         Date now = new Date();
-        assertThat(parse("{\"val\": "+now.getTime()+"}").read("val", Date.class)).isEqualTo(now);
+        assertThat(parse("{\"val\": " + now.getTime() + "}").read("val", Date.class)).isEqualTo(now);
     }
 
     @Test

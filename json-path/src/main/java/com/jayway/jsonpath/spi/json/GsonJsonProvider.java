@@ -22,7 +22,6 @@ import com.google.gson.JsonParser;
 import com.google.gson.JsonPrimitive;
 import com.jayway.jsonpath.InvalidJsonException;
 import com.jayway.jsonpath.JsonPathException;
-
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.UnsupportedEncodingException;
@@ -36,6 +35,7 @@ import java.util.Map;
 public class GsonJsonProvider extends AbstractJsonProvider {
 
     private static final JsonParser PARSER = new JsonParser();
+
     private final Gson gson;
 
     /**
@@ -55,21 +55,16 @@ public class GsonJsonProvider extends AbstractJsonProvider {
     }
 
     public Object unwrap(final Object o) {
-
         if (o == null) {
             return null;
         }
-
         if (!(o instanceof JsonElement)) {
             return o;
         }
-
         JsonElement e = (JsonElement) o;
-
         if (e.isJsonNull()) {
             return null;
         } else if (e.isJsonPrimitive()) {
-
             JsonPrimitive p = e.getAsJsonPrimitive();
             if (p.isString()) {
                 return p.getAsString();
@@ -79,28 +74,21 @@ public class GsonJsonProvider extends AbstractJsonProvider {
                 return unwrapNumber(p.getAsNumber());
             }
         }
-
         return o;
     }
 
     private static boolean isPrimitiveNumber(final Number n) {
-        return n instanceof Integer ||
-                n instanceof Float ||
-                n instanceof Double ||
-                n instanceof Long ||
-                n instanceof BigDecimal ||
-                n instanceof BigInteger;
+        return n instanceof Integer || n instanceof Float || n instanceof Double || n instanceof Long || n instanceof BigDecimal || n instanceof BigInteger;
     }
 
     private static Number unwrapNumber(final Number n) {
         Number unwrapped;
-
         if (!isPrimitiveNumber(n)) {
             BigDecimal bigDecimal = new BigDecimal(n.toString());
             if (bigDecimal.scale() <= 0) {
                 if (bigDecimal.abs().compareTo(new BigDecimal(Integer.MAX_VALUE)) <= 0) {
                     unwrapped = bigDecimal.intValue();
-                } else if (bigDecimal.abs().compareTo(new BigDecimal(Long.MAX_VALUE)) <= 0){
+                } else if (bigDecimal.abs().compareTo(new BigDecimal(Long.MAX_VALUE)) <= 0) {
                     unwrapped = bigDecimal.longValue();
                 } else {
                     unwrapped = bigDecimal;
@@ -126,7 +114,6 @@ public class GsonJsonProvider extends AbstractJsonProvider {
 
     @Override
     public Object parse(final InputStream jsonStream, final String charset) throws InvalidJsonException {
-
         try {
             return PARSER.parse(new InputStreamReader(jsonStream, charset));
         } catch (UnsupportedEncodingException e) {
@@ -196,7 +183,6 @@ public class GsonJsonProvider extends AbstractJsonProvider {
             } else {
                 index = array.size();
             }
-
             if (index == array.size()) {
                 array.add(createJsonElement(value));
             } else {
@@ -218,7 +204,6 @@ public class GsonJsonProvider extends AbstractJsonProvider {
 
     @Override
     public boolean isMap(final Object obj) {
-
         // return (obj instanceof JsonObject || obj instanceof Map);
         return (obj instanceof JsonObject);
     }
@@ -229,7 +214,6 @@ public class GsonJsonProvider extends AbstractJsonProvider {
         for (Map.Entry<String, JsonElement> entry : toJsonObject(obj).entrySet()) {
             keys.add(entry.getKey());
         }
-
         return keys;
     }
 
@@ -247,8 +231,7 @@ public class GsonJsonProvider extends AbstractJsonProvider {
                 }
             }
         }
-        throw new JsonPathException("length operation can not applied to " + (obj != null ? obj.getClass().getName()
-                                                                                         : "null"));
+        throw new JsonPathException("length operation can not applied to " + (obj != null ? obj.getClass().getName() : "null"));
     }
 
     @Override
@@ -258,7 +241,6 @@ public class GsonJsonProvider extends AbstractJsonProvider {
         for (Object o : arr) {
             values.add(unwrap(o));
         }
-
         return values;
     }
 

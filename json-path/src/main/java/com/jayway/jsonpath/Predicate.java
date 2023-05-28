@@ -17,7 +17,6 @@ package com.jayway.jsonpath;
 import com.jayway.jsonpath.spi.mapper.MappingException;
 
 /**
- *
  */
 public interface Predicate {
 

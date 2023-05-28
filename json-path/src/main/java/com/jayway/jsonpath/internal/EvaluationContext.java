@@ -15,14 +15,12 @@
 package com.jayway.jsonpath.internal;
 
 import com.jayway.jsonpath.Configuration;
-
 import java.util.Collection;
 import java.util.List;
 
 public interface EvaluationContext {
 
     /**
-     *
      * @return the configuration used for this evaluation
      */
     Configuration configuration();
@@ -52,14 +50,12 @@ public interface EvaluationContext {
      */
     <T> T getValue(boolean unwrap);
 
-
     /**
      * Returns the list of formalized paths that represent the result of the evaluation
      * @param <T>
      * @return list of paths
      */
     <T> T getPath();
-
 
     /**
      * Convenience method to get list of hits as String path representations
@@ -69,5 +65,4 @@ public interface EvaluationContext {
     List<String> getPathList();
 
     Collection<PathRef> updateOperations();
-
 }

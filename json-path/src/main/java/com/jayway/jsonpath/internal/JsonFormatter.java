@@ -21,9 +21,13 @@ public class JsonFormatter {
     private static final String NEW_LINE = System.getProperty("line.separator");
 
     private static final int MODE_SINGLE = 100;
+
     private static final int MODE_DOUBLE = 101;
+
     private static final int MODE_ESCAPE_SINGLE = 102;
+
     private static final int MODE_ESCAPE_DOUBLE = 103;
+
     private static final int MODE_BETWEEN = 104;
 
     private static void appendIndent(StringBuilder sb, int count) {
@@ -31,19 +35,15 @@ public class JsonFormatter {
     }
 
     public static String prettyPrint(String input) {
-
         input = input.replaceAll("[\\r\\n]", "");
-
         StringBuilder output = new StringBuilder(input.length() * 2);
         int mode = MODE_BETWEEN;
         int depth = 0;
-
         for (int i = 0; i < input.length(); ++i) {
             char ch = input.charAt(i);
-
-            switch (mode) {
+            switch(mode) {
                 case MODE_BETWEEN:
-                    switch (ch) {
+                    switch(ch) {
                         case '{':
                         case '[':
                             output.append(ch);
@@ -89,7 +89,7 @@ public class JsonFormatter {
                     break;
                 case MODE_SINGLE:
                     output.append(ch);
-                    switch (ch) {
+                    switch(ch) {
                         case '\'':
                             mode = MODE_BETWEEN;
                             break;
@@ -100,7 +100,7 @@ public class JsonFormatter {
                     break;
                 case MODE_DOUBLE:
                     output.append(ch);
-                    switch (ch) {
+                    switch(ch) {
                         case '"':
                             mode = MODE_BETWEEN;
                             break;

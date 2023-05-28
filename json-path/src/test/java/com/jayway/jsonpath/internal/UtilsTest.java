@@ -18,7 +18,6 @@ public class UtilsTest {
         strings.add("foo");
         strings.add("bar");
         strings.add("baz");
-
         Assert.assertEquals("foo,bar,baz", Utils.join(",", strings));
         Assert.assertEquals("", Utils.join(",", new ArrayList<String>()));
     }
@@ -36,17 +35,13 @@ public class UtilsTest {
     @Test
     public void testEscape() {
         Assert.assertNull(Utils.escape(null, true));
-
-        Assert.assertEquals("\\\\f\\'o\\\"o\\rb\\fa\\t\\nr\\bb\\/a",
-                Utils.escape("\\f\'o\"o\rb\fa\t\nr\bb/a", true));
-        Assert.assertEquals("\\uFFFF\\u0FFF\\u00FF\\u000F\\u0010",
-                Utils.escape("\uffff\u0fff\u00ff\u000f\u0010", true));
+        Assert.assertEquals("\\\\f\\'o\\\"o\\rb\\fa\\t\\nr\\bb\\/a", Utils.escape("\\f\'o\"o\rb\fa\t\nr\bb/a", true));
+        Assert.assertEquals("\\uFFFF\\u0FFF\\u00FF\\u000F\\u0010", Utils.escape("\uffff\u0fff\u00ff\u000f\u0010", true));
     }
 
     @Test
     public void testUnescape() {
         Assert.assertNull(Utils.unescape(null));
-
         Assert.assertEquals("foo", Utils.unescape("foo"));
         Assert.assertEquals("\\", Utils.unescape("\\"));
         Assert.assertEquals("\\", Utils.unescape("\\\\"));
@@ -77,7 +72,6 @@ public class UtilsTest {
     public void testIsEmpty() {
         Assert.assertTrue(Utils.isEmpty(null));
         Assert.assertTrue(Utils.isEmpty(""));
-
         Assert.assertFalse(Utils.isEmpty("foo"));
     }
 
@@ -133,7 +127,6 @@ public class UtilsTest {
     @Test
     public void testOnlyOneIsTrueNonThrow() {
         Assert.assertTrue(Utils.onlyOneIsTrueNonThrow(true));
-
         Assert.assertFalse(Utils.onlyOneIsTrueNonThrow(true, true, true));
         Assert.assertFalse(Utils.onlyOneIsTrueNonThrow(true, true, false));
         Assert.assertFalse(Utils.onlyOneIsTrueNonThrow(false, false, false));
@@ -142,8 +135,7 @@ public class UtilsTest {
     @Test
     public void testNotEmpty() {
         Assert.assertEquals("bar", Utils.notEmpty("bar", "foo", 1, 2, 3));
-        Assert.assertEquals("baz",
-                Utils.notEmpty("baz", "bar", "b", "a", "r"));
+        Assert.assertEquals("baz", Utils.notEmpty("baz", "bar", "b", "a", "r"));
     }
 
     @Test
@@ -161,7 +153,6 @@ public class UtilsTest {
     @Test
     public void testToString() {
         Assert.assertNull(Utils.toString(null));
-
         Assert.assertEquals("", Utils.toString(""));
         Assert.assertEquals("foo", Utils.toString("foo"));
         Assert.assertEquals("123", Utils.toString(123));

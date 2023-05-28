@@ -3,13 +3,11 @@ package com.jayway.jsonpath.internal;
 import com.jayway.jsonpath.Configuration;
 import com.jayway.jsonpath.DocumentContext;
 import com.jayway.jsonpath.ParseContext;
-
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
-
 import static com.jayway.jsonpath.internal.Utils.notEmpty;
 import static com.jayway.jsonpath.internal.Utils.notNull;
 
@@ -86,5 +84,4 @@ public class ParseContextImpl implements ParseContext {
             Utils.closeQuietly(fis);
         }
     }
-
 }

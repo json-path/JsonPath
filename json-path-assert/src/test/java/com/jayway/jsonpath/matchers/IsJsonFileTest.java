@@ -8,9 +8,7 @@ import org.hamcrest.StringDescription;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
-
 import java.io.File;
-
 import static com.jayway.jsonpath.matchers.JsonPathMatchers.isJsonFile;
 import static com.jayway.jsonpath.matchers.helpers.ResourceHelpers.resourceAsFile;
 import static com.jayway.jsonpath.matchers.helpers.TestingMatchers.*;
@@ -18,7 +16,9 @@ import static org.hamcrest.Matchers.*;
 import static org.junit.Assert.assertThat;
 
 public class IsJsonFileTest {
+
     private static final File BOOKS_JSON = resourceAsFile("books.json");
+
     private static final File INVALID_JSON = resourceAsFile("invalid.json");
 
     @BeforeClass

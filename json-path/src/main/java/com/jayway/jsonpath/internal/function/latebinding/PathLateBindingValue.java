@@ -16,7 +16,6 @@ package com.jayway.jsonpath.internal.function.latebinding;
 
 import com.jayway.jsonpath.Configuration;
 import com.jayway.jsonpath.internal.Path;
-
 import java.util.Objects;
 
 /**
@@ -24,13 +23,17 @@ import java.util.Objects;
  * date such that we can operate on a dynamically changing value.
  *
  * Acts like a lambda function with references, but since we're supporting JDK 6+, we're left doing this...
- *
  */
 public class PathLateBindingValue implements ILateBindingValue {
+
     private final Path path;
+
     private final String rootDocument;
+
     private final Configuration configuration;
+
     private final Object result;
+
     public PathLateBindingValue(final Path path, final Object rootDocument, final Configuration configuration) {
         this.path = path;
         this.rootDocument = rootDocument.toString();
@@ -39,7 +42,6 @@ public class PathLateBindingValue implements ILateBindingValue {
     }
 
     /**
-     *
      * @return the late value
      */
     public Object get() {
@@ -48,11 +50,11 @@ public class PathLateBindingValue implements ILateBindingValue {
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+        if (this == o)
+            return true;
+        if (o == null || getClass() != o.getClass())
+            return false;
         PathLateBindingValue that = (PathLateBindingValue) o;
-        return Objects.equals(path, that.path) &&
-                rootDocument.equals(that.rootDocument) &&
-                Objects.equals(configuration, that.configuration);
+        return Objects.equals(path, that.path) && rootDocument.equals(that.rootDocument) && Objects.equals(configuration, that.configuration);
     }
 }

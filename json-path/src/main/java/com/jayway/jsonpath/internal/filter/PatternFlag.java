@@ -3,6 +3,7 @@ package com.jayway.jsonpath.internal.filter;
 import java.util.regex.Pattern;
 
 public enum PatternFlag {
+
     UNIX_LINES(Pattern.UNIX_LINES, 'd'),
     CASE_INSENSITIVE(Pattern.CASE_INSENSITIVE, 'i'),
     COMMENTS(Pattern.COMMENTS, 'x'),
@@ -12,6 +13,7 @@ public enum PatternFlag {
     UNICODE_CHARACTER_CLASS(Pattern.UNICODE_CHARACTER_CLASS, 'U');
 
     private final int code;
+
     private final char flag;
 
     private PatternFlag(int code, char flag) {

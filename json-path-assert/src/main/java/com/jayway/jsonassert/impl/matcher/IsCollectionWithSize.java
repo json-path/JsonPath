@@ -31,15 +31,14 @@ package com.jayway.jsonassert.impl.matcher;
 
 import org.hamcrest.Description;
 import org.hamcrest.Matcher;
-
 import java.util.Collection;
-
 import static org.hamcrest.core.IsEqual.equalTo;
 
 /**
  * Matches if collection size satisfies a nested matcher.
  */
 public class IsCollectionWithSize<E> extends CollectionMatcher<Collection<? extends E>> {
+
     private final Matcher<? super Integer> sizeMatcher;
 
     public IsCollectionWithSize(Matcher<? super Integer> sizeMatcher) {
@@ -53,8 +52,7 @@ public class IsCollectionWithSize<E> extends CollectionMatcher<Collection<? exte
 
     @Override
     public void describeTo(Description description) {
-        description.appendText("a collection with size ")
-            .appendDescriptionOf(sizeMatcher);
+        description.appendText("a collection with size ").appendDescriptionOf(sizeMatcher);
     }
 
     /**

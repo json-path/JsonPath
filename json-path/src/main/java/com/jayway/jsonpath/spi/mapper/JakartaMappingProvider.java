@@ -32,10 +32,8 @@ import java.util.Map;
 import java.util.NoSuchElementException;
 import java.util.Queue;
 import java.util.Set;
-
 import com.jayway.jsonpath.Configuration;
 import com.jayway.jsonpath.TypeRef;
-
 import jakarta.json.JsonArray;
 import jakarta.json.JsonArrayBuilder;
 import jakarta.json.JsonException;
@@ -55,6 +53,7 @@ import jakarta.json.stream.JsonParser;
 public class JakartaMappingProvider implements MappingProvider {
 
     private final Jsonb jsonb;
+
     private Method jsonToClassMethod, jsonToTypeMethod;
 
     public JakartaMappingProvider() {
@@ -157,7 +156,7 @@ public class JakartaMappingProvider implements MappingProvider {
                     try {
                         JsonParser jsonParser = new JsonStructureToParserAdapter((JsonStructure) source);
                         return jsonToClassMethod.invoke(jsonb, jsonParser, (Class<?>) targetType);
-                    } catch (Exception e){
+                    } catch (Exception e) {
                         throw new MappingException(e);
                     }
                 } else {
@@ -168,7 +167,7 @@ public class JakartaMappingProvider implements MappingProvider {
                         // it to data object of given class.
                         String json = source.toString();
                         return jsonb.fromJson(json, (Class<?>) targetType);
-                    } catch (JsonbException e){
+                    } catch (JsonbException e) {
                         throw new MappingException(e);
                     }
                 }
@@ -177,7 +176,7 @@ public class JakartaMappingProvider implements MappingProvider {
                     try {
                         JsonParser jsonParser = new JsonStructureToParserAdapter((JsonStructure) source);
                         return jsonToTypeMethod.invoke(jsonb, jsonParser, (Type) targetType);
-                    } catch (Exception e){
+                    } catch (Exception e) {
                         throw new MappingException(e);
                     }
                 } else {
@@ -188,7 +187,7 @@ public class JakartaMappingProvider implements MappingProvider {
                         // the JSON string to data object of given type.
                         String json = source.toString();
                         return jsonb.fromJson(json, (Type) targetType);
-                    } catch (JsonbException e){
+                    } catch (JsonbException e) {
                         throw new MappingException(e);
                     }
                 }
@@ -217,7 +216,6 @@ public class JakartaMappingProvider implements MappingProvider {
         } else if (BigDecimal.class.equals(targetType)) {
             return (T) jsonNumber.bigDecimalValue();
         }
-
         String className = targetType.getSimpleName();
         throw new MappingException("JSON integral number cannot be mapped to " + className);
     }
@@ -237,7 +235,6 @@ public class JakartaMappingProvider implements MappingProvider {
         } else if (BigDecimal.class.equals(targetType)) {
             return (T) jsonNumber.bigDecimalValue();
         }
-
         String className = targetType.getSimpleName();
         throw new MappingException("JSON decimal number cannot be mapped to " + className);
     }
@@ -249,35 +246,35 @@ public class JakartaMappingProvider implements MappingProvider {
         if (!(jsonValue instanceof JsonValue)) {
             return jsonValue;
         }
-        switch (((JsonValue) jsonValue).getValueType()) {
-        case ARRAY:
-        	// TODO do we unwrap JsonObjectArray proxies?
-            //return ((JsonArray) jsonValue).getValuesAs(JsonValue.class);
-            return ((JsonArray) jsonValue).getValuesAs((JsonValue v) -> unwrapJsonValue(v));
-        case OBJECT:
-            throw new IllegalArgumentException("Use map() method to databind a JsonObject");
-        case STRING:
-            return ((JsonString) jsonValue).getString();
-        case NUMBER:
-            if (((JsonNumber) jsonValue).isIntegral()) {
-                //return ((JsonNumber) jsonValue).bigIntegerValueExact();
-                try {
-                    return ((JsonNumber) jsonValue).intValueExact();
-                } catch (ArithmeticException e) {
-                    return ((JsonNumber) jsonValue).longValueExact();
+        switch(((JsonValue) jsonValue).getValueType()) {
+            case ARRAY:
+                // TODO do we unwrap JsonObjectArray proxies?
+                //return ((JsonArray) jsonValue).getValuesAs(JsonValue.class);
+                return ((JsonArray) jsonValue).getValuesAs((JsonValue v) -> unwrapJsonValue(v));
+            case OBJECT:
+                throw new IllegalArgumentException("Use map() method to databind a JsonObject");
+            case STRING:
+                return ((JsonString) jsonValue).getString();
+            case NUMBER:
+                if (((JsonNumber) jsonValue).isIntegral()) {
+                    //return ((JsonNumber) jsonValue).bigIntegerValueExact();
+                    try {
+                        return ((JsonNumber) jsonValue).intValueExact();
+                    } catch (ArithmeticException e) {
+                        return ((JsonNumber) jsonValue).longValueExact();
+                    }
+                } else {
+                    //return ((JsonNumber) jsonValue).bigDecimalValue();
+                    return ((JsonNumber) jsonValue).doubleValue();
                 }
-            } else {
-                //return ((JsonNumber) jsonValue).bigDecimalValue();
-                return ((JsonNumber) jsonValue).doubleValue();
-            }
-        case TRUE:
-            return Boolean.TRUE;
-        case FALSE:
-            return Boolean.FALSE;
-        case NULL:
-            return null;
-        default:
-            return jsonValue;
+            case TRUE:
+                return Boolean.TRUE;
+            case FALSE:
+                return Boolean.FALSE;
+            case NULL:
+                return null;
+            default:
+                return jsonValue;
         }
     }
 
@@ -314,12 +311,12 @@ public class JakartaMappingProvider implements MappingProvider {
      * Lists all publicly accessible constructors for the {@code Class}
      * identified by the argument, including any constructors inherited
      * from superclasses, and uses a no-args constructor, if available,
-     * to create a new instance of the class. If argument is interface, 
+     * to create a new instance of the class. If argument is interface,
      * this method returns {@code null}.
-     * 
+     *
      * @param targetType class type to create instance of
      * @return an instance of the class represented by the argument
-     * @throws MappingException if no-arg public constructor is not there 
+     * @throws MappingException if no-arg public constructor is not there
      */
     private Object newNoArgInstance(Class<?> targetType) throws MappingException {
         if (targetType.isInterface()) {
@@ -345,7 +342,7 @@ public class JakartaMappingProvider implements MappingProvider {
      * Locates optional API method on the supplied JSON-B API implementation class with
      * the supplied name and parameter types. Searches the superclasses up to
      * {@code Object}, but ignores interfaces and default interface methods. Returns
-     * {@code null} if no {@code Method} can be found. 
+     * {@code null} if no {@code Method} can be found.
      *
      * @param clazz the implementation class to reflect upon
      * @param name the name of the method
@@ -356,9 +353,7 @@ public class JakartaMappingProvider implements MappingProvider {
         while (clazz != null && !clazz.isInterface()) {
             for (Method method : clazz.getDeclaredMethods()) {
                 final int mods = method.getModifiers();
-                if (Modifier.isPublic(mods) && !Modifier.isAbstract(mods) &&
-                        name.equals(method.getName()) &&
-                        Arrays.equals(paramTypes, method.getParameterTypes())) {
+                if (Modifier.isPublic(mods) && !Modifier.isAbstract(mods) && name.equals(method.getName()) && Arrays.equals(paramTypes, method.getParameterTypes())) {
                     return method;
                 }
             }
@@ -406,7 +401,9 @@ public class JakartaMappingProvider implements MappingProvider {
     private static class JsonStructureToParserAdapter implements JsonParser {
 
         private JsonStructureScope scope;
+
         private Event state;
+
         private final Deque<JsonStructureScope> ancestry = new ArrayDeque<>();
 
         JsonStructureToParserAdapter(JsonStructure jsonStruct) {
@@ -429,7 +426,8 @@ public class JakartaMappingProvider implements MappingProvider {
                 if (state == Event.END_ARRAY || state == Event.END_OBJECT) {
                     scope = ancestry.pop();
                 }
-                if (scope instanceof JsonArrayScope) { // array scope
+                if (scope instanceof JsonArrayScope) {
+                    // array scope
                     if (scope.hasNext()) {
                         scope.next();
                         state = getState(scope.getValue());
@@ -440,7 +438,8 @@ public class JakartaMappingProvider implements MappingProvider {
                     } else {
                         state = Event.END_ARRAY;
                     }
-                } else { // object scope
+                } else {
+                    // object scope
                     if (state == Event.KEY_NAME) {
                         state = getState(scope.getValue());
                         if (state == Event.START_ARRAY || state == Event.START_OBJECT) {
@@ -462,15 +461,15 @@ public class JakartaMappingProvider implements MappingProvider {
 
         @Override
         public String getString() {
-            switch (state) {
-            case KEY_NAME:
-                return ((JsonObjectScope) scope).getKey();
-            case VALUE_STRING:
-                return ((JsonString) scope.getValue()).getString();
-            case VALUE_NUMBER:
-                return ((JsonNumber) scope.getValue()).toString();
-            default:
-                throw new IllegalStateException("Parser is not in KEY_NAME, VALUE_STRING, or VALUE_NUMBER state");
+            switch(state) {
+                case KEY_NAME:
+                    return ((JsonObjectScope) scope).getKey();
+                case VALUE_STRING:
+                    return ((JsonString) scope.getValue()).getString();
+                case VALUE_NUMBER:
+                    return ((JsonNumber) scope.getValue()).toString();
+                default:
+                    throw new IllegalStateException("Parser is not in KEY_NAME, VALUE_STRING, or VALUE_NUMBER state");
             }
         }
 
@@ -546,28 +545,29 @@ public class JakartaMappingProvider implements MappingProvider {
         }
 
         private Event getState(JsonValue value) {
-            switch (value.getValueType()) {
-            case ARRAY:
-                return Event.START_ARRAY;
-            case OBJECT:
-                return Event.START_OBJECT;
-            case STRING:
-                return Event.VALUE_STRING;
-            case NUMBER:
-                return Event.VALUE_NUMBER;
-            case TRUE:
-                return Event.VALUE_TRUE;
-            case FALSE:
-                return Event.VALUE_FALSE;
-            case NULL:
-                return Event.VALUE_NULL;
-            default:
-                throw new JsonException("Unknown value type " + value.getValueType());
+            switch(value.getValueType()) {
+                case ARRAY:
+                    return Event.START_ARRAY;
+                case OBJECT:
+                    return Event.START_OBJECT;
+                case STRING:
+                    return Event.VALUE_STRING;
+                case NUMBER:
+                    return Event.VALUE_NUMBER;
+                case TRUE:
+                    return Event.VALUE_TRUE;
+                case FALSE:
+                    return Event.VALUE_FALSE;
+                case NULL:
+                    return Event.VALUE_NULL;
+                default:
+                    throw new JsonException("Unknown value type " + value.getValueType());
             }
         }
     }
 
     private static abstract class JsonStructureScope implements Iterator<JsonValue> {
+
         /**
          * Returns current {@link JsonValue}, that the parser is pointing on. Before
          * the {@link #next()} method has been called, this returns {@code null}.
@@ -578,7 +578,9 @@ public class JakartaMappingProvider implements MappingProvider {
     }
 
     private static class JsonArrayScope extends JsonStructureScope {
+
         private final Iterator<JsonValue> it;
+
         private JsonValue value;
 
         JsonArrayScope(JsonArray array) {
@@ -603,8 +605,11 @@ public class JakartaMappingProvider implements MappingProvider {
     }
 
     private static class JsonObjectScope extends JsonStructureScope {
+
         private final Iterator<Map.Entry<String, JsonValue>> it;
+
         private JsonValue value;
+
         private String key;
 
         JsonObjectScope(JsonObject object) {

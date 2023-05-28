@@ -5,22 +5,34 @@ import com.jayway.jsonpath.InvalidPathException;
 public class CharacterIndex {
 
     private static final char OPEN_PARENTHESIS = '(';
+
     private static final char CLOSE_PARENTHESIS = ')';
+
     private static final char CLOSE_SQUARE_BRACKET = ']';
+
     private static final char SPACE = ' ';
+
     private static final char ESCAPE = '\\';
+
     private static final char SINGLE_QUOTE = '\'';
+
     private static final char DOUBLE_QUOTE = '"';
+
     private static final char MINUS = '-';
+
     private static final char PERIOD = '.';
+
     private static final char REGEX = '/';
 
     //workaround for issue: https://github.com/json-path/JsonPath/issues/590
     private static final char SCI_E = 'E';
+
     private static final char SCI_e = 'e';
 
     private final CharSequence charSequence;
+
     private int position;
+
     private int endPosition;
 
     public CharacterIndex(CharSequence charSequence) {
@@ -46,7 +58,7 @@ public class CharacterIndex {
     }
 
     public boolean lastCharIs(char c) {
-      return charSequence.charAt(endPosition) == c;
+        return charSequence.charAt(endPosition) == c;
     }
 
     public boolean nextCharIs(char c) {
@@ -72,14 +84,14 @@ public class CharacterIndex {
         return endPosition;
     }
 
-    public int position(){
+    public int position() {
         return position;
     }
 
     public int indexOfClosingSquareBracket(int startPosition) {
         int readPosition = startPosition;
         while (inBounds(readPosition)) {
-            if(charAt(readPosition) == CLOSE_SQUARE_BRACKET){
+            if (charAt(readPosition) == CLOSE_SQUARE_BRACKET) {
                 return readPosition;
             }
             readPosition++;
@@ -88,18 +100,17 @@ public class CharacterIndex {
     }
 
     public int indexOfMatchingCloseChar(int startPosition, char openChar, char closeChar, boolean skipStrings, boolean skipRegex) {
-        if(charAt(startPosition) != openChar){
+        if (charAt(startPosition) != openChar) {
             throw new InvalidPathException("Expected " + openChar + " but found " + charAt(startPosition));
         }
-
         int opened = 1;
         int readPosition = startPosition + 1;
         while (inBounds(readPosition)) {
             if (skipStrings) {
                 char quoteChar = charAt(readPosition);
-                if (quoteChar == SINGLE_QUOTE || quoteChar == DOUBLE_QUOTE){
+                if (quoteChar == SINGLE_QUOTE || quoteChar == DOUBLE_QUOTE) {
                     readPosition = nextIndexOfUnescaped(readPosition, quoteChar);
-                    if(readPosition == -1){
+                    if (readPosition == -1) {
                         throw new InvalidPathException("Could not find matching close quote for " + quoteChar + " when parsing : " + charSequence);
                     }
                     readPosition++;
@@ -108,7 +119,7 @@ public class CharacterIndex {
             if (skipRegex) {
                 if (charAt(readPosition) == REGEX) {
                     readPosition = nextIndexOfUnescaped(readPosition, REGEX);
-                    if(readPosition == -1){
+                    if (readPosition == -1) {
                         throw new InvalidPathException("Could not find matching close for " + REGEX + " when parsing regex in : " + charSequence);
                     }
                     readPosition++;
@@ -168,25 +179,26 @@ public class CharacterIndex {
     }
 
     public int nextIndexOfUnescaped(int startPosition, char c) {
-
         int readPosition = startPosition + 1;
         boolean inEscape = false;
         while (!isOutOfBounds(readPosition)) {
-            if(inEscape){
+            if (inEscape) {
                 inEscape = false;
-            } else if('\\' == charAt(readPosition)){
+            } else if ('\\' == charAt(readPosition)) {
                 inEscape = true;
-            } else if (c == charAt(readPosition)){
+            } else if (c == charAt(readPosition)) {
                 return readPosition;
             }
-            readPosition ++;
+            readPosition++;
         }
         return -1;
     }
 
-    public char charAtOr(int postition, char defaultChar){
-        if(!inBounds(postition)) return defaultChar;
-        else return charAt(postition);
+    public char charAtOr(int postition, char defaultChar) {
+        if (!inBounds(postition))
+            return defaultChar;
+        else
+            return charAt(postition);
     }
 
     public boolean nextSignificantCharIs(int startPosition, char c) {
@@ -226,18 +238,17 @@ public class CharacterIndex {
 
     public boolean hasSignificantSubSequence(CharSequence s) {
         skipBlanks();
-        if (! inBounds(position + s.length() - 1)) {
+        if (!inBounds(position + s.length() - 1)) {
             return false;
         }
-        if (! subSequence(position, position + s.length()).equals(s)) {
+        if (!subSequence(position, position + s.length()).equals(s)) {
             return false;
         }
-
         incrementPosition(s.length());
         return true;
     }
 
-    public int indexOfPreviousSignificantChar(int startPosition){
+    public int indexOfPreviousSignificantChar(int startPosition) {
         int readPosition = startPosition - 1;
         while (!isOutOfBounds(readPosition) && charAt(readPosition) == SPACE) {
             readPosition--;
@@ -249,14 +260,16 @@ public class CharacterIndex {
         }
     }
 
-    public int indexOfPreviousSignificantChar(){
+    public int indexOfPreviousSignificantChar() {
         return indexOfPreviousSignificantChar(position);
     }
 
     public char previousSignificantChar(int startPosition) {
         int previousSignificantCharIndex = indexOfPreviousSignificantChar(startPosition);
-        if(previousSignificantCharIndex == -1) return ' ';
-        else return charAt(previousSignificantCharIndex);
+        if (previousSignificantCharIndex == -1)
+            return ' ';
+        else
+            return charAt(previousSignificantCharIndex);
     }
 
     public char previousSignificantChar() {
@@ -274,6 +287,7 @@ public class CharacterIndex {
     public boolean inBounds(int idx) {
         return (idx >= 0) && (idx <= endPosition);
     }
+
     public boolean inBounds() {
         return inBounds(position);
     }
@@ -298,18 +312,18 @@ public class CharacterIndex {
     public boolean isNumberCharacter(int readPosition) {
         char c = charAt(readPosition);
         //workaround for issue: https://github.com/json-path/JsonPath/issues/590
-        return Character.isDigit(c) || c == MINUS  || c == PERIOD || c == SCI_E || c == SCI_e;
+        return Character.isDigit(c) || c == MINUS || c == PERIOD || c == SCI_E || c == SCI_e;
     }
 
     public CharacterIndex skipBlanks() {
-        while (inBounds() && position < endPosition  && currentChar() == SPACE){
+        while (inBounds() && position < endPosition && currentChar() == SPACE) {
             incrementPosition(1);
         }
         return this;
     }
 
     private CharacterIndex skipBlanksAtEnd() {
-        while (inBounds() && position < endPosition && lastCharIs(SPACE)){
+        while (inBounds() && position < endPosition && lastCharIs(SPACE)) {
             decrementEndPosition(1);
         }
         return this;

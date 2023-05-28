@@ -54,7 +54,6 @@ public interface JsonAsserter {
 
     JsonAsserter assertNotDefined(String path, String message);
 
-
     /**
      * Asserts that object specified by path is null. If it is not, an AssertionError
      * is thrown with the given message.
@@ -63,6 +62,7 @@ public interface JsonAsserter {
      * @return this to allow fluent assertion chains
      */
     JsonAsserter assertNull(String path);
+
     JsonAsserter assertNull(String path, String message);
 
     /**

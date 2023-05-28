@@ -2,9 +2,7 @@ package com.jayway.jsonpath.matchers;
 
 import org.junit.Ignore;
 import org.junit.Test;
-
 import java.io.File;
-
 import static com.jayway.jsonpath.matchers.JsonPathMatchers.*;
 import static com.jayway.jsonpath.matchers.helpers.ResourceHelpers.resource;
 import static com.jayway.jsonpath.matchers.helpers.ResourceHelpers.resourceAsFile;
@@ -13,6 +11,7 @@ import static org.junit.Assert.assertThat;
 
 @Ignore
 public class DemoTest {
+
     @Test
     public void shouldFailOnJsonString() {
         String json = resource("books.json");

@@ -14,10 +14,10 @@
  */
 package com.jayway.jsonpath;
 
-
 /**
  * Returns a new representation for the input value.
  */
 public interface MapFunction {
+
     Object map(Object currentValue, Configuration configuration);
 }

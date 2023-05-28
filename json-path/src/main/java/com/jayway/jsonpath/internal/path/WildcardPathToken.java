@@ -15,15 +15,12 @@
 package com.jayway.jsonpath.internal.path;
 
 import java.util.Collections;
-
 import com.jayway.jsonpath.Option;
 import com.jayway.jsonpath.PathNotFoundException;
 import com.jayway.jsonpath.internal.PathRef;
-
 import static java.util.Arrays.asList;
 
 /**
- *
  */
 public class WildcardPathToken extends PathToken {
 
@@ -40,15 +37,14 @@ public class WildcardPathToken extends PathToken {
             for (int idx = 0; idx < ctx.jsonProvider().length(model); idx++) {
                 try {
                     handleArrayIndex(idx, currentPath, model, ctx);
-                } catch (PathNotFoundException p){
-                    if(ctx.options().contains(Option.REQUIRE_PROPERTIES)){
+                } catch (PathNotFoundException p) {
+                    if (ctx.options().contains(Option.REQUIRE_PROPERTIES)) {
                         throw p;
                     }
                 }
             }
         }
     }
-
 
     @Override
     public boolean isTokenDefinite() {

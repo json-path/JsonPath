@@ -8,7 +8,6 @@ import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
 import static org.junit.Assert.assertEquals;
 import static org.junit.runners.Parameterized.Parameters;
 
@@ -40,7 +39,6 @@ public class NumericPathFunctionTest extends BaseFunctionTest {
     public static Iterable<Configuration> configurations() {
         return Configurations.configurations();
     }
-
 
     @Test
     public void testAverageOfDoubles() {
@@ -98,7 +96,6 @@ public class NumericPathFunctionTest extends BaseFunctionTest {
         }
     }
 
-
     @Test
     public void testStdDevOfDouble() {
         verifyMathFunction(conf, "$.numbers.stddev()", 2.8722813232690143d);
@@ -112,16 +109,14 @@ public class NumericPathFunctionTest extends BaseFunctionTest {
             assertEquals(e.getMessage(), "Aggregation function attempted to calculate value using empty array");
         }
     }
-
     /**
      * Expect that for an invalid function name we'll get back the original input to the function
      */
-//    @Test
-//    @Ignore
-//    public void testInvalidFunctionNameNegative() {
-//        JSONArray numberSeries = new JSONArray();
-//        numberSeries.addAll(Arrays.asList(1, 2, 3, 4, 5, 6, 7, 8, 9, 10));
-//        assertThat(using(conf).parse(NUMBER_SERIES).read("$.numbers.foo()")).isEqualTo(numberSeries);
-//    }
-
+    //    @Test
+    //    @Ignore
+    //    public void testInvalidFunctionNameNegative() {
+    //        JSONArray numberSeries = new JSONArray();
+    //        numberSeries.addAll(Arrays.asList(1, 2, 3, 4, 5, 6, 7, 8, 9, 10));
+    //        assertThat(using(conf).parse(NUMBER_SERIES).read("$.numbers.foo()")).isEqualTo(numberSeries);
+    //    }
 }

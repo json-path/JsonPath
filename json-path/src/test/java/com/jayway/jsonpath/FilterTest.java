@@ -2,12 +2,10 @@ package com.jayway.jsonpath;
 
 import org.assertj.core.util.Lists;
 import org.junit.Test;
-
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.regex.Pattern;
-
 import static com.jayway.jsonpath.Criteria.where;
 import static com.jayway.jsonpath.Filter.filter;
 import static com.jayway.jsonpath.Filter.parse;
@@ -15,23 +13,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 public class FilterTest extends BaseTest {
 
-
-    Object json = Configuration.defaultConfiguration().jsonProvider().parse(
-            "{" +
-            "  \"int-key\" : 1, " +
-            "  \"long-key\" : 3000000000, " +
-            "  \"double-key\" : 10.1, " +
-            "  \"boolean-key\" : true, " +
-            "  \"null-key\" : null, " +
-            "  \"string-key\" : \"string\", " +
-            "  \"string-key-empty\" : \"\", " +
-            "  \"char-key\" : \"c\", " +
-            "  \"arr-empty\" : [], " +
-            "  \"int-arr\" : [0,1,2,3,4], " +
-            "  \"string-arr\" : [\"a\",\"b\",\"c\",\"d\",\"e\"], " +
-            "  \"obj\": {\"foo\": \"bar\"}" +
-            "}"
-    );
+    Object json = Configuration.defaultConfiguration().jsonProvider().parse("{" + "  \"int-key\" : 1, " + "  \"long-key\" : 3000000000, " + "  \"double-key\" : 10.1, " + "  \"boolean-key\" : true, " + "  \"null-key\" : null, " + "  \"string-key\" : \"string\", " + "  \"string-key-empty\" : \"\", " + "  \"char-key\" : \"c\", " + "  \"arr-empty\" : [], " + "  \"int-arr\" : [0,1,2,3,4], " + "  \"string-arr\" : [\"a\",\"b\",\"c\",\"d\",\"e\"], " + "  \"obj\": {\"foo\": \"bar\"}" + "}");
 
     //----------------------------------------------------------------------------
     //
@@ -48,14 +30,10 @@ public class FilterTest extends BaseTest {
     public void int_eq_string_evals() {
         assertThat(filter(where("int-key").eq("1")).apply(createPredicateContext(json))).isEqualTo(true);
         assertThat(filter(where("int-key").eq("666")).apply(createPredicateContext(json))).isEqualTo(false);
-
-
         assertThat(Filter.parse("[?(1 == '1')]").apply(createPredicateContext(json))).isEqualTo(true);
         assertThat(Filter.parse("[?('1' == 1)]").apply(createPredicateContext(json))).isEqualTo(true);
-
         assertThat(Filter.parse("[?(1 === '1')]").apply(createPredicateContext(json))).isEqualTo(false);
         assertThat(Filter.parse("[?('1' === 1)]").apply(createPredicateContext(json))).isEqualTo(false);
-
         assertThat(Filter.parse("[?(1 === 1)]").apply(createPredicateContext(json))).isEqualTo(true);
     }
 
@@ -98,6 +76,7 @@ public class FilterTest extends BaseTest {
         assertThat(filter(where("int-arr").eq("[0,1,2,3]")).apply(createPredicateContext(json))).isEqualTo(false);
         assertThat(filter(where("int-arr").eq("[0,1,2,3,4,5]")).apply(createPredicateContext(json))).isEqualTo(false);
     }
+
     //----------------------------------------------------------------------------
     //
     // NE
@@ -322,7 +301,6 @@ public class FilterTest extends BaseTest {
         assertThat(filter(where("null-key").nin("a", null)).apply(createPredicateContext(json))).isEqualTo(false);
         assertThat(filter(where("null-key").nin("a", "b")).apply(createPredicateContext(json))).isEqualTo(true);
         assertThat(filter(where("string-arr").nin("a")).apply(createPredicateContext(json))).isEqualTo(true);
-
     }
 
     //----------------------------------------------------------------------------
@@ -332,17 +310,19 @@ public class FilterTest extends BaseTest {
     //----------------------------------------------------------------------------
     @Test
     public void int_all_evals() {
-        assertThat(filter(where("int-arr").all(0,1)).apply(createPredicateContext(json))).isEqualTo(true);
-        assertThat(filter(where("int-arr").all(0,7)).apply(createPredicateContext(json))).isEqualTo(false);
+        assertThat(filter(where("int-arr").all(0, 1)).apply(createPredicateContext(json))).isEqualTo(true);
+        assertThat(filter(where("int-arr").all(0, 7)).apply(createPredicateContext(json))).isEqualTo(false);
     }
+
     @Test
     public void string_all_evals() {
-        assertThat(filter(where("string-arr").all("a","b")).apply(createPredicateContext(json))).isEqualTo(true);
-        assertThat(filter(where("string-arr").all("a","x")).apply(createPredicateContext(json))).isEqualTo(false);
+        assertThat(filter(where("string-arr").all("a", "b")).apply(createPredicateContext(json))).isEqualTo(true);
+        assertThat(filter(where("string-arr").all("a", "x")).apply(createPredicateContext(json))).isEqualTo(false);
     }
+
     @Test
     public void not_array_all_evals() {
-        assertThat(filter(where("string-key").all("a","b")).apply(createPredicateContext(json))).isEqualTo(false);
+        assertThat(filter(where("string-key").all("a", "b")).apply(createPredicateContext(json))).isEqualTo(false);
     }
 
     //----------------------------------------------------------------------------
@@ -429,7 +409,6 @@ public class FilterTest extends BaseTest {
     public void exists_evals() {
         assertThat(filter(where("string-key").exists(true)).apply(createPredicateContext(json))).isEqualTo(true);
         assertThat(filter(where("string-key").exists(false)).apply(createPredicateContext(json))).isEqualTo(false);
-
         assertThat(filter(where("missing-key").exists(true)).apply(createPredicateContext(json))).isEqualTo(false);
         assertThat(filter(where("missing-key").exists(false)).apply(createPredicateContext(json))).isEqualTo(true);
     }
@@ -443,12 +422,9 @@ public class FilterTest extends BaseTest {
     public void type_evals() {
         assertThat(filter(where("string-key").type(String.class)).apply(createPredicateContext(json))).isEqualTo(true);
         assertThat(filter(where("string-key").type(Number.class)).apply(createPredicateContext(json))).isEqualTo(false);
-
         assertThat(filter(where("int-key").type(String.class)).apply(createPredicateContext(json))).isEqualTo(false);
         assertThat(filter(where("int-key").type(Number.class)).apply(createPredicateContext(json))).isEqualTo(true);
-
         assertThat(filter(where("null-key").type(String.class)).apply(createPredicateContext(json))).isEqualTo(false);
-
         assertThat(filter(where("int-arr").type(List.class)).apply(createPredicateContext(json))).isEqualTo(true);
     }
 
@@ -461,10 +437,8 @@ public class FilterTest extends BaseTest {
     public void not_empty_evals() {
         assertThat(filter(where("string-key").empty(false)).apply(createPredicateContext(json))).isEqualTo(true);
         assertThat(filter(where("string-key-empty").empty(false)).apply(createPredicateContext(json))).isEqualTo(false);
-
         assertThat(filter(where("int-arr").empty(false)).apply(createPredicateContext(json))).isEqualTo(true);
         assertThat(filter(where("arr-empty").empty(false)).apply(createPredicateContext(json))).isEqualTo(false);
-
         assertThat(filter(where("null-key").empty(false)).apply(createPredicateContext(json))).isEqualTo(false);
     }
 
@@ -477,38 +451,30 @@ public class FilterTest extends BaseTest {
     public void empty_evals() {
         assertThat(filter(where("string-key").empty(false)).apply(createPredicateContext(json))).isEqualTo(true);
         assertThat(filter(where("string-key").empty(true)).apply(createPredicateContext(json))).isEqualTo(false);
-
         assertThat(filter(where("string-key-empty").empty(true)).apply(createPredicateContext(json))).isEqualTo(true);
         assertThat(filter(where("string-key-empty").empty(false)).apply(createPredicateContext(json))).isEqualTo(false);
-
         assertThat(filter(where("int-arr").empty(false)).apply(createPredicateContext(json))).isEqualTo(true);
         assertThat(filter(where("int-arr").empty(true)).apply(createPredicateContext(json))).isEqualTo(false);
-
         assertThat(filter(where("arr-empty").empty(true)).apply(createPredicateContext(json))).isEqualTo(true);
         assertThat(filter(where("arr-empty").empty(false)).apply(createPredicateContext(json))).isEqualTo(false);
-
         assertThat(filter(where("null-key").empty(true)).apply(createPredicateContext(json))).isEqualTo(false);
         assertThat(filter(where("null-key").empty(false)).apply(createPredicateContext(json))).isEqualTo(false);
     }
-
 
     //----------------------------------------------------------------------------
     //
     // MATCHES
     //
     //----------------------------------------------------------------------------
-
     @Test
     public void matches_evals() {
         Predicate p = new Predicate() {
+
             @Override
             public boolean apply(PredicateContext ctx) {
                 Map<String, Object> t = (Map<String, Object>) ctx.item();
-
                 Object o = t.get("int-key");
-
                 Integer i = (Integer) o;
-
                 return i == 1;
             }
         };
@@ -522,29 +488,22 @@ public class FilterTest extends BaseTest {
     //----------------------------------------------------------------------------
     @Test
     public void or_and_filters_evaluates() {
-
         Map<String, Object> model = new HashMap<String, Object>();
         model.put("foo", true);
         model.put("bar", false);
-
         Filter isFoo = filter(where("foo").is(true));
         Filter isBar = filter(where("bar").is(true));
-
-
         Filter fooOrBar = filter(where("foo").is(true)).or(where("bar").is(true));
         Filter fooAndBar = filter(where("foo").is(true)).and(where("bar").is(true));
-
         assertThat(isFoo.or(isBar).apply(createPredicateContext(model))).isTrue();
         assertThat(isFoo.and(isBar).apply(createPredicateContext(model))).isFalse();
         assertThat(fooOrBar.apply(createPredicateContext(model))).isTrue();
         assertThat(fooAndBar.apply(createPredicateContext(model))).isFalse();
-
     }
-
 
     @Test
     public void testFilterWithOrShortCircuit1() throws Exception {
-        Object json = Configuration.defaultConfiguration().jsonProvider().parse( "{\"firstname\":\"Bob\",\"surname\":\"Smith\",\"age\":30}");
+        Object json = Configuration.defaultConfiguration().jsonProvider().parse("{\"firstname\":\"Bob\",\"surname\":\"Smith\",\"age\":30}");
         assertThat(Filter.parse("[?((@.firstname == 'Bob' || @.firstname == 'Jane') && @.surname == 'Doe')]").apply(createPredicateContext(json))).isFalse();
     }
 
@@ -556,14 +515,11 @@ public class FilterTest extends BaseTest {
 
     @Test
     public void criteria_can_be_parsed() {
-
         Filter criteria = Filter.parse("[?(@.foo == 'baar')]");
         assertThat(criteria.toString()).isEqualTo("[?(@['foo'] == 'baar')]");
-
         criteria = Filter.parse("[?(@.foo)]");
         assertThat(criteria.toString()).isEqualTo("[?(@['foo'])]");
     }
-
 
     @Test
     public void inline_in_criteria_evaluates() {

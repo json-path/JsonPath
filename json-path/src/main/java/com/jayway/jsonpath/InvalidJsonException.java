@@ -21,7 +21,7 @@ public class InvalidJsonException extends JsonPathException {
      * Problematic JSON if available.
      */
     private final String json;
-    
+
     public InvalidJsonException() {
         json = null;
     }
@@ -40,7 +40,7 @@ public class InvalidJsonException extends JsonPathException {
         super(cause);
         json = null;
     }
-    
+
     /**
      * Rethrow the exception with the problematic JSON captured.
      */
@@ -48,7 +48,7 @@ public class InvalidJsonException extends JsonPathException {
         super(cause);
         this.json = json;
     }
-    
+
     /**
      * @return the problematic JSON if available.
      */

@@ -36,5 +36,4 @@ public class ValueCompareException extends JsonPathException {
     public ValueCompareException(String message, Throwable cause) {
         super(message, cause);
     }
-
 }

@@ -31,12 +31,11 @@ package com.jayway.jsonassert.impl.matcher;
 
 import org.hamcrest.Description;
 import org.hamcrest.Matcher;
-
 import java.util.Map;
-
 import static org.hamcrest.core.IsEqual.equalTo;
 
-public class IsMapContainingKey<K> extends MapTypeSafeMatcher<Map<K,?>> {
+public class IsMapContainingKey<K> extends MapTypeSafeMatcher<Map<K, ?>> {
+
     private final Matcher<K> keyMatcher;
 
     public IsMapContainingKey(Matcher<K> keyMatcher) {
@@ -55,15 +54,14 @@ public class IsMapContainingKey<K> extends MapTypeSafeMatcher<Map<K,?>> {
 
     @Override
     public void describeTo(Description description) {
-        description.appendText("map with key ")
-                   .appendDescriptionOf(keyMatcher);
+        description.appendText("map with key ").appendDescriptionOf(keyMatcher);
     }
 
-    public static <K> Matcher<Map<K,?>> hasKey(K key) {
+    public static <K> Matcher<Map<K, ?>> hasKey(K key) {
         return hasKey(equalTo(key));
     }
 
-    public static <K> Matcher<Map<K,?>> hasKey(Matcher<K> keyMatcher) {
+    public static <K> Matcher<Map<K, ?>> hasKey(Matcher<K> keyMatcher) {
         return new IsMapContainingKey<K>(keyMatcher);
     }
 }

@@ -9,7 +9,6 @@ import com.jayway.jsonpath.internal.path.CompiledPath;
 import com.jayway.jsonpath.internal.path.PathToken;
 import com.jayway.jsonpath.internal.path.RootPathToken;
 import com.jayway.jsonpath.internal.path.WildcardPathToken;
-
 import java.util.List;
 
 /**
@@ -42,7 +41,6 @@ public class Length implements PathFunction {
     @Override
     public Object invoke(String currentPath, PathRef parent, Object model, EvaluationContext ctx, List<Parameter> parameters) {
         if (null != parameters && parameters.size() > 0) {
-
             // Set the tail of the first parameter, when its not a function path parameter (which wouldn't make sense
             // for length - to the wildcard such that we request all of its children so we can get back an array and
             // take its length.
@@ -67,7 +65,7 @@ public class Length implements PathFunction {
         }
         if (ctx.configuration().jsonProvider().isArray(model)) {
             return ctx.configuration().jsonProvider().length(model);
-        } else if(ctx.configuration().jsonProvider().isMap(model)){
+        } else if (ctx.configuration().jsonProvider().isMap(model)) {
             return ctx.configuration().jsonProvider().length(model);
         }
         return null;

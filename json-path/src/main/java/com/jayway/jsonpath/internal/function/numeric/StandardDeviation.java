@@ -6,8 +6,11 @@ package com.jayway.jsonpath.internal.function.numeric;
  * Created by mattg on 6/27/15.
  */
 public class StandardDeviation extends AbstractAggregation {
+
     private Double sumSq = 0d;
+
     private Double sum = 0d;
+
     private Double count = 0d;
 
     @Override
@@ -19,6 +22,6 @@ public class StandardDeviation extends AbstractAggregation {
 
     @Override
     protected Number getValue() {
-        return Math.sqrt(sumSq/count - sum*sum/count/count);
+        return Math.sqrt(sumSq / count - sum * sum / count / count);
     }
 }

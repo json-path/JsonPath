@@ -4,7 +4,6 @@ import java.math.BigDecimal;
 import java.time.OffsetDateTime;
 import java.util.*;
 import java.util.regex.Pattern;
-
 import com.jayway.jsonpath.Configuration;
 import com.jayway.jsonpath.JsonPathException;
 import com.jayway.jsonpath.Option;
@@ -31,8 +30,11 @@ import org.slf4j.LoggerFactory;
 public interface ValueNodes {
 
     NullNode NULL_NODE = new NullNode();
+
     BooleanNode TRUE = new BooleanNode("true");
+
     BooleanNode FALSE = new BooleanNode("false");
+
     UndefinedNode UNDEFINED = new UndefinedNode();
 
     //----------------------------------------------------
@@ -41,8 +43,11 @@ public interface ValueNodes {
     //
     //----------------------------------------------------
     class PatternNode extends ValueNode {
+
         private final String pattern;
+
         private final Pattern compiledPattern;
+
         private final String flags;
 
         PatternNode(CharSequence charSequence) {
@@ -60,7 +65,6 @@ public interface ValueNodes {
             this.compiledPattern = pattern;
             this.flags = PatternFlag.parseFlags(pattern.flags());
         }
-
 
         Pattern getCompiledPattern() {
             return compiledPattern;
@@ -81,8 +85,7 @@ public interface ValueNodes {
 
         @Override
         public String toString() {
-
-            if(!pattern.startsWith("/")){
+            if (!pattern.startsWith("/")) {
                 return "/" + pattern + "/" + flags;
             } else {
                 return pattern;
@@ -91,18 +94,19 @@ public interface ValueNodes {
 
         @Override
         public boolean equals(Object o) {
-            if (this == o) return true;
-            if (!(o instanceof PatternNode)) return false;
-
+            if (this == o)
+                return true;
+            if (!(o instanceof PatternNode))
+                return false;
             PatternNode that = (PatternNode) o;
-
             return !(compiledPattern != null ? !compiledPattern.equals(that.compiledPattern) : that.compiledPattern != null);
-
         }
     }
 
     class JsonNode extends ValueNode {
+
         private final Object json;
+
         private final boolean parsed;
 
         JsonNode(CharSequence charSequence) {
@@ -117,12 +121,18 @@ public interface ValueNodes {
 
         @Override
         public Class<?> type(Predicate.PredicateContext ctx) {
-            if(isArray(ctx)) return List.class;
-            else if(isMap(ctx)) return Map.class;
-            else if(parse(ctx) instanceof Number) return Number.class;
-            else if(parse(ctx) instanceof String) return String.class;
-            else if(parse(ctx) instanceof Boolean) return Boolean.class;
-            else return Void.class;
+            if (isArray(ctx))
+                return List.class;
+            else if (isMap(ctx))
+                return Map.class;
+            else if (parse(ctx) instanceof Number)
+                return Number.class;
+            else if (parse(ctx) instanceof String)
+                return String.class;
+            else if (parse(ctx) instanceof Boolean)
+                return Boolean.class;
+            else
+                return Void.class;
         }
 
         public boolean isJsonNode() {
@@ -133,19 +143,19 @@ public interface ValueNodes {
             return this;
         }
 
-        public ValueNode asValueListNode(Predicate.PredicateContext ctx){
-            if(!isArray(ctx)){
+        public ValueNode asValueListNode(Predicate.PredicateContext ctx) {
+            if (!isArray(ctx)) {
                 return UNDEFINED;
             } else {
                 return new ValueListNode(Collections.unmodifiableList((List) parse(ctx)));
             }
         }
 
-        public Object parse(Predicate.PredicateContext ctx){
+        public Object parse(Predicate.PredicateContext ctx) {
             try {
-              return parsed ? json : new JSONParser(JSONParser.MODE_PERMISSIVE).parse(json.toString());
+                return parsed ? json : new JSONParser(JSONParser.MODE_PERMISSIVE).parse(json.toString());
             } catch (ParseException e) {
-              throw new IllegalArgumentException(e);
+                throw new IllegalArgumentException(e);
             }
         }
 
@@ -170,8 +180,10 @@ public interface ValueNodes {
         }
 
         public boolean isEmpty(Predicate.PredicateContext ctx) {
-            if (isArray(ctx) || isMap(ctx)) return ((Collection<?>) parse(ctx)).size() == 0;
-            else if((parse(ctx) instanceof String)) return ((String)parse(ctx)).length() == 0;
+            if (isArray(ctx) || isMap(ctx))
+                return ((Collection<?>) parse(ctx)).size() == 0;
+            else if ((parse(ctx) instanceof String))
+                return ((String) parse(ctx)).length() == 0;
             return true;
         }
 
@@ -181,33 +193,36 @@ public interface ValueNodes {
         }
 
         public boolean equals(JsonNode jsonNode, Predicate.PredicateContext ctx) {
-            if (this == jsonNode) return true;
+            if (this == jsonNode)
+                return true;
             return !(json != null ? !json.equals(jsonNode.parse(ctx)) : jsonNode.json != null);
         }
 
         @Override
         public boolean equals(Object o) {
-            if (this == o) return true;
-            if (!(o instanceof JsonNode)) return false;
-
+            if (this == o)
+                return true;
+            if (!(o instanceof JsonNode))
+                return false;
             JsonNode jsonNode = (JsonNode) o;
-
             return !(json != null ? !json.equals(jsonNode.json) : jsonNode.json != null);
         }
     }
 
     class StringNode extends ValueNode {
+
         private final String string;
+
         private boolean useSingleQuote = true;
 
         StringNode(CharSequence charSequence, boolean escape) {
             if (escape && charSequence.length() > 1) {
                 char open = charSequence.charAt(0);
-                char close = charSequence.charAt(charSequence.length()-1);
+                char close = charSequence.charAt(charSequence.length() - 1);
                 if (open == '\'' && close == '\'') {
-                    charSequence = charSequence.subSequence(1, charSequence.length()-1);
+                    charSequence = charSequence.subSequence(1, charSequence.length() - 1);
                 } else if (open == '"' && close == '"') {
-                    charSequence = charSequence.subSequence(1, charSequence.length()-1);
+                    charSequence = charSequence.subSequence(1, charSequence.length() - 1);
                     useSingleQuote = false;
                 }
                 string = Utils.unescape(charSequence.toString());
@@ -221,7 +236,7 @@ public interface ValueNodes {
             BigDecimal number = null;
             try {
                 number = new BigDecimal(string);
-            } catch (NumberFormatException nfe){
+            } catch (NumberFormatException nfe) {
                 return NumberNode.NAN;
             }
             return new NumberNode(number);
@@ -231,11 +246,11 @@ public interface ValueNodes {
             return string;
         }
 
-        public int length(){
+        public int length() {
             return getString().length();
         }
 
-        public boolean isEmpty(){
+        public boolean isEmpty() {
             return getString().isEmpty();
         }
 
@@ -264,25 +279,25 @@ public interface ValueNodes {
 
         @Override
         public boolean equals(Object o) {
-            if (this == o) return true;
-            if (!(o instanceof StringNode) && !(o instanceof NumberNode)) return false;
-
+            if (this == o)
+                return true;
+            if (!(o instanceof StringNode) && !(o instanceof NumberNode))
+                return false;
             StringNode that = ((ValueNode) o).asStringNode();
-
             return !(string != null ? !string.equals(that.getString()) : that.getString() != null);
-
         }
     }
 
     class NumberNode extends ValueNode {
 
-        public static NumberNode NAN = new NumberNode((BigDecimal)null);
+        public static NumberNode NAN = new NumberNode((BigDecimal) null);
 
         private final BigDecimal number;
 
         NumberNode(BigDecimal number) {
             this.number = number;
         }
+
         NumberNode(CharSequence num) {
             number = new BigDecimal(num.toString());
         }
@@ -316,12 +331,12 @@ public interface ValueNodes {
 
         @Override
         public boolean equals(Object o) {
-            if (this == o) return true;
-            if (!(o instanceof NumberNode) && !(o instanceof StringNode)) return false;
-
-            NumberNode that = ((ValueNode)o).asNumberNode();
-
-            if(that == NumberNode.NAN){
+            if (this == o)
+                return true;
+            if (!(o instanceof NumberNode) && !(o instanceof StringNode))
+                return false;
+            NumberNode that = ((ValueNode) o).asNumberNode();
+            if (that == NumberNode.NAN) {
                 return false;
             } else {
                 return number.compareTo(that.number) == 0;
@@ -333,7 +348,6 @@ public interface ValueNodes {
     class OffsetDateTimeNode extends ValueNode {
 
         private final OffsetDateTime dateTime;
-
 
         OffsetDateTimeNode(OffsetDateTime dateTime) {
             this.dateTime = dateTime;
@@ -372,16 +386,17 @@ public interface ValueNodes {
 
         @Override
         public boolean equals(Object o) {
-            if (this == o) return true;
-            if (!(o instanceof OffsetDateTimeNode) && !(o instanceof StringNode)) return false;
-            OffsetDateTimeNode that = ((ValueNode)o).asOffsetDateTimeNode();
+            if (this == o)
+                return true;
+            if (!(o instanceof OffsetDateTimeNode) && !(o instanceof StringNode))
+                return false;
+            OffsetDateTimeNode that = ((ValueNode) o).asOffsetDateTimeNode();
             return dateTime.compareTo(that.dateTime) == 0;
         }
     }
 
-
-
     class BooleanNode extends ValueNode {
+
         private final Boolean value;
 
         private BooleanNode(CharSequence boolValue) {
@@ -412,20 +427,17 @@ public interface ValueNodes {
 
         @Override
         public boolean equals(Object o) {
-            if (this == o) return true;
-            if (!(o instanceof BooleanNode)) return false;
-
+            if (this == o)
+                return true;
+            if (!(o instanceof BooleanNode))
+                return false;
             BooleanNode that = (BooleanNode) o;
-
             return !(value != null ? !value.equals(that.value) : that.value != null);
         }
     }
 
-
-
-
-
     class ClassNode extends ValueNode {
+
         private final Class clazz;
 
         ClassNode(Class clazz) {
@@ -456,18 +468,19 @@ public interface ValueNodes {
 
         @Override
         public boolean equals(Object o) {
-            if (this == o) return true;
-            if (!(o instanceof ClassNode)) return false;
-
+            if (this == o)
+                return true;
+            if (!(o instanceof ClassNode))
+                return false;
             ClassNode that = (ClassNode) o;
-
             return !(clazz != null ? !clazz.equals(that.clazz) : that.clazz != null);
         }
     }
 
     class NullNode extends ValueNode {
 
-        private NullNode() {}
+        private NullNode() {
+        }
 
         @Override
         public Class<?> type(Predicate.PredicateContext ctx) {
@@ -491,9 +504,10 @@ public interface ValueNodes {
 
         @Override
         public boolean equals(Object o) {
-            if (this == o) return true;
-            if (!(o instanceof NullNode)) return false;
-
+            if (this == o)
+                return true;
+            if (!(o instanceof NullNode))
+                return false;
             return true;
         }
     }
@@ -565,7 +579,7 @@ public interface ValueNodes {
             }
         }
 
-        public boolean contains(ValueNode node){
+        public boolean contains(ValueNode node) {
             return nodes.contains(node);
         }
 
@@ -602,11 +616,11 @@ public interface ValueNodes {
 
         @Override
         public boolean equals(Object o) {
-            if (this == o) return true;
-            if (!(o instanceof ValueListNode)) return false;
-
+            if (this == o)
+                return true;
+            if (!(o instanceof ValueListNode))
+                return false;
             ValueListNode that = (ValueListNode) o;
-
             return nodes.equals(that.nodes);
         }
 
@@ -621,7 +635,9 @@ public interface ValueNodes {
         private static final Logger logger = LoggerFactory.getLogger(PathNode.class);
 
         private final Path path;
+
         private final boolean existsCheck;
+
         private final boolean shouldExist;
 
         PathNode(Path path) {
@@ -670,7 +686,7 @@ public interface ValueNodes {
 
         @Override
         public String toString() {
-            return existsCheck && ! shouldExist ? Utils.concat("!" , path.toString()) : path.toString();
+            return existsCheck && !shouldExist ? Utils.concat("!", path.toString()) : path.toString();
         }
 
         public ValueNode evaluate(Predicate.PredicateContext ctx) {
@@ -694,15 +710,24 @@ public interface ValueNodes {
                         res = path.evaluate(doc, ctx.root(), ctx.configuration()).getValue();
                     }
                     res = ctx.configuration().jsonProvider().unwrap(res);
-
-                    if (res instanceof Number) return ValueNode.createNumberNode(res.toString());
-                    else if (res instanceof String) return ValueNode.createStringNode(res.toString(), false);
-                    else if (res instanceof Boolean) return ValueNode.createBooleanNode(res.toString());
-                    else if (res instanceof OffsetDateTime) return ValueNode.createOffsetDateTimeNode(res.toString()); //workaround for issue: https://github.com/json-path/JsonPath/issues/613
-                    else if (res == null) return NULL_NODE;
-                    else if (ctx.configuration().jsonProvider().isArray(res)) return ValueNode.createJsonNode(ctx.configuration().mappingProvider().map(res, List.class, ctx.configuration()));
-                    else if (ctx.configuration().jsonProvider().isMap(res)) return ValueNode.createJsonNode(ctx.configuration().mappingProvider().map(res, Map.class, ctx.configuration()));
-                    else throw new JsonPathException("Could not convert " + res.getClass().toString()+":"+ res.toString() + " to a ValueNode");
+                    if (res instanceof Number)
+                        return ValueNode.createNumberNode(res.toString());
+                    else if (res instanceof String)
+                        return ValueNode.createStringNode(res.toString(), false);
+                    else if (res instanceof Boolean)
+                        return ValueNode.createBooleanNode(res.toString());
+                    else if (//workaround for issue: https://github.com/json-path/JsonPath/issues/613
+                    res instanceof OffsetDateTime)
+                        //workaround for issue: https://github.com/json-path/JsonPath/issues/613
+                        return ValueNode.createOffsetDateTimeNode(res.toString());
+                    else if (res == null)
+                        return NULL_NODE;
+                    else if (ctx.configuration().jsonProvider().isArray(res))
+                        return ValueNode.createJsonNode(ctx.configuration().mappingProvider().map(res, List.class, ctx.configuration()));
+                    else if (ctx.configuration().jsonProvider().isMap(res))
+                        return ValueNode.createJsonNode(ctx.configuration().mappingProvider().map(res, Map.class, ctx.configuration()));
+                    else
+                        throw new JsonPathException("Could not convert " + res.getClass().toString() + ":" + res.toString() + " to a ValueNode");
                 } catch (PathNotFoundException e) {
                     return UNDEFINED;
                 }

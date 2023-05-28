@@ -23,7 +23,6 @@ import com.jayway.jsonpath.internal.function.ParamType;
 import com.jayway.jsonpath.internal.function.Parameter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
 import java.util.Arrays;
 
 public class CompiledPath implements Path {
@@ -34,7 +33,6 @@ public class CompiledPath implements Path {
 
     private final boolean isRootPath;
 
-
     public CompiledPath(RootPathToken root, boolean isRootPath) {
         this.root = invertScannerFunctionRelationship(root);
         this.isRootPath = isRootPath;
@@ -44,8 +42,6 @@ public class CompiledPath implements Path {
     public boolean isRootPath() {
         return isRootPath;
     }
-
-
 
     /**
      * In the event the writer of the path referenced a function at the tail end of a scanner, augment the query such
@@ -70,16 +66,14 @@ public class CompiledPath implements Path {
             if (token instanceof FunctionPathToken) {
                 prior.setNext(null);
                 path.setTail(prior);
-
                 // Now generate a new parameter from our path
                 Parameter parameter = new Parameter();
                 parameter.setPath(new CompiledPath(path, true));
                 parameter.setType(ParamType.PATH);
-                ((FunctionPathToken)token).setParameters(Arrays.asList(parameter));
+                ((FunctionPathToken) token).setParameters(Arrays.asList(parameter));
                 RootPathToken functionRoot = new RootPathToken('$');
                 functionRoot.setTail(token);
                 functionRoot.setNext(token);
-
                 // Define the function as the root
                 return functionRoot;
             }
@@ -92,18 +86,17 @@ public class CompiledPath implements Path {
         if (logger.isDebugEnabled()) {
             logger.debug("Evaluating path: {}", toString());
         }
-
         EvaluationContextImpl ctx = new EvaluationContextImpl(this, rootDocument, configuration, forUpdate);
         try {
-            PathRef op = ctx.forUpdate() ?  PathRef.createRoot(rootDocument) : PathRef.NO_OP;
+            PathRef op = ctx.forUpdate() ? PathRef.createRoot(rootDocument) : PathRef.NO_OP;
             root.evaluate("", op, document, ctx);
-        } catch (EvaluationAbortException abort) {}
-
+        } catch (EvaluationAbortException abort) {
+        }
         return ctx;
     }
 
     @Override
-    public EvaluationContext evaluate(Object document, Object rootDocument, Configuration configuration){
+    public EvaluationContext evaluate(Object document, Object rootDocument, Configuration configuration) {
         return evaluate(document, rootDocument, configuration, false);
     }
 

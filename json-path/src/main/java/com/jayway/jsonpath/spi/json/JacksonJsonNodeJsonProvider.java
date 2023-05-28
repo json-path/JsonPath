@@ -19,7 +19,6 @@ import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
 
-
 public class JacksonJsonNodeJsonProvider extends AbstractJsonProvider {
 
     private static final ObjectMapper defaultObjectMapper = new ObjectMapper();
@@ -56,8 +55,7 @@ public class JacksonJsonNodeJsonProvider extends AbstractJsonProvider {
     }
 
     @Override
-    public Object parse(byte[] json)
-        throws InvalidJsonException {
+    public Object parse(byte[] json) throws InvalidJsonException {
         try {
             return objectMapper.readTree(json);
         } catch (IOException e) {
@@ -99,11 +97,8 @@ public class JacksonJsonNodeJsonProvider extends AbstractJsonProvider {
         if (!(o instanceof JsonNode)) {
             return o;
         }
-
         JsonNode e = (JsonNode) o;
-
         if (e.isValueNode()) {
-
             if (e.isTextual()) {
                 return e.asText();
             } else if (e.isBoolean()) {
@@ -127,7 +122,6 @@ public class JacksonJsonNodeJsonProvider extends AbstractJsonProvider {
         return o;
     }
 
-
     @Override
     public boolean isArray(Object obj) {
         return (obj instanceof ArrayNode || obj instanceof List);
@@ -144,9 +138,9 @@ public class JacksonJsonNodeJsonProvider extends AbstractJsonProvider {
             throw new UnsupportedOperationException();
         } else {
             ArrayNode arrayNode = toJsonArray(array);
-            if (index == arrayNode.size()){
+            if (index == arrayNode.size()) {
                 arrayNode.add(createJsonElement(newValue));
-            }else {
+            } else {
                 arrayNode.set(index, createJsonElement(newValue));
             }
         }
@@ -163,11 +157,11 @@ public class JacksonJsonNodeJsonProvider extends AbstractJsonProvider {
         }
     }
 
-	@Override
-	public void setProperty(Object obj, Object key, Object value) {
-		// jlolling: Bug: #211 avoid create cloned nodes
+    @Override
+    public void setProperty(Object obj, Object key, Object value) {
+        // jlolling: Bug: #211 avoid create cloned nodes
         if (isMap(obj)) {
-        	setValueInObjectNode((ObjectNode) obj, key, value);
+            setValueInObjectNode((ObjectNode) obj, key, value);
         } else {
             ArrayNode array = (ArrayNode) obj;
             int index;
@@ -182,7 +176,7 @@ public class JacksonJsonNodeJsonProvider extends AbstractJsonProvider {
                 array.set(index, createJsonElement(value));
             }
         }
-	}
+    }
 
     public void removeProperty(Object obj, Object key) {
         if (isMap(obj)) {
@@ -202,9 +196,8 @@ public class JacksonJsonNodeJsonProvider extends AbstractJsonProvider {
     @Override
     public Collection<String> getPropertyKeys(Object obj) {
         List<String> keys = new ArrayList<String>();
-
         Iterator<String> iter = toJsonObject(obj).fieldNames();
-        while (iter.hasNext()){
+        while (iter.hasNext()) {
             keys.add(iter.next());
         }
         return keys;
@@ -222,8 +215,7 @@ public class JacksonJsonNodeJsonProvider extends AbstractJsonProvider {
                 return element.size();
             }
         }
-        throw new JsonPathException("length operation can not applied to " + (obj != null ? obj.getClass().getName()
-                : "null"));
+        throw new JsonPathException("length operation can not applied to " + (obj != null ? obj.getClass().getName() : "null"));
     }
 
     @Override
@@ -231,9 +223,11 @@ public class JacksonJsonNodeJsonProvider extends AbstractJsonProvider {
         ArrayNode arr = toJsonArray(obj);
         Iterator<?> iterator = arr.iterator();
         return new Iterable<Object>() {
+
             @Override
             public Iterator<Object> iterator() {
                 return new Iterator<Object>() {
+
                     @Override
                     public boolean hasNext() {
                         return iterator.hasNext();
@@ -249,16 +243,16 @@ public class JacksonJsonNodeJsonProvider extends AbstractJsonProvider {
     }
 
     private JsonNode createJsonElement(Object o) {
-    	if (o != null) {
-    		// jlolling: avoid creating a cloned node: bug #211
-    		if (o instanceof JsonNode) {
-    			return (JsonNode) o;
-    		} else {
-    	        return objectMapper.valueToTree(o);
-    		}
-    	} else {
-    		return null;
-    	}
+        if (o != null) {
+            // jlolling: avoid creating a cloned node: bug #211
+            if (o instanceof JsonNode) {
+                return (JsonNode) o;
+            } else {
+                return objectMapper.valueToTree(o);
+            }
+        } else {
+            return null;
+        }
     }
 
     private ArrayNode toJsonArray(Object o) {
@@ -269,35 +263,35 @@ public class JacksonJsonNodeJsonProvider extends AbstractJsonProvider {
         return (ObjectNode) o;
     }
 
-	private void setValueInObjectNode(ObjectNode objectNode, Object key, Object value) {
-		// jlolling: necessary to avoid deprecated methods and to avoid creating a cloned node. Bug: #211
-    	if (value instanceof JsonNode) {
+    private void setValueInObjectNode(ObjectNode objectNode, Object key, Object value) {
+        // jlolling: necessary to avoid deprecated methods and to avoid creating a cloned node. Bug: #211
+        if (value instanceof JsonNode) {
             objectNode.set(key.toString(), (JsonNode) value);
-    	} else if (value instanceof String) {
-    		objectNode.put(key.toString(), (String) value);
-    	} else if (value instanceof Integer) {
-    		objectNode.put(key.toString(), (Integer) value);
-    	} else if (value instanceof Long) {
-    		objectNode.put(key.toString(), (Long) value);
-    	} else if (value instanceof Short) {
-    		objectNode.put(key.toString(), (Short) value);
-    	} else if (value instanceof BigInteger) {
+        } else if (value instanceof String) {
+            objectNode.put(key.toString(), (String) value);
+        } else if (value instanceof Integer) {
+            objectNode.put(key.toString(), (Integer) value);
+        } else if (value instanceof Long) {
+            objectNode.put(key.toString(), (Long) value);
+        } else if (value instanceof Short) {
+            objectNode.put(key.toString(), (Short) value);
+        } else if (value instanceof BigInteger) {
             objectNode.put(key.toString(), (BigInteger) value);
         } else if (value instanceof Double) {
-    		objectNode.put(key.toString(), (Double) value);
-    	} else if (value instanceof Float) {
-    		objectNode.put(key.toString(), (Float) value);
-    	} else if (value instanceof BigDecimal) {
-    		objectNode.put(key.toString(), (BigDecimal) value);
-    	} else if (value instanceof Boolean) {
-    		objectNode.put(key.toString(), (Boolean) value);
-    	} else if (value instanceof byte[]) {
-    		objectNode.put(key.toString(), (byte[]) value);
-    	} else if (value == null) {
-    		objectNode.set(key.toString(), null); // this will create a null-node
-    	} else {
-    		objectNode.set(key.toString(), createJsonElement(value));
-    	}
-	}
-
+            objectNode.put(key.toString(), (Double) value);
+        } else if (value instanceof Float) {
+            objectNode.put(key.toString(), (Float) value);
+        } else if (value instanceof BigDecimal) {
+            objectNode.put(key.toString(), (BigDecimal) value);
+        } else if (value instanceof Boolean) {
+            objectNode.put(key.toString(), (Boolean) value);
+        } else if (value instanceof byte[]) {
+            objectNode.put(key.toString(), (byte[]) value);
+        } else if (value == null) {
+            // this will create a null-node
+            objectNode.set(key.toString(), null);
+        } else {
+            objectNode.set(key.toString(), createJsonElement(value));
+        }
+    }
 }

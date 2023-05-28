@@ -20,7 +20,6 @@ import com.jayway.jsonpath.internal.Path;
 import com.jayway.jsonpath.spi.mapper.MappingException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
 import java.util.HashMap;
 
 public class PredicateContextImpl implements Predicate.PredicateContext {
@@ -28,8 +27,11 @@ public class PredicateContextImpl implements Predicate.PredicateContext {
     private static final Logger logger = LoggerFactory.getLogger(PredicateContextImpl.class);
 
     private final Object contextDocument;
+
     private final Object rootDocument;
+
     private final Configuration configuration;
+
     private final HashMap<Path, Object> documentPathCache;
 
     public PredicateContextImpl(Object contextDocument, Object rootDocument, Configuration configuration, HashMap<Path, Object> documentPathCache) {
@@ -39,10 +41,10 @@ public class PredicateContextImpl implements Predicate.PredicateContext {
         this.documentPathCache = documentPathCache;
     }
 
-    public Object evaluate(Path path){
+    public Object evaluate(Path path) {
         Object result;
-        if(path.isRootPath()){
-            if(documentPathCache.containsKey(path)){
+        if (path.isRootPath()) {
+            if (documentPathCache.containsKey(path)) {
                 logger.debug("Using cached result for root path: " + path.toString());
                 result = documentPathCache.get(path);
             } else {
@@ -66,7 +68,7 @@ public class PredicateContextImpl implements Predicate.PredicateContext {
 
     @Override
     public <T> T item(Class<T> clazz) throws MappingException {
-        return  configuration().mappingProvider().map(contextDocument, clazz, configuration);
+        return configuration().mappingProvider().map(contextDocument, clazz, configuration);
     }
 
     @Override
@@ -78,5 +80,4 @@ public class PredicateContextImpl implements Predicate.PredicateContext {
     public Configuration configuration() {
         return configuration;
     }
-
 }
