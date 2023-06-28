@@ -83,6 +83,31 @@ public enum Option {
      * If REQUIRE_PROPERTIES option is present PathNotFoundException is thrown.
      * If REQUIRE_PROPERTIES option is not present ["b-val"] is returned.
      */
-    REQUIRE_PROPERTIES
+    REQUIRE_PROPERTIES,
+
+    /**
+     * Configures JsonPath to require all properties defined in filters.
+     *
+     *
+     * Given:
+     *
+     * <pre>
+     * [
+     *     {
+     *         "a" : "a-val",
+     *         "b" : "b-val"
+     *     },
+     *     {
+     *         "a" : "a-val",
+     *     }
+     * ]
+     * </pre>
+     *
+     * evaluating the filter "[?(@['does_not_exist'] NIN ['1', '2'])]"
+     *
+     * If STRICT_MODE option is present, filter will evaluate to false.
+     * If STRICT_MODE option is not present, filter will evaluate to true.
+     */
+    STRICT_MODE
 
 }

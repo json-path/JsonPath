@@ -1,5 +1,6 @@
 package com.jayway.jsonpath.internal.filter;
 
+import com.jayway.jsonpath.Option;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -38,6 +39,9 @@ public class RelationalExpressionNode extends ExpressionNode {
         }
         if(right.isPathNode()){
             r = right.asPathNode().evaluate(ctx);
+        }
+        if (ctx.configuration().containsOption(Option.STRICT_MODE) && (l.isUndefinedNode() || r.isUndefinedNode())) {
+            return false;
         }
         Evaluator evaluator = EvaluatorFactory.createEvaluator(relationalOperator);
         if(evaluator != null){
