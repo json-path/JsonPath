@@ -14,9 +14,11 @@ import java.util.regex.Pattern;
 import static com.jayway.jsonpath.Criteria.where;
 import static com.jayway.jsonpath.Filter.filter;
 import static java.util.Arrays.asList;
-import static org.junit.Assert.*;
 import static org.hamcrest.CoreMatchers.is;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertThat;
+import static org.junit.Assert.assertTrue;
 
 public class FilterTest extends BaseTest {
 
@@ -156,14 +158,14 @@ public class FilterTest extends BaseTest {
         check.put("item", 3);
         check.put("null_item", null);
 
-//        assertTrue(filter(where("item").nin(4, 5)).apply(createPredicateContext(check)));
-//        assertTrue(filter(where("item").nin(asList(4, 5))).apply(createPredicateContext(check)));
-//        assertTrue(filter(where("item").nin(asList('A'))).apply(createPredicateContext(check)));
-//        assertTrue(filter(where("null_item").nin(1, 2, 3)).apply(createPredicateContext(check)));
-//        assertTrue(filter(where("item").nin(asList((Object) null))).apply(createPredicateContext(check)));
-//
-//        assertFalse(filter(where("item").nin(3)).apply(createPredicateContext(check)));
-//        assertFalse(filter(where("item").nin(asList(3))).apply(createPredicateContext(check)));
+        assertTrue(filter(where("item").nin(4, 5)).apply(createPredicateContext(check)));
+        assertTrue(filter(where("item").nin(asList(4, 5))).apply(createPredicateContext(check)));
+        assertTrue(filter(where("item").nin(asList('A'))).apply(createPredicateContext(check)));
+        assertTrue(filter(where("null_item").nin(1, 2, 3)).apply(createPredicateContext(check)));
+        assertTrue(filter(where("item").nin(asList((Object) null))).apply(createPredicateContext(check)));
+
+        assertFalse(filter(where("item").nin(3)).apply(createPredicateContext(check)));
+        assertFalse(filter(where("item").nin(asList(3))).apply(createPredicateContext(check)));
         assertFalse(filter(where("not_existent_item").nin(3)).apply(createPredicateContext(check, Option.STRICT_MODE)));
         assertFalse(filter(where("not_existent_item").nin(asList(3))).apply(createPredicateContext(check, Option.STRICT_MODE)));
     }
