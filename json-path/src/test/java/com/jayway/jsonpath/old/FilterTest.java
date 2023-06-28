@@ -1,6 +1,11 @@
 package com.jayway.jsonpath.old;
 
-import com.jayway.jsonpath.*;
+import com.jayway.jsonpath.BaseTest;
+import com.jayway.jsonpath.Configuration;
+import com.jayway.jsonpath.Filter;
+import com.jayway.jsonpath.JsonPath;
+import com.jayway.jsonpath.Option;
+import com.jayway.jsonpath.Predicate;
 import com.jayway.jsonpath.spi.json.JsonProvider;
 import org.assertj.core.api.Assertions;
 import org.junit.Test;
@@ -14,11 +19,9 @@ import java.util.regex.Pattern;
 import static com.jayway.jsonpath.Criteria.where;
 import static com.jayway.jsonpath.Filter.filter;
 import static java.util.Arrays.asList;
+import static org.junit.Assert.*;
 import static org.hamcrest.CoreMatchers.is;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertThat;
-import static org.junit.Assert.assertTrue;
 
 public class FilterTest extends BaseTest {
 
