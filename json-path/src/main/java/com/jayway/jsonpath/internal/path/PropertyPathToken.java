@@ -28,7 +28,7 @@ import static com.jayway.jsonpath.internal.Utils.onlyOneIsTrueNonThrow;
 /**
  *
  */
-class PropertyPathToken extends PathToken {
+public class PropertyPathToken extends PathToken {
 
     private final List<String> properties;
     private final String stringDelimiter;
