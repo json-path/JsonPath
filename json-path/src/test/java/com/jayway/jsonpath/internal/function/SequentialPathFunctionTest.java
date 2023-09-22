@@ -1,7 +1,14 @@
 package com.jayway.jsonpath.internal.function;
 
+import static com.jayway.jsonpath.JsonPath.using;
+
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.jayway.jsonpath.Configuration;
 import com.jayway.jsonpath.Configurations;
+import java.util.Arrays;
+
+import com.jayway.jsonpath.spi.json.JacksonJsonProvider;
+import com.jayway.jsonpath.spi.mapper.JacksonMappingProvider;
 import org.junit.Test;
 
 /**
@@ -10,6 +17,7 @@ import org.junit.Test;
  * -first
  * -last
  * -index(X)
+ * -distinct
  *
  * Created by git9527 on 6/11/22.
  */
@@ -49,5 +57,37 @@ public class SequentialPathFunctionTest extends BaseFunctionTest {
         verifyFunction(conf, "$.text.index(0)", TEXT_SERIES, "a");
         verifyFunction(conf, "$.text.index(-1)", TEXT_SERIES, "f");
         verifyFunction(conf, "$.text.index(1)", TEXT_SERIES, "b");
+    }
+
+    @Test
+    public void testDistinctOfText() {
+        verifyFunction(conf, "$.text_with_duplicates.distinct()", TEXT_SERIES, Arrays.asList("a", "b"));
+    }
+
+    @Test
+    public void testDistinctOfObjects() {
+        final Object expectedValue = Configuration.defaultConfiguration().jsonProvider()
+                .parse("[{\"a\":\"a-val\"}, {\"b\":\"b-val\"}]");
+        verifyFunction(conf, "$.objects.distinct()", OBJECT_SERIES, expectedValue);
+    }
+
+    @Test
+    public void testDistinctArrayOfObjects() {
+        final Object expectedValue = Configuration.defaultConfiguration().jsonProvider()
+                .parse("[{\"a\":[{\"a\":\"a-val\"}, {\"b\":\"b-val\"}]}, {\"b\":[{\"b\":\"b-val\"}]}]");
+        verifyFunction(conf, "$.array_of_objects.distinct()", OBJECT_SERIES, expectedValue);
+    }
+
+    @Test
+    public void testDistinctArrayOfArrays() {
+        final Object expectedValue = Configuration.defaultConfiguration().jsonProvider()
+                .parse("[[{\"a\":\"a-val\"}, {\"b\":\"b-val\"}], [{\"b\":\"b-val\"}]]");
+        verifyFunction(conf, "$.array_of_arrays.distinct()", OBJECT_SERIES, expectedValue);
+    }
+
+    @Test
+    public void testDistinctOfEmptyObjects() throws Exception {
+        final Object expectedValue = Configuration.defaultConfiguration().jsonProvider().parse("[]");
+        verifyFunction(conf, "$.empty.distinct()", OBJECT_SERIES, expectedValue);
     }
 }
