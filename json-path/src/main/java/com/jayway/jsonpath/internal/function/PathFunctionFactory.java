@@ -8,6 +8,7 @@ import com.jayway.jsonpath.internal.function.numeric.Max;
 import com.jayway.jsonpath.internal.function.numeric.Min;
 import com.jayway.jsonpath.internal.function.numeric.StandardDeviation;
 import com.jayway.jsonpath.internal.function.numeric.Sum;
+import com.jayway.jsonpath.internal.function.sequence.Distinct;
 import com.jayway.jsonpath.internal.function.sequence.First;
 import com.jayway.jsonpath.internal.function.sequence.Index;
 import com.jayway.jsonpath.internal.function.sequence.Last;
@@ -53,6 +54,7 @@ public class PathFunctionFactory {
         // Sequential Functions
         map.put("first", First.class);
         map.put("last", Last.class);
+        map.put("distinct", Distinct.class);
         map.put("index", Index.class);
 
 
