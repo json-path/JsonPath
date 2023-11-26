@@ -38,7 +38,7 @@ public class FunctionPathToken extends PathToken {
     public void evaluate(String currentPath, PathRef parent, Object model, EvaluationContextImpl ctx) {
         PathFunction pathFunction = PathFunctionFactory.newFunction(functionName);
         evaluateParameters(currentPath, parent, model, ctx);
-        Object result = pathFunction.invoke(currentPath, parent, model, ctx, functionParams);
+        Object result = pathFunction.aggregateAndInvoke(currentPath, parent, model, ctx, functionParams);
         ctx.addResult(currentPath + "." + functionName, parent, result);
         cleanWildcardPathToken();
         if (!isLeaf()) {

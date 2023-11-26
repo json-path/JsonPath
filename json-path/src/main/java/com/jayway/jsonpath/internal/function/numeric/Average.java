@@ -11,13 +11,13 @@ public class Average extends AbstractAggregation {
     private Double count = 0d;
 
     @Override
-    protected void next(Number value) {
+    protected void processNumericValue(Number value) {
         count++;
         summation += value.doubleValue();
     }
 
     @Override
-    protected Number getValue() {
+    protected Number getAggregatedValue() {
         if (count != 0d) {
             return summation / count;
         }

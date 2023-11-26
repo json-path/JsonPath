@@ -9,12 +9,12 @@ public class Sum extends AbstractAggregation {
     private Double summation = 0d;
 
     @Override
-    protected void next(Number value) {
+    protected void processNumericValue(Number value) {
         summation += value.doubleValue();
     }
 
     @Override
-    protected Number getValue() {
+    protected Number getAggregatedValue() {
         return summation;
     }
 }

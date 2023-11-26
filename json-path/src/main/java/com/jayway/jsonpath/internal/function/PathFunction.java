@@ -32,5 +32,5 @@ public interface PathFunction {
      * @param parameters
      * @return result
      */
-    Object invoke(String currentPath, PathRef parent, Object model, EvaluationContext ctx, List<Parameter> parameters);
+    Object aggregateAndInvoke(String currentPath, PathRef parent, Object model, EvaluationContext ctx, List<Parameter> parameters);
 }

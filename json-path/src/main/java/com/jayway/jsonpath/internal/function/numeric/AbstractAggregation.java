@@ -23,7 +23,7 @@ public abstract class AbstractAggregation implements PathFunction {
      * @param value
      *      The numerical value to process next
      */
-    protected abstract void next(Number value);
+    protected abstract void processNumericValue(Number value);
 
     /**
      * Obtains the value generated via the series of next value calls
@@ -31,31 +31,37 @@ public abstract class AbstractAggregation implements PathFunction {
      * @return
      *      A numerical answer based on the input value provided
      */
-    protected abstract Number getValue();
+    protected abstract Number getAggregatedValue();
 
     @Override
-    public Object invoke(String currentPath, PathRef parent, Object model, EvaluationContext ctx, List<Parameter> parameters) {
+    public Object aggregateAndInvoke(String currentPath, PathRef parent, Object model, EvaluationContext ctx, List<Parameter> parameters) {
         int count = 0;
-        if(ctx.configuration().jsonProvider().isArray(model)){
 
-            Iterable<?> objects = ctx.configuration().jsonProvider().toIterable(model);
-            for (Object obj : objects) {
-                if (obj instanceof Number) {
-                    Number value = (Number) obj;
+        if (ctx.configuration().jsonProvider().isArray(model)) {
+            Iterable<?> arrayElements = ctx.configuration().jsonProvider().toIterable(model);
+
+            for (Object arrayElement : arrayElements) {
+                if (arrayElement instanceof Number) {
+                    Number numericValue = (Number) arrayElement;
                     count++;
-                    next(value);
+                    processNumericValue(numericValue);
                 }
             }
         }
+
         if (parameters != null) {
-            for (Number value : Parameter.toList(Number.class, ctx, parameters)) {
+            for (Number parameterValue : Parameter.toList(Number.class, ctx, parameters)) {
                 count++;
-                next(value);
+                processNumericValue(parameterValue);
             }
         }
+
         if (count != 0) {
-            return getValue();
+            return getAggregatedValue();
         }
+
         throw new JsonPathException("Aggregation function attempted to calculate value using empty array");
     }
+
+
 }

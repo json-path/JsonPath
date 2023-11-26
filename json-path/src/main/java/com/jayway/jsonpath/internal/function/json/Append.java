@@ -16,7 +16,7 @@ import java.util.List;
  */
 public class Append implements PathFunction {
     @Override
-    public Object invoke(String currentPath, PathRef parent, Object model, EvaluationContext ctx, List<Parameter> parameters) {
+    public Object aggregateAndInvoke(String currentPath, PathRef parent, Object model, EvaluationContext ctx, List<Parameter> parameters) {
         JsonProvider jsonProvider = ctx.configuration().jsonProvider();
         if (parameters != null && parameters.size() > 0) {
             for (Parameter param : parameters) {

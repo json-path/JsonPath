@@ -135,25 +135,43 @@ public abstract class ValueNode {
     }
 
     private static boolean isJson(Object o) {
-        if(o == null || !(o instanceof String)){
+        if (o == null || !(o instanceof String)) {
             return false;
         }
+
         String str = o.toString().trim();
+
         if (str.length() <= 1) {
             return false;
         }
+
         char c0 = str.charAt(0);
         char c1 = str.charAt(str.length() - 1);
-        if ((c0 == '[' && c1 == ']') || (c0 == '{' && c1 == '}')){
-            try {
-                new JSONParser(JSONParser.MODE_PERMISSIVE).parse(str);
-                return true;
-            } catch(Exception e){
-                return false;
-            }
+
+        if (isJsonArray(c0, c1) || isJsonObject(c0, c1)) {
+            return isValidJson(str);
         }
+
         return false;
     }
+
+    private static boolean isJsonArray(char c0, char c1) {
+        return c0 == '[' && c1 == ']';
+    }
+
+    private static boolean isJsonObject(char c0, char c1) {
+        return c0 == '{' && c1 == '}';
+    }
+
+    private static boolean isValidJson(String str) {
+        try {
+            new JSONParser(JSONParser.MODE_PERMISSIVE).parse(str);
+            return true;
+        } catch (Exception e) {
+            return false;
+        }
+    }
+
 
 
 

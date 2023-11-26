@@ -14,7 +14,7 @@ import java.util.List;
  */
 public class Concatenate implements PathFunction {
     @Override
-    public Object invoke(String currentPath, PathRef parent, Object model, EvaluationContext ctx, List<Parameter> parameters) {
+    public Object aggregateAndInvoke(String currentPath, PathRef parent, Object model, EvaluationContext ctx, List<Parameter> parameters) {
         StringBuilder result = new StringBuilder();
         if(ctx.configuration().jsonProvider().isArray(model)){
             Iterable<?> objects = ctx.configuration().jsonProvider().toIterable(model);

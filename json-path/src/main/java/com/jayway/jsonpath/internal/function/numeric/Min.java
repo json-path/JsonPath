@@ -9,14 +9,14 @@ public class Min extends AbstractAggregation {
     private Double min = Double.MAX_VALUE;
 
     @Override
-    protected void next(Number value) {
+    protected void processNumericValue(Number value) {
         if (min > value.doubleValue()) {
             min = value.doubleValue();
         }
     }
 
     @Override
-    protected Number getValue() {
+    protected Number getAggregatedValue() {
         return min;
     }
 }
