@@ -30,7 +30,7 @@ public interface Path {
      * @param configuration configuration to use
      * @return EvaluationContext containing results of evaluation
      */
-    EvaluationContext evaluate(Object document, Object rootDocument, Configuration configuration);
+//    EvaluationContext evaluate(Object document, Object rootDocument, Configuration configuration);
 
     /**
      * Evaluates this path
@@ -41,7 +41,7 @@ public interface Path {
      * @param forUpdate is this a read or a write operation
      * @return EvaluationContext containing results of evaluation
      */
-    EvaluationContext evaluate(Object document, Object rootDocument, Configuration configuration, boolean forUpdate);
+//    EvaluationContext evaluate(Object document, Object rootDocument, Configuration configuration, boolean forUpdate);
 
     /**
      *

@@ -212,18 +212,42 @@ public class JacksonJsonNodeJsonProvider extends AbstractJsonProvider {
 
     @Override
     public int length(Object obj) {
+        JsonLengthCalculator lengthCalculator = getLengthCalculator(obj);
+        return lengthCalculator.calculateLength(obj);
+    }
+
+    private JsonLengthCalculator getLengthCalculator(Object obj) {
         if (isArray(obj)) {
-            return toJsonArray(obj).size();
+            return new JsonArrayLengthCalculator();
         } else if (isMap(obj)) {
-            return toJsonObject(obj).size();
+            return new JsonObjectLengthCalculator();
         } else {
+            return new TextNodeLengthCalculator();
+        }
+    }
+
+    public class JsonArrayLengthCalculator implements JsonLengthCalculator {
+        @Override
+        public int calculateLength(Object obj) {
+            return toJsonArray(obj).size();
+        }
+    }
+    public class JsonObjectLengthCalculator implements JsonLengthCalculator {
+        @Override
+        public int calculateLength(Object obj) {
+            return toJsonObject(obj).size();
+        }
+    }
+
+    public class TextNodeLengthCalculator implements JsonLengthCalculator {
+        @Override
+        public int calculateLength(Object obj) {
             if (obj instanceof TextNode) {
                 TextNode element = (TextNode) obj;
                 return element.size();
             }
+            throw new JsonPathException("length operation cannot be applied to " + (obj != null ? obj.getClass().getName() : "null"));
         }
-        throw new JsonPathException("length operation can not applied to " + (obj != null ? obj.getClass().getName()
-                : "null"));
     }
 
     @Override
