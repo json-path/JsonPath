@@ -9,6 +9,7 @@ target
 .springBeans
 .DS_Store
 .gradle
+.java-version
 TODO
 gradle.properties
 build
