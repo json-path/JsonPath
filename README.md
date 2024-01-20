@@ -9,33 +9,6 @@ Jayway JsonPath
 
 Jayway JsonPath is a Java port of [Stefan Goessner JsonPath implementation](http://goessner.net/articles/JsonPath/). 
 
-News
-----
-26 Mar 2023 - Released JsonPath 2.8.0
-
-30 Jan 2022 - Released JsonPath 2.7.0
-
-02 Jun 2021 - Released JsonPath 2.6.0 
-
-10 Dec 2020 - Released JsonPath 2.5.0
-
-05 Jul 2017 - Released JsonPath 2.4.0
-
-26 Jun 2017 - Released JsonPath 2.3.0
-
-29 Feb 2016 - Released JsonPath 2.2.0
-
-22 Nov 2015 - Released JsonPath 2.1.0
-
-19 Mar 2015 - Released JsonPath 2.0.0
-
-11 Nov 2014 - Released JsonPath 1.2.0
-
-01 Oct 2014 - Released JsonPath 1.1.0  
-
-26 Sep 2014 - Released JsonPath 1.0.0 
-
-
 Getting Started
 ---------------
 
@@ -45,7 +18,7 @@ JsonPath is available at the Central Maven Repository. Maven users add this to y
 <dependency>
     <groupId>com.jayway.jsonpath</groupId>
     <artifactId>json-path</artifactId>
-    <version>2.8.0</version>
+    <version>2.9.0</version>
 </dependency>
 ```
 
@@ -232,10 +205,10 @@ try to cast the result to the type expected by the invoker.
 
 ```java
 //Will throw an java.lang.ClassCastException    
-List<String> list = JsonPath.parse(json).read("$.store.book[0].author")
+List<String> list = JsonPath.parse(json).read("$.store.book[0].author");
 
 //Works fine
-String author = JsonPath.parse(json).read("$.store.book[0].author")
+String author = JsonPath.parse(json).read("$.store.book[0].author");
 ```
 
 When evaluating a path you need to understand the concept of when a path is `definite`. A path is `indefinite` if it contains:
