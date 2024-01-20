@@ -153,8 +153,8 @@ public class BaseTest {
             "    \"expensive\": 10\n" +
             "}";
 
-    public Predicate.PredicateContext createPredicateContext(final Object check) {
+    public Predicate.PredicateContext createPredicateContext(final Object check, Option... options) {
 
-        return new PredicateContextImpl(check, check, Configuration.defaultConfiguration(), new HashMap<Path, Object>());
+        return new PredicateContextImpl(check, check, Configuration.defaultConfiguration().setOptions(options), new HashMap<Path, Object>());
     }
 }
