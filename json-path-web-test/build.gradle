@@ -1,5 +1,6 @@
 apply plugin: 'com.github.johnrengelman.shadow'
 apply plugin: 'application'
+apply plugin: 'com.palantir.docker'
 
 description = "Web app that compares different JsonPath implementations."
 
@@ -26,6 +27,19 @@ jar {
     )
 }
 
+docker {
+    name "registry.fly.io/jsonpath:" + project.version.toString()
+    files tasks.distTar.outputs
+    buildArgs([VERSION: project.version.toString(), SLF4J_VERSION: libs.slf4jApi.substring(libs.slf4jApi.lastIndexOf(":") + 1)])
+    buildx true
+    platform "linux/amd64"
+}
+
+task flyDeploy(type: Exec) {
+    //dependsOn "dockerPush" + project.version.toString()
+    commandLine 'fly', 'deploy', '--image=registry.fly.io/jsonpath:' + project.version.toString()
+}
+
 
 dependencies {
     implementation project(':json-path')
@@ -36,8 +50,8 @@ dependencies {
     implementation 'io.fastjson:boon:0.33'
     implementation 'com.nebhale.jsonpath:jsonpath:1.2'
     implementation 'io.gatling:jsonpath_2.10:0.6.4'
-    implementation 'org.eclipse.jetty:jetty-server:9.3.0.M1'
-    implementation 'org.eclipse.jetty:jetty-webapp:9.3.0.M1'
+    implementation 'org.eclipse.jetty:jetty-server:9.4.51.v20230217'
+    implementation 'org.eclipse.jetty:jetty-webapp:9.4.51.v20230217'
     implementation 'org.glassfish.jersey.containers:jersey-container-servlet:2.20'
     implementation('org.glassfish.jersey.media:jersey-media-json-jackson:2.20'){
         exclude module: 'jackson-annotations:com.fasterxml.jackson.core'
