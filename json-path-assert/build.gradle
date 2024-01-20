@@ -2,6 +2,11 @@
 description = "Assertions on Json using JsonPath"
 
 jar {
+    from('../') {
+        include 'LICENSE'
+        include 'COPYRIGHT'
+    }
+
     baseName 'json-path-assert'
     bnd (
         'Implementation-Title': 'json-path-assert', 'Implementation-Version': archiveVersion
