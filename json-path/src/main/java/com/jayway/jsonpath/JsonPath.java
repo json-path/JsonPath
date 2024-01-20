@@ -496,6 +496,17 @@ public class JsonPath {
         }
     }
 
+    /**
+     * As JsonPath accepts a vary number of functions like min(), max(),
+     * avg(), stddev(), length(), sum(), keys(), concat(X), append(X),
+     * this function will return true if the path is a function
+     *
+     * @return true if the path is a function
+     */
+    public Boolean isFunctionPath() {
+        return path.isFunctionPath();
+    }
+
     // --------------------------------------------------------
     //
     // Static factory methods

@@ -304,6 +304,12 @@ public class PathCompilerTest {
         assertThat(compile("$.aaa.foo(5,10,15)").toString()).isEqualTo("$['aaa'].foo(...)");
     }
 
+    @Test
+    public void path_is_a_function() {
+        assertThat(compile("concat($.aaa, $.bbb)").isFunctionPath()).isTrue();
+        assertThat(compile("$.aaa").isFunctionPath()).isFalse();
+    }
+
     @Test(expected = InvalidPathException.class)
     public void array_indexes_must_be_separated_by_commas() {
         compile("$[0, 1, 2 4]");
