@@ -235,7 +235,7 @@ public class PathCompiler {
                     String functionName = path.subSequence(startPosition, endPosition).toString();
                     functionParameters = parseFunctionParameters(functionName);
                 } else {
-                    path.setPosition(readPosition + 1);
+                    path.setPosition(readPosition + 2);
                 }
             }
             else {
