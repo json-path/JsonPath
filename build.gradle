@@ -6,7 +6,6 @@ buildscript {
         }
     }
     dependencies {
-        classpath 'com.github.jengelman.gradle.plugins:shadow:5.2.0'
         classpath 'biz.aQute.bnd:biz.aQute.bnd.gradle:6.1.0'
     }
 }
@@ -114,10 +113,10 @@ subprojects {
             mavenJava(MavenPublication) {
                 from components.java
 
-                artifactId = jar.baseName
+                artifactId = jar.archiveBaseName
 
                 pom {
-                    name = jar.baseName
+                    name = jar.archiveBaseName
                     description = 'A library to query and verify JSON'
                     url = 'https://github.com/jayway/JsonPath'
 
@@ -149,9 +148,6 @@ subprojects {
 }
 
 wrapper {
-    gradleVersion = '7.4.2'
+    gradleVersion = '8.5'
 }
-
-//Task used by Heroku for staging
-task stage(dependsOn: [':json-path-web-test:clean', 'json-path-web-test:jar', 'json-path-web-test:shadowJar']) {}
 

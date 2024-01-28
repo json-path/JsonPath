@@ -1,7 +1,7 @@
 description = "Java port of Stefan Goessner JsonPath."
 
+
 jar {
-    baseName 'json-path'
     bnd(
             'Automatic-Module-Name': 'json.path',
             'Implementation-Title': 'json-path', 'Implementation-Version': archiveVersion,
