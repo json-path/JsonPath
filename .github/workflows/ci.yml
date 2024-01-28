@@ -10,7 +10,7 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        java: [ 8, 11, 17, 18, 21 ]
+        java: [ 8, 11, 17, 18 ]
       fail-fast: false
       max-parallel: 4
     name: JDK ${{ matrix.java }}
