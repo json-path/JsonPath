@@ -31,7 +31,6 @@ ext {
                     'org.hamcrest:hamcrest:2.2',
                     'org.glassfish:jakarta.json:2.0.1',
                     'org.eclipse:yasson:2.0.4',
-                    //'org.apache.johnzon:johnzon-jsonb:1.2.21',
                     'org.slf4j:slf4j-simple:2.0.9',
                     'com.google.code.gson:gson:2.10.1',
                     'org.hamcrest:hamcrest:2.2',
