@@ -2,14 +2,14 @@ package com.jayway.jsonpath.old;
 
 import com.jayway.jsonpath.JsonPath;
 import org.hamcrest.Matchers;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import java.util.List;
 import java.util.Map;
 
+import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.*;
-import static org.junit.Assert.assertThat;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
  * test defined in http://jsonpath.googlecode.com/svn/trunk/tests/jsonpath-test-js.html
@@ -31,7 +31,7 @@ public class ComplianceTest {
         assertThat(JsonPath.<String>read(json, "$.['c d']"), is(equalTo("e")));
         assertThat(JsonPath.<List<String>>read(json, "$[*]"), hasItems("a", "b", "e"));
     }
-    
+
     @Test
     public void test_two() throws Exception {
         String json = "[ 1, \"2\", 3.14, true, null ]";
@@ -43,7 +43,7 @@ public class ComplianceTest {
                 new String("2"),
                 new Double(3.14),
                 new Boolean(true),
-                (Comparable)null));
+                (Comparable) null));
 
         List<Object> res = JsonPath.read(json, "$[-1:]");
 

@@ -1,13 +1,12 @@
-
 description = "Java port of Stefan Goessner JsonPath."
 
 jar {
     baseName 'json-path'
-    bnd (
-        'Automatic-Module-Name': 'json.path',
-        'Implementation-Title': 'json-path', 'Implementation-Version': archiveVersion,
-        'Import-Package': 'org.json.*;resolution:=optional, com.google.gson.*;resolution:=optional, com.fasterxml.jackson.*;resolution:=optional, org.apache.tapestry5.json.*;resolution:=optional, org.codehaus.jettison.*;resolution:=optional, jakarta.json.*;resolution:=optional, *',
-        'Export-Package': 'com.jayway.jsonpath,com.jayway.jsonpath.spi,com.jayway.jsonpath.spi.cache,com.jayway.jsonpath.spi.json,com.jayway.jsonpath.spi.mapper'
+    bnd(
+            'Automatic-Module-Name': 'json.path',
+            'Implementation-Title': 'json-path', 'Implementation-Version': archiveVersion,
+            'Import-Package': 'org.json.*;resolution:=optional, com.google.gson.*;resolution:=optional, com.fasterxml.jackson.*;resolution:=optional, org.apache.tapestry5.json.*;resolution:=optional, org.codehaus.jettison.*;resolution:=optional, jakarta.json.*;resolution:=optional, *',
+            'Export-Package': 'com.jayway.jsonpath,com.jayway.jsonpath.spi,com.jayway.jsonpath.spi.cache,com.jayway.jsonpath.spi.json,com.jayway.jsonpath.spi.mapper'
     )
 }
 
@@ -23,5 +22,4 @@ dependencies {
     compileOnly libs.jakartaJsonB// , optional
 
     testImplementation libs.test
-    testRuntimeOnly 'org.junit.vintage:junit-vintage-engine'
 }

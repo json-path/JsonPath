@@ -1,10 +1,10 @@
 package com.jayway.jsonpath.matchers;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import static com.jayway.jsonpath.matchers.JsonPathMatchers.hasNoJsonPath;
+import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.*;
-import static org.junit.Assert.assertThat;
 
 public class HasNoJsonPathTest {
     private static final String JSON_STRING = "{" +

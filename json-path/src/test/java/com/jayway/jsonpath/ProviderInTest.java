@@ -2,23 +2,14 @@ package com.jayway.jsonpath;
 
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.google.gson.JsonArray;
-import com.jayway.jsonpath.spi.json.GsonJsonProvider;
-import com.jayway.jsonpath.spi.json.JacksonJsonNodeJsonProvider;
-import com.jayway.jsonpath.spi.json.JacksonJsonProvider;
-import com.jayway.jsonpath.spi.json.JakartaJsonProvider;
-import com.jayway.jsonpath.spi.json.JsonOrgJsonProvider;
-import com.jayway.jsonpath.spi.json.JsonSmartJsonProvider;
-import com.jayway.jsonpath.spi.mapper.GsonMappingProvider;
-import com.jayway.jsonpath.spi.mapper.JacksonMappingProvider;
-import com.jayway.jsonpath.spi.mapper.JakartaMappingProvider;
-import com.jayway.jsonpath.spi.mapper.JsonOrgMappingProvider;
-import com.jayway.jsonpath.spi.mapper.JsonSmartMappingProvider;
+import com.jayway.jsonpath.spi.json.*;
+import com.jayway.jsonpath.spi.mapper.*;
 import org.assertj.core.util.Lists;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import java.util.List;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class ProviderInTest {
     private final String JSON = "[{\"foo\": \"bar\"}, {\"foo\": \"baz\"}]";
@@ -33,7 +24,7 @@ public class ProviderInTest {
 
 
     @Test
-    public void testJsonPathQuotesJackson() throws Exception {
+    public void testJsonPathQuotesJackson() {
         final Configuration jackson = Configuration.builder().jsonProvider(new JacksonJsonProvider()).mappingProvider(new JacksonMappingProvider()).build();
         final DocumentContext ctx = JsonPath.using(jackson).parse(JSON);
 
@@ -52,7 +43,7 @@ public class ProviderInTest {
 
 
     @Test
-    public void testJsonPathQuotesJacksonJsonNode() throws Exception {
+    public void testJsonPathQuotesJacksonJsonNode() {
         final Configuration jacksonJsonNode = Configuration.builder().jsonProvider(new JacksonJsonNodeJsonProvider()).mappingProvider(new JacksonMappingProvider()).build();
         final DocumentContext ctx = JsonPath.using(jacksonJsonNode).parse(JSON);
 
@@ -70,7 +61,7 @@ public class ProviderInTest {
     }
 
     @Test
-    public void testJsonPathQuotesGson() throws Exception {
+    public void testJsonPathQuotesGson() {
         final Configuration gson = Configuration.builder().jsonProvider(new GsonJsonProvider()).mappingProvider(new GsonMappingProvider()).build();
         final DocumentContext ctx = JsonPath.using(gson).parse(JSON);
 
@@ -88,7 +79,7 @@ public class ProviderInTest {
     }
 
     @Test
-    public void testJsonPathQuotesJsonOrg() throws Exception {
+    public void testJsonPathQuotesJsonOrg() {
         final Configuration jsonOrg = Configuration.builder().jsonProvider(new JsonOrgJsonProvider()).mappingProvider(new JsonOrgMappingProvider()).build();
         final DocumentContext ctx = JsonPath.using(jsonOrg).parse(JSON);
 
@@ -106,7 +97,7 @@ public class ProviderInTest {
     }
 
     @Test
-    public void testJsonPathQuotesJsonSmart() throws Exception {
+    public void testJsonPathQuotesJsonSmart() {
         final Configuration jsonSmart = Configuration.builder().jsonProvider(new JsonSmartJsonProvider()).mappingProvider(new JsonSmartMappingProvider()).build();
         final DocumentContext ctx = JsonPath.using(jsonSmart).parse(JSON);
 
@@ -124,7 +115,7 @@ public class ProviderInTest {
     }
 
     @Test
-    public void testJsonPathQuotesJakarta() throws Exception {
+    public void testJsonPathQuotesJakarta() {
         final Configuration gson = Configuration.builder().jsonProvider(new JakartaJsonProvider()).mappingProvider(new JakartaMappingProvider()).build();
         final DocumentContext ctx = JsonPath.using(gson).parse(JSON);
 

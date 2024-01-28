@@ -1,15 +1,13 @@
 package com.jayway.jsonpath.internal.function;
 
-import net.minidev.json.JSONArray;
 import com.jayway.jsonpath.JsonPath;
-import org.junit.Test;
-
-
-import static org.junit.Assert.assertEquals;
+import net.minidev.json.JSONArray;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
 
 public class Issue273 {
     @Test
-    public void testGetPropertyFromArray(){
+    public void testGetPropertyFromArray() {
         String json = "[\n" +
                 "   [\n" +
                 "      {\n" +
@@ -45,12 +43,12 @@ public class Issue273 {
                 "   }\n" +
                 "]\n";
 
-        JSONArray arr = JsonPath.read(json,"$..[2].author");
-        assertEquals(arr.get(0), "Herman Melville");
+        JSONArray arr = JsonPath.read(json, "$..[2].author");
+        Assertions.assertEquals(arr.get(0), "Herman Melville");
     }
 
     @Test
-    public void testGetPropertyFromObject(){
+    public void testGetPropertyFromObject() {
         String json = "{\n" +
                 "    \"store\": {\n" +
                 "        \"book\": [\n" +
@@ -89,7 +87,7 @@ public class Issue273 {
                 "    \"expensive\": 10\n" +
                 "}\n" +
                 "                ";
-        JSONArray arr = JsonPath.read(json,"$..[2].author");
-        assertEquals(arr.get(0), "Herman Melville");
+        JSONArray arr = JsonPath.read(json, "$..[2].author");
+        Assertions.assertEquals(arr.get(0), "Herman Melville");
     }
 }

@@ -1,6 +1,6 @@
 package com.jayway.jsonpath;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import java.io.InputStream;
 import java.util.HashMap;
@@ -11,6 +11,7 @@ import java.util.Map;
 import static com.jayway.jsonpath.JsonPath.parse;
 import static java.util.Collections.emptyMap;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public class WriteTest extends BaseTest {
 
@@ -187,7 +188,7 @@ public class WriteTest extends BaseTest {
 
     @Test
     public void item_can_be_added_to_root_array() {
-        List<Integer> model = new LinkedList<Integer>();
+        List<Integer> model = new LinkedList<>();
         model.add(1);
         model.add(2);
 
@@ -206,23 +207,23 @@ public class WriteTest extends BaseTest {
         assertThat(newVal).isEqualTo("new-val");
     }
 
-    @Test(expected = InvalidModificationException.class)
+    @Test
     public void add_to_object_on_array() {
-        parse(JSON_DOCUMENT).put("$.store.book", "new-key", "new-value");
+        assertThrows(InvalidModificationException.class, () -> parse(JSON_DOCUMENT).put("$.store.book", "new-key", "new-value"));
     }
 
-    @Test(expected = InvalidModificationException.class)
+    @Test
     public void add_to_array_on_object() {
-        parse(JSON_DOCUMENT).add("$.store.book[0]", "new-value");
+        assertThrows(InvalidModificationException.class, () -> parse(JSON_DOCUMENT).add("$.store.book[0]", "new-value"));
     }
 
 
-    @Test(expected = InvalidModificationException.class)
+    @Test
     public void root_object_can_not_be_updated() {
         Map model = new HashMap();
         model.put("a", "a-val");
 
-        parse(model).set("$[?(@.a == 'a-val')]", 1);
+        assertThrows(InvalidModificationException.class, () -> parse(model).set("$[?(@.a == 'a-val')]", 1));
     }
 
     @Test
@@ -247,25 +248,25 @@ public class WriteTest extends BaseTest {
         assertThat(result).isNotEmpty();
     }
 
-    @Test(expected = InvalidModificationException.class)
+    @Test
     public void non_map_array_items_cannot_be_renamed(){
-        List<Integer> model = new LinkedList<Integer>();
+        List<Integer> model = new LinkedList<>();
         model.add(1);
         model.add(2);
-        parse(model).renameKey("$[*]", "oldKey", "newKey");
+        assertThrows(InvalidModificationException.class, () -> parse(model).renameKey("$[*]", "oldKey", "newKey"));
     }
 
-    @Test(expected = InvalidModificationException.class)
+    @Test
     public void multiple_properties_cannot_be_renamed(){
-        parse(JSON_DOCUMENT).renameKey("$.store.book[*]['author', 'category']", "old-key", "new-key");
+        assertThrows(InvalidModificationException.class, () ->parse(JSON_DOCUMENT).renameKey("$.store.book[*]['author', 'category']", "old-key", "new-key"));
     }
 
-    @Test(expected = PathNotFoundException.class)
+    @Test
     public void non_existent_key_rename_not_allowed(){
-        Object o = parse(JSON_DOCUMENT).renameKey("$", "fake", "new-fake").json();
+        assertThrows(PathNotFoundException.class, () -> parse(JSON_DOCUMENT).renameKey("$", "fake", "new-fake").json());
     }
 
-    @Test(expected = InvalidModificationException.class)
+    @Test
     public void rootCannotBeMapped(){
         MapFunction mapFunction = new MapFunction() {
             @Override
@@ -273,7 +274,7 @@ public class WriteTest extends BaseTest {
                 return currentValue.toString()+"converted";
             }
         };
-        Object o = parse(JSON_DOCUMENT).map("$", mapFunction).json();
+        assertThrows(InvalidModificationException.class, () -> parse(JSON_DOCUMENT).map("$", mapFunction).json());
     }
 
     @Test

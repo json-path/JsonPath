@@ -4,9 +4,9 @@ import com.jayway.jsonpath.Configuration;
 import com.jayway.jsonpath.JsonPath;
 import com.jayway.jsonpath.ReadContext;
 import com.jayway.jsonpath.matchers.helpers.StrictParsingConfiguration;
-import org.junit.AfterClass;
-import org.junit.BeforeClass;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
 
 import java.io.File;
 import java.util.List;
@@ -15,21 +15,21 @@ import java.util.Map;
 import static com.jayway.jsonpath.matchers.JsonPathMatchers.*;
 import static com.jayway.jsonpath.matchers.helpers.ResourceHelpers.resource;
 import static com.jayway.jsonpath.matchers.helpers.ResourceHelpers.resourceAsFile;
+import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.*;
-import static org.junit.Assert.assertThat;
 
 public class JsonPathMatchersTest {
     private static final String BOOKS_JSON = resource("books.json");
     private static final String INVALID_JSON = "{ invalid-json }";
     private static final File BOOKS_JSON_FILE = resourceAsFile("books.json");
 
-    @BeforeClass
+    @BeforeAll
     public static void setupStrictJsonParsing() {
         // NOTE: Evaluation depends on the default configuration of JsonPath
         Configuration.setDefaults(new StrictParsingConfiguration());
     }
 
-    @AfterClass
+    @AfterAll
     public static void setupDefaultJsonParsing() {
         Configuration.setDefaults(null);
     }

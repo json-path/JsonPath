@@ -1,17 +1,17 @@
 package com.jayway.jsonpath.matchers;
 
-import org.junit.Ignore;
-import org.junit.Test;
+import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.Test;
 
 import java.io.File;
 
 import static com.jayway.jsonpath.matchers.JsonPathMatchers.*;
 import static com.jayway.jsonpath.matchers.helpers.ResourceHelpers.resource;
 import static com.jayway.jsonpath.matchers.helpers.ResourceHelpers.resourceAsFile;
+import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
-import static org.junit.Assert.assertThat;
 
-@Ignore
+@Disabled
 public class DemoTest {
     @Test
     public void shouldFailOnJsonString() {

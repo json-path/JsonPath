@@ -1,17 +1,11 @@
 package com.jayway.jsonpath.internal.function;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.node.ArrayNode;
-import com.jayway.jsonpath.*;
-import com.jayway.jsonpath.spi.json.JacksonJsonNodeJsonProvider;
-import com.jayway.jsonpath.spi.mapper.JacksonMappingProvider;
-import org.junit.Assert;
-import org.junit.Test;
-
-import static com.jayway.jsonpath.JsonPath.using;
-import static com.jayway.jsonpath.internal.path.PathCompiler.fail;
+import com.jayway.jsonpath.Configuration;
+import com.jayway.jsonpath.DocumentContext;
+import com.jayway.jsonpath.JsonPath;
+import com.jayway.jsonpath.Option;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
 
 public class Issue612 {
     @Test
@@ -22,16 +16,18 @@ public class Issue612 {
         String json = "{\"1\":{\"2\":null}}";
         DocumentContext documentContext = JsonPath.using(config).parse(json);
         JsonPath query = JsonPath.compile("$.1.2.a.b.c");
-        Assert.assertNull(documentContext.read(query));
-        Assert.assertNull(documentContext.map(query, (object, configuration) -> object));
+        Assertions.assertNull(documentContext.read(query));
+        Assertions.assertNull(documentContext.map(query, (object, configuration) -> object));
     }
-    @Test(expected = Exception.class)
+
+    @Test
     public void test2() {
         Configuration config = Configuration.builder()
                 .build();
         String json = "{\"1\":{\"2\":null}}";
         DocumentContext documentContext = JsonPath.using(config).parse(json);
         JsonPath query = JsonPath.compile("$.1.2.a.b.c");
-        documentContext.map(query, (object, configuration) -> object);
+
+        Assertions.assertThrows(Exception.class, () -> documentContext.map(query, (object, configuration) -> object));
     }
 }

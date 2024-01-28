@@ -1,32 +1,32 @@
 package com.jayway.jsonpath;
 
-import com.jayway.jsonpath.internal.ParseContextImpl;
-import org.junit.Ignore;
-import org.junit.Test;
+import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.Test;
 
 import java.util.List;
 
 import static com.jayway.jsonpath.internal.path.PathCompiler.compile;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public class PathCompilerTest {
 
 
-    @Ignore("Backward compatibility <= 2.0.0")
-    @Test(expected = InvalidPathException.class)
+    @Disabled("Backward compatibility <= 2.0.0")
+    @Test
     public void a_path_must_start_with_$_or_at() {
-        compile("x");
+        assertThrows(InvalidPathException.class, () -> compile("x"));
     }
 
-    @Ignore("Backward compatibility <= 2.0.0")
-    @Test(expected = InvalidPathException.class)
+    @Disabled("Backward compatibility <= 2.0.0")
+    @Test
     public void a_square_bracket_may_not_follow_a_period() {
-        compile("$.[");
+        assertThrows(InvalidPathException.class, () -> compile("$.["));
     }
 
-    @Test(expected = InvalidPathException.class)
+    @Test
     public void a_root_path_must_be_followed_by_period_or_bracket() {
-        compile("$X");
+        assertThrows(InvalidPathException.class, () -> compile("$X"));
     }
 
     @Test
@@ -35,24 +35,24 @@ public class PathCompilerTest {
         assertThat(compile("@").toString()).isEqualTo("@");
     }
 
-    @Test(expected = InvalidPathException.class)
+    @Test
     public void a_path_may_not_end_with_period() {
-        compile("$.");
+        assertThrows(InvalidPathException.class, () -> compile("$."));
     }
 
-    @Test(expected = InvalidPathException.class)
+    @Test
     public void a_path_may_not_end_with_period_2() {
-        compile("$.prop.");
+        assertThrows(InvalidPathException.class, () -> compile("$.prop."));
     }
 
-    @Test(expected = InvalidPathException.class)
+    @Test
     public void a_path_may_not_end_with_scan() {
-        compile("$..");
+        assertThrows(InvalidPathException.class, () -> compile("$.."));
     }
 
-    @Test(expected = InvalidPathException.class)
+    @Test
     public void a_path_may_not_end_with_scan_2() {
-        compile("$.prop..");
+        assertThrows(InvalidPathException.class, () -> compile("$.prop.."));
     }
 
     @Test
@@ -84,9 +84,9 @@ public class PathCompilerTest {
         assertThat(compile("$.aaa.bbb.ccc").toString()).isEqualTo("$['aaa']['bbb']['ccc']");
     }
 
-    @Test(expected = InvalidPathException.class)
+    @Test
     public void a_property_may_not_contain_blanks() {
-        assertThat(compile("$.foo bar").toString());
+        assertThrows(InvalidPathException.class, () -> compile("$.foo bar"));
     }
 
     @Test
@@ -242,7 +242,7 @@ public class PathCompilerTest {
         String json = "{\n"
                 + "    \"logs\": [\n"
                 + "        {\n"
-                + "            \"message\": \"\\\"it\\\"\",\n"
+                + "            \"message\": \"\\\"it\\\"\"\n"
                 + "        }\n"
                 + "    ]\n"
                 + "}";
@@ -255,7 +255,7 @@ public class PathCompilerTest {
         String json = "{\n"
                 + "    \"logs\": [\n"
                 + "        {\n"
-                + "            \"message\": \"'it'\",\n"
+                + "            \"message\": \"'it'\"\n"
                 + "        }\n"
                 + "    ]\n"
                 + "}";
@@ -270,7 +270,7 @@ public class PathCompilerTest {
         String json = "{\n"
                 + "    \"logs\": [\n"
                 + "        {\n"
-                + "            \"message\": \"'it'\",\n"
+                + "            \"message\": \"'it'\"\n"
                 + "        }\n"
                 + "    ]\n"
                 + "}";
@@ -304,23 +304,23 @@ public class PathCompilerTest {
         assertThat(compile("$.aaa.foo(5,10,15)").toString()).isEqualTo("$['aaa'].foo(...)");
     }
 
-    @Test(expected = InvalidPathException.class)
+    @Test
     public void array_indexes_must_be_separated_by_commas() {
-        compile("$[0, 1, 2 4]");
+        assertThrows(InvalidPathException.class, () -> compile("$[0, 1, 2 4]"));
     }
 
-    @Test(expected = InvalidPathException.class)
+    @Test
     public void trailing_comma_after_list_is_not_accepted() {
-        compile("$['1','2',]");
+        assertThrows(InvalidPathException.class, () -> compile("$['1','2',]"));
     }
 
-    @Test(expected = InvalidPathException.class)
+    @Test
     public void accept_only_a_single_comma_between_indexes() {
-        compile("$['1', ,'3']");
+        assertThrows(InvalidPathException.class, () -> compile("$['1', ,'3']"));
     }
 
-    @Test(expected = InvalidPathException.class)
+    @Test
     public void property_must_be_separated_by_commas() {
-        compile("$['aaa'}'bbb']");
+        assertThrows(InvalidPathException.class, () -> compile("$['aaa'}'bbb']"));
     }
 }

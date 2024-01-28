@@ -1,9 +1,10 @@
 package com.jayway.jsonpath;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import static com.jayway.jsonpath.internal.filter.FilterCompiler.compile;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public class FilterCompilerTest {
 
@@ -60,9 +61,9 @@ public class FilterCompilerTest {
         assertThat(compile("[?(@[\")]@$)]\"] == \")]@$)]\")]").toString()).isEqualTo("[?(@[\")]@$)]\"] == \")]@$)]\")]");
     }
 
-    @Test(expected = InvalidPathException.class)
+    @Test
     public void invalid_path_when_string_literal_is_unquoted() {
-        compile("[?(@.foo == x)]");
+        assertThrows(InvalidPathException.class, () -> compile("[?(@.foo == x)]"));
     }
 
     @Test
@@ -86,19 +87,18 @@ public class FilterCompilerTest {
 
     @Test
     // issue #178
-    public void compile_and_serialize_not_exists_filter(){
+    public void compile_and_serialize_not_exists_filter() {
         Filter compiled = compile("[?(!@.foo)]");
         String serialized = compiled.toString();
         assertThat(serialized).isEqualTo("[?(!@['foo'])]");
     }
 
 
-
-    private void assertInvalidPathException(String filter){
+    private void assertInvalidPathException(String filter) {
         try {
             compile(filter);
             throw new AssertionError("Expected " + filter + " to throw InvalidPathException");
-        } catch (InvalidPathException e){
+        } catch (InvalidPathException e) {
             //e.printStackTrace();
         }
     }

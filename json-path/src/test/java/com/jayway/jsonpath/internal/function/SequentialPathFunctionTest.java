@@ -2,7 +2,7 @@ package com.jayway.jsonpath.internal.function;
 
 import com.jayway.jsonpath.Configuration;
 import com.jayway.jsonpath.Configurations;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 /**
  * Test cases for functions

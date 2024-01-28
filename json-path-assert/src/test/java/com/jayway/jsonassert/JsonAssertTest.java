@@ -1,11 +1,12 @@
 package com.jayway.jsonassert;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import java.io.InputStream;
 
 import static com.jayway.jsonassert.JsonAssert.*;
 import static org.hamcrest.Matchers.*;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public class JsonAssertTest {
 
@@ -52,10 +53,10 @@ public class JsonAssertTest {
     }
 
 
-    @Test(expected = AssertionError.class)
+    @Test
     public void has_path() throws Exception {
 
-        with(JSON).assertNotDefined("$.store.bicycle[?(@.color == 'red' )]");
+        assertThrows(AssertionError.class, () -> with(JSON).assertNotDefined("$.store.bicycle[?(@.color == 'red' )]"));
     }
 
     @Test
@@ -66,10 +67,10 @@ public class JsonAssertTest {
         with(JSON).assertThat("$.store.bicycle[?(@.escape == 'Esc\\b\\f\\n\\r\\t\\u002A')]", is(collectionWithSize(equalTo(1))));
     }
 
-    @Test(expected = AssertionError.class)
+    @Test
     public void failed_error_message() throws Exception {
 
-        with(JSON).assertThat("$.store.book[0].category", endsWith("foobar"));
+        assertThrows(AssertionError.class, () -> with(JSON).assertThat("$.store.book[0].category", endsWith("foobar")));
     }
 
     @Test
@@ -168,25 +169,26 @@ public class JsonAssertTest {
     }
 
 
-    @Test(expected = AssertionError.class)
+    @Test
     public void assert_that_invalid_path_is_thrown() {
 
         JsonAsserter asserter = JsonAssert.with("{\"foo\":\"bar\"}");
-        asserter.assertEquals("$foo", "bar");
+        assertThrows(AssertionError.class, () -> asserter.assertEquals("$foo", "bar"));
     }
+
     @Test
     public void testAssertEqualsInteger() throws Exception {
         with(getResourceAsStream("lotto.json")).assertEquals("lotto.winners[0].winnerId", 23);
     }
 
-    @Test(expected = AssertionError.class)
+    @Test
     public void testAssertEqualsIntegerInvalidExpected() throws Exception {
-        with(getResourceAsStream("lotto.json")).assertEquals("lotto.winners[0].winnerId", 24);
+        assertThrows(AssertionError.class, () -> with(getResourceAsStream("lotto.json")).assertEquals("lotto.winners[0].winnerId", 24));
     }
 
-    @Test(expected = AssertionError.class)
+    @Test
     public void testAssertEqualsIntegerInvalidField() throws Exception {
-        with(getResourceAsStream("lotto.json")).assertEquals("lotto.winners[0].winnerId1", 24);
+        assertThrows(AssertionError.class, () -> with(getResourceAsStream("lotto.json")).assertEquals("lotto.winners[0].winnerId1", 24));
     }
 
     private InputStream getResourceAsStream(String resourceName) {

@@ -4,14 +4,15 @@ import com.jayway.jsonpath.Configuration;
 import com.jayway.jsonpath.JsonPath;
 import com.jayway.jsonpath.Option;
 import com.jayway.jsonpath.PathNotFoundException;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.List;
 
-import static org.junit.Assert.assertNull;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public class PropertyPathTokenTest {
 
@@ -52,21 +53,14 @@ public class PropertyPathTokenTest {
 
     }
 
-    @Test(expected = PathNotFoundException.class)
+    @Test
     public void property_not_found_deep() {
-
-        String result = JsonPath.read(SIMPLE_MAP, "$.foo.not-found");
-
-        assertThat(result).isNull();
+        assertThrows(PathNotFoundException.class, () -> JsonPath.read(SIMPLE_MAP, "$.foo.not-found"));
     }
 
-    @Test(expected = PathNotFoundException.class)
+    @Test
     public void property_not_found_option_throw() {
-
-        //String result = JsonPath.using(Configuration.defaultConfiguration().setOptions(Option.THROW_ON_MISSING_PROPERTY)).parse(SIMPLE_MAP).read("$.not-found");
-        String result = JsonPath.using(Configuration.defaultConfiguration()).parse(SIMPLE_MAP).read("$.not-found");
-
-        assertThat(result).isNull();
+        assertThrows(PathNotFoundException.class, () -> JsonPath.using(Configuration.defaultConfiguration()).parse(SIMPLE_MAP).read("$.not-found"));
     }
 
     @Test

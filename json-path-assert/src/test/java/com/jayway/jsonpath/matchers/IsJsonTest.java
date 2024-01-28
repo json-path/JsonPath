@@ -6,9 +6,9 @@ import com.jayway.jsonpath.matchers.helpers.TestingMatchers;
 import org.hamcrest.Description;
 import org.hamcrest.Matcher;
 import org.hamcrest.StringDescription;
-import org.junit.AfterClass;
-import org.junit.BeforeClass;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
 
 import java.io.File;
 
@@ -16,8 +16,8 @@ import static com.jayway.jsonpath.matchers.JsonPathMatchers.isJson;
 import static com.jayway.jsonpath.matchers.helpers.ResourceHelpers.resource;
 import static com.jayway.jsonpath.matchers.helpers.ResourceHelpers.resourceAsFile;
 import static com.jayway.jsonpath.matchers.helpers.TestingMatchers.withPathEvaluatedTo;
+import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.*;
-import static org.junit.Assert.assertThat;
 
 public class IsJsonTest {
     private static final String VALID_JSON = resource("example.json");
@@ -26,12 +26,12 @@ public class IsJsonTest {
     private static final File BOOKS_JSON_FILE = resourceAsFile("books.json");
     private static final Object BOOKS_JSON_PARSED = parseJson(BOOKS_JSON_STRING);
 
-    @BeforeClass
+    @BeforeAll
     public static void setupStrictJsonParsing() {
         Configuration.setDefaults(new StrictParsingConfiguration());
     }
 
-    @AfterClass
+    @AfterAll
     public static void setupDefaultJsonParsing() {
         Configuration.setDefaults(null);
     }

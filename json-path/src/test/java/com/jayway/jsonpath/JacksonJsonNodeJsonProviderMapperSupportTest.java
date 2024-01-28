@@ -1,28 +1,23 @@
 package com.jayway.jsonpath;
 
-import static org.assertj.core.api.Assertions.assertThat;
-
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.TextNode;
 import com.jayway.jsonpath.spi.json.JacksonJsonNodeJsonProvider;
 import com.jayway.jsonpath.spi.mapper.JacksonMappingProvider;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.MethodSource;
+
 import java.util.Arrays;
 import java.util.List;
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.junit.runners.Parameterized;
 
-@RunWith(Parameterized.class)
+import static org.assertj.core.api.Assertions.assertThat;
+
 public class JacksonJsonNodeJsonProviderMapperSupportTest {
 
-    private final TestData testData;
-
-    public JacksonJsonNodeJsonProviderMapperSupportTest(final TestData testData) {
-        this.testData = testData;
-    }
-    @Test
-    public void mapMethod_withJacksonJsonNodeJsonProvider_shouldUsingJsonNodeForMappingValues() {
+    @ParameterizedTest
+    @MethodSource("testDataSource")
+    public void mapMethod_withJacksonJsonNodeJsonProvider_shouldUsingJsonNodeForMappingValues(TestData testData) {
         DocumentContext testJsonDocumentContext = cloneDocumentContext(testData.jsonDocumentContext);
 
         testJsonDocumentContext.map(testData.jsonPath, (value, config) -> {
@@ -33,16 +28,20 @@ public class JacksonJsonNodeJsonProviderMapperSupportTest {
                 .isEqualTo(testData.expectedUpdatedJsonDocument);
     }
 
-    @Test
-    public void readMethod_withJacksonJsonNodeJsonProvider_shouldReturnJsonNode() {
+
+    @ParameterizedTest
+    @MethodSource("testDataSource")
+    public void readMethod_withJacksonJsonNodeJsonProvider_shouldReturnJsonNode(TestData testData) {
         DocumentContext testJsonDocumentContext = cloneDocumentContext(testData.jsonDocumentContext);
 
         final JsonNode actualJsonValue = testJsonDocumentContext.read(testData.jsonPath);
         assertThat(actualJsonValue).isEqualTo(testData.expectedJsonValue);
     }
 
-    @Test
-    public void setMethod_withJacksonJsonNodeJsonProvider_shouldAcceptJsonNode() {
+
+    @ParameterizedTest
+    @MethodSource("testDataSource")
+    public void setMethod_withJacksonJsonNodeJsonProvider_shouldAcceptJsonNode(TestData testData) {
         DocumentContext testJsonDocumentContext = cloneDocumentContext(testData.jsonDocumentContext);
 
         testJsonDocumentContext.set(testData.jsonPath, testData.newJsonValue);
@@ -75,7 +74,7 @@ public class JacksonJsonNodeJsonProviderMapperSupportTest {
         }
     }
 
-    @Parameterized.Parameters
+
     public static List<TestData> testDataSource() throws Exception {
         final Configuration configuration = Configuration.builder()
                 .jsonProvider(new JacksonJsonNodeJsonProvider())

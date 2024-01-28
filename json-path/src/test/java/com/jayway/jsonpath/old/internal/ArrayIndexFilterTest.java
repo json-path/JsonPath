@@ -1,19 +1,17 @@
 package com.jayway.jsonpath.old.internal;
 
 import com.jayway.jsonpath.JsonPath;
-
-import org.junit.Assert;
-
 import org.hamcrest.Matchers;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import java.util.List;
 
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class ArrayIndexFilterTest {
 
-    private static final String JSON =  "[1, 3, 5, 7, 8, 13, 20]";
+    private static final String JSON = "[1, 3, 5, 7, 8, 13, 20]";
 
     @Test
     public void tail_does_not_throw_when_index_out_of_bounds() {
@@ -49,7 +47,7 @@ public class ArrayIndexFilterTest {
     @Test
     public void can_access_items_from_end_with_negative_index() {
         int result = JsonPath.parse(JSON).read("$[-3]");
-        Assert.assertEquals(8, result);
+        assertEquals(8, result);
     }
 
 }

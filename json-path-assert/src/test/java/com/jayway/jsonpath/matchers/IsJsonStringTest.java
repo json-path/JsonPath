@@ -5,25 +5,25 @@ import com.jayway.jsonpath.matchers.helpers.StrictParsingConfiguration;
 import org.hamcrest.Description;
 import org.hamcrest.Matcher;
 import org.hamcrest.StringDescription;
-import org.junit.AfterClass;
-import org.junit.BeforeClass;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
 
 import static com.jayway.jsonpath.matchers.JsonPathMatchers.isJsonString;
 import static com.jayway.jsonpath.matchers.helpers.ResourceHelpers.resource;
 import static com.jayway.jsonpath.matchers.helpers.TestingMatchers.*;
+import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.*;
-import static org.junit.Assert.assertThat;
 
 public class IsJsonStringTest {
     private static final String BOOKS_JSON = resource("books.json");
 
-    @BeforeClass
+    @BeforeAll
     public static void setupStrictJsonParsing() {
         Configuration.setDefaults(new StrictParsingConfiguration());
     }
 
-    @AfterClass
+    @AfterAll
     public static void setupDefaultJsonParsing() {
         Configuration.setDefaults(null);
     }
