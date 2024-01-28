@@ -1,6 +1,6 @@
 package com.jayway.jsonpath;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import java.util.List;
 import java.util.Map;
@@ -9,6 +9,7 @@ import static com.jayway.jsonpath.JsonPath.parse;
 import static com.jayway.jsonpath.JsonPath.using;
 import static com.jayway.jsonpath.Option.AS_PATH_LIST;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 @SuppressWarnings("ALL")
 public class ReturnTypeTest extends BaseTest {
@@ -18,7 +19,7 @@ public class ReturnTypeTest extends BaseTest {
 
     @Test
     public void assert_strings_can_be_read() {
-        assertThat((String)reader.read("$.string-property")).isEqualTo("string-value");
+        assertThat((String) reader.read("$.string-property")).isEqualTo("string-value");
     }
 
     @Test
@@ -28,17 +29,17 @@ public class ReturnTypeTest extends BaseTest {
 
     @Test
     public void assert_longs_can_be_read() {
-        assertThat((Long)reader.read("$.long-max-property")).isEqualTo(Long.MAX_VALUE);
+        assertThat((Long) reader.read("$.long-max-property")).isEqualTo(Long.MAX_VALUE);
     }
 
     @Test
     public void assert_boolean_values_can_be_read() {
-        assertThat((Boolean)reader.read("$.boolean-property")).isEqualTo(true);
+        assertThat((Boolean) reader.read("$.boolean-property")).isEqualTo(true);
     }
 
     @Test
     public void assert_null_values_can_be_read() {
-        assertThat((String)reader.read("$.null-property")).isNull();
+        assertThat((String) reader.read("$.null-property")).isNull();
     }
 
     @Test
@@ -78,8 +79,10 @@ public class ReturnTypeTest extends BaseTest {
 
     }
 
-    @Test(expected = ClassCastException.class)
+    @Test
     public void class_cast_exception_is_thrown_when_return_type_is_not_expected() {
-        List<String>  list = reader.read("$.store.book[0].author");
+        assertThrows(ClassCastException.class, () -> {
+            List<String> list = reader.read("$.store.book[0].author");
+        });
     }
 }

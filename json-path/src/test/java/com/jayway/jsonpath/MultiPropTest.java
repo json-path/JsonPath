@@ -1,6 +1,7 @@
 package com.jayway.jsonpath;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
 
 import java.util.HashMap;
 import java.util.List;
@@ -48,7 +49,7 @@ public class MultiPropTest {
                 .containsEntry("d", null);
     }
 
-    @Test(expected = PathNotFoundException.class)
+    @Test
     public void multi_props_can_be_required() {
 
         Map<String, Object> model = new HashMap<String, Object>(){{
@@ -59,7 +60,7 @@ public class MultiPropTest {
 
         Configuration conf = Configuration.defaultConfiguration().addOptions(Option.REQUIRE_PROPERTIES);
 
-        using(conf).parse(model).read("$['a', 'x']", Map.class);
+        Assertions.assertThrows(PathNotFoundException.class, () -> using(conf).parse(model).read("$['a', 'x']", Map.class));
     }
 
     @Test

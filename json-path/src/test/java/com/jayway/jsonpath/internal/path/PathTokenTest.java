@@ -1,7 +1,7 @@
 package com.jayway.jsonpath.internal.path;
 
 import com.jayway.jsonpath.BaseTest;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import java.util.Arrays;
 

@@ -1,7 +1,7 @@
 package com.jayway.jsonpath;
 
 import com.google.gson.JsonArray;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import java.util.List;
 

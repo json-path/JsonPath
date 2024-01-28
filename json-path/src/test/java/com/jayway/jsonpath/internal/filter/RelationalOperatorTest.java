@@ -1,23 +1,23 @@
 package com.jayway.jsonpath.internal.filter;
 
-import static org.junit.Assert.*;
-
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import java.util.Locale;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class RelationalOperatorTest {
 
     Locale locale;
 
-    @Before
+    @BeforeEach
     public void saveDefaultLocale() {
         locale = Locale.getDefault();
     }
 
-    @After
+    @AfterEach
     public void restoreDefaultLocale() {
         Locale.setDefault(locale);
     }

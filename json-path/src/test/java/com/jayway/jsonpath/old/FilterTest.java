@@ -1,13 +1,9 @@
 package com.jayway.jsonpath.old;
 
-import com.jayway.jsonpath.BaseTest;
-import com.jayway.jsonpath.Configuration;
-import com.jayway.jsonpath.Filter;
-import com.jayway.jsonpath.JsonPath;
-import com.jayway.jsonpath.Predicate;
+import com.jayway.jsonpath.*;
 import com.jayway.jsonpath.spi.json.JsonProvider;
 import org.assertj.core.api.Assertions;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import java.util.Collections;
 import java.util.HashMap;
@@ -18,9 +14,9 @@ import java.util.regex.Pattern;
 import static com.jayway.jsonpath.Criteria.where;
 import static com.jayway.jsonpath.Filter.filter;
 import static java.util.Arrays.asList;
-import static org.junit.Assert.*;
 import static org.hamcrest.CoreMatchers.is;
-import static org.junit.Assert.assertThat;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.junit.jupiter.api.Assertions.*;
 
 public class FilterTest extends BaseTest {
 
@@ -73,7 +69,6 @@ public class FilterTest extends BaseTest {
         assertFalse(filter(where("foo").is("xxx")).apply(createPredicateContext(check)));
         assertFalse(filter(where("bar").is("xxx")).apply(createPredicateContext(check)));
     }
-
 
 
     @Test
@@ -270,17 +265,17 @@ public class FilterTest extends BaseTest {
 
         Filter filter = filter(
                 where("first-name").is("Jock")
-                .and("address.state").is("Texas"));
+                        .and("address.state").is("Texas"));
 
         List<Map<String, Object>> jocksInTexas1 = JsonPath.read(json, "$[?]", filter);
-        List<Map<String, Object>> jocksInTexas2  = JsonPath.read(json, "$[?(@.first-name == 'Jock' && @.address.state == 'Texas')]");
+        List<Map<String, Object>> jocksInTexas2 = JsonPath.read(json, "$[?(@.first-name == 'Jock' && @.address.state == 'Texas')]");
 
 
         JsonPath.parse(json).json();
 
-        assertThat((String)JsonPath.read(jocksInTexas1, "$[0].address.state"), is("Texas"));
-        assertThat((String)JsonPath.read(jocksInTexas1, "$[0].first-name"), is("Jock"));
-        assertThat((String)JsonPath.read(jocksInTexas1, "$[0].last-name"), is("Ewing"));
+        assertThat((String) JsonPath.read(jocksInTexas1, "$[0].address.state"), is("Texas"));
+        assertThat((String) JsonPath.read(jocksInTexas1, "$[0].first-name"), is("Jock"));
+        assertThat((String) JsonPath.read(jocksInTexas1, "$[0].last-name"), is("Ewing"));
 
     }
 
@@ -306,8 +301,6 @@ public class FilterTest extends BaseTest {
         assertTrue(shouldMarch.apply(createPredicateContext(check)));
         assertFalse(shouldNotMarch.apply(createPredicateContext(check)));
     }
-
-
 
 
     @Test
@@ -340,7 +333,7 @@ public class FilterTest extends BaseTest {
         root.put("children", asList(rootChild_A, rootChild_B, rootChild_C));
 
 
-        Predicate customFilter = new Predicate () {
+        Predicate customFilter = new Predicate() {
             @Override
             public boolean apply(PredicateContext ctx) {
                 if (ctx.configuration().jsonProvider().getMapValue(ctx.item(), "name").equals("rootGrandChild_A")) {
@@ -366,7 +359,7 @@ public class FilterTest extends BaseTest {
         Predicate customFilter = new Predicate() {
             @Override
             public boolean apply(PredicateContext ctx) {
-                return 1 == (Integer)ctx.item();
+                return 1 == (Integer) ctx.item();
             }
         };
 

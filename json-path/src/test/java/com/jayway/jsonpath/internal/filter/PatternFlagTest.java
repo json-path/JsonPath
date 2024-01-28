@@ -1,47 +1,37 @@
 package com.jayway.jsonpath.internal.filter;
 
 import com.jayway.jsonpath.BaseTest;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.Arguments;
+import org.junit.jupiter.params.provider.MethodSource;
 
-import org.junit.Assert;
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.junit.runners.Parameterized;
+import java.util.stream.Stream;
 
-import java.util.Arrays;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
-@RunWith(Parameterized.class)
 public class PatternFlagTest extends BaseTest {
 
-    private final int flags;
-    private final String expectedFlags;
 
-    public PatternFlagTest(int flags, String expectedFlags) {
-        this.flags = flags;
-        this.expectedFlags = expectedFlags;
+    @ParameterizedTest
+    @MethodSource("testData")
+    public void testParseFlags(int flags, String expectedFlags) {
+        assertEquals(expectedFlags, PatternFlag.parseFlags(flags));
     }
 
-    @Test
-    public void testParseFlags() {
-        Assert.assertEquals(expectedFlags, PatternFlag.parseFlags(flags));
-    }
-
-    @Parameterized.Parameters
-    public static Iterable data() {
-        return Arrays.asList(
-            new Object[][]{
-                { 1,   "d"       },
-                { 2,   "i"       },
-                { 4,   "x"       },
-                { 8,   "m"       },
-                { 32,  "s"       },
-                { 64,  "u"       },
-                { 256, "U"       },
-                { 300, "xmsU"    },
-                { 13,  "dxm"     },
-                { 7,   "dix"     },
-                { 100, "xsu"     },
-                { 367, "dixmsuU" }
-            }
+    public static Stream<Arguments> testData() {
+        return Stream.of(
+                Arguments.arguments(1, "d"),
+                Arguments.arguments(2, "i"),
+                Arguments.arguments(4, "x"),
+                Arguments.arguments(8, "m"),
+                Arguments.arguments(32, "s"),
+                Arguments.arguments(64, "u"),
+                Arguments.arguments(256, "U"),
+                Arguments.arguments(300, "xmsU"),
+                Arguments.arguments(13, "dxm"),
+                Arguments.arguments(7, "dix"),
+                Arguments.arguments(100, "xsu"),
+                Arguments.arguments(367, "dixmsuU")
         );
     }
 }

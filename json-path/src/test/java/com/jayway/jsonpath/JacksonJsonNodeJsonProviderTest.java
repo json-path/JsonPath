@@ -13,7 +13,9 @@ import com.jayway.jsonpath.spi.json.JacksonJsonNodeJsonProvider;
 import com.jayway.jsonpath.spi.mapper.JacksonMappingProvider;
 import com.jayway.jsonpath.spi.mapper.MappingException;
 import java.nio.charset.StandardCharsets;
-import org.junit.Test;
+
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
 import java.math.BigDecimal;
@@ -186,11 +188,11 @@ public class JacksonJsonNodeJsonProviderTest extends BaseTest {
         assertThat(list.get(0).gen.eric).isEqualTo("yepp");
     }
 
-    @Test(expected = MappingException.class)
+    @Test
     public void test_type_ref_fail() throws IOException {
         TypeRef<List<FooBarBaz<Integer>>> typeRef = new TypeRef<List<FooBarBaz<Integer>>>() {};
 
-        using(JACKSON_JSON_NODE_CONFIGURATION).parse(JSON).read("$", typeRef);
+        Assertions.assertThrows(MappingException.class, () -> using(JACKSON_JSON_NODE_CONFIGURATION).parse(JSON).read("$", typeRef));
     }
 
     @Test

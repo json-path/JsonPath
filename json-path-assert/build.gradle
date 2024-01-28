@@ -1,10 +1,9 @@
-
 description = "Assertions on Json using JsonPath"
 
 jar {
     baseName 'json-path-assert'
-    bnd (
-        'Implementation-Title': 'json-path-assert', 'Implementation-Version': archiveVersion
+    bnd(
+            'Implementation-Title': 'json-path-assert', 'Implementation-Version': archiveVersion
     )
 }
 
@@ -15,5 +14,4 @@ dependencies {
 
     testImplementation libs.jsonSmart
     testImplementation libs.test
-    testRuntimeOnly 'org.junit.vintage:junit-vintage-engine'
 }

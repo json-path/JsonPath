@@ -13,21 +13,20 @@ buildscript {
 
 ext {
     libs = [
-            jsonSmart: 'net.minidev:json-smart:2.5.0',
-            slf4jApi: 'org.slf4j:slf4j-api:2.0.11',
-            gson: 'com.google.code.gson:gson:2.10.1',
-            hamcrest: 'org.hamcrest:hamcrest:2.2',
+            jsonSmart      : 'net.minidev:json-smart:2.5.0',
+            slf4jApi       : 'org.slf4j:slf4j-api:2.0.11',
+            gson           : 'com.google.code.gson:gson:2.10.1',
+            hamcrest       : 'org.hamcrest:hamcrest:2.2',
             jacksonDatabind: 'com.fasterxml.jackson.core:jackson-databind:2.16.1',
-            jettison: 'org.codehaus.jettison:jettison:1.5.4',
-            jsonOrg: 'org.json:json:20231013',
-            tapestryJson: 'org.apache.tapestry:tapestry-json:5.8.3',
-            jakartaJsonP: 'jakarta.json:jakarta.json-api:2.0.2',
-            jakartaJsonB: 'jakarta.json.bind:jakarta.json.bind-api:2.0.0',
+            jettison       : 'org.codehaus.jettison:jettison:1.5.4',
+            jsonOrg        : 'org.json:json:20231013',
+            tapestryJson   : 'org.apache.tapestry:tapestry-json:5.8.3',
+            jakartaJsonP   : 'jakarta.json:jakarta.json-api:2.0.2',
+            jakartaJsonB   : 'jakarta.json.bind:jakarta.json.bind-api:2.0.0',
 
-            test: [
+            test           : [
                     'commons-io:commons-io:2.15.0',
-                    'junit:junit:4.13.+',
-                    'org.junit.vintage:junit-vintage-engine:5.10.+',
+                    'org.junit.jupiter:junit-jupiter:5.10.1',
                     'org.assertj:assertj-core:3.25.1',
                     'org.hamcrest:hamcrest:2.2',
                     'org.glassfish:jakarta.json:2.0.1',
@@ -80,9 +79,6 @@ subprojects {
 
     test {
         useJUnitPlatform()
-
-        systemProperty("java.util.logging.manager", "org.apache.logging.log4j.jul.LogManager")
-
         testLogging {
             events "passed", "skipped", "failed"
         }
@@ -98,7 +94,7 @@ subprojects {
             options.addStringOption('Xdoclint:none', '-quiet')
         }
 
-        if(JavaVersion.current().isJava9Compatible()) {
+        if (JavaVersion.current().isJava9Compatible()) {
             options.addBooleanOption('html5', true)
         }
     }

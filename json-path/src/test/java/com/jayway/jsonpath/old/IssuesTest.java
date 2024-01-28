@@ -2,14 +2,7 @@ package com.jayway.jsonpath.old;
 
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.google.gson.JsonObject;
-import com.jayway.jsonpath.BaseTest;
-import com.jayway.jsonpath.Configuration;
-import com.jayway.jsonpath.DocumentContext;
-import com.jayway.jsonpath.Filter;
-import com.jayway.jsonpath.InvalidPathException;
-import com.jayway.jsonpath.JsonPath;
-import com.jayway.jsonpath.Option;
-import com.jayway.jsonpath.PathNotFoundException;
+import com.jayway.jsonpath.*;
 import com.jayway.jsonpath.internal.Utils;
 import com.jayway.jsonpath.spi.cache.LRUCache;
 import com.jayway.jsonpath.spi.json.GsonJsonProvider;
@@ -22,7 +15,7 @@ import net.minidev.json.JSONAware;
 import net.minidev.json.parser.JSONParser;
 import org.assertj.core.api.Assertions;
 import org.hamcrest.Matchers;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import java.io.InputStream;
 import java.util.Collections;
@@ -35,13 +28,11 @@ import static com.jayway.jsonpath.Criteria.where;
 import static com.jayway.jsonpath.Filter.filter;
 import static com.jayway.jsonpath.JsonPath.read;
 import static com.jayway.jsonpath.JsonPath.using;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.failBecauseExceptionWasNotThrown;
+import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertThat;
+import static org.junit.jupiter.api.Assertions.*;
 
 public class IssuesTest extends BaseTest {
 
@@ -51,7 +42,7 @@ public class IssuesTest extends BaseTest {
     public void issue_143() {
         String json = "{ \"foo\": { \"bar\" : \"val\" }, \"moo\": { \"cow\" : \"val\" } }";
 
-        Configuration configuration = Configuration.builder().options( Option.AS_PATH_LIST ).build();
+        Configuration configuration = Configuration.builder().options(Option.AS_PATH_LIST).build();
 
         List<String> pathList = JsonPath.using(configuration).parse(json).read(JsonPath.compile("$.*.bar"));
 
@@ -67,7 +58,7 @@ public class IssuesTest extends BaseTest {
                 "}}";
 
         List<String> result = read(json, "$.p.['s', 't'].u");
-        assertThat(result).containsExactly("su","tu");
+        assertThat(result).containsExactly("su", "tu");
     }
 
     @Test
@@ -86,9 +77,9 @@ public class IssuesTest extends BaseTest {
         assertThat(result).isEmpty();
     }
 
-    @Test(expected = InvalidPathException.class)
+    @Test
     public void issue_114_d() {
-        read(JSON_BOOK_DOCUMENT, "$..book[(@.length-1)] ");
+        assertThrows(InvalidPathException.class, () -> read(JSON_BOOK_DOCUMENT, "$..book[(@.length-1)] "));
     }
 
 
@@ -121,7 +112,7 @@ public class IssuesTest extends BaseTest {
 
         List<Integer> result = read(json, "$.datas.selling['3','206'].*");
 
-        assertThat(result).containsExactly(26452067,31625950,32381852,32489262);
+        assertThat(result).containsExactly(26452067, 31625950, 32381852, 32489262);
     }
 
     @Test
@@ -161,10 +152,10 @@ public class IssuesTest extends BaseTest {
         assertTrue(result.isEmpty());
     }
 
-    @Test(expected = PathNotFoundException.class)
+    @Test
     public void issue_11b() throws Exception {
         String json = "{ \"foo\" : [] }";
-        read(json, "$.foo[0].uri");
+        assertThrows(PathNotFoundException.class, () -> read(json, "$.foo[0].uri"));
     }
 
     @Test
@@ -318,13 +309,13 @@ public class IssuesTest extends BaseTest {
     }
 
 
-    @Test(expected = PathNotFoundException.class)
+    @Test
     public void issue_22() throws Exception {
 
         Configuration configuration = Configuration.defaultConfiguration();
 
         String json = "{\"a\":{\"b\":1,\"c\":2}}";
-        JsonPath.parse(json, configuration).read("a.d");
+        assertThrows(PathNotFoundException.class, () -> JsonPath.parse(json, configuration).read("a.d"));
     }
 
     @Test
@@ -344,10 +335,10 @@ public class IssuesTest extends BaseTest {
         assertThat(res).hasSize(1).containsNull();
     }
 
-    @Test(expected = PathNotFoundException.class)
+    @Test
     public void issue_26() throws Exception {
         String json = "[{\"a\":[{\"b\":1,\"c\":2}]}]";
-        Object o = read(json, "$.a");
+        assertThrows(PathNotFoundException.class, () -> read(json, "$.a"));
     }
 
     @Test
@@ -434,7 +425,7 @@ public class IssuesTest extends BaseTest {
         assertEquals(Integer.valueOf(1), read(json, "$[0].a"));
     }
 
-    @Test(expected = PathNotFoundException.class)
+    @Test
     public void a_test() {
 
         String json = "{\n" +
@@ -448,7 +439,7 @@ public class IssuesTest extends BaseTest {
                 "  \"version\": 1371160528774\n" +
                 "}";
 
-        Object read = read(json, "$.data.passes[0].id");
+        assertThrows(PathNotFoundException.class, () -> read(json, "$.data.passes[0].id"));
     }
 
 
@@ -471,9 +462,9 @@ public class IssuesTest extends BaseTest {
 
         String json = "{\"test\":null}";
 
-        assertThat((String)read(json, "test")).isNull();
+        assertThat((String) read(json, "test")).isNull();
 
-        assertThat((String)JsonPath.using(Configuration.defaultConfiguration().setOptions(Option.SUPPRESS_EXCEPTIONS)).parse(json).read("nonExistingProperty")).isNull();
+        assertThat((String) JsonPath.using(Configuration.defaultConfiguration().setOptions(Option.SUPPRESS_EXCEPTIONS)).parse(json).read("nonExistingProperty")).isNull();
 
         try {
             read(json, "nonExistingProperty");
@@ -498,7 +489,7 @@ public class IssuesTest extends BaseTest {
     public void issue_45() {
         String json = "{\"rootkey\":{\"sub.key\":\"value\"}}";
 
-        assertThat((String)read(json, "rootkey['sub.key']")).isEqualTo("value");
+        assertThat((String) read(json, "rootkey['sub.key']")).isEqualTo("value");
     }
 
     @Test
@@ -508,7 +499,7 @@ public class IssuesTest extends BaseTest {
         String json = "{\"a\": {}}";
 
         Configuration configuration = Configuration.defaultConfiguration().setOptions(Option.SUPPRESS_EXCEPTIONS);
-        assertThat((String)JsonPath.using(configuration).parse(json).read("a.x")).isNull();
+        assertThat((String) JsonPath.using(configuration).parse(json).read("a.x")).isNull();
 
         try {
             read(json, "a.x");
@@ -818,7 +809,7 @@ public class IssuesTest extends BaseTest {
         assertThat(parsed.apply(createPredicateContext(noMatch))).isFalse();
     }
 
-    private PredicateContext createPredicateContext(final Map<String, Integer> map){
+    private PredicateContext createPredicateContext(final Map<String, Integer> map) {
         return new PredicateContext() {
             @Override
             public Object item() {
@@ -827,7 +818,7 @@ public class IssuesTest extends BaseTest {
 
             @Override
             public <T> T item(Class<T> clazz) throws MappingException {
-                return (T)map;
+                return (T) map;
             }
 
             @Override
@@ -951,14 +942,14 @@ public class IssuesTest extends BaseTest {
         assertThat(numbers).containsExactly(8.95D, 12.99D, 8.99D, 22.99D);
     }
 
-    @Test(expected = PathNotFoundException.class)
+    @Test
     public void github_89() {
 
         com.google.gson.JsonObject json = new JsonObject();
         json.addProperty("foo", "bar");
 
         JsonPath path = JsonPath.compile("$.foo");
-        String object = path.read(json);
+        assertThrows(PathNotFoundException.class, () -> path.read(json));
 
     }
 
@@ -1003,7 +994,7 @@ public class IssuesTest extends BaseTest {
     }
 
     @Test
-    public void issue_309(){
+    public void issue_309() {
 
         String json = "{\n" +
                 "\"jsonArr\": [\n" +
@@ -1018,27 +1009,27 @@ public class IssuesTest extends BaseTest {
 
         DocumentContext doc = JsonPath.parse(json).set("$.jsonArr[1].name", "Jayway");
 
-        assertThat((String)doc.read("$.jsonArr[0].name")).isEqualTo("nOne");
-        assertThat((String)doc.read("$.jsonArr[1].name")).isEqualTo("Jayway");
+        assertThat((String) doc.read("$.jsonArr[0].name")).isEqualTo("nOne");
+        assertThat((String) doc.read("$.jsonArr[1].name")).isEqualTo("Jayway");
     }
 
     @Test
-    public void issue_378(){
+    public void issue_378() {
 
         String json = "{\n" +
-            "    \"nodes\": {\n" +
-            "        \"unnamed1\": {\n" +
-            "            \"ntpServers\": [\n" +
-            "                \"1.2.3.4\"\n" +
-            "            ]\n" +
-            "        }\n" +
-            "    }\n" +
-            "}";
+                "    \"nodes\": {\n" +
+                "        \"unnamed1\": {\n" +
+                "            \"ntpServers\": [\n" +
+                "                \"1.2.3.4\"\n" +
+                "            ]\n" +
+                "        }\n" +
+                "    }\n" +
+                "}";
 
         Configuration configuration = Configuration.builder()
-            .jsonProvider(new JacksonJsonNodeJsonProvider())
-            .mappingProvider(new JacksonMappingProvider())
-            .build();
+                .jsonProvider(new JacksonJsonNodeJsonProvider())
+                .mappingProvider(new JacksonMappingProvider())
+                .build();
 
         DocumentContext ctx = JsonPath.using(configuration).parse(json);
 
@@ -1050,7 +1041,7 @@ public class IssuesTest extends BaseTest {
 
     //CS304 (manually written) Issue link: https://github.com/json-path/JsonPath/issues/620
     @Test
-    public void issue_620_1(){
+    public void issue_620_1() {
         String json = "{\n" +
                 "  \"complexText\": {\n" +
                 "    \"nestedFields\": [\n" +
@@ -1077,12 +1068,13 @@ public class IssuesTest extends BaseTest {
                 "$.complexText.nestedFields[1].name," +
                 "$.complexText.nestedFields[0].name)";
 
-        assertThat((String)JsonPath.read(json,path1)).isEqualTo("CBA");
-        assertThat((String)JsonPath.read(json,path2)).isEqualTo("CBA");
+        assertThat((String) JsonPath.read(json, path1)).isEqualTo("CBA");
+        assertThat((String) JsonPath.read(json, path2)).isEqualTo("CBA");
     }
+
     //CS304 (manually written) Issue link: https://github.com/json-path/JsonPath/issues/620
     @Test
-    public void issue_620_2(){
+    public void issue_620_2() {
         String json = "{\n" +
                 "  \"complexText\": {\n" +
                 "    \"nestedFields\": [\n" +
@@ -1109,7 +1101,7 @@ public class IssuesTest extends BaseTest {
         boolean thrown = false;
 
         try {
-            Object result = (Object) JsonPath.read(json,path1);
+            Object result = (Object) JsonPath.read(json, path1);
         } catch (Exception e) {
             thrown = true;
         }

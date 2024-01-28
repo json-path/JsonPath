@@ -2,12 +2,12 @@ package com.jayway.jsonpath.matchers;
 
 import com.jayway.jsonpath.JsonPath;
 import com.jayway.jsonpath.ReadContext;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import static com.jayway.jsonpath.JsonPath.compile;
 import static com.jayway.jsonpath.matchers.JsonPathMatchers.withoutJsonPath;
+import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.*;
-import static org.junit.Assert.assertThat;
 
 public class WithoutJsonPathTest {
     private static final String JSON_STRING = "{" +

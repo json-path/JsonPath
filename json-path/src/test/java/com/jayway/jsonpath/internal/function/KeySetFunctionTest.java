@@ -3,7 +3,7 @@ package com.jayway.jsonpath.internal.function;
 import com.jayway.jsonpath.Configuration;
 import com.jayway.jsonpath.Configurations;
 import org.apache.commons.io.IOUtils;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import java.util.Arrays;
 import java.util.HashSet;

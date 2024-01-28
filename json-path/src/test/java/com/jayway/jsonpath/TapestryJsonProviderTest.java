@@ -8,7 +8,7 @@ import java.util.Map;
 
 import org.apache.tapestry5.json.JSONArray;
 import org.apache.tapestry5.json.JSONObject;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 public class TapestryJsonProviderTest extends BaseTest {
 
