@@ -1,6 +1,5 @@
 description = "Java port of Stefan Goessner JsonPath."
 
-
 jar {
     bnd(
             'Automatic-Module-Name': 'json.path',
