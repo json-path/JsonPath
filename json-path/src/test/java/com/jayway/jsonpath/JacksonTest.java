@@ -1,7 +1,8 @@
 package com.jayway.jsonpath;
 
+import org.junit.jupiter.api.Test;
+
 import java.util.Date;
-import org.junit.Test;
 
 import static java.nio.charset.StandardCharsets.UTF_8;
 import static java.util.Collections.singletonMap;

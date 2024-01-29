@@ -1,8 +1,8 @@
 package com.jayway.jsonpath;
 
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.junit.runners.Parameterized;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.MethodSource;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
@@ -14,66 +14,61 @@ import static com.jayway.jsonpath.TestUtils.assertHasOneResult;
 import static java.util.Arrays.asList;
 import static org.assertj.core.api.Assertions.assertThat;
 
-@RunWith(Parameterized.class)
 public class InlineFilterTest extends BaseTest {
 
     private static int bookCount = 4;
 
     public static final String MULTI_STORE_JSON_DOCUMENT = "{\n" +
-        "   \"store\" : [{\n" +
-        "      \"name\": \"First\"," +
-        "      \"book\" : [\n" +
-        "         {\n" +
-        "            \"category\" : \"reference\",\n" +
-        "            \"author\" : \"Nigel Rees\",\n" +
-        "            \"title\" : \"Sayings of the Century\",\n" +
-        "            \"display-price\" : 8.95\n" +
-        "         },\n" +
-        "         {\n" +
-        "            \"category\" : \"fiction\",\n" +
-        "            \"author\" : \"Evelyn Waugh\",\n" +
-        "            \"title\" : \"Sword of Honour\",\n" +
-        "            \"display-price\" : 12.99\n" +
-        "         },\n" +
-        "         {\n" +
-        "            \"category\" : \"fiction\",\n" +
-        "            \"author\" : \"Herman Melville\",\n" +
-        "            \"title\" : \"Moby Dick\",\n" +
-        "            \"isbn\" : \"0-553-21311-3\",\n" +
-        "            \"display-price\" : 8.99\n" +
-        "         },\n" +
-        "         {\n" +
-        "            \"category\" : \"fiction\",\n" +
-        "            \"author\" : \"J. R. R. Tolkien\",\n" +
-        "            \"title\" : \"The Lord of the Rings\",\n" +
-        "            \"isbn\" : \"0-395-19395-8\",\n" +
-        "            \"display-price\" : 22.99\n" +
-        "         }]\n" +
-        "      },\n" +
-        "      {\n" +
-        "       \"name\": \"Second\",\n" +
-        "       \"book\": [\n" +
-        "         {\n" +
-        "            \"category\" : \"fiction\",\n" +
-        "            \"author\" : \"Ernest Hemmingway\",\n" +
-        "            \"title\" : \"The Old Man and the Sea\",\n" +
-        "            \"display-price\" : 12.99\n" +
-        "         }]\n" +
-        "      }]}";
+            "   \"store\" : [{\n" +
+            "      \"name\": \"First\"," +
+            "      \"book\" : [\n" +
+            "         {\n" +
+            "            \"category\" : \"reference\",\n" +
+            "            \"author\" : \"Nigel Rees\",\n" +
+            "            \"title\" : \"Sayings of the Century\",\n" +
+            "            \"display-price\" : 8.95\n" +
+            "         },\n" +
+            "         {\n" +
+            "            \"category\" : \"fiction\",\n" +
+            "            \"author\" : \"Evelyn Waugh\",\n" +
+            "            \"title\" : \"Sword of Honour\",\n" +
+            "            \"display-price\" : 12.99\n" +
+            "         },\n" +
+            "         {\n" +
+            "            \"category\" : \"fiction\",\n" +
+            "            \"author\" : \"Herman Melville\",\n" +
+            "            \"title\" : \"Moby Dick\",\n" +
+            "            \"isbn\" : \"0-553-21311-3\",\n" +
+            "            \"display-price\" : 8.99\n" +
+            "         },\n" +
+            "         {\n" +
+            "            \"category\" : \"fiction\",\n" +
+            "            \"author\" : \"J. R. R. Tolkien\",\n" +
+            "            \"title\" : \"The Lord of the Rings\",\n" +
+            "            \"isbn\" : \"0-395-19395-8\",\n" +
+            "            \"display-price\" : 22.99\n" +
+            "         }]\n" +
+            "      },\n" +
+            "      {\n" +
+            "       \"name\": \"Second\",\n" +
+            "       \"book\": [\n" +
+            "         {\n" +
+            "            \"category\" : \"fiction\",\n" +
+            "            \"author\" : \"Ernest Hemmingway\",\n" +
+            "            \"title\" : \"The Old Man and the Sea\",\n" +
+            "            \"display-price\" : 12.99\n" +
+            "         }]\n" +
+            "      }]}";
 
-    private Configuration conf = Configurations.GSON_CONFIGURATION;
 
-    public InlineFilterTest(Configuration conf) {
-        this.conf = conf;
-    }
-
-    @Parameterized.Parameters
     public static Iterable<Configuration> configurations() {
         return Configurations.configurations();
     }
 
-    @Test
-    public void root_context_can_be_referred_in_predicate() {
+
+    @ParameterizedTest
+    @MethodSource("configurations")
+    public void root_context_can_be_referred_in_predicate(Configuration conf) {
         List<?> prices = using(conf).parse(JSON_DOCUMENT).read("store.book[?(@.display-price <= $.max-price)].display-price", List.class);
 
         assertThat(prices.stream().map(this::asDouble)).containsAll(asList(8.95D, 8.99D));
@@ -84,8 +79,9 @@ public class InlineFilterTest extends BaseTest {
         return object instanceof BigDecimal ? ((BigDecimal) object).doubleValue() : (Double) object;
     }
 
-    @Test
-    public void multiple_context_object_can_be_refered() {
+    @ParameterizedTest
+    @MethodSource("configurations")
+    public void multiple_context_object_can_be_refered(Configuration conf) {
 
         List all = using(conf).parse(JSON_DOCUMENT).read("store.book[ ?(@.category == @.category) ]", List.class);
         assertThat(all.size()).isEqualTo(bookCount);
@@ -104,8 +100,9 @@ public class InlineFilterTest extends BaseTest {
 
     }
 
-    @Test
-    public void simple_inline_or_statement_evaluates() {
+    @ParameterizedTest
+    @MethodSource("configurations")
+    public void simple_inline_or_statement_evaluates(Configuration conf) {
 
         List a = using(conf).parse(JSON_DOCUMENT).read("store.book[ ?(@.author == 'Nigel Rees' || @.author == 'Evelyn Waugh') ].author", List.class);
         assertThat(a).containsExactly("Nigel Rees", "Evelyn Waugh");
@@ -120,7 +117,7 @@ public class InlineFilterTest extends BaseTest {
         assertThat(d).containsExactly("Nigel Rees");
     }
 
-    @Test
+
     public void no_path_ref_in_filter_hit_all() {
 
         List<String> res = JsonPath.parse(JSON_DOCUMENT).read("$.store.book[?('a' == 'a')].author");
@@ -199,18 +196,19 @@ public class InlineFilterTest extends BaseTest {
 
 
         List<Integer> hits = JsonPath.parse(ints).read("$[?(@)]");
-        assertThat(hits).containsExactly(0,1,null,2,3);
+        assertThat(hits).containsExactly(0, 1, null, 2, 3);
 
         hits = JsonPath.parse(ints).read("$[?(@ != null)]");
-        assertThat(hits).containsExactly(0,1,2,3);
+        assertThat(hits).containsExactly(0, 1, 2, 3);
 
         List<Integer> isNull = JsonPath.parse(ints).read("$[?(!@)]");
         assertThat(isNull).containsExactly(new Integer[]{});
         assertThat(isNull).containsExactly(new Integer[]{});
     }
 
-    @Test
-    public void equality_check_does_not_break_evaluation() {
+    @ParameterizedTest
+    @MethodSource("configurations")
+    public void equality_check_does_not_break_evaluation(Configuration conf) {
         assertHasOneResult("[{\"value\":\"5\"}]", "$[?(@.value=='5')]", conf);
         assertHasOneResult("[{\"value\":5}]", "$[?(@.value==5)]", conf);
 
@@ -225,8 +223,9 @@ public class InlineFilterTest extends BaseTest {
         assertHasNoResults("[{\"value\":\"5.1.26\"}]", "$[?(@.value==5.1)]", conf);
     }
 
-    @Test
-    public void lt_check_does_not_break_evaluation() {
+    @ParameterizedTest
+    @MethodSource("configurations")
+    public void lt_check_does_not_break_evaluation(Configuration conf) {
         assertHasOneResult("[{\"value\":\"5\"}]", "$[?(@.value<'7')]", conf);
 
         assertHasNoResults("[{\"value\":\"7\"}]", "$[?(@.value<'5')]", conf);
@@ -241,44 +240,50 @@ public class InlineFilterTest extends BaseTest {
         assertHasNoResults("[{\"value\":7.1}]", "$[?(@.value<5)]", conf);
     }
 
-    @Test
-    public void escaped_literals() {
-        if(conf.jsonProvider().getClass().getSimpleName().startsWith("Jackson")){
+    @ParameterizedTest
+    @MethodSource("configurations")
+    public void escaped_literals(Configuration conf) {
+        if (conf.jsonProvider().getClass().getSimpleName().startsWith("Jackson")) {
             return;
         }
-        if(conf.jsonProvider().getClass().getSimpleName().startsWith("Jakarta")){
+        if (conf.jsonProvider().getClass().getSimpleName().startsWith("Jakarta")) {
             // single quotes are not valid in JSON; see json.org
             return;
         }
         assertHasOneResult("[\"\\'foo\"]", "$[?(@ == '\\'foo')]", conf);
     }
 
-    @Test
-    public void escaped_literals2() {
-        if(conf.jsonProvider().getClass().getSimpleName().startsWith("Jackson")){
+    @ParameterizedTest
+    @MethodSource("configurations")
+    public void escaped_literals2(Configuration conf) {
+        if (conf.jsonProvider().getClass().getSimpleName().startsWith("Jackson")) {
             return;
         }
         assertHasOneResult("[\"\\\\'foo\"]", "$[?(@ == \"\\\\'foo\")]", conf);
     }
 
 
-    @Test
-    public void escape_pattern() {
+    @ParameterizedTest
+    @MethodSource("configurations")
+    public void escape_pattern(Configuration conf) {
         assertHasOneResult("[\"x\"]", "$[?(@ =~ /\\/|x/)]", conf);
     }
 
-    @Test
-    public void escape_pattern_after_literal() {
+    @ParameterizedTest
+    @MethodSource("configurations")
+    public void escape_pattern_after_literal(Configuration conf) {
         assertHasOneResult("[\"x\"]", "$[?(@ == \"abc\" || @ =~ /\\/|x/)]", conf);
     }
 
-    @Test
-    public void escape_pattern_before_literal() {
+    @ParameterizedTest
+    @MethodSource("configurations")
+    public void escape_pattern_before_literal(Configuration conf) {
         assertHasOneResult("[\"x\"]", "$[?(@ =~ /\\/|x/ || @ == \"abc\")]", conf);
     }
 
-    @Test
-    public void filter_evaluation_does_not_break_path_evaluation() {
+    @ParameterizedTest
+    @MethodSource("configurations")
+    public void filter_evaluation_does_not_break_path_evaluation(Configuration conf) {
         assertHasOneResult("[{\"s\": \"fo\", \"expected_size\": \"m\"}, {\"s\": \"lo\", \"expected_size\": 2}]", "$[?(@.s size @.expected_size)]", conf);
     }
 }

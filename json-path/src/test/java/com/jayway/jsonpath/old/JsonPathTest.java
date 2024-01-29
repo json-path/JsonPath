@@ -1,21 +1,17 @@
 package com.jayway.jsonpath.old;
 
-import com.jayway.jsonpath.BaseTest;
-import com.jayway.jsonpath.Configuration;
-import com.jayway.jsonpath.InvalidPathException;
-import com.jayway.jsonpath.JsonPath;
-import com.jayway.jsonpath.Option;
-import com.jayway.jsonpath.PathNotFoundException;
+import com.jayway.jsonpath.*;
 import com.jayway.jsonpath.internal.path.PathCompiler;
 import org.assertj.core.api.Assertions;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import java.util.List;
 import java.util.Map;
 
+import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.hasItems;
 import static org.hamcrest.Matchers.hasSize;
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 public class JsonPathTest extends BaseTest {
 
@@ -81,12 +77,10 @@ public class JsonPathTest extends BaseTest {
     private final static String ARRAY_EXPAND = "[{\"parent\": \"ONE\", \"child\": {\"name\": \"NAME_ONE\"}}, [{\"parent\": \"TWO\", \"child\": {\"name\": \"NAME_TWO\"}}]]";
 
 
-    @Test(expected = PathNotFoundException.class)
+    @Test
     public void missing_prop() {
 
-        //Object read = JsonPath.using(Configuration.defaultConfiguration().setOptions(Option.THROW_ON_MISSING_PROPERTY)).parse(DOCUMENT).read("$.store.book[*].fooBar");
-        //Object read = JsonPath.using(Configuration.defaultConfiguration()).parse(DOCUMENT).read("$.store.book[*].fooBar");
-        Object read2 = JsonPath.using(Configuration.defaultConfiguration().addOptions(Option.REQUIRE_PROPERTIES)).parse(DOCUMENT).read("$.store.book[*].fooBar.not");
+        assertThrows(PathNotFoundException.class, () -> JsonPath.using(Configuration.defaultConfiguration().addOptions(Option.REQUIRE_PROPERTIES)).parse(DOCUMENT).read("$.store.book[*].fooBar.not"));
 
 
     }
@@ -133,7 +127,7 @@ public class JsonPathTest extends BaseTest {
             Assertions.fail("Expected PathNotFoundException");
         } catch (PathNotFoundException e) {
         }
-        Assertions.assertThat((String)JsonPath.read(json, "$.data2.passes[0].id")).isEqualTo("1");
+        Assertions.assertThat((String) JsonPath.read(json, "$.data2.passes[0].id")).isEqualTo("1");
     }
 
     @Test
@@ -296,9 +290,9 @@ public class JsonPathTest extends BaseTest {
         List<String> all = JsonPath.read(DOCUMENT, "$..*");
     }
 
-    @Test(expected = PathNotFoundException.class)
+    @Test
     public void access_index_out_of_bounds_does_not_throw_exception() throws Exception {
-        JsonPath.read(DOCUMENT, "$.store.book[100].author");
+        assertThrows(PathNotFoundException.class, () -> JsonPath.read(DOCUMENT, "$.store.book[100].author"));
     }
 
     @Test
@@ -311,21 +305,21 @@ public class JsonPathTest extends BaseTest {
     @Test
     // see https://code.google.com/p/json-path/issues/detail?id=58
     public void invalid_paths_throw_invalid_path_exception() throws Exception {
-        for (String path : new String[]{"$.", "$.results[?"}){
-          try{
-              JsonPath.compile(path);
-          } catch (InvalidPathException e){
-              // that's expected
-          } catch (Exception e){
-              fail("Expected an InvalidPathException trying to compile '"+path+"', but got a "+e.getClass().getName());
-          }
+        for (String path : new String[]{"$.", "$.results[?"}) {
+            try {
+                JsonPath.compile(path);
+            } catch (InvalidPathException e) {
+                // that's expected
+            } catch (Exception e) {
+                fail("Expected an InvalidPathException trying to compile '" + path + "', but got a " + e.getClass().getName());
+            }
         }
     }
 
-    @Test(expected = InvalidPathException.class)
+    @Test
     //see https://github.com/json-path/JsonPath/issues/428
     public void prevent_stack_overflow_error_when_unclosed_property() {
-        JsonPath.compile("$['boo','foo][?(@ =~ /bar/)]");
+        assertThrows(InvalidPathException.class, () -> JsonPath.compile("$['boo','foo][?(@ =~ /bar/)]"));
     }
 
 }

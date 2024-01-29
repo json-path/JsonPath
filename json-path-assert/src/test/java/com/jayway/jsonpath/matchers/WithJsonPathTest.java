@@ -6,7 +6,7 @@ import com.jayway.jsonpath.ReadContext;
 import org.hamcrest.Description;
 import org.hamcrest.Matcher;
 import org.hamcrest.StringDescription;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import java.util.Collection;
 import java.util.List;
@@ -14,8 +14,9 @@ import java.util.List;
 import static com.jayway.jsonpath.JsonPath.compile;
 import static com.jayway.jsonpath.matchers.JsonPathMatchers.withJsonPath;
 import static com.jayway.jsonpath.matchers.helpers.ResourceHelpers.resource;
+import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.*;
-import static org.junit.Assert.assertThat;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public class WithJsonPathTest {
     private static final ReadContext BOOKS_JSON = JsonPath.parse(resource("books.json"));
@@ -82,9 +83,9 @@ public class WithJsonPathTest {
         assertThat(BOOKS_JSON, withJsonPath("$..book[2].title", hasItem("Moby Dick")));
     }
 
-    @Test(expected = InvalidPathException.class)
+    @Test
     public void shouldFailOnInvalidJsonPath() {
-        withJsonPath("$[}");
+        assertThrows(InvalidPathException.class, () -> withJsonPath("$[}"));
     }
 
     @Test

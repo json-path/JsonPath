@@ -5,12 +5,12 @@ import com.jayway.jsonpath.JsonPath;
 import com.jayway.jsonpath.Option;
 import com.jayway.jsonpath.PathNotFoundException;
 import org.assertj.core.api.Assertions;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import java.util.List;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public class NullHandlingTest {
 
@@ -36,9 +36,9 @@ public class NullHandlingTest {
             "}";
 
 
-    @Test(expected = PathNotFoundException.class)
+    @Test
     public void not_defined_property_throws_PathNotFoundException() {
-        JsonPath.read(DOCUMENT, "$.children[0].child.age");
+        assertThrows(PathNotFoundException.class, () -> JsonPath.read(DOCUMENT, "$.children[0].child.age"));
     }
 
 
@@ -53,7 +53,7 @@ public class NullHandlingTest {
     @Test
     public void null_property_returns_null() {
         Integer age = JsonPath.read(DOCUMENT, "$.children[1].age");
-        assertEquals(null, age);
+        assertNull(age);
     }
 
     @Test

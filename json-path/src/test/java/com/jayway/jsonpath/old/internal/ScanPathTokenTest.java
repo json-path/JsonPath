@@ -2,7 +2,7 @@ package com.jayway.jsonpath.old.internal;
 
 import com.jayway.jsonpath.Configuration;
 import com.jayway.jsonpath.internal.path.PathCompiler;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import java.util.List;
 

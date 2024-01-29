@@ -1,10 +1,6 @@
 package com.jayway.jsonpath;
 
-import com.jayway.jsonpath.Configuration;
-import com.jayway.jsonpath.DocumentContext;
-import com.jayway.jsonpath.JsonPath;
-import com.jayway.jsonpath.Option;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 public class Issue_721 {
 

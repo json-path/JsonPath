@@ -3,52 +3,40 @@ package com.jayway.jsonpath.internal.function;
 import com.jayway.jsonpath.Configuration;
 import com.jayway.jsonpath.Configurations;
 import com.jayway.jsonpath.JsonPathException;
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.junit.runners.Parameterized;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.MethodSource;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.runners.Parameterized.Parameters;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+
 
 /**
  * Defines functional tests around executing:
- *
+ * <p>
  * - sum
  * - avg
  * - stddev
- *
+ * <p>
  * for each of the above, executes the test and verifies that the results are as expected based on a static input
  * and static output.
- *
+ * <p>
  * Created by mattg on 6/26/15.
  */
-@RunWith(Parameterized.class)
 public class NumericPathFunctionTest extends BaseFunctionTest {
 
-    private static final Logger logger = LoggerFactory.getLogger(NumericPathFunctionTest.class);
-
-    private Configuration conf = Configurations.GSON_CONFIGURATION;
-
-    public NumericPathFunctionTest(Configuration conf) {
-        logger.debug("Testing with configuration {}", conf.getClass().getName());
-        this.conf = conf;
-    }
-
-    @Parameters
     public static Iterable<Configuration> configurations() {
         return Configurations.configurations();
     }
 
 
-    @Test
-    public void testAverageOfDoubles() {
+    @ParameterizedTest
+    @MethodSource("configurations")
+    public void testAverageOfDoubles(Configuration conf) {
         verifyMathFunction(conf, "$.numbers.avg()", 5.5);
     }
 
-    @Test
-    public void testAverageOfEmptyListNegative() {
+    @ParameterizedTest
+    @MethodSource("configurations")
+    public void testAverageOfEmptyListNegative(Configuration conf) {
         try {
             verifyMathFunction(conf, "$.empty.avg()", null);
         } catch (JsonPathException e) {
@@ -56,13 +44,15 @@ public class NumericPathFunctionTest extends BaseFunctionTest {
         }
     }
 
-    @Test
-    public void testSumOfDouble() {
+    @ParameterizedTest
+    @MethodSource("configurations")
+    public void testSumOfDouble(Configuration conf) {
         verifyMathFunction(conf, "$.numbers.sum()", (10d * (10d + 1d)) / 2d);
     }
 
-    @Test
-    public void testSumOfEmptyListNegative() {
+    @ParameterizedTest
+    @MethodSource("configurations")
+    public void testSumOfEmptyListNegative(Configuration conf) {
         try {
             verifyMathFunction(conf, "$.empty.sum()", null);
         } catch (JsonPathException e) {
@@ -70,13 +60,15 @@ public class NumericPathFunctionTest extends BaseFunctionTest {
         }
     }
 
-    @Test
-    public void testMaxOfDouble() {
+    @ParameterizedTest
+    @MethodSource("configurations")
+    public void testMaxOfDouble(Configuration conf) {
         verifyMathFunction(conf, "$.numbers.max()", 10d);
     }
 
-    @Test
-    public void testMaxOfEmptyListNegative() {
+    @ParameterizedTest
+    @MethodSource("configurations")
+    public void testMaxOfEmptyListNegative(Configuration conf) {
         try {
             verifyMathFunction(conf, "$.empty.max()", null);
         } catch (JsonPathException e) {
@@ -84,13 +76,15 @@ public class NumericPathFunctionTest extends BaseFunctionTest {
         }
     }
 
-    @Test
-    public void testMinOfDouble() {
+    @ParameterizedTest
+    @MethodSource("configurations")
+    public void testMinOfDouble(Configuration conf) {
         verifyMathFunction(conf, "$.numbers.min()", 1d);
     }
 
-    @Test
-    public void testMinOfEmptyListNegative() {
+    @ParameterizedTest
+    @MethodSource("configurations")
+    public void testMinOfEmptyListNegative(Configuration conf) {
         try {
             verifyMathFunction(conf, "$.empty.min()", null);
         } catch (JsonPathException e) {
@@ -99,13 +93,15 @@ public class NumericPathFunctionTest extends BaseFunctionTest {
     }
 
 
-    @Test
-    public void testStdDevOfDouble() {
+    @ParameterizedTest
+    @MethodSource("configurations")
+    public void testStdDevOfDouble(Configuration conf) {
         verifyMathFunction(conf, "$.numbers.stddev()", 2.8722813232690143d);
     }
 
-    @Test
-    public void testStddevOfEmptyListNegative() {
+    @ParameterizedTest
+    @MethodSource("configurations")
+    public void testStddevOfEmptyListNegative(Configuration conf) {
         try {
             verifyMathFunction(conf, "$.empty.stddev()", null);
         } catch (JsonPathException e) {

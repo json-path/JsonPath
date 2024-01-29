@@ -1,8 +1,6 @@
 package com.jayway.jsonpath;
 
-import org.junit.Test;
-
-import static com.jayway.jsonpath.BaseTest.JSON_DOCUMENT;
+import org.junit.jupiter.api.Test;
 
 
 /**

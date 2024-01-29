@@ -1,7 +1,7 @@
 package com.jayway.jsonpath;
 
 import org.assertj.core.api.Assertions;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import static com.jayway.jsonpath.JsonPath.using;
 

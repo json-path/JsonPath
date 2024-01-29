@@ -2,9 +2,9 @@ package com.jayway.jsonpath;
 
 import net.minidev.json.JSONStyle;
 import net.minidev.json.JSONValue;
-import org.junit.AfterClass;
-import org.junit.BeforeClass;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -12,13 +12,13 @@ public class EscapeTest extends BaseTest {
 
     private static JSONStyle style;
 
-    @BeforeClass
+    @BeforeAll
     public static void before(){
         style = JSONValue.COMPRESSION;
         JSONValue.COMPRESSION = JSONStyle.LT_COMPRESS;
     }
 
-    @AfterClass
+    @AfterAll
     public static void after(){
         JSONValue.COMPRESSION = style;
     }
