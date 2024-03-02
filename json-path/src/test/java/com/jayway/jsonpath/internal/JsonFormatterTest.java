@@ -22,7 +22,7 @@ public class JsonFormatterTest {
     //  Test case for pretty printing a JSON object with escaped characters
     // The input is a JSON object with escaped characters
     // The expected output is the same JSON object with proper indentation
-
+  //
     @Test
     public void testPrettyPrint_JsonWithEscapedCharacters() {
         JsonFormatter jsonFormatter = new JsonFormatter();
