@@ -74,7 +74,7 @@ public class JsonContext implements DocumentContext {
     @Override
     public <T> T read(String path, Predicate... filters) {
         notEmpty(path, "path can not be null or empty");
-        return read(pathFromCache(path, filters));
+        return read(pathFromCache(path.trim(), filters));
     }
 
     @Override
