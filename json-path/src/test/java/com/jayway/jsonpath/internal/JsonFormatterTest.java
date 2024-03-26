@@ -37,7 +37,7 @@ public class JsonFormatterTest {
     // The expected output is the same JSON array with proper indentation
     @Test
     public void testPrettyPrint_JsonWithArray() {
-
+        //
         JsonFormatter jsonFormatter = new JsonFormatter();
         String input = "[{\"name\":\"Vaibhav R\",\"age\":23},{\"name\":\"Sanskar K\",\"age\":24}]";
         String actualOutput=jsonFormatter.prettyPrint(input);
