@@ -83,6 +83,47 @@ public enum Option {
      * If REQUIRE_PROPERTIES option is present PathNotFoundException is thrown.
      * If REQUIRE_PROPERTIES option is not present ["b-val"] is returned.
      */
-    REQUIRE_PROPERTIES
+    REQUIRE_PROPERTIES,
+
+    /**
+     * This mode can be used query at special filters.
+     * In the origin design, the filter receive an array and return an array.
+     * However, the subsequent operation will apply on each element in the returned array, rather than the whole array itself.
+     * The mode treats the result of filter as array, and it might be useful to some situation.
+     * For example:
+     *
+     * Given:
+     * <pre>
+     * [
+     *      {
+     *          "price" : 20,
+     *          "name" : "book1"
+     *      },
+     *      {
+     *          "price" : 30,
+     *          "name" : "book1"
+     *      },
+     *      {
+     *          "price" : 40,
+     *          "name" : "book1"
+     *      },
+     *      {
+     *          "price" : 50,
+     *          "name" : "book1"
+     *      },
+     * ]
+     * </pre>
+     *
+     * We want to get the first book which price is greater than 25.
+     *
+     * evaluating the path "$[?(@.price > 25)][0]"
+     *
+     * when using classic mode, the result will be null.
+     * when using this mode, the result will be [{"price":30,"name":"book1"}]. That is what we expected.
+     *
+     *
+     * Notice: When using this mode, the path of the result will be incorrect. Besides, SET operation will don't work.
+     */
+    FILTER_AS_ARRAY
 
 }
