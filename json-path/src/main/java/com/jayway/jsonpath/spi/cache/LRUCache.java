@@ -12,101 +12,62 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package com.jayway.jsonpath.spi.cache;
 
 import com.jayway.jsonpath.JsonPath;
 
-import java.util.Deque;
-import java.util.LinkedList;
+import java.util.LinkedHashMap;
 import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.locks.ReentrantLock;
 
 public class LRUCache implements Cache {
 
-    private final ReentrantLock lock = new ReentrantLock();
+  private static final float DEFAULT_LOAD_FACTOR = 0.75f;
+  private final int size;
+  private LinkedHashMap<String, JsonPath> hashMap;
 
-    private final Map<String, JsonPath> map = new ConcurrentHashMap<String, JsonPath>();
-    private final Deque<String> queue = new LinkedList<String>();
-    private final int limit;
+  public LRUCache(int size) {
+    this.size = size;
+    int capacity = (int) Math.ceil(size / DEFAULT_LOAD_FACTOR) + 1;
+    hashMap = new LinkedHashMap<String, JsonPath>(capacity, DEFAULT_LOAD_FACTOR, true) {
+      // (an anonymous inner class)
+      private static final long serialVersionUID = 1;
 
-    public LRUCache(int limit) {
-        this.limit = limit;
+      @Override
+      protected boolean removeEldestEntry(Map.Entry<String, JsonPath> eldest) {
+        return size() > LRUCache.this.size;
+      }
+    };
+  }
+
+  public void put(String key, JsonPath value) {
+    synchronized (this) {
+      hashMap.put(key, value);
     }
+  }
 
-    public void put(String key, JsonPath value) {
-        JsonPath oldValue = map.put(key, value);
-        if (oldValue != null) {
-            removeThenAddKey(key);
-        } else {
-            addKey(key);
-        }
-        if (map.size() > limit) {
-            map.remove(removeLast());
-        }
+  public JsonPath get(String key) {
+    synchronized (this) {
+      return hashMap.get(key);
     }
+  }
 
-    public JsonPath get(String key) {
-        JsonPath jsonPath = map.get(key);
-        if(jsonPath != null){
-            removeThenAddKey(key);
-        }
-        return jsonPath;
+  public JsonPath getSilent(String key) {
+    synchronized (this) {
+      return hashMap.get(key);
     }
+  }
 
-    private void addKey(String key) {
-        lock.lock();
-        try {
-            queue.addFirst(key);
-        } finally {
-            lock.unlock();
-        }
+  public int size() {
+    synchronized (this) {
+      return hashMap.size();
     }
+  }
 
-    private String removeLast() {
-        lock.lock();
-        try {
-            final String removedKey = queue.removeLast();
-            return removedKey;
-        } finally {
-            lock.unlock();
-        }
+  public String toString() {
+    synchronized (this) {
+      return hashMap.toString();
     }
-
-    private void removeThenAddKey(String key) {
-        lock.lock();
-        try {
-            queue.removeFirstOccurrence(key);
-            queue.addFirst(key);
-        } finally {
-            lock.unlock();
-        }
-
-    }
-
-    private void removeFirstOccurrence(String key) {
-        lock.lock();
-        try {
-            queue.removeFirstOccurrence(key);
-        } finally {
-            lock.unlock();
-        }
-    }
-
-    public JsonPath getSilent(String key) {
-        return map.get(key);
-    }
-
-    public void remove(String key) {
-        removeFirstOccurrence(key);
-        map.remove(key);
-    }
-
-    public int size() {
-        return map.size();
-    }
-
-    public String toString() {
-        return map.toString();
-    }
+  }
 }
