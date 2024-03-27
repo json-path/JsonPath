@@ -98,9 +98,19 @@ public class PropertyPathToken extends PathToken {
 
     @Override
     public String getPathFragment() {
+        // Add escape characters to string of property paths that it can be recompile to JsonPath
+        List<String> outputProperties = new ArrayList<String>(properties.size());
+        for (String property : properties) {
+            String outputProperty = property
+                    // "\" to "\\"
+                    .replaceAll("\\\\", "\\\\\\\\")
+                    // "'" to "\'"
+                    .replaceAll("'", "\\\\'");
+            outputProperties.add(outputProperty);
+        }
         return new StringBuilder()
                 .append("[")
-                .append(Utils.join(",", stringDelimiter, properties))
+                .append(Utils.join(",", stringDelimiter, outputProperties))
                 .append("]").toString();
     }
 }
