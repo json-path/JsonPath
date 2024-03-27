@@ -168,42 +168,48 @@ public class JsonPath {
         boolean optAsPathList = configuration.containsOption(AS_PATH_LIST);
         boolean optAlwaysReturnList = configuration.containsOption(Option.ALWAYS_RETURN_LIST);
         boolean optSuppressExceptions = configuration.containsOption(Option.SUPPRESS_EXCEPTIONS);
-
-        if (path.isFunctionPath()) {
-            if (optAsPathList || optAlwaysReturnList) {
-                if (optSuppressExceptions) {
+        try {
+            if (path.isFunctionPath()) {
+                if (optAsPathList || optAlwaysReturnList) {
+                    if (optSuppressExceptions) {
+                        return (T) (path.isDefinite() ? null : configuration.jsonProvider().createArray());
+                    }
+                    throw new JsonPathException("Options " + AS_PATH_LIST + " and " + ALWAYS_RETURN_LIST + " are not allowed when using path functions!");
+                }
+                EvaluationContext evaluationContext = path.evaluate(jsonObject, jsonObject, configuration);
+                if (optSuppressExceptions && evaluationContext.getPathList().isEmpty()) {
                     return (T) (path.isDefinite() ? null : configuration.jsonProvider().createArray());
                 }
-                throw new JsonPathException("Options " + AS_PATH_LIST + " and " + ALWAYS_RETURN_LIST + " are not allowed when using path functions!");
+                return evaluationContext.getValue(true);
+            } else if (optAsPathList) {
+                EvaluationContext evaluationContext = path.evaluate(jsonObject, jsonObject, configuration);
+                if (optSuppressExceptions && evaluationContext.getPathList().isEmpty()) {
+                    return (T) configuration.jsonProvider().createArray();
+                }
+                return (T) evaluationContext.getPath();
+            } else {
+                EvaluationContext evaluationContext = path.evaluate(jsonObject, jsonObject, configuration);
+                if (optSuppressExceptions && evaluationContext.getPathList().isEmpty()) {
+                    if (optAlwaysReturnList) {
+                        return (T) configuration.jsonProvider().createArray();
+                    } else {
+                        return (T) (path.isDefinite() ? null : configuration.jsonProvider().createArray());
+                    }
+                }
+                Object res = evaluationContext.getValue(false);
+                if (optAlwaysReturnList && path.isDefinite()) {
+                    Object array = configuration.jsonProvider().createArray();
+                    configuration.jsonProvider().setArrayIndex(array, 0, res);
+                    return (T) array;
+                } else {
+                    return (T) res;
+                }
             }
-            EvaluationContext evaluationContext = path.evaluate(jsonObject, jsonObject, configuration);
-            if (optSuppressExceptions && evaluationContext.getPathList().isEmpty()) {
-                return (T) (path.isDefinite() ? null : configuration.jsonProvider().createArray());
-            }
-            return evaluationContext.getValue(true);
-        } else if (optAsPathList) {
-            EvaluationContext evaluationContext = path.evaluate(jsonObject, jsonObject, configuration);
-            if (optSuppressExceptions && evaluationContext.getPathList().isEmpty()) {
+        } catch (JsonPathException ex) {
+            if (optSuppressExceptions) {
                 return (T) configuration.jsonProvider().createArray();
             }
-            return (T) evaluationContext.getPath();
-        } else {
-            EvaluationContext evaluationContext = path.evaluate(jsonObject, jsonObject, configuration);
-            if (optSuppressExceptions && evaluationContext.getPathList().isEmpty()) {
-                if (optAlwaysReturnList) {
-                    return (T) configuration.jsonProvider().createArray();
-                } else {
-                    return (T) (path.isDefinite() ? null : configuration.jsonProvider().createArray());
-                }
-            }
-            Object res = evaluationContext.getValue(false);
-            if (optAlwaysReturnList && path.isDefinite()) {
-                Object array = configuration.jsonProvider().createArray();
-                configuration.jsonProvider().setArrayIndex(array, 0, res);
-                return (T) array;
-            } else {
-                return (T) res;
-            }
+            throw ex;
         }
     }
 
