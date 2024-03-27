@@ -323,4 +323,11 @@ public class PathCompilerTest {
     public void property_must_be_separated_by_commas() {
         assertThrows(InvalidPathException.class, () -> compile("$['aaa'}'bbb']"));
     }
+
+    @Test
+    public void function_with_no_argument_can_be_parsed() {
+        String json = "{\"empty\": [], \"number-series\" : [[ 1, 2, 3, 4, 5, 6, 7, 8, 9, 10], [11, 12]]}";
+        Integer result = JsonPath.read(json, "$.number-series.first().last()");
+        assertThat(result).isEqualTo(10);
+    }
 }
