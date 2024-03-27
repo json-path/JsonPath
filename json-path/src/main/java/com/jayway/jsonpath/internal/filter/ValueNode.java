@@ -16,6 +16,15 @@ public abstract class ValueNode {
 
     public abstract Class<?> type(Predicate.PredicateContext ctx);
 
+    /**
+     * Get the value of ValueNode.
+     * The class of return Object depends on the type of ValueNode.
+     *
+     * @return Object
+     */
+    // CS304 Issue link: https://github.com/json-path/JsonPath/issues/356
+    public abstract Object getValue();
+
     public boolean isPatternNode() {
         return false;
     }
@@ -154,6 +163,7 @@ public abstract class ValueNode {
         }
         return false;
     }
+
 
 
 

@@ -71,6 +71,11 @@ public interface ValueNodes {
             return Void.TYPE;
         }
 
+        @Override
+        public Object getValue() {
+            return compiledPattern;
+        }
+
         public boolean isPatternNode() {
             return true;
         }
@@ -123,6 +128,11 @@ public interface ValueNodes {
             else if(parse(ctx) instanceof String) return String.class;
             else if(parse(ctx) instanceof Boolean) return Boolean.class;
             else return Void.class;
+        }
+
+        @Override
+        public Object getValue() {
+            return json;
         }
 
         public boolean isJsonNode() {
@@ -248,6 +258,11 @@ public interface ValueNodes {
             return String.class;
         }
 
+        @Override
+        public Object getValue() {
+            return string;
+        }
+
         public boolean isStringNode() {
             return true;
         }
@@ -299,6 +314,11 @@ public interface ValueNodes {
         @Override
         public Class<?> type(Predicate.PredicateContext ctx) {
             return Number.class;
+        }
+
+        @Override
+        public Object getValue() {
+            return number;
         }
 
         public boolean isNumberNode() {
@@ -357,6 +377,11 @@ public interface ValueNodes {
             return OffsetDateTimeNode.class;
         }
 
+        @Override
+        public Object getValue() {
+            return dateTime;
+        }
+
         public boolean isOffsetDateTimeNode() {
             return true;
         }
@@ -391,6 +416,11 @@ public interface ValueNodes {
         @Override
         public Class<?> type(Predicate.PredicateContext ctx) {
             return Boolean.class;
+        }
+
+        @Override
+        public Object getValue() {
+            return value;
         }
 
         public boolean isBooleanNode() {
@@ -437,6 +467,11 @@ public interface ValueNodes {
             return Class.class;
         }
 
+        @Override
+        public Object getValue() {
+            return clazz;
+        }
+
         public boolean isClassNode() {
             return true;
         }
@@ -475,6 +510,11 @@ public interface ValueNodes {
         }
 
         @Override
+        public Object getValue() {
+            return null;
+        }
+
+        @Override
         public boolean isNullNode() {
             return true;
         }
@@ -503,6 +543,11 @@ public interface ValueNodes {
         @Override
         public Class<?> type(Predicate.PredicateContext ctx) {
             return Void.class;
+        }
+
+        @Override
+        public Object getValue() {
+            return null;
         }
 
         public UndefinedNode asUndefinedNode() {
@@ -538,6 +583,11 @@ public interface ValueNodes {
         @Override
         public Class<?> type(Predicate.PredicateContext ctx) {
             return Void.class;
+        }
+
+        @Override
+        public Object getValue() {
+            return predicate;
         }
 
         public boolean isPredicateNode() {
@@ -585,6 +635,12 @@ public interface ValueNodes {
         @Override
         public Class<?> type(Predicate.PredicateContext ctx) {
             return List.class;
+        }
+
+        @Override
+        public Object getValue() {
+            List<ValueNode> valueNodes = new ArrayList<>(nodes);
+            return valueNodes;
         }
 
         public boolean isValueListNode() {
@@ -654,6 +710,11 @@ public interface ValueNodes {
         @Override
         public Class<?> type(Predicate.PredicateContext ctx) {
             return Void.class;
+        }
+
+        @Override
+        public Object getValue() {
+            return path;
         }
 
         public boolean isPathNode() {

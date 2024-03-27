@@ -2,6 +2,7 @@ package com.jayway.jsonpath.internal.filter;
 
 import com.jayway.jsonpath.JsonPathException;
 import com.jayway.jsonpath.Predicate;
+import com.jayway.jsonpath.internal.path.PredicateContextImpl;
 
 import java.util.HashMap;
 import java.util.Iterator;
@@ -244,9 +245,25 @@ public class EvaluatorFactory {
     }
 
     private static class PredicateMatchEvaluator implements Evaluator {
+        /**
+         * Evaluate the match operation of predicate.
+         *
+         * @param left the ValueNode
+         * @param right the ValueNode
+         * @param ctx the PredicateContext
+         * @return boolean
+         */
         @Override
-        public boolean evaluate(ValueNode left, ValueNode right, Predicate.PredicateContext ctx) {
-            return right.asPredicateNode().getPredicate().apply(ctx);
+        public boolean evaluate(final ValueNode left, final ValueNode right, final Predicate.PredicateContext ctx) {
+            // CS304 Issue link: https://github.com/json-path/JsonPath/issues/356
+            // Create new predicateContext according to the left ValueNode
+            final Predicate.PredicateContext predicateContext = new PredicateContextImpl(
+                    left.getValue(),
+                    ctx.root(),
+                    ctx.configuration(),
+                    null
+            );
+            return right.asPredicateNode().getPredicate().apply(predicateContext); //NOPMD - suppressed LawOfDemeter //NOPMD - suppressed LawOfDemeter
         }
     }
 
