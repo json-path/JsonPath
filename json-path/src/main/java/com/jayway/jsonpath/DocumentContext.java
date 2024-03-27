@@ -14,5 +14,7 @@
  */
 package com.jayway.jsonpath;
 
-public interface DocumentContext extends ReadContext, WriteContext {
+import java.io.Externalizable;
+
+public interface DocumentContext extends ReadContext, WriteContext, Externalizable {
 }
