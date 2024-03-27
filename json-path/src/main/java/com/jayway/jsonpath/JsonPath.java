@@ -112,7 +112,15 @@ public class JsonPath {
     public static boolean isPathDefinite(String path) {
         return compile(path).isDefinite();
     }
-
+    public static boolean isPathValid(String json,String path){
+        try{
+            JsonPath.parse(json).read(path);
+            return true;
+        }
+        catch (PathNotFoundException e){
+            return false;
+        }
+    }
 
     /**
      * Checks if a path points to a single item or if it potentially returns multiple items
