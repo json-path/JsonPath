@@ -486,8 +486,45 @@ CacheProvider.setCache(new Cache() {
 });
 ```
 
+### Custom Path Functions
 
+If you want to implement you own path functions, create your PathFunction implementation.
+Initializing PathFunctionFactory should only be done when your application is being initialized.
 
+```java
+
+class MyPathFunction implements PathFunction {
+
+	public static final String NAME = "mypathfunc";
+
+	@Override
+	public Object invoke(
+		String currentPath,
+		PathRef parent,
+		Object model,
+		EvaluationContext ctx,
+		List<Parameter> parameters
+	) {
+		// Do something here
+
+		return model;
+	}
+}
+
+// Example application initialization
+class ApplicationBoot {
+	public static void main(String[] args) {
+
+		PathFunctionFactory.add(
+			MyPathFunction.NAME,
+			MyPathFunction.class
+		);
+
+		PathFunctionFactory.init();
+	}
+}
+
+```
 
 
 
