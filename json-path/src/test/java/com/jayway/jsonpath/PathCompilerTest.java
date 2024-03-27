@@ -323,4 +323,11 @@ public class PathCompilerTest {
     public void property_must_be_separated_by_commas() {
         assertThrows(InvalidPathException.class, () -> compile("$['aaa'}'bbb']"));
     }
+
+    @Test
+    public void function_parameter_with_closing_paren() {
+        String json = "{}";
+        String result = JsonPath.read(json, "$.concat(\"Bob\", $.concat(\" Joe\", \" Alex\"))");
+        assertThat(result).isEqualTo("Bob Joe Alex");
+    }
 }

@@ -353,6 +353,7 @@ public class PathCompiler {
                     if (0 > groupParen || priorChar == '(') {
                         parameter.append(c);
                     }
+                    if(groupParen > 0) break;
                 case COMMA:
                     // In this state we've reach the end of a function parameter and we can pass along the parameter string
                     // to the parser
