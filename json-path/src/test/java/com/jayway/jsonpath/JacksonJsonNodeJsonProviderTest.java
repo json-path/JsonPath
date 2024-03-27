@@ -9,6 +9,7 @@ import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.JsonNodeFactory;
 import com.fasterxml.jackson.databind.node.ObjectNode;
+import com.jayway.jsonpath.internal.JsonContext;
 import com.jayway.jsonpath.spi.json.JacksonJsonNodeJsonProvider;
 import com.jayway.jsonpath.spi.mapper.JacksonMappingProvider;
 import com.jayway.jsonpath.spi.mapper.MappingException;
@@ -255,6 +256,26 @@ public class JacksonJsonNodeJsonProviderTest extends BaseTest {
       ArrayNode node = using(JACKSON_JSON_NODE_CONFIGURATION).parse(json).read("$[?(@.groups[?(@.type == 'phase' && @.name == 'alpha')] empty false)]");
       assertThat(node.size()).isEqualTo(1);
       assertThat(node.get(0).get("name").asText()).isEqualTo("a");
+    }
+
+    @Test
+    public void object_can_be_parsed() {
+        Gen gen = new Gen();
+        gen.eric = "yepp";
+
+        FooBarBaz<Gen> fooBarBaz = new FooBarBaz<>();
+        fooBarBaz.foo = "foo0";
+        fooBarBaz.bar = 0L;
+        fooBarBaz.baz = true;
+        fooBarBaz.gen = gen;
+
+        DocumentContext context = using(JACKSON_JSON_NODE_CONFIGURATION).parse(fooBarBaz);
+        assertThat((Object) context.json()).isInstanceOf(JsonNode.class);
+
+        assertThat(context.read("$.foo", String.class)).isEqualTo("foo0");
+        assertThat(context.read("$.bar", Long.class)).isZero();
+        assertThat(context.read("$.baz", Boolean.class)).isTrue();
+        assertThat(context.read("$.gen.eric", String.class)).isEqualTo("yepp");
     }
 
     public static class FooBarBaz<T> {

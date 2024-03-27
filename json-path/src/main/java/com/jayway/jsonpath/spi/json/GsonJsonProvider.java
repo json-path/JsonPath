@@ -120,6 +120,11 @@ public class GsonJsonProvider extends AbstractJsonProvider {
     }
 
     @Override
+    public Object parse(Object object) throws InvalidJsonException {
+        return object instanceof JsonElement ? object : gson.toJsonTree(object);
+    }
+
+    @Override
     public Object parse(final String json) throws InvalidJsonException {
         return PARSER.parse(json);
     }
