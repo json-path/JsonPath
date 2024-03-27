@@ -1,0 +1,30 @@
+package com.jayway.jsonpath;
+
+import org.junit.Test;
+
+import java.time.OffsetDateTime;
+import java.time.ZoneOffset;
+import java.util.LinkedHashMap;
+import java.util.Map;
+
+import static com.jayway.jsonpath.Criteria.where;
+import static com.jayway.jsonpath.Filter.filter;
+import static org.assertj.core.api.Assertions.assertThat;
+
+//test for issue: https://github.com/json-path/JsonPath/issues/707
+public class issue707 extends BaseTest{
+@Test
+    public void Test_Escape_character1() {
+        String JSON="{\"\\data\": \"a \\ b\"}";
+        assertThat((String)(((JsonPath.parse(JSON)
+                .read("$.\\data"))))).isEqualTo("a \\ b");
+
+    }
+
+    @Test
+    public void Test_Escape_character2() {
+        String JSON="{\"a\": [{\"data\"  : \"a \\ b\"}]}";
+        assertThat((String)(((net.minidev.json.JSONArray)(JsonPath.parse(JSON)
+                .read("$.a[*].data"))).get(0))).isEqualTo("a \\ b");
+    }
+}
