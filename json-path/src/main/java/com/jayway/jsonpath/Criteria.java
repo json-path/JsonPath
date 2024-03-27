@@ -158,6 +158,94 @@ public class Criteria implements Predicate {
     }
 
     /**
+     * Creates a criterion using the <b>&ltall;</b> operator
+     *
+     * @param o
+     * @return the criteria
+     */
+    public Criteria ltall(Object... o) {
+        return ltall(Arrays.asList(o));
+    }
+
+    /**
+     * Creates a criterion using the <b>&ltall;</b> operator
+     *
+     * @param c
+     * @return the criteria
+     */
+    public Criteria ltall(Collection<?> c) {
+        this.criteriaType = RelationalOperator.LTALL;
+        this.right = new ValueListNode(c);
+        return this;
+    }
+
+    /**
+     * Creates a criterion using the <b>&lteall;</b> operator
+     *
+     * @param o
+     * @return the criteria
+     */
+    public Criteria lteall(Object... o) {
+        return lteall(Arrays.asList(o));
+    }
+
+    /**
+     * Creates a criterion using the <b>&lteall;</b> operator
+     *
+     * @param c
+     * @return the criteria
+     */
+    public Criteria lteall(Collection<?> c) {
+        this.criteriaType = RelationalOperator.LTEALL;
+        this.right = new ValueListNode(c);
+        return this;
+    }
+
+    /**
+     * Creates a criterion using the <b>&ltany;</b> operator
+     *
+     * @param o
+     * @return the criteria
+     */
+    public Criteria ltany(Object... o) {
+        return ltany(Arrays.asList(o));
+    }
+
+    /**
+     * Creates a criterion using the <b>&ltany;</b> operator
+     *
+     * @param c
+     * @return the criteria
+     */
+    public Criteria ltany(Collection<?> c) {
+        this.criteriaType = RelationalOperator.LTANY;
+        this.right = new ValueListNode(c);
+        return this;
+    }
+
+    /**
+     * Creates a criterion using the <b>&lteany;</b> operator
+     *
+     * @param o
+     * @return the criteria
+     */
+    public Criteria lteany(Object... o) {
+        return lteany(Arrays.asList(o));
+    }
+
+    /**
+     * Creates a criterion using the <b>&lteany;</b> operator
+     *
+     * @param c
+     * @return the criteria
+     */
+    public Criteria lteany(Collection<?> c) {
+        this.criteriaType = RelationalOperator.LTEANY;
+        this.right = new ValueListNode(c);
+        return this;
+    }
+
+    /**
      * Creates a criterion using the <b>&lt;=</b> operator
      *
      * @param o
@@ -178,6 +266,94 @@ public class Criteria implements Predicate {
     public Criteria gt(Object o) {
         this.criteriaType = RelationalOperator.GT;
         this.right = ValueNode.toValueNode(o);
+        return this;
+    }
+
+    /**
+     * Creates a criterion using the <b>&gtall;</b> operator
+     *
+     * @param o
+     * @return the criteria
+     */
+    public Criteria gtall(Object... o) {
+        return gtall(Arrays.asList(o));
+    }
+
+    /**
+     * Creates a criterion using the <b>&gtall;</b> operator
+     *
+     * @param c
+     * @return the criteria
+     */
+    public Criteria gtall(Collection<?> c) {
+        this.criteriaType = RelationalOperator.GTALL;
+        this.right = new ValueListNode(c);
+        return this;
+    }
+
+    /**
+     * Creates a criterion using the <b>&gteall;</b> operator
+     *
+     * @param o
+     * @return the criteria
+     */
+    public Criteria gteall(Object... o) {
+        return gteall(Arrays.asList(o));
+    }
+
+    /**
+     * Creates a criterion using the <b>&gteall;</b> operator
+     *
+     * @param c
+     * @return the criteria
+     */
+    public Criteria gteall(Collection<?> c) {
+        this.criteriaType = RelationalOperator.GTEALL;
+        this.right = new ValueListNode(c);
+        return this;
+    }
+
+    /**
+     * Creates a criterion using the <b>&gtany;</b> operator
+     *
+     * @param o
+     * @return the criteria
+     */
+    public Criteria gtany(Object... o) {
+        return gtany(Arrays.asList(o));
+    }
+
+    /**
+     * Creates a criterion using the <b>&gtany;</b> operator
+     *
+     * @param c
+     * @return the criteria
+     */
+    public Criteria gtany(Collection<?> c) {
+        this.criteriaType = RelationalOperator.GTANY;
+        this.right = new ValueListNode(c);
+        return this;
+    }
+
+    /**
+     * Creates a criterion using the <b>&gteany;</b> operator
+     *
+     * @param o
+     * @return the criteria
+     */
+    public Criteria gteany(Object... o) {
+        return gteany(Arrays.asList(o));
+    }
+
+    /**
+     * Creates a criterion using the <b>&gteany;</b> operator
+     *
+     * @param c
+     * @return the criteria
+     */
+    public Criteria gteany(Collection<?> c) {
+        this.criteriaType = RelationalOperator.GTEANY;
+        this.right = new ValueListNode(c);
         return this;
     }
 
@@ -304,7 +480,7 @@ public class Criteria implements Predicate {
      * @return the criteria
      */
     public Criteria anyof(Object... o) {
-        return subsetof(Arrays.asList(o));
+        return anyof(Arrays.asList(o));
     }
 
     /**
@@ -368,6 +544,371 @@ public class Criteria implements Predicate {
         notNull(c, "collection can not be null");
         this.criteriaType = RelationalOperator.ALL;
         this.right = new ValueListNode(c);
+        return this;
+    }
+
+    /**
+     * Creates a criterion using the <b>&dateeq;</b> operator
+     *
+     * @param o
+     * @return the criteria
+     */
+    public Criteria dateeq(Object o) {
+        this.criteriaType = RelationalOperator.DATEEQ;
+        this.right = ValueNode.toValueNode(o);
+        return this;
+    }
+
+    /**
+     * Creates a criterion using the <b>&dayeq;</b> operator
+     *
+     * @param o
+     * @return the criteria
+     */
+    public Criteria dayeq(Object o) {
+        this.criteriaType = RelationalOperator.DAYEQ;
+        this.right = ValueNode.toValueNode(o);
+        return this;
+    }
+
+    /**
+     * Creates a criterion using the <b>&montheq;</b> operator
+     *
+     * @param o
+     * @return the criteria
+     */
+    public Criteria montheq(Object o) {
+        this.criteriaType = RelationalOperator.MONTHEQ;
+        this.right = ValueNode.toValueNode(o);
+        return this;
+    }
+
+    /**
+     * Creates a criterion using the <b>&yeareq;</b> operator
+     *
+     * @param o
+     * @return the criteria
+     */
+    public Criteria yeareq(Object o) {
+        this.criteriaType = RelationalOperator.YEAREQ;
+        this.right = ValueNode.toValueNode(o);
+        return this;
+    }
+
+    /**
+     * Creates a criterion using the <b>&dayin;</b> operator
+     *
+     * @param o
+     * @return the criteria
+     */
+    public Criteria dayin(Object... o) {
+        return dayin(Arrays.asList(o));
+    }
+
+    /**
+     * Creates a criterion using the <b>&dayin;</b> operator
+     *
+     * @param c
+     * @return the criteria
+     */
+    public Criteria dayin(Collection<?> c) {
+        this.criteriaType = RelationalOperator.DAYIN;
+        this.right = new ValueListNode(c);
+        return this;
+    }
+
+    /**
+     * Creates a criterion using the <b>&monthin;</b> operator
+     *
+     * @param o
+     * @return the criteria
+     */
+    public Criteria monthin(Object... o) {
+        return monthin(Arrays.asList(o));
+    }
+
+    /**
+     * Creates a criterion using the <b>&monthin;</b> operator
+     *
+     * @param c
+     * @return the criteria
+     */
+    public Criteria monthin(Collection<?> c) {
+        this.criteriaType = RelationalOperator.MONTHIN;
+        this.right = new ValueListNode(c);
+        return this;
+    }
+
+    /**
+     * Creates a criterion using the <b>&yearin;</b> operator
+     *
+     * @param o
+     * @return the criteria
+     */
+    public Criteria yearin(Object... o) {
+        return yearin(Arrays.asList(o));
+    }
+
+    /**
+     * Creates a criterion using the <b>&yearin;</b> operator
+     *
+     * @param c
+     * @return the criteria
+     */
+    public Criteria yearin(Collection<?> c) {
+        this.criteriaType = RelationalOperator.YEARIN;
+        this.right = new ValueListNode(c);
+        return this;
+    }
+
+    /**
+     * Creates a criterion using the <b>&before;</b> operator
+     *
+     * @param o
+     * @return the criteria
+     */
+    public Criteria before(Object o) {
+        this.criteriaType = RelationalOperator.BEFORE;
+        this.right = ValueNode.toValueNode(o);
+        return this;
+    }
+
+    /**
+     * Creates a criterion using the <b>&after;</b> operator
+     *
+     * @param o
+     * @return the criteria
+     */
+    public Criteria after(Object o) {
+        this.criteriaType = RelationalOperator.AFTER;
+        this.right = ValueNode.toValueNode(o);
+        return this;
+    }
+
+    /**
+     * Creates a criterion using the <b>&houreq;</b> operator
+     *
+     * @param o
+     * @return the criteria
+     */
+    public Criteria houreq(Object o) {
+        this.criteriaType = RelationalOperator.HOUREQ;
+        this.right = ValueNode.toValueNode(o);
+        return this;
+    }
+
+    /**
+     * Creates a criterion using the <b>&hourin;</b> operator
+     *
+     * @param o
+     * @return the criteria
+     */
+    public Criteria hourin(Object... o) {
+        return hourin(Arrays.asList(o));
+    }
+
+    /**
+     * Creates a criterion using the <b>&hourin;</b> operator
+     *
+     * @param c
+     * @return the criteria
+     */
+    public Criteria hourin(Collection<?> c) {
+        this.criteriaType = RelationalOperator.HOURIN;
+        this.right = new ValueListNode(c);
+        return this;
+    }
+
+    /**
+     * Creates a criterion using the <b>&timebefore;</b> operator
+     *
+     * @param o
+     * @return the criteria
+     */
+    public Criteria timebefore(Object o) {
+        this.criteriaType = RelationalOperator.TIMEBEFORE;
+        this.right = ValueNode.toValueNode(o);
+        return this;
+    }
+
+    /**
+     * Creates a criterion using the <b>&timeafter;</b> operator
+     *
+     * @param o
+     * @return the criteria
+     */
+    public Criteria timeafter(Object o) {
+        this.criteriaType = RelationalOperator.TIMEAFTER;
+        this.right = ValueNode.toValueNode(o);
+        return this;
+    }
+
+    /**
+     * The <code>allmatch</code> operator selects objects for which the specified field is
+     * an array whose elements comprise a subset of the set comprised by the elements of
+     * the specified array.
+     *
+     * @param o the values to match against
+     * @return the criteria
+     */
+    public Criteria allmatch(Object... o) {
+        return allmatch(Arrays.asList(o));
+    }
+
+    /**
+     * The <code>allmatch</code> operator selects objects for which the specified field is
+     * an array whose elements comprise a subset of the set comprised by the elements of
+     * the specified array.
+     *
+     * @param c the values to match against
+     * @return the criteria
+     */
+    public Criteria allmatch(Collection<?> c) {
+        notNull(c, "collection can not be null");
+        this.criteriaType = RelationalOperator.ALLMATCH;
+        this.right = new ValueListNode(c);
+        return this;
+    }
+
+    /**
+     * The <code>anymatch</code> operator selects objects for which the specified field is
+     * an array whose elements comprise a subset of the set comprised by the elements of
+     * the specified array.
+     *
+     * @param o the values to match against
+     * @return the criteria
+     */
+    public Criteria anymatch(Object... o) {
+        return anymatch(Arrays.asList(o));
+    }
+
+    /**
+     * The <code>anymatch</code> operator selects objects for which the specified field is
+     * an array whose elements comprise a subset of the set comprised by the elements of
+     * the specified array.
+     *
+     * @param c the values to match against
+     * @return the criteria
+     */
+    public Criteria anymatch(Collection<?> c) {
+        notNull(c, "collection can not be null");
+        this.criteriaType = RelationalOperator.ANYMATCH;
+        this.right = new ValueListNode(c);
+        return this;
+    }
+
+    /**
+     * The <code>nonematch</code> operator selects objects for which the specified field is
+     * an array whose elements comprise a subset of the set comprised by the elements of
+     * the specified array.
+     *
+     * @param o the values to match against
+     * @return the criteria
+     */
+    public Criteria nonematch(Object... o) {
+        return nonematch(Arrays.asList(o));
+    }
+
+    /**
+     * The <code>nonematch</code> operator selects objects for which the specified field is
+     * an array whose elements comprise a subset of the set comprised by the elements of
+     * the specified array.
+     *
+     * @param c the values to match against
+     * @return the criteria
+     */
+    public Criteria nonematch(Collection<?> c) {
+        notNull(c, "collection can not be null");
+        this.criteriaType = RelationalOperator.NONEMATCH;
+        this.right = new ValueListNode(c);
+        return this;
+    }
+
+    /**
+     * The <code>exactmatch</code> operator selects objects for which the specified field is
+     * an array whose elements comprise a subset of the set comprised by the elements of
+     * the specified array.
+     *
+     * @param o the values to match against
+     * @return the criteria
+     */
+    public Criteria exactmatch(Object... o) {
+        return exactmatch(Arrays.asList(o));
+    }
+
+    /**
+     * The <code>exactmatch</code> operator selects objects for which the specified field is
+     * an array whose elements comprise a subset of the set comprised by the elements of
+     * the specified array.
+     *
+     * @param c the values to match against
+     * @return the criteria
+     */
+    public Criteria exactmatch(Collection<?> c) {
+        notNull(c, "collection can not be null");
+        this.criteriaType = RelationalOperator.EXACTMATCH;
+        this.right = new ValueListNode(c);
+        return this;
+    }
+
+    /**
+     * Creates a criterion using the <b>&windowin;</b> operator
+     *
+     * @param o
+     * @return the criteria
+     */
+    public Criteria windowin(Object o) {
+        this.criteriaType = RelationalOperator.WINDOWIN;
+        this.right = ValueNode.toValueNode(o);
+        return this;
+    }
+
+    /**
+     * Creates a criterion using the <b>&windowout;</b> operator
+     *
+     * @param o
+     * @return the criteria
+     */
+    public Criteria windowout(Object o) {
+        this.criteriaType = RelationalOperator.WINDOWOUT;
+        this.right = ValueNode.toValueNode(o);
+        return this;
+    }
+
+    /**
+     * Creates a criterion using the <b>&windowtimein;</b> operator
+     *
+     * @param o
+     * @return the criteria
+     */
+    public Criteria windowtimein(Object o) {
+        this.criteriaType = RelationalOperator.WINDOWTIMEIN;
+        this.right = ValueNode.toValueNode(o);
+        return this;
+    }
+
+    /**
+     * Creates a criterion using the <b>&windowtimeout;</b> operator
+     *
+     * @param o
+     * @return the criteria
+     */
+    public Criteria windowtimeout(Object o) {
+        this.criteriaType = RelationalOperator.WINDOWTIMEOUT;
+        this.right = ValueNode.toValueNode(o);
+        return this;
+    }
+
+    /**
+     * The <code>notcontains</code> operator asserts that the provided object is not contained
+     * in the result. The object that should contain the input can be either an object or a String.
+     *
+     * @param o that should not exists in given collection or
+     * @return the criteria
+     */
+    public Criteria notcontains(Object o) {
+        this.criteriaType = RelationalOperator.NOTCONTAINS;
+        this.right = ValueNode.toValueNode(o);
         return this;
     }
 
