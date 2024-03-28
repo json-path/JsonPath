@@ -11,14 +11,14 @@ public class StandardDeviation extends AbstractAggregation {
     private Double count = 0d;
 
     @Override
-    protected void next(Number value) {
+    protected void processNumericValue(Number value) {
         sum += value.doubleValue();
         sumSq += value.doubleValue() * value.doubleValue();
         count++;
     }
 
     @Override
-    protected Number getValue() {
+    protected Number getAggregatedValue() {
         return Math.sqrt(sumSq/count - sum*sum/count/count);
     }
 }

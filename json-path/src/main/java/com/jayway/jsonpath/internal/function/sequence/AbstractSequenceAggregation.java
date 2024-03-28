@@ -19,7 +19,7 @@ public abstract class AbstractSequenceAggregation implements PathFunction {
     protected abstract int targetIndex(EvaluationContext ctx, List<Parameter> parameters);
     
     @Override
-    public Object invoke(String currentPath, PathRef parent, Object model, EvaluationContext ctx, List<Parameter> parameters) {
+    public Object aggregateAndInvoke(String currentPath, PathRef parent, Object model, EvaluationContext ctx, List<Parameter> parameters) {
         if(ctx.configuration().jsonProvider().isArray(model)){
 
             Iterable<?> objects = ctx.configuration().jsonProvider().toIterable(model);

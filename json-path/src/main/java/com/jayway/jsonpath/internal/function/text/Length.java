@@ -40,7 +40,7 @@ public class Length implements PathFunction {
      * @return
      */
     @Override
-    public Object invoke(String currentPath, PathRef parent, Object model, EvaluationContext ctx, List<Parameter> parameters) {
+    public Object aggregateAndInvoke(String currentPath, PathRef parent, Object model, EvaluationContext ctx, List<Parameter> parameters) {
         if (null != parameters && parameters.size() > 0) {
 
             // Set the tail of the first parameter, when its not a function path parameter (which wouldn't make sense

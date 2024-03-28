@@ -16,6 +16,7 @@ package com.jayway.jsonpath;
 
 
 import com.jayway.jsonpath.internal.*;
+import com.jayway.jsonpath.internal.PathEvaluator;
 import com.jayway.jsonpath.internal.path.PathCompiler;
 import com.jayway.jsonpath.spi.json.JsonProvider;
 
@@ -139,6 +140,23 @@ public class JsonPath {
         return path.isDefinite();
     }
 
+
+//    public boolean isFunctionPath() {
+//        return path.isFunctionPath();
+//    }
+//
+//    public boolean isRootPath() {
+//        return path.isRootPath();
+//    }
+
+    public EvaluationContext evaluate(Object document, Object rootDocument, Configuration configuration) {
+        return evaluate(document, rootDocument, configuration, false);
+    }
+
+    public EvaluationContext evaluate(Object document, Object rootDocument, Configuration configuration, boolean forUpdate) {
+        EvaluationContext evaluationContext = null;
+        return resultByConfiguration(document, configuration, evaluationContext);
+    }
     /**
      * Applies this JsonPath to the provided json document.
      * Note that the document must be identified as either a List or Map by
@@ -165,46 +183,8 @@ public class JsonPath {
      */
     @SuppressWarnings("unchecked")
     public <T> T read(Object jsonObject, Configuration configuration) {
-        boolean optAsPathList = configuration.containsOption(AS_PATH_LIST);
-        boolean optAlwaysReturnList = configuration.containsOption(Option.ALWAYS_RETURN_LIST);
-        boolean optSuppressExceptions = configuration.containsOption(Option.SUPPRESS_EXCEPTIONS);
-
-        if (path.isFunctionPath()) {
-            if (optAsPathList || optAlwaysReturnList) {
-                if (optSuppressExceptions) {
-                    return (T) (path.isDefinite() ? null : configuration.jsonProvider().createArray());
-                }
-                throw new JsonPathException("Options " + AS_PATH_LIST + " and " + ALWAYS_RETURN_LIST + " are not allowed when using path functions!");
-            }
-            EvaluationContext evaluationContext = path.evaluate(jsonObject, jsonObject, configuration);
-            if (optSuppressExceptions && evaluationContext.getPathList().isEmpty()) {
-                return (T) (path.isDefinite() ? null : configuration.jsonProvider().createArray());
-            }
-            return evaluationContext.getValue(true);
-        } else if (optAsPathList) {
-            EvaluationContext evaluationContext = path.evaluate(jsonObject, jsonObject, configuration);
-            if (optSuppressExceptions && evaluationContext.getPathList().isEmpty()) {
-                return (T) configuration.jsonProvider().createArray();
-            }
-            return (T) evaluationContext.getPath();
-        } else {
-            EvaluationContext evaluationContext = path.evaluate(jsonObject, jsonObject, configuration);
-            if (optSuppressExceptions && evaluationContext.getPathList().isEmpty()) {
-                if (optAlwaysReturnList) {
-                    return (T) configuration.jsonProvider().createArray();
-                } else {
-                    return (T) (path.isDefinite() ? null : configuration.jsonProvider().createArray());
-                }
-            }
-            Object res = evaluationContext.getValue(false);
-            if (optAlwaysReturnList && path.isDefinite()) {
-                Object array = configuration.jsonProvider().createArray();
-                configuration.jsonProvider().setArrayIndex(array, 0, res);
-                return (T) array;
-            } else {
-                return (T) res;
-            }
-        }
+        PathEvaluator evaluator = new PathEvaluator(path, configuration);
+        return evaluator.evaluate(jsonObject);
     }
 
     /**
@@ -218,7 +198,7 @@ public class JsonPath {
     public <T> T set(Object jsonObject, Object newVal, Configuration configuration) {
         notNull(jsonObject, "json can not be null");
         notNull(configuration, "configuration can not be null");
-        EvaluationContext evaluationContext = path.evaluate(jsonObject, jsonObject, configuration, true);
+        EvaluationContext evaluationContext = evaluate(jsonObject, jsonObject, configuration, true);
         if (evaluationContext.getPathList().isEmpty()) {
             boolean optSuppressExceptions = configuration.containsOption(Option.SUPPRESS_EXCEPTIONS);
             if (optSuppressExceptions) {
@@ -246,7 +226,7 @@ public class JsonPath {
         notNull(jsonObject, "json can not be null");
         notNull(configuration, "configuration can not be null");
         notNull(mapFunction, "mapFunction can not be null");
-        EvaluationContext evaluationContext = path.evaluate(jsonObject, jsonObject, configuration, true);
+        EvaluationContext evaluationContext = evaluate(jsonObject, jsonObject, configuration, true);
         if (evaluationContext.getPathList().isEmpty()) {
             boolean optSuppressExceptions = configuration.containsOption(Option.SUPPRESS_EXCEPTIONS);
             if (optSuppressExceptions) {
@@ -273,7 +253,7 @@ public class JsonPath {
     public <T> T delete(Object jsonObject, Configuration configuration) {
         notNull(jsonObject, "json can not be null");
         notNull(configuration, "configuration can not be null");
-        EvaluationContext evaluationContext = path.evaluate(jsonObject, jsonObject, configuration, true);
+        EvaluationContext evaluationContext = evaluate(jsonObject, jsonObject, configuration, true);
         if (evaluationContext.getPathList().isEmpty()) {
             boolean optSuppressExceptions = configuration.containsOption(Option.SUPPRESS_EXCEPTIONS);
             if (optSuppressExceptions) {
@@ -300,7 +280,7 @@ public class JsonPath {
     public <T> T add(Object jsonObject, Object value, Configuration configuration) {
         notNull(jsonObject, "json can not be null");
         notNull(configuration, "configuration can not be null");
-        EvaluationContext evaluationContext = path.evaluate(jsonObject, jsonObject, configuration, true);
+        EvaluationContext evaluationContext = evaluate(jsonObject, jsonObject, configuration, true);
         if (evaluationContext.getPathList().isEmpty()) {
             boolean optSuppressExceptions = configuration.containsOption(Option.SUPPRESS_EXCEPTIONS);
             if (optSuppressExceptions) {
@@ -329,7 +309,7 @@ public class JsonPath {
         notNull(jsonObject, "json can not be null");
         notEmpty(key, "key can not be null or empty");
         notNull(configuration, "configuration can not be null");
-        EvaluationContext evaluationContext = path.evaluate(jsonObject, jsonObject, configuration, true);
+        EvaluationContext evaluationContext = evaluate(jsonObject, jsonObject, configuration, true);
         if (evaluationContext.getPathList().isEmpty()) {
             boolean optSuppressExceptions = configuration.containsOption(Option.SUPPRESS_EXCEPTIONS);
             if (optSuppressExceptions) {
@@ -348,7 +328,7 @@ public class JsonPath {
         notNull(jsonObject, "json can not be null");
         notEmpty(newKeyName, "newKeyName can not be null or empty");
         notNull(configuration, "configuration can not be null");
-        EvaluationContext evaluationContext = path.evaluate(jsonObject, jsonObject, configuration, true);
+        EvaluationContext evaluationContext = evaluate(jsonObject, jsonObject, configuration, true);
         for (PathRef updateOperation : evaluationContext.updateOperations()) {
             boolean optSuppressExceptions = configuration.containsOption(Option.SUPPRESS_EXCEPTIONS);
             try {
@@ -554,17 +534,17 @@ public class JsonPath {
     /**
      * Creates a new JsonPath and applies it to the provided Json object
      *
-     * @param jsonURL  url pointing to json doc
+     //     * @param jsonURL  url pointing to json doc
      * @param jsonPath the json path
      * @param filters  filters to be applied to the filter place holders  [?] in the path
      * @param <T>      expected return type
      * @return list of objects matched by the given path
      */
-    @SuppressWarnings({"unchecked"})
+//    @SuppressWarnings({"unchecked"})
     @Deprecated
-    public static <T> T read(URL jsonURL, String jsonPath, Predicate... filters) throws IOException {
-        return new ParseContextImpl().parse(jsonURL).read(jsonPath, filters);
-    }
+//    public static <T> T read(URL jsonURL, String jsonPath, Predicate... filters) throws IOException {
+//        return new ParseContextImpl().parse(jsonURL).read(jsonPath, filters);
+//    }
 
     /**
      * Creates a new JsonPath and applies it to the provided Json object

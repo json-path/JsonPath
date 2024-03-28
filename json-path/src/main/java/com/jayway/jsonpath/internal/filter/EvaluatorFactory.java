@@ -375,27 +375,28 @@ public class EvaluatorFactory {
     private static class NoneOfEvaluator implements Evaluator {
         @Override
         public boolean evaluate(ValueNode left, ValueNode right, Predicate.PredicateContext ctx) {
-            ValueListNode rightValueListNode;
-            if (right.isJsonNode()) {
-                ValueNode vn = right.asJsonNode().asValueListNode(ctx);
+            ValueListNode rightValueListNode = extractValueListNode(right, ctx);
+            ValueListNode leftValueListNode = extractValueListNode(left, ctx);
+
+            return areAllElementsDifferent(leftValueListNode, rightValueListNode);
+        }
+
+        private ValueListNode extractValueListNode(ValueNode node, Predicate.PredicateContext ctx) {
+            if (node.isJsonNode()) {
+                ValueNode vn = node.asJsonNode().asValueListNode(ctx);
                 if (vn.isUndefinedNode()) {
-                    return false;
+                    return null; // or handle undefined case accordingly
                 } else {
-                    rightValueListNode = vn.asValueListNode();
+                    return vn.asValueListNode();
                 }
             } else {
-                rightValueListNode = right.asValueListNode();
+                return node.asValueListNode();
             }
-            ValueListNode leftValueListNode;
-            if (left.isJsonNode()) {
-                ValueNode vn = left.asJsonNode().asValueListNode(ctx);
-                if (vn.isUndefinedNode()) {
-                    return false;
-                } else {
-                    leftValueListNode = vn.asValueListNode();
-                }
-            } else {
-                leftValueListNode = left.asValueListNode();
+        }
+
+        private boolean areAllElementsDifferent(ValueListNode leftValueListNode, ValueListNode rightValueListNode) {
+            if (leftValueListNode == null || rightValueListNode == null) {
+                return false; // or handle the case where one of the lists is null
             }
 
             for (ValueNode leftValueNode : leftValueListNode) {
@@ -405,7 +406,9 @@ public class EvaluatorFactory {
                     }
                 }
             }
+
             return true;
         }
+
     }
 }

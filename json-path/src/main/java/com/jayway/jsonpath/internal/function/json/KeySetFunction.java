@@ -14,7 +14,7 @@ import java.util.List;
 public class KeySetFunction implements PathFunction {
 
     @Override
-    public Object invoke(String currentPath, PathRef parent, Object model, EvaluationContext ctx, List<Parameter> parameters) {
+    public Object aggregateAndInvoke(String currentPath, PathRef parent, Object model, EvaluationContext ctx, List<Parameter> parameters) {
         if (ctx.configuration().jsonProvider().isMap(model)) {
             return ctx.configuration().jsonProvider().getPropertyKeys(model);
         }
