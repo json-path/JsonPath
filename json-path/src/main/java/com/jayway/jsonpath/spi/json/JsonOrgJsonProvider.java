@@ -5,7 +5,6 @@ import com.jayway.jsonpath.InvalidJsonException;
 import com.jayway.jsonpath.JsonPathException;
 import org.json.JSONArray;
 import org.json.JSONException;
-import org.json.JSONObject;
 import org.json.JSONTokener;
 
 import java.io.InputStream;
@@ -128,6 +127,7 @@ public class JsonOrgJsonProvider extends AbstractJsonProvider {
         }
     }
 
+    @Override
     @SuppressWarnings("unchecked")
     public void removeProperty(Object obj, Object key) {
         if (isMap(obj))
