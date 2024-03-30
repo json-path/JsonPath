@@ -299,7 +299,7 @@ public class PathCompiler {
                     continue;
                 }
 
-                if (c == OPEN_BRACE || isDigit(c) || DOUBLE_QUOTE == c || MINUS == c) {
+                if (isJsonParam(c)) {
                     type = ParamType.JSON;
                 }
                 else if (isPathContext(c)) {
@@ -386,6 +386,12 @@ public class PathCompiler {
             throw new InvalidPathException("Arguments to function: '" + funcName + "' are not closed properly.");
         }
         return parameters;
+    }
+
+    private boolean isJsonParam(char c) {
+        
+        return c == OPEN_BRACE || Character.isDigit(c) || c == DOUBLE_QUOTE || c == MINUS;
+
     }
 
     private boolean isWhitespace(char c) {
