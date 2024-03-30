@@ -24,7 +24,9 @@ import com.jayway.jsonpath.internal.function.Parameter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+
 import java.util.Arrays;
+
 
 public class CompiledPath implements Path {
 
@@ -36,7 +38,8 @@ public class CompiledPath implements Path {
 
 
     public CompiledPath(RootPathToken root, boolean isRootPath) {
-        this.root = invertScannerFunctionRelationship(root);
+        ScannerFunctionInverter inverter = new ScannerFunctionInverter(root);
+        this.root = inverter.invert();
         this.isRootPath = isRootPath;
     }
 
@@ -47,45 +50,8 @@ public class CompiledPath implements Path {
 
 
 
-    /**
-     * In the event the writer of the path referenced a function at the tail end of a scanner, augment the query such
-     * that the root node is the function and the parameter to the function is the scanner.   This way we maintain
-     * relative sanity in the path expression, functions either evaluate scalar values or arrays, they're
-     * not re-entrant nor should they maintain state, they do however take parameters.
-     *
-     * @param path
-     *      this is our old root path which will become a parameter (assuming there's a scanner terminated by a function
-     *
-     * @return
-     *      A function with the scanner as input, or if this situation doesn't exist just the input path
-     */
-    private RootPathToken invertScannerFunctionRelationship(final RootPathToken path) {
-        if (path.isFunctionPath() && path.next() instanceof ScanPathToken) {
-            PathToken token = path;
-            PathToken prior = null;
-            while (null != (token = token.next()) && !(token instanceof FunctionPathToken)) {
-                prior = token;
-            }
-            // Invert the relationship $..path.function() to $.function($..path)
-            if (token instanceof FunctionPathToken) {
-                prior.setNext(null);
-                path.setTail(prior);
 
-                // Now generate a new parameter from our path
-                Parameter parameter = new Parameter();
-                parameter.setPath(new CompiledPath(path, true));
-                parameter.setType(ParamType.PATH);
-                ((FunctionPathToken)token).setParameters(Arrays.asList(parameter));
-                RootPathToken functionRoot = new RootPathToken('$');
-                functionRoot.setTail(token);
-                functionRoot.setNext(token);
 
-                // Define the function as the root
-                return functionRoot;
-            }
-        }
-        return path;
-    }
 
     @Override
     public EvaluationContext evaluate(Object document, Object rootDocument, Configuration configuration, boolean forUpdate) {

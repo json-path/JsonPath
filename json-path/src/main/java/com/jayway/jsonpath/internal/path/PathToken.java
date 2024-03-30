@@ -150,7 +150,7 @@ public abstract class PathToken {
         return prev;
     }
 
-    PathToken next() {
+    public PathToken next() {
         if (isLeaf()) {
             throw new IllegalStateException("Current path token is a leaf");
         }
