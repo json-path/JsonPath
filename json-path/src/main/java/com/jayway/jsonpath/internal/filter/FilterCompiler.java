@@ -357,8 +357,17 @@ public class FilterCompiler  {
         filter.incrementPosition(1); //skip $ and @
         while (filter.inBounds()) {
             if (filter.currentChar() == OPEN_SQUARE_BRACKET) {
-                handleSquareBracket();
-            } else if (shouldBreakParsing()) {
+                int closingSquareBracketIndex = filter.indexOfMatchingCloseChar(filter.position(), OPEN_SQUARE_BRACKET, CLOSE_SQUARE_BRACKET, true, false);
+                if (closingSquareBracketIndex == -1) {
+                    throw new InvalidPathException("Square brackets does not match in filter " + filter);
+                } else {
+                    filter.setPosition(closingSquareBracketIndex + 1);
+                }
+            }
+            boolean closingFunctionBracket = (filter.currentChar() == CLOSE_PARENTHESIS && currentCharIsClosingFunctionBracket(begin));
+            boolean closingLogicalBracket  = (filter.currentChar() == CLOSE_PARENTHESIS && !closingFunctionBracket);
+
+            if (!filter.inBounds() || isRelationalOperatorChar(filter.currentChar()) || filter.currentChar() == SPACE || closingLogicalBracket) {
                 break;
             } else {
                 filter.incrementPosition(1);
@@ -368,24 +377,6 @@ public class FilterCompiler  {
         boolean shouldExists = !(previousSignificantChar == NOT);
         CharSequence path = filter.subSequence(begin, filter.position());
         return ValueNode.createPathNode(path, false, shouldExists);
-    }
-
-    private void handleSquareBracket() {
-        int closingSquareBracketIndex = filter.indexOfMatchingCloseChar(filter.position(), OPEN_SQUARE_BRACKET, CLOSE_SQUARE_BRACKET, true, false);
-        if (closingSquareBracketIndex == -1) {
-            throw new InvalidPathException("Square brackets do not match in filter " + filter);
-        } else {
-            filter.setPosition(closingSquareBracketIndex + 1);
-        }
-    }
-
-    private boolean shouldBreakParsing() {
-        return !filter.inBounds() || isRelationalOperatorChar(filter.currentChar()) || filter.currentChar() == SPACE || closingLogicalBracket();
-    }
-
-    private boolean closingLogicalBracket() {
-        boolean closingFunctionBracket = (filter.currentChar() == CLOSE_PARENTHESIS && currentCharIsClosingFunctionBracket(filter.position()));
-        return (filter.currentChar() == CLOSE_PARENTHESIS && !closingFunctionBracket);
     }
 
 
