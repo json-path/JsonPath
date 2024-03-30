@@ -14,7 +14,7 @@ import java.util.HashSet;
  */
 public class KeySetFunctionTest extends BaseFunctionTest {
 
-    private Configuration conf = Configurations.JACKSON_CONFIGURATION;
+    private Configuration conf = Configurations.getJsonSmartConfiguration();
 
     @Test
     public void testKeySet() throws Exception {

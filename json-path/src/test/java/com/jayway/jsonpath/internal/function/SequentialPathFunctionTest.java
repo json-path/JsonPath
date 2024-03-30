@@ -15,7 +15,7 @@ import org.junit.jupiter.api.Test;
  */
 public class SequentialPathFunctionTest extends BaseFunctionTest {
 
-    private Configuration conf = Configurations.JACKSON_CONFIGURATION;
+    private Configuration conf = Configurations.getJsonSmartConfiguration();
 
     @Test
     public void testFirstOfNumbers() throws Exception {

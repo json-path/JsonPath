@@ -85,13 +85,7 @@ public class PathCompiler {
     }
 
     private void readWhitespace() {
-        while (path.inBounds()) {
-            char c = path.currentChar();
-            if (!isWhitespace(c)) {
-                break;
-            }
-            path.incrementPosition(1);
-        }
+        path.readWhitespace();
     }
 
     private Boolean isPathContext(char c) {
@@ -101,7 +95,7 @@ public class PathCompiler {
     //[$ | @]
     private RootPathToken readContextToken() {
 
-        readWhitespace();
+        path.readWhitespace();
 
         if (!isPathContext(path.currentChar())) {
             throw new InvalidPathException("Path must start with '$' or '@'");
