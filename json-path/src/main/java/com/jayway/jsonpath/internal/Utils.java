@@ -175,14 +175,15 @@ public final class Utils {
         }
         int len = str.length();
         StringWriter writer = new StringWriter(len);
-        StringBuilder unicode = new StringBuilder(4);
+        final int UNICODE_LENGTH = 4;
+        StringBuilder unicode = new StringBuilder(UNICODE_LENGTH);
         boolean hadSlash = false;
         boolean inUnicode = false;
         for (int i = 0; i < len; i++) {
             char ch = str.charAt(i);
             if (inUnicode) {
                 unicode.append(ch);
-                if (unicode.length() == 4) {
+                if (unicode.length() == UNICODE_LENGTH) {
                     try {
                         int value = Integer.parseInt(unicode.toString(), 16);
                         writer.write((char) value);

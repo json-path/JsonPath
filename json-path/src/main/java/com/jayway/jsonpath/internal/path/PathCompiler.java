@@ -519,12 +519,11 @@ public class PathCompiler {
     // [1], [1,2, n], [1:], [1:2], [:2]
     //
     private boolean readArrayToken(PathTokenAppender appender) {
-
-        if (!path.currentCharIs(OPEN_SQUARE_BRACKET)) {
+        if (!isOpeningSquareBracket()) {
             return false;
         }
-        char nextSignificantChar = path.nextSignificantChar();
-        if (!isDigit(nextSignificantChar) && nextSignificantChar != MINUS && nextSignificantChar != SPLIT) {
+        char nextSignificantChar = getNextSignificantChar();
+        if (!isValidNextChar(nextSignificantChar)) {
             return false;
         }
 
@@ -535,34 +534,65 @@ public class PathCompiler {
             return false;
         }
 
-        String expression = path.subSequence(expressionBeginIndex, expressionEndIndex).toString().trim();
+        String expression = extractExpression(expressionBeginIndex, expressionEndIndex);
 
-        if ("*".equals(expression)) {
+        if (!isValidExpression(expression)) {
             return false;
-        }
-
-        //check valid chars
-        for (int i = 0; i < expression.length(); i++) {
-            char c = expression.charAt(i);
-            if (!isDigit(c) && c != COMMA && c != MINUS && c != SPLIT && c != SPACE) {
-                return false;
-            }
         }
 
         boolean isSliceOperation = expression.contains(":");
 
         if (isSliceOperation) {
-            ArraySliceOperation arraySliceOperation = ArraySliceOperation.parse(expression);
-            appender.appendPathToken(PathTokenFactory.createSliceArrayPathToken(arraySliceOperation));
+            processSliceOperation(expression, appender);
         } else {
-            ArrayIndexOperation arrayIndexOperation = ArrayIndexOperation.parse(expression);
-            appender.appendPathToken(PathTokenFactory.createIndexArrayPathToken(arrayIndexOperation));
+            processIndexOperation(expression, appender);
         }
 
         path.setPosition(expressionEndIndex + 1);
 
         return path.currentIsTail() || readNextToken(appender);
     }
+
+    private boolean isOpeningSquareBracket() {
+        return path.currentCharIs(OPEN_SQUARE_BRACKET);
+    }
+
+    private char getNextSignificantChar() {
+        return path.nextSignificantChar();
+    }
+
+    private boolean isValidNextChar(char nextChar) {
+        return isDigit(nextChar) || nextChar == MINUS || nextChar == SPLIT;
+    }
+
+    private String extractExpression(int beginIndex, int endIndex) {
+        return path.subSequence(beginIndex, endIndex).toString().trim();
+    }
+
+    private boolean isValidExpression(String expression) {
+        return !"*".equals(expression) && containsValidChars(expression);
+    }
+
+    private boolean containsValidChars(String expression) {
+        for (int i = 0; i < expression.length(); i++) {
+            char c = expression.charAt(i);
+            if (!isDigit(c) && c != COMMA && c != MINUS && c != SPLIT && c != SPACE) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    private void processSliceOperation(String expression, PathTokenAppender appender) {
+        ArraySliceOperation arraySliceOperation = ArraySliceOperation.parse(expression);
+        appender.appendPathToken(PathTokenFactory.createSliceArrayPathToken(arraySliceOperation));
+    }
+
+    private void processIndexOperation(String expression, PathTokenAppender appender) {
+        ArrayIndexOperation arrayIndexOperation = ArrayIndexOperation.parse(expression);
+        appender.appendPathToken(PathTokenFactory.createIndexArrayPathToken(arrayIndexOperation));
+    }
+
 
     //
     // ['foo']
