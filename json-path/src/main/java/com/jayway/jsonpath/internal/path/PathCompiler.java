@@ -388,10 +388,24 @@ public class PathCompiler {
         return parameters;
     }
 
-    private boolean isJsonParam(char c) {
-        
-        return c == OPEN_BRACE || Character.isDigit(c) || c == DOUBLE_QUOTE || c == MINUS;
+    private boolean isOpenBrace(char c) {
+        return c == OPEN_BRACE;
+    }
 
+    private boolean isDigit(char c) {
+        return Character.isDigit(c);
+    }
+
+    private boolean isDoubleQuote(char c) {
+        return c == DOUBLE_QUOTE;
+    }
+
+    private boolean isMinus(char c) {
+        return c == MINUS;
+    }
+
+    private boolean isJsonParam(char c) {
+        return isOpenBrace(c) || isDigit(c) || isDoubleQuote(c) || isMinus(c);
     }
 
     private boolean isWhitespace(char c) {
