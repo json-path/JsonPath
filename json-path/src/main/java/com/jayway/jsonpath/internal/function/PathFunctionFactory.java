@@ -32,6 +32,20 @@ public class PathFunctionFactory {
 
     static {
         // New functions should be added here and ensure the name is not overridden
+        Map<String, Class> map = getFunctions();
+
+        FUNCTIONS = Collections.unmodifiableMap(map);
+    }
+
+    /**
+     * Returns the common/core functions.
+     *
+     * @see #FUNCTIONS
+     * @see PathFunction
+     *
+     * @return Map of path functions keyed by name
+     */
+    public static Map<String, Class> getFunctions() {
         Map<String, Class> map = new HashMap<String, Class>();
 
         // Math Functions
@@ -55,11 +69,11 @@ public class PathFunctionFactory {
         map.put("last", Last.class);
         map.put("index", Index.class);
 
-
-        FUNCTIONS = Collections.unmodifiableMap(map);
+        return map;
     }
 
     /**
+     * @deprecated
      * Returns the function by name or throws InvalidPathException if function not found.
      *
      * @see #FUNCTIONS
