@@ -5,9 +5,13 @@ import com.jayway.jsonpath.JsonPathException;
 import com.jayway.jsonpath.Predicate;
 import com.jayway.jsonpath.internal.Path;
 import com.jayway.jsonpath.internal.path.PathCompiler;
+import net.minidev.json.JSONArray;
 import net.minidev.json.parser.JSONParser;
 
 import java.time.OffsetDateTime;
+import java.util.Collections;
+import java.util.List;
+import java.util.Map;
 import java.util.regex.Pattern;
 
 import static com.jayway.jsonpath.internal.filter.ValueNodes.*;
@@ -175,6 +179,8 @@ public abstract class ValueNode {
         else if(o instanceof Boolean) return createBooleanNode(o.toString());
         else if(o instanceof Pattern) return createPatternNode((Pattern)o);
         else if (o instanceof OffsetDateTime) return createOffsetDateTimeNode(o.toString());  //workaround for issue: https://github.com/json-path/JsonPath/issues/613
+        else if (o instanceof Map) return new JsonNode(o);
+        else if (o instanceof JSONArray) return new ValueListNode(Collections.unmodifiableList((List) o));
         else throw new JsonPathException("Could not determine value type");
 
     }
@@ -235,4 +241,3 @@ public abstract class ValueNode {
 
 
 }
-
