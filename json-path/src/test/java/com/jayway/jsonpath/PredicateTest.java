@@ -23,4 +23,18 @@ public class PredicateTest extends BaseTest {
 
         assertThat(reader.read("$.store.book[?].isbn", List.class, booksWithISBN)).containsOnly("0-395-19395-8", "0-553-21311-3");
     }
+
+    @Test
+    public void predicates_filters_can_be_applied_with_type_ref() {
+        TypeRef<List<String>> typeRef = new TypeRef<List<String>>() {
+        };
+        Predicate booksWithISBN = new Predicate() {
+            @Override
+            public boolean apply(PredicateContext ctx) {
+                return ctx.item(Map.class).containsKey("isbn");
+            }
+        };
+
+        assertThat(reader.read("$.store.book[?].isbn", typeRef, booksWithISBN)).containsOnly("0-395-19395-8", "0-553-21311-3");
+    }
 }

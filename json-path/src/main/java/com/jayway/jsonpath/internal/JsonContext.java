@@ -83,6 +83,11 @@ public class JsonContext implements DocumentContext {
     }
 
     @Override
+    public <T> T read(String path, TypeRef<T> type, Predicate... filters) {
+        return convert(read(path, filters), type, configuration);
+    }
+
+    @Override
     public <T> T read(JsonPath path) {
         notNull(path, "path can not be null");
         return path.read(json, configuration);
