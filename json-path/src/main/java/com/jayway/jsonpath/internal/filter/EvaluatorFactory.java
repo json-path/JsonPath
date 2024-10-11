@@ -102,6 +102,10 @@ public class EvaluatorFactory {
                 return left.asNumberNode().getNumber().compareTo(right.asNumberNode().getNumber()) < 0;
             } if(left.isStringNode() && right.isStringNode()){
                 return left.asStringNode().getString().compareTo(right.asStringNode().getString()) < 0;
+            } if(left.isStringNode() && right.isNumberNode()){
+                return left.asStringNode().getString().compareTo(right.asNumberNode().getNumber().toString()) < 0;
+            } if(left.isNumberNode() && right.isStringNode()){
+                return left.asNumberNode().getNumber().toString().compareTo(right.asStringNode().getString()) < 0;
             } if (left.isOffsetDateTimeNode() && right.isOffsetDateTimeNode()){ //workaround for issue: https://github.com/json-path/JsonPath/issues/613
                 return left.asOffsetDateTimeNode().getDate().compareTo(right.asOffsetDateTimeNode().getDate()) < 0;
             }
@@ -116,6 +120,10 @@ public class EvaluatorFactory {
                 return left.asNumberNode().getNumber().compareTo(right.asNumberNode().getNumber()) <= 0;
             } if(left.isStringNode() && right.isStringNode()){
                 return left.asStringNode().getString().compareTo(right.asStringNode().getString()) <= 0;
+            } if(left.isStringNode() && right.isNumberNode()){
+                return left.asStringNode().getString().compareTo(right.asNumberNode().getNumber().toString()) <= 0;
+            } if(left.isNumberNode() && right.isStringNode()){
+                return left.asNumberNode().getNumber().toString().compareTo(right.asStringNode().getString()) <= 0;
             } if (left.isOffsetDateTimeNode() && right.isOffsetDateTimeNode()){ //workaround for issue: https://github.com/json-path/JsonPath/issues/613
                 return left.asOffsetDateTimeNode().getDate().compareTo(right.asOffsetDateTimeNode().getDate()) <= 0;
             }
@@ -130,6 +138,10 @@ public class EvaluatorFactory {
                 return left.asNumberNode().getNumber().compareTo(right.asNumberNode().getNumber()) > 0;
             } else if(left.isStringNode() && right.isStringNode()){
                 return left.asStringNode().getString().compareTo(right.asStringNode().getString()) > 0;
+            } else if (left.isStringNode() && right.isNumberNode()){
+                return left.asStringNode().getString().compareTo(right.asNumberNode().getNumber().toString()) > 0;
+            } else if (left.isNumberNode() && right.isStringNode()){
+                return left.asNumberNode().getNumber().toString().compareTo(right.asStringNode().getString()) > 0;
             } else if (left.isOffsetDateTimeNode() && right.isOffsetDateTimeNode()){ //workaround for issue: https://github.com/json-path/JsonPath/issues/613
                 return left.asOffsetDateTimeNode().getDate().compareTo(right.asOffsetDateTimeNode().getDate()) > 0;
             }
@@ -144,6 +156,10 @@ public class EvaluatorFactory {
                 return left.asNumberNode().getNumber().compareTo(right.asNumberNode().getNumber()) >= 0;
             } else if(left.isStringNode() && right.isStringNode()){
                 return left.asStringNode().getString().compareTo(right.asStringNode().getString()) >= 0;
+            } else if (left.isStringNode() && right.isNumberNode()){
+                return left.asStringNode().getString().compareTo(right.asNumberNode().getNumber().toString()) >= 0;
+            } else if (left.isNumberNode() && right.isStringNode()){
+                return left.asNumberNode().getNumber().toString().compareTo(right.asStringNode().getString()) >= 0;
             } else if (left.isOffsetDateTimeNode() && right.isOffsetDateTimeNode()){ //workaround for issue: https://github.com/json-path/JsonPath/issues/613
                 return left.asOffsetDateTimeNode().getDate().compareTo(right.asOffsetDateTimeNode().getDate()) >= 0;
             }
