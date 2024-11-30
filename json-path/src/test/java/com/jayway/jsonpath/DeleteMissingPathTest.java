@@ -1,7 +1,7 @@
 package com.jayway.jsonpath;
 
 import com.jayway.jsonpath.spi.json.*;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 public class DeleteMissingPathTest {
 
