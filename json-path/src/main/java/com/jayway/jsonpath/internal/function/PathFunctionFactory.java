@@ -1,7 +1,6 @@
 package com.jayway.jsonpath.internal.function;
 
 import com.jayway.jsonpath.InvalidPathException;
-import com.jayway.jsonpath.internal.Path;
 import com.jayway.jsonpath.internal.function.json.Append;
 import com.jayway.jsonpath.internal.function.json.KeySetFunction;
 import com.jayway.jsonpath.internal.function.numeric.Average;
@@ -16,7 +15,6 @@ import com.jayway.jsonpath.internal.function.text.Concatenate;
 import com.jayway.jsonpath.internal.function.text.Length;
 
 import java.io.InvalidClassException;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -89,6 +87,9 @@ public class PathFunctionFactory {
     }
 
     public static void addCustomFunction(String name,Class function) throws InvalidClassException {
+        if(FUNCTIONS.containsKey(name)){
+            throw new InvalidPathException("Function with name: " + name + " already exists");
+        }
         if (!PathFunction.class.isAssignableFrom(function)){
             throw new InvalidClassException("Function with name: " + name + "must be a instance of PathFunction class");
         }
