@@ -678,7 +678,14 @@ public interface ValueNodes {
                 try {
                     Configuration c = Configuration.builder().jsonProvider(ctx.configuration().jsonProvider()).options(Option.REQUIRE_PROPERTIES).build();
                     Object result = path.evaluate(ctx.item(), ctx.root(), c).getValue(false);
-                    return result == JsonProvider.UNDEFINED ? FALSE : TRUE;
+                    if (result == JsonProvider.UNDEFINED) {
+                        return FALSE;
+                    }
+                    // If the result is an empty array, return FALSE for exists checks
+                    if (ctx.configuration().jsonProvider().isArray(result) && ctx.configuration().jsonProvider().length(result) == 0) {
+                        return FALSE;
+                    }
+                    return TRUE;
                 } catch (PathNotFoundException e) {
                     return FALSE;
                 }
