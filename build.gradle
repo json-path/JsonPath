@@ -39,27 +39,24 @@ ext {
                     'org.apache.tapestry:tapestry-json:5.8.3',
                     'jakarta.json:jakarta.json-api:2.0.2',
                     'jakarta.json.bind:jakarta.json.bind-api:2.0.0'
-
             ]
     ]
-    snapshotVersion = true
 }
 
 allprojects {
     ext.displayName = null
     ext.buildTimestamp = new Date().format('yyyy-MM-dd HH:mm:ss')
 
-    group = 'com.jayway.jsonpath'
-    version = '2.10.0' + (snapshotVersion ? "-SNAPSHOT" : "")
-
+    group = 'io.fl101.jsonpath'
+    version = '1.0.0'
 }
 
 subprojects {
     apply plugin: 'java'
     apply plugin: 'java-library'
     apply plugin: 'maven-publish'
-    apply plugin: 'signing'
     apply plugin: 'biz.aQute.bnd.builder'
+    apply plugin: 'signing'
 
     java {
         sourceCompatibility = JavaVersion.VERSION_1_8
@@ -84,7 +81,7 @@ subprojects {
 
     signing {
         sign publishing.publications
-        required { !snapshotVersion && gradle.taskGraph.hasTask("publish") }
+        required { false }
     }
 
     javadoc {
@@ -100,12 +97,10 @@ subprojects {
     publishing {
         repositories {
             maven {
-                def releaseRepo = "https://oss.sonatype.org/service/local/staging/deploy/maven2/"
-                def snapshotRepo = "https://oss.sonatype.org/content/repositories/snapshots/"
-                url = snapshotVersion ? snapshotRepo : releaseRepo
+                url "https://maven.pkg.github.com/fl101-io/JsonPath"
                 credentials {
-                    username = project.hasProperty('sonatypeOssUsername') ? sonatypeOssUsername : "Unknown user"
-                    password = project.hasProperty('sonatypeOssPassword') ? sonatypeOssPassword : "Unknown password"
+                    username = System.getenv("GITHUB_USERNAME")
+                    password = System.getenv("GITHUB_PAT")
                 }
             }
         }
@@ -113,13 +108,12 @@ subprojects {
             mavenJava(MavenPublication) {
                 from components.java
 
-                artifactId = project.name
-                //artifactId = jar.archiveBaseName
+                artifactId = project.name // Retains 'json-path' as artifactId
 
                 pom {
                     name = project.name
-                    description = 'A library to query and verify JSON'
-                    url = 'https://github.com/jayway/JsonPath'
+                    description = 'A forked Java JsonPath implementation based on Jayway JsonPath'
+                    url = 'https://github.com/fl101-io/JsonPath'
 
                     licenses {
                         license {
@@ -130,16 +124,16 @@ subprojects {
                     }
 
                     scm {
-                        url = 'scm:git:git://github.com/jayway/JsonPath.git'
-                        connection = 'scm:git:git://github.com/jayway/JsonPath.git'
-                        developerConnection = 'scm:git:git://github.com/jayway/JsonPath.git'
+                        url = 'scm:git:git://github.com/fl101-io/JsonPath.git'
+                        connection = 'scm:git:git://github.com/fl101-io/JsonPath.git'
+                        developerConnection = 'scm:git:git://github.com/your-username/your-forked-repo.git'
                     }
 
                     developers {
                         developer {
-                            id = 'kalle.stenflo'
-                            name = 'Kalle Stenflo'
-                            email = 'kalle.stenflo (a) gmail.com'
+                            id = 'fl101'
+                            name = 'Andrei Kucherov'
+                            email = 'andrei  (a) kucherov.net'
                         }
                     }
                 }
@@ -151,4 +145,3 @@ subprojects {
 wrapper {
     gradleVersion = '8.5'
 }
-
