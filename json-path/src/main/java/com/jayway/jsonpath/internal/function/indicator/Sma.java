@@ -8,7 +8,7 @@ import java.util.List;
  *
  * Created by Andrei on 02/07/25.
  */
-public class Sma extends AbstractIndicatorFunction {
+public class Sma extends AbstractWindowFunction {
 
     @Override
     protected List<Double> calculate(List<Double> values, int window) {

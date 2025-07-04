@@ -1,6 +1,7 @@
 package com.jayway.jsonpath.internal.function;
 
 import com.jayway.jsonpath.InvalidPathException;
+import com.jayway.jsonpath.internal.function.indicator.Diff;
 import com.jayway.jsonpath.internal.function.indicator.Ema;
 import com.jayway.jsonpath.internal.function.indicator.Rsi;
 import com.jayway.jsonpath.internal.function.indicator.Sma;
@@ -62,6 +63,7 @@ public class PathFunctionFactory {
         map.put("sma", Sma.class);
         map.put("ema", Ema.class);
         map.put("rsi", Rsi.class);
+        map.put("diff", Diff.class);
 
         FUNCTIONS = Collections.unmodifiableMap(map);
     }

@@ -8,7 +8,7 @@ import java.util.List;
  *
  * Created by Andrei on 02/07/25.
  */
-public class Rsi extends AbstractIndicatorFunction {
+public class Rsi extends AbstractWindowFunction {
     @Override
     protected List<Double> calculate(List<Double> values, int window) {
         List<Double> rsi = new ArrayList<>();
