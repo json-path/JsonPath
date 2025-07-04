@@ -126,7 +126,7 @@ subprojects {
                     scm {
                         url = 'scm:git:git://github.com/fl101-io/JsonPath.git'
                         connection = 'scm:git:git://github.com/fl101-io/JsonPath.git'
-                        developerConnection = 'scm:git:git://github.com/your-username/your-forked-repo.git'
+                        developerConnection = 'scm:git:git://github.com/fl101-io/JsonPath.git'
                     }
 
                     developers {
