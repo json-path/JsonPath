@@ -313,13 +313,14 @@ public class NestedJsonPathWrapper implements Serializable {
             } else {
                 __self.set(originalRootPath, __dic.get(rootPath).getDocumentContext().jsonString());
             }
+            return true;
         } else {
             int index = path.lastIndexOf('.');
             String rootPath = path.substring(0, index);
             String key = path.substring(index + 1);
             __self.put(rootPath, key, value);
+            return Objects.equals(value, __self.read(path));
         }
-        return true;
     }
 
     /**
