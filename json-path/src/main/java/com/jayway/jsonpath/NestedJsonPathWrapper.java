@@ -302,7 +302,9 @@ public class NestedJsonPathWrapper implements Serializable {
             if(childPathWrapper == null){
                 return false;
             }
-            childPathWrapper.putValueByPath(childPath, value);
+            if(!childPathWrapper.putValueByPath(childPath, value)){
+                return false;
+            }
             String rootPath = path.substring(0, index + 1);
             String originalRootPath = rootPath.replace(openDelimiter, "")
                     .replace(closeDelimiter, "");
