@@ -42,7 +42,7 @@ ext {
 
             ]
     ]
-    snapshotVersion = true
+    snapshotVersion = false
 }
 
 allprojects {
@@ -100,9 +100,8 @@ subprojects {
     publishing {
         repositories {
             maven {
-                def releaseRepo = "https://oss.sonatype.org/service/local/staging/deploy/maven2/"
-                def snapshotRepo = "https://oss.sonatype.org/content/repositories/snapshots/"
-                url = snapshotVersion ? snapshotRepo : releaseRepo
+                name = 'ossrh-staging-api'
+                url = 'https://ossrh-staging-api.central.sonatype.com/service/local/staging/deploy/maven2/'
                 credentials {
                     username = project.hasProperty('sonatypeOssUsername') ? sonatypeOssUsername : "Unknown user"
                     password = project.hasProperty('sonatypeOssPassword') ? sonatypeOssPassword : "Unknown password"
