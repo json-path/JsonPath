@@ -349,15 +349,11 @@ public class PathCompiler {
                 // we've encountered a COMMA do the same
                 case CLOSE_PARENTHESIS:
                     groupParen--;
-                    //CS304 Issue link: https://github.com/json-path/JsonPath/issues/620
-                    if (0 > groupParen || priorChar == '(') {
-                        parameter.append(c);
-                    }
                 case COMMA:
                     // In this state we've reach the end of a function parameter and we can pass along the parameter string
                     // to the parser
                     if ((0 == groupQuote && 0 == groupBrace && 0 == groupBracket
-                            && ((0 == groupParen && CLOSE_PARENTHESIS == c) || 1 == groupParen))) {
+                            && ((0 == groupParen && CLOSE_PARENTHESIS == c) || (1 == groupParen && c == COMMA)))) {
                         endOfStream = (0 == groupParen);
 
                         if (null != type) {

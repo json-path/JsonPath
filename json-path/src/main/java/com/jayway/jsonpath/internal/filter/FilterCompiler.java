@@ -355,6 +355,7 @@ public class FilterCompiler  {
         int begin = filter.position();
 
         filter.incrementPosition(1); //skip $ and @
+        int groupParen = 0;
         while (filter.inBounds()) {
             if (filter.currentChar() == OPEN_SQUARE_BRACKET) {
                 int closingSquareBracketIndex = filter.indexOfMatchingCloseChar(filter.position(), OPEN_SQUARE_BRACKET, CLOSE_SQUARE_BRACKET, true, false);
@@ -364,14 +365,31 @@ public class FilterCompiler  {
                     filter.setPosition(closingSquareBracketIndex + 1);
                 }
             }
-            boolean closingFunctionBracket = (filter.currentChar() == CLOSE_PARENTHESIS && currentCharIsClosingFunctionBracket(begin));
-            boolean closingLogicalBracket  = (filter.currentChar() == CLOSE_PARENTHESIS && !closingFunctionBracket);
 
-            if (!filter.inBounds() || isRelationalOperatorChar(filter.currentChar()) || filter.currentChar() == SPACE || closingLogicalBracket) {
-                break;
+            if (filter.currentChar() == OPEN_PARENTHESIS) {
+                groupParen++;
+            }
+
+            if (groupParen == 0) {
+                boolean closingFunctionBracket = (filter.currentChar() == CLOSE_PARENTHESIS && currentCharIsClosingFunctionBracket(begin));
+                boolean closingLogicalBracket  = (filter.currentChar() == CLOSE_PARENTHESIS && !closingFunctionBracket);
+
+                if (!filter.inBounds() || isRelationalOperatorChar(filter.currentChar()) || filter.currentChar() == SPACE || closingLogicalBracket) {
+                    break;
+                } else {
+                    filter.incrementPosition(1);
+                }
             } else {
+                if (filter.currentChar() == CLOSE_PARENTHESIS) {
+                    groupParen--;
+                    if (groupParen < 0) {
+                        throw new InvalidPathException("Parentheses does not match in filter " + filter);
+                    }
+                }
                 filter.incrementPosition(1);
             }
+
+
         }
 
         boolean shouldExists = !(previousSignificantChar == NOT);

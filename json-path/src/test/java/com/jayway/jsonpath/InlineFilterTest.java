@@ -286,4 +286,11 @@ public class InlineFilterTest extends BaseTest {
     public void filter_evaluation_does_not_break_path_evaluation(Configuration conf) {
         assertHasOneResult("[{\"s\": \"fo\", \"expected_size\": \"m\"}, {\"s\": \"lo\", \"expected_size\": 2}]", "$[?(@.s size @.expected_size)]", conf);
     }
+
+    @ParameterizedTest
+    @MethodSource("configurations")
+    public void testFilterCallingFunction(Configuration conf) {
+        assertHasOneResult("[[\"abcdef\"]]", "$[?(@.concat(\"-\") == \"abcdef-\")]", conf);
+    }
+
 }
