@@ -16,7 +16,8 @@ import java.io.InputStream;
  */
 public class Issue191 {
 
-    private Configuration conf = Configurations.GSON_CONFIGURATION;
+    private Configuration conf = Configurations.getGsonConfiguration();
+
 
     @Test
     public void testResultSetNumericComputation() {

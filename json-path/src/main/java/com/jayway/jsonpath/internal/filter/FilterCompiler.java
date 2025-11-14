@@ -205,21 +205,26 @@ public class FilterCompiler  {
         return new RelationalExpressionNode(left, operator, right);
     }
 
-    private LogicalOperator readLogicalOperator(){
-        int begin = filter.skipBlanks().position();
-        int end = begin+1;
+    private LogicalOperator readLogicalOperator(CharSequence charSequence, int position) {
+        int begin = position;
+        int end = begin + 1;
 
-        if(!filter.inBounds(end)){
+        if (!inBounds(charSequence, end)) {
             throw new InvalidPathException("Expected boolean literal");
         }
-        CharSequence logicalOperator = filter.subSequence(begin, end+1);
-        if(!logicalOperator.equals("||") && !logicalOperator.equals("&&")){
+
+        CharSequence logicalOperator = charSequence.subSequence(begin, end + 1);
+        if (!logicalOperator.equals("||") && !logicalOperator.equals("&&")) {
             throw new InvalidPathException("Expected logical operator");
         }
-        filter.incrementPosition(logicalOperator.length());
+
         logger.trace("LogicalOperator from {} to {} -> [{}]", begin, end, logicalOperator);
 
         return LogicalOperator.fromString(logicalOperator.toString());
+    }
+
+    private boolean inBounds(CharSequence charSequence, int index) {
+        return index >= 0 && index < charSequence.length();
     }
 
     private RelationalOperator readRelationalOperator() {
@@ -378,6 +383,7 @@ public class FilterCompiler  {
         CharSequence path = filter.subSequence(begin, filter.position());
         return ValueNode.createPathNode(path, false, shouldExists);
     }
+
 
     private boolean expressionIsTerminated(){
         char c = filter.currentChar();

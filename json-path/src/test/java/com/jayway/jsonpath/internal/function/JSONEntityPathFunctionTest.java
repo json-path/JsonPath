@@ -52,7 +52,8 @@ public class JSONEntityPathFunctionTest extends BaseFunctionTest {
 
 
 
-    private Configuration conf = Configurations.JSON_SMART_CONFIGURATION;
+
+    private Configuration conf= Configurations.getJsonSmartConfiguration();
 
     @Test
     public void testLengthOfTextArray() {

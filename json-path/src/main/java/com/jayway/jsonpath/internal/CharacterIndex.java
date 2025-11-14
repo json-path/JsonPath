@@ -3,7 +3,6 @@ package com.jayway.jsonpath.internal;
 import com.jayway.jsonpath.InvalidPathException;
 
 public class CharacterIndex {
-
     private static final char OPEN_PARENTHESIS = '(';
     private static final char CLOSE_PARENTHESIS = ')';
     private static final char CLOSE_SQUARE_BRACKET = ']';
@@ -28,6 +27,7 @@ public class CharacterIndex {
         this.position = 0;
         this.endPosition = charSequence.length() - 1;
     }
+
 
     public int length() {
         return endPosition + 1;
@@ -320,4 +320,15 @@ public class CharacterIndex {
         skipBlanksAtEnd();
         return this;
     }
+
+    public void readWhitespace() {
+        while (inBounds()) {
+            char c = currentChar();
+            if (!Character.isWhitespace(c)) {
+                break;
+            }
+            incrementPosition(1);
+        }
+    }
+
 }

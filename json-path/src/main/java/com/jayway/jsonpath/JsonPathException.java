@@ -17,6 +17,7 @@ package com.jayway.jsonpath;
 public class JsonPathException extends RuntimeException {
 
     public JsonPathException() {
+        super();
     }
 
     public JsonPathException(String message) {
