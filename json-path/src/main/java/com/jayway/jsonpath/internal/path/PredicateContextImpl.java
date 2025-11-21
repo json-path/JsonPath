@@ -22,6 +22,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.HashMap;
+import java.util.regex.Pattern;
 
 public class PredicateContextImpl implements Predicate.PredicateContext {
 
@@ -32,11 +33,14 @@ public class PredicateContextImpl implements Predicate.PredicateContext {
     private final Configuration configuration;
     private final HashMap<Path, Object> documentPathCache;
 
+    private final HashMap<String, Pattern> compiledPatternCache;
+
     public PredicateContextImpl(Object contextDocument, Object rootDocument, Configuration configuration, HashMap<Path, Object> documentPathCache) {
         this.contextDocument = contextDocument;
         this.rootDocument = rootDocument;
         this.configuration = configuration;
         this.documentPathCache = documentPathCache;
+        this.compiledPatternCache = new HashMap<String, Pattern>();
     }
 
     public Object evaluate(Path path){
@@ -57,6 +61,10 @@ public class PredicateContextImpl implements Predicate.PredicateContext {
 
     public HashMap<Path, Object> documentPathCache() {
         return documentPathCache;
+    }
+
+    public HashMap<String, Pattern> compiledPatternCache() {
+        return compiledPatternCache;
     }
 
     @Override
