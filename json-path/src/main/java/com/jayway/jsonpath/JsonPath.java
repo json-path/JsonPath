@@ -18,6 +18,7 @@ package com.jayway.jsonpath;
 import com.jayway.jsonpath.internal.*;
 import com.jayway.jsonpath.internal.path.PathCompiler;
 import com.jayway.jsonpath.spi.json.JsonProvider;
+import com.jayway.jsonpath.spi.pathFunction.PathFunctionProvider;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -514,7 +515,6 @@ public class JsonPath {
 
         return new JsonPath(jsonPath, filters);
     }
-
 
     // --------------------------------------------------------
     //

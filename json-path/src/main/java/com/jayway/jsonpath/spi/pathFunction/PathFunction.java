@@ -1,7 +1,8 @@
-package com.jayway.jsonpath.internal.function;
+package com.jayway.jsonpath.spi.pathFunction;
 
 import com.jayway.jsonpath.internal.EvaluationContext;
 import com.jayway.jsonpath.internal.PathRef;
+import com.jayway.jsonpath.internal.function.Parameter;
 
 import java.util.List;
 

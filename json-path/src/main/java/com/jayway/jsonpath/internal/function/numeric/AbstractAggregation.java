@@ -4,7 +4,7 @@ import com.jayway.jsonpath.JsonPathException;
 import com.jayway.jsonpath.internal.EvaluationContext;
 import com.jayway.jsonpath.internal.PathRef;
 import com.jayway.jsonpath.internal.function.Parameter;
-import com.jayway.jsonpath.internal.function.PathFunction;
+import com.jayway.jsonpath.spi.pathFunction.PathFunction;
 
 import java.util.List;
 

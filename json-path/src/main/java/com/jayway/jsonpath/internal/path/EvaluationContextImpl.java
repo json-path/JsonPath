@@ -23,6 +23,7 @@ import com.jayway.jsonpath.internal.EvaluationContext;
 import com.jayway.jsonpath.internal.Path;
 import com.jayway.jsonpath.internal.PathRef;
 import com.jayway.jsonpath.spi.json.JsonProvider;
+import com.jayway.jsonpath.spi.pathFunction.PathFunctionProvider;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -98,6 +99,7 @@ public class EvaluationContextImpl implements EvaluationContext {
         }
     }
 
+    public PathFunctionProvider functionProvider() { return configuration.pathFunctionProvider(); }
 
     public JsonProvider jsonProvider() {
         return configuration.jsonProvider();

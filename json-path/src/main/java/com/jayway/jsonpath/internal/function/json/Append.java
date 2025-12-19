@@ -3,7 +3,7 @@ package com.jayway.jsonpath.internal.function.json;
 import com.jayway.jsonpath.internal.EvaluationContext;
 import com.jayway.jsonpath.internal.PathRef;
 import com.jayway.jsonpath.internal.function.Parameter;
-import com.jayway.jsonpath.internal.function.PathFunction;
+import com.jayway.jsonpath.spi.pathFunction.PathFunction;
 import com.jayway.jsonpath.spi.json.JsonProvider;
 
 import java.util.List;
