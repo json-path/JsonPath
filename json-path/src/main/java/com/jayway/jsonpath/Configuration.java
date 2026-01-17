@@ -15,11 +15,10 @@
 package com.jayway.jsonpath;
 
 import com.jayway.jsonpath.internal.DefaultsImpl;
-import com.jayway.jsonpath.spi.pathFunction.DefaultPathFunctionProvider;
-import com.jayway.jsonpath.spi.pathFunction.PathFunction;
+import com.jayway.jsonpath.spi.function.DefaultPathFunctionProvider;
 import com.jayway.jsonpath.spi.json.JsonProvider;
 import com.jayway.jsonpath.spi.mapper.MappingProvider;
-import com.jayway.jsonpath.spi.pathFunction.PathFunctionProvider;
+import com.jayway.jsonpath.spi.function.PathFunctionProvider;
 
 import java.util.*;
 

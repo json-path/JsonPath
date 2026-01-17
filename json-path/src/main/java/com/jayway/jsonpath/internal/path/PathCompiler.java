@@ -3,12 +3,11 @@ package com.jayway.jsonpath.internal.path;
 import com.jayway.jsonpath.InvalidPathException;
 import com.jayway.jsonpath.Predicate;
 import com.jayway.jsonpath.internal.CharacterIndex;
-import com.jayway.jsonpath.internal.Path;
+import com.jayway.jsonpath.Path;
 import com.jayway.jsonpath.internal.Utils;
 import com.jayway.jsonpath.internal.filter.FilterCompiler;
-import com.jayway.jsonpath.internal.function.ParamType;
-import com.jayway.jsonpath.internal.function.Parameter;
-import com.jayway.jsonpath.spi.pathFunction.PathFunctionProvider;
+import com.jayway.jsonpath.spi.function.ParamType;
+import com.jayway.jsonpath.spi.function.Parameter;
 
 import java.util.*;
 

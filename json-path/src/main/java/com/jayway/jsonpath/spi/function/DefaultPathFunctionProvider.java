@@ -1,4 +1,4 @@
-package com.jayway.jsonpath.spi.pathFunction;
+package com.jayway.jsonpath.spi.function;
 
 import com.jayway.jsonpath.InvalidPathException;
 import com.jayway.jsonpath.internal.function.json.Append;

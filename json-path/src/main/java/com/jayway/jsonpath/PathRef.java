@@ -1,9 +1,6 @@
-package com.jayway.jsonpath.internal;
+package com.jayway.jsonpath;
 
-import com.jayway.jsonpath.Configuration;
-import com.jayway.jsonpath.InvalidModificationException;
-import com.jayway.jsonpath.MapFunction;
-import com.jayway.jsonpath.PathNotFoundException;
+import com.jayway.jsonpath.internal.Utils;
 import com.jayway.jsonpath.spi.json.JsonProvider;
 
 import java.util.Collection;
