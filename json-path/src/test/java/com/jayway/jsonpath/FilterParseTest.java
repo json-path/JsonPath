@@ -92,11 +92,67 @@ public class FilterParseTest {
     }
 
     @Test
+    public void a_ltall_filter_can_be_serialized() {
+        String filter = filter(where("a").ltall(1)).toString();
+        String parsed = parse("[?(@['a'] LTALL [1])]").toString();
+        assertThat(filter).isEqualTo(parsed);
+    }
+
+    @Test
+    public void a_lteall_filter_can_be_serialized() {
+        String filter = filter(where("a").lteall(1)).toString();
+        String parsed = parse("[?(@['a'] LTEALL [1])]").toString();
+        assertThat(filter).isEqualTo(parsed);
+    }
+
+    @Test
+    public void a_ltany_filter_can_be_serialized() {
+        String filter = filter(where("a").ltany(1)).toString();
+        String parsed = parse("[?(@['a'] LTANY [1])]").toString();
+        assertThat(filter).isEqualTo(parsed);
+    }
+
+    @Test
+    public void a_lteany_filter_can_be_serialized() {
+        String filter = filter(where("a").lteany(1)).toString();
+        String parsed = parse("[?(@['a'] LTEANY [1])]").toString();
+        assertThat(filter).isEqualTo(parsed);
+    }
+
+    @Test
     public void a_gt_filter_can_be_serialized() {
 
         String filter = filter(where("a").gt(1)).toString();
         String parsed = parse("[?(@['a'] > 1)]").toString();
 
+        assertThat(filter).isEqualTo(parsed);
+    }
+
+    @Test
+    public void a_gtall_filter_can_be_serialized() {
+        String filter = filter(where("a").gtall(1)).toString();
+        String parsed = parse("[?(@['a'] GTALL [1])]").toString();
+        assertThat(filter).isEqualTo(parsed);
+    }
+
+    @Test
+    public void a_gteall_filter_can_be_serialized() {
+        String filter = filter(where("a").gteall(1)).toString();
+        String parsed = parse("[?(@['a'] GTEALL [1])]").toString();
+        assertThat(filter).isEqualTo(parsed);
+    }
+
+    @Test
+    public void a_gtany_filter_can_be_serialized() {
+        String filter = filter(where("a").gtany(1)).toString();
+        String parsed = parse("[?(@['a'] GTANY [1])]").toString();
+        assertThat(filter).isEqualTo(parsed);
+    }
+
+    @Test
+    public void a_gteany_filter_can_be_serialized() {
+        String filter = filter(where("a").gteany(1)).toString();
+        String parsed = parse("[?(@['a'] GTEANY [1])]").toString();
         assertThat(filter).isEqualTo(parsed);
     }
 
@@ -122,6 +178,13 @@ public class FilterParseTest {
         String filter = filter(where("a").contains("a")).toString();
         String parsed = parse("[?(@['a'] CONTAINS 'a')]").toString();
 
+        assertThat(filter).isEqualTo(parsed);
+    }
+
+    @Test
+    public void a_notcontains_filter_can_be_serialized() {
+        String filter = filter(where("a").notcontains("a")).toString();
+        String parsed = parse("[?(@['a'] NOTCONTAINS 'a')]").toString();
         assertThat(filter).isEqualTo(parsed);
     }
 
@@ -153,6 +216,15 @@ public class FilterParseTest {
     }
 
     @Test
+    public void a_subsetof_objectrange_filter_can_be_serialized() {
+
+        String filter = filter(where("a").subsetof("a")).toString();
+        String parsed = parse("[?(@['a'] SUBSETOF ['a'])]").toString();
+
+        assertThat(filter).isEqualTo(parsed);
+    }
+
+    @Test
     public void a_anyof_filter_can_be_serialized() {
 
         String filter = filter(where("a").anyof(Collections.emptyList())).toString();
@@ -162,10 +234,28 @@ public class FilterParseTest {
     }
 
     @Test
+    public void a_anyof_objectrange_filter_can_be_serialized() {
+
+        String filter = filter(where("a").anyof("a")).toString();
+        String parsed = parse("[?(@['a'] ANYOF ['a'])]").toString();
+
+        assertThat(filter).isEqualTo(parsed);
+    }
+
+    @Test
     public void a_noneof_filter_can_be_serialized() {
 
         String filter = filter(where("a").noneof(Collections.emptyList())).toString();
         String parsed = parse("[?(@['a'] NONEOF [])]").toString();
+
+        assertThat(filter).isEqualTo(parsed);
+    }
+
+    @Test
+    public void a_noneof_objectrange_filter_can_be_serialized() {
+
+        String filter = filter(where("a").noneof("a")).toString();
+        String parsed = parse("[?(@['a'] NONEOF ['a'])]").toString();
 
         assertThat(filter).isEqualTo(parsed);
     }
@@ -273,6 +363,181 @@ public class FilterParseTest {
         Filter d = parse("[?(@['a'] == 1 || @['b'] == 2)]");
         String parsed = d.toString();
 
+        assertThat(filter).isEqualTo(parsed);
+    }
+
+    @Test
+    public void a_allmatch_filter_can_be_serialized() {
+        String filter = filter(where("a").allmatch(Collections.emptyList())).toString();
+        String parsed = parse("[?(@['a'] ALLMATCH [])]").toString();
+        assertThat(filter).isEqualTo(parsed);
+    }
+
+    @Test
+    public void a_anymatch_filter_can_be_serialized() {
+        String filter = filter(where("a").anymatch(Collections.emptyList())).toString();
+        String parsed = parse("[?(@['a'] ANYMATCH [])]").toString();
+        assertThat(filter).isEqualTo(parsed);
+    }
+
+    @Test
+    public void a_nonematch_filter_can_be_serialized() {
+        String filter = filter(where("a").nonematch(Collections.emptyList())).toString();
+        String parsed = parse("[?(@['a'] NONEMATCH [])]").toString();
+        assertThat(filter).isEqualTo(parsed);
+    }
+
+    @Test
+    public void a_exactmatch_filter_can_be_serialized() {
+        String filter = filter(where("a").exactmatch(Collections.emptyList())).toString();
+        String parsed = parse("[?(@['a'] EXACTMATCH [])]").toString();
+        assertThat(filter).isEqualTo(parsed);
+    }
+
+    @Test
+    public void a_allmatch_objectrange_filter_can_be_serialized() {
+        String filter = filter(where("a").allmatch("a")).toString();
+        String parsed = parse("[?(@['a'] ALLMATCH ['a'])]").toString();
+        assertThat(filter).isEqualTo(parsed);
+    }
+
+    @Test
+    public void a_anymatch_objectrange_filter_can_be_serialized() {
+        String filter = filter(where("a").anymatch("a")).toString();
+        String parsed = parse("[?(@['a'] ANYMATCH ['a'])]").toString();
+        assertThat(filter).isEqualTo(parsed);
+    }
+
+    @Test
+    public void a_nonematch_objectrange_filter_can_be_serialized() {
+        String filter = filter(where("a").nonematch("a")).toString();
+        String parsed = parse("[?(@['a'] NONEMATCH ['a'])]").toString();
+        assertThat(filter).isEqualTo(parsed);
+    }
+
+    @Test
+    public void a_exactmatch_objectrange_filter_can_be_serialized() {
+        String filter = filter(where("a").exactmatch("a")).toString();
+        String parsed = parse("[?(@['a'] EXACTMATCH ['a'])]").toString();
+        assertThat(filter).isEqualTo(parsed);
+    }
+
+    @Test
+    public void a_dateeq_objectrange_filter_can_be_serialized() {
+        String filter = filter(where("a").dateeq("a")).toString();
+        String parsed = parse("[?(@['a'] DATEEQ 'a')]").toString();
+        assertThat(filter).isEqualTo(parsed);
+    }
+
+    @Test
+    public void a_dayeq_objectrange_filter_can_be_serialized() {
+        String filter = filter(where("a").dayeq("a")).toString();
+        String parsed = parse("[?(@['a'] DAYEQ 'a')]").toString();
+        assertThat(filter).isEqualTo(parsed);
+    }
+
+    @Test
+    public void a_dayin_objectrange_filter_can_be_serialized() {
+        String filter = filter(where("a").dayin("a")).toString();
+        String parsed = parse("[?(@['a'] DAYIN ['a'])]").toString();
+        assertThat(filter).isEqualTo(parsed);
+    }
+
+    @Test
+    public void a_montheq_objectrange_filter_can_be_serialized() {
+        String filter = filter(where("a").montheq("a")).toString();
+        String parsed = parse("[?(@['a'] MONTHEQ 'a')]").toString();
+        assertThat(filter).isEqualTo(parsed);
+    }
+
+    @Test
+    public void a_monthin_objectrange_filter_can_be_serialized() {
+        String filter = filter(where("a").monthin("a")).toString();
+        String parsed = parse("[?(@['a'] MONTHIN ['a'])]").toString();
+        assertThat(filter).isEqualTo(parsed);
+    }
+
+    @Test
+    public void a_yeareq_objectrange_filter_can_be_serialized() {
+        String filter = filter(where("a").yeareq("a")).toString();
+        String parsed = parse("[?(@['a'] YEAREQ 'a')]").toString();
+        assertThat(filter).isEqualTo(parsed);
+    }
+
+    @Test
+    public void a_yearin_objectrange_filter_can_be_serialized() {
+        String filter = filter(where("a").yearin("a")).toString();
+        String parsed = parse("[?(@['a'] YEARIN ['a'])]").toString();
+        assertThat(filter).isEqualTo(parsed);
+    }
+
+    @Test
+    public void a_before_objectrange_filter_can_be_serialized() {
+        String filter = filter(where("a").before("a")).toString();
+        String parsed = parse("[?(@['a'] BEFORE 'a')]").toString();
+        assertThat(filter).isEqualTo(parsed);
+    }
+
+    @Test
+    public void a_after_objectrange_filter_can_be_serialized() {
+        String filter = filter(where("a").after("a")).toString();
+        String parsed = parse("[?(@['a'] AFTER 'a')]").toString();
+        assertThat(filter).isEqualTo(parsed);
+    }
+
+    @Test
+    public void a_houreq_objectrange_filter_can_be_serialized() {
+        String filter = filter(where("a").houreq("a")).toString();
+        String parsed = parse("[?(@['a'] HOUREQ 'a')]").toString();
+        assertThat(filter).isEqualTo(parsed);
+    }
+
+    @Test
+    public void a_hourin_objectrange_filter_can_be_serialized() {
+        String filter = filter(where("a").hourin("a")).toString();
+        String parsed = parse("[?(@['a'] HOURIN ['a'])]").toString();
+        assertThat(filter).isEqualTo(parsed);
+    }
+
+    @Test
+    public void a_timebefore_objectrange_filter_can_be_serialized() {
+        String filter = filter(where("a").timebefore("a")).toString();
+        String parsed = parse("[?(@['a'] TIMEBEFORE 'a')]").toString();
+        assertThat(filter).isEqualTo(parsed);
+    }
+
+    @Test
+    public void a_timeafter_objectrange_filter_can_be_serialized() {
+        String filter = filter(where("a").timeafter("a")).toString();
+        String parsed = parse("[?(@['a'] TIMEAFTER 'a')]").toString();
+        assertThat(filter).isEqualTo(parsed);
+    }
+
+    @Test
+    public void a_windowin_objectrange_filter_can_be_serialized() {
+        String filter = filter(where("a").windowin("a")).toString();
+        String parsed = parse("[?(@['a'] WINDOWIN 'a')]").toString();
+        assertThat(filter).isEqualTo(parsed);
+    }
+
+    @Test
+    public void a_windowout_objectrange_filter_can_be_serialized() {
+        String filter = filter(where("a").windowout("a")).toString();
+        String parsed = parse("[?(@['a'] WINDOWOUT 'a')]").toString();
+        assertThat(filter).isEqualTo(parsed);
+    }
+
+    @Test
+    public void a_windowtimein_objectrange_filter_can_be_serialized() {
+        String filter = filter(where("a").windowtimein("a")).toString();
+        String parsed = parse("[?(@['a'] WINDOWTIMEIN 'a')]").toString();
+        assertThat(filter).isEqualTo(parsed);
+    }
+
+    @Test
+    public void a_windowtimeout_objectrange_filter_can_be_serialized() {
+        String filter = filter(where("a").windowtimeout("a")).toString();
+        String parsed = parse("[?(@['a'] WINDOWTIMEOUT 'a')]").toString();
         assertThat(filter).isEqualTo(parsed);
     }
 }
