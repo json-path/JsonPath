@@ -1,12 +1,15 @@
 package com.jayway.jsonpath;
 
 import com.jayway.jsonpath.spi.json.GsonJsonProvider;
+import com.jayway.jsonpath.spi.json.Jackson3JsonNodeJsonProvider;
+import com.jayway.jsonpath.spi.json.Jackson3JsonProvider;
 import com.jayway.jsonpath.spi.json.JacksonJsonNodeJsonProvider;
 import com.jayway.jsonpath.spi.json.JacksonJsonProvider;
 import com.jayway.jsonpath.spi.json.JakartaJsonProvider;
 import com.jayway.jsonpath.spi.json.JsonOrgJsonProvider;
 import com.jayway.jsonpath.spi.json.JsonSmartJsonProvider;
 import com.jayway.jsonpath.spi.mapper.GsonMappingProvider;
+import com.jayway.jsonpath.spi.mapper.Jackson3MappingProvider;
 import com.jayway.jsonpath.spi.mapper.JacksonMappingProvider;
 import com.jayway.jsonpath.spi.mapper.JakartaMappingProvider;
 import com.jayway.jsonpath.spi.mapper.JsonOrgMappingProvider;
@@ -40,6 +43,18 @@ public class Configurations {
             .jsonProvider(new JacksonJsonNodeJsonProvider())
             .build();
 
+    public static final Configuration JACKSON3_CONFIGURATION = Configuration
+            .builder()
+            .mappingProvider(new Jackson3MappingProvider())
+            .jsonProvider(new Jackson3JsonProvider())
+            .build();
+
+    public static final Configuration JACKSON3_JSON_NODE_CONFIGURATION = Configuration
+            .builder()
+            .mappingProvider(new Jackson3MappingProvider())
+            .jsonProvider(new Jackson3JsonNodeJsonProvider())
+            .build();
+
     public static final Configuration JSON_SMART_CONFIGURATION = Configuration
             .builder()
             .mappingProvider(new JsonSmartMappingProvider())
@@ -58,6 +73,8 @@ public class Configurations {
                ,GSON_CONFIGURATION
                ,JACKSON_CONFIGURATION
                ,JACKSON_JSON_NODE_CONFIGURATION
+               ,JACKSON3_CONFIGURATION
+               ,JACKSON3_JSON_NODE_CONFIGURATION
                ,JSON_ORG_CONFIGURATION
                ,JAKARTA_CONFIGURATION
         );
@@ -68,6 +85,8 @@ public class Configurations {
                  GSON_CONFIGURATION
                 ,JACKSON_CONFIGURATION
                 ,JACKSON_JSON_NODE_CONFIGURATION
+                ,JACKSON3_CONFIGURATION
+                ,JACKSON3_JSON_NODE_CONFIGURATION
                 ,JAKARTA_CONFIGURATION
         );
     }

@@ -13,6 +13,7 @@ dependencies {
     implementation libs.jsonSmart
     implementation libs.slf4jApi
     compileOnly libs.jacksonDatabind // , optional
+    compileOnly libs.jacksonDatabind3 // , optional
     compileOnly libs.gson// , optional
     compileOnly libs.jsonOrg// , optional
     compileOnly libs.tapestryJson// , optional

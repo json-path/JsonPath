@@ -972,7 +972,27 @@ public class IssuesTest extends BaseTest {
         List<Integer> list = context.read("$.array", List.class);
 
         assertThat(list).containsExactly(null, 1, null);
+    }
 
+    @Test
+    public void issue_170_jackson3() {
+
+        String json = "{\n" +
+                      "  \"array\": [\n" +
+                      "    0,\n" +
+                      "    1,\n" +
+                      "    2\n" +
+                      "  ]\n" +
+                      "}";
+
+
+        DocumentContext context = using(JACKSON3_JSON_NODE_CONFIGURATION).parse(json);
+        context = context.set("$.array[0]", null);
+        context = context.set("$.array[2]", null);
+
+        List<Integer> list = context.read("$.array", List.class);
+
+        assertThat(list).containsExactly(null, 1, null);
     }
 
     @Test
@@ -988,6 +1008,24 @@ public class IssuesTest extends BaseTest {
         context.set("$.['can\\'t delete']", null);
 
         ObjectNode objectNode = context.read("$");
+
+        assertThat(objectNode.get("can delete").isNull());
+        assertThat(objectNode.get("can't delete").isNull());
+    }
+
+    @Test
+    public void issue_171_jackson3() {
+
+        String json = "{\n" +
+                      "  \"can delete\": \"this\",\n" +
+                      "  \"can't delete\": \"this\"\n" +
+                      "}";
+
+        DocumentContext context = using(JACKSON3_JSON_NODE_CONFIGURATION).parse(json);
+        context.set("$.['can delete']", null);
+        context.set("$.['can\\'t delete']", null);
+
+        tools.jackson.databind.node.ObjectNode objectNode = context.read("$");
 
         assertThat(objectNode.get("can delete").isNull());
         assertThat(objectNode.get("can't delete").isNull());

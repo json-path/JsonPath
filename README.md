@@ -233,7 +233,7 @@ String json = "{\"date_as_long\" : 1411455611975}";
 Date date = JsonPath.parse(json).read("$['date_as_long']", Date.class);
 ```
 
-If you configure JsonPath to use `JacksonMappingProvider`, `GsonMappingProvider`, or `JakartaJsonProvider` you can even
+If you configure JsonPath to use `JacksonMappingProvider`, `Jackson3MappingProvider`, `GsonMappingProvider`, or `JakartaJsonProvider` you can even
 map your JsonPath output directly into POJO's.
 
 ```java
@@ -434,6 +434,8 @@ JsonPath is shipped with five different JsonProviders:
 * [JsonSmartJsonProvider](https://github.com/netplex/json-smart-v2) (default)
 * [JacksonJsonProvider](https://github.com/FasterXML/jackson)
 * [JacksonJsonNodeJsonProvider](https://github.com/FasterXML/jackson)
+* [JacksonJson3Provider](https://github.com/FasterXML/jackson)
+* [JacksonJson3NodeJsonProvider](https://github.com/FasterXML/jackson)
 * [GsonJsonProvider](https://code.google.com/p/google-gson/)
 * [JsonOrgJsonProvider](https://github.com/stleary/JSON-java)
 * [JakartaJsonProvider](https://javaee.github.io/jsonp/)
@@ -464,7 +466,7 @@ Configuration.setDefaults(new Configuration.Defaults() {
 });
 ```
 
-Note that the JacksonJsonProvider requires `com.fasterxml.jackson.core:jackson-databind:2.4.5` and the GsonJsonProvider
+Note that the JacksonJsonProvider requires `com.fasterxml.jackson.core:jackson-databind:2.20.1`, the Jackson3JsonProvider requires `tools.jackson.core:jackson-databind:3.0.3` and the GsonJsonProvider
 requires `com.google.code.gson:gson:2.3.1` on your classpath.
 
 Both of Jakarta EE 9 [JSON-P (JSR-342)](https://javaee.github.io/jsonp/) and [JSON-B (JSR-367)](http://json-b.net/)
