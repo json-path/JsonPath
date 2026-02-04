@@ -52,8 +52,7 @@ allprojects {
     ext.buildTimestamp = new Date().format('yyyy-MM-dd HH:mm:ss')
 
     group = 'com.jayway.jsonpath'
-    version = '2.11.0' + (snapshotVersion ? "-SNAPSHOT" : "")
-
+    version = '3.0.0' + (snapshotVersion ? "-SNAPSHOT" : "")
 }
 
 subprojects {
