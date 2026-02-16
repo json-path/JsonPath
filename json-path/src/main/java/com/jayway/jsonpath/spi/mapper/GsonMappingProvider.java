@@ -15,6 +15,7 @@
 package com.jayway.jsonpath.spi.mapper;
 
 import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import com.google.gson.JsonElement;
 import com.google.gson.reflect.TypeToken;
 import com.jayway.jsonpath.Configuration;
@@ -31,19 +32,32 @@ public class GsonMappingProvider implements MappingProvider {
 
     private final Callable<Gson> factory;
 
+    /**
+     * Allows the caller to provide a GsonBuilder so that Gson will be created with the callers configuration rather than using the default one
+     * @param builder a user defined GsonBuilder instance
+     * @since 2.8.0
+     */
+    public GsonMappingProvider(final GsonBuilder builder) {
+        this(builder::create);
+    }
+
+    /**
+     * Allows the caller to provide a Gson instance rather than using the default one
+     * @param gson a user defined Gson instance
+     * @since 1.2.0
+     */
     public GsonMappingProvider(final Gson gson) {
-        this(new Callable<Gson>() {
-            @Override
-            public Gson call() {
-                return gson;
-            }
-        });
+        this(() -> gson);
     }
 
     public GsonMappingProvider(Callable<Gson> factory) {
         this.factory = factory;
     }
 
+    /**
+     * Gson will be created using its default configuration
+     * @since 1.2.0
+     */
     public GsonMappingProvider() {
         super();
         try {
