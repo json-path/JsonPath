@@ -29,8 +29,10 @@ import com.jayway.jsonpath.spi.cache.CacheProvider;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.stream.Stream;
 
 import static com.jayway.jsonpath.JsonPath.compile;
 import static com.jayway.jsonpath.internal.Utils.notEmpty;
@@ -79,6 +81,9 @@ public class JsonContext implements DocumentContext {
 
     @Override
     public <T> T read(String path, Class<T> type, Predicate... filters) {
+        if (type == Stream.class) {
+            return (T) convert(read(path, filters), List.class, configuration).stream();
+        }
         return convert(read(path, filters), type, configuration);
     }
 
@@ -90,6 +95,9 @@ public class JsonContext implements DocumentContext {
 
     @Override
     public <T> T read(JsonPath path, Class<T> type) {
+        if (type == Stream.class) {
+            return (T) convert(read(path), List.class, configuration).stream();
+        }
         return convert(read(path), type, configuration);
     }
 
