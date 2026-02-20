@@ -676,7 +676,7 @@ public interface ValueNodes {
         public ValueNode evaluate(Predicate.PredicateContext ctx) {
             if (isExistsCheck()) {
                 try {
-                    Configuration c = Configuration.builder().jsonProvider(ctx.configuration().jsonProvider()).options(Option.REQUIRE_PROPERTIES).build();
+                    Configuration c = Configuration.builder().jsonProvider(ctx.configuration().jsonProvider()).mappingProvider(ctx.configuration().mappingProvider()).options(Option.REQUIRE_PROPERTIES).build();
                     Object result = path.evaluate(ctx.item(), ctx.root(), c).getValue(false);
                     return result == JsonProvider.UNDEFINED ? FALSE : TRUE;
                 } catch (PathNotFoundException e) {
