@@ -42,6 +42,8 @@ public class PathCompiler {
     private static final char SINGLE_QUOTE = '\'';
     private static final char DOUBLE_QUOTE = '"';
 
+    private static final char ESACAPE = '\\';
+
     private final LinkedList<Predicate> filterStack;
     private final CharacterIndex path;
 
@@ -379,6 +381,15 @@ public class PathCompiler {
                             parameter.delete(0, parameter.length());
                             type = null;
                         }
+                    }
+                    break;
+                case ESACAPE:
+                    char next = path.currentChar();
+                    if (groupQuote == 1 && (next == ',' || next == '\"')){
+                        parameter.append(next);
+                        path.incrementPosition(1);
+                        priorChar = 0;
+                        continue;
                     }
                     break;
             }
