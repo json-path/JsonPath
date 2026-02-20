@@ -25,6 +25,16 @@ public interface JsonProvider {
     static final Object UNDEFINED = new Object();
 
     /**
+     * Convert the given object as a parsed json object
+     * @param object object to parse
+     * @return The parsed json object
+     * @throws InvalidJsonException
+     */
+    default Object parse(Object object) throws InvalidJsonException {
+        return object;
+    }
+
+    /**
      * Parse the given json string
      * @param json json string to parse
      * @return Object representation of json

@@ -1,8 +1,11 @@
 package com.jayway.jsonpath;
 
+import com.fasterxml.jackson.databind.JsonNode;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
+import com.jayway.jsonpath.JacksonJsonNodeJsonProviderTest.FooBarBaz;
+import com.jayway.jsonpath.JacksonJsonNodeJsonProviderTest.Gen;
 import com.jayway.jsonpath.spi.json.GsonJsonProvider;
 import com.jayway.jsonpath.spi.mapper.GsonMappingProvider;
 import com.jayway.jsonpath.spi.mapper.MappingException;
@@ -208,6 +211,25 @@ public class GsonJsonProviderTest extends BaseTest {
         assertThat(result).isNull();
     }
 
+    @Test
+    public void object_can_be_parsed() {
+        Gen gen = new Gen();
+        gen.eric = "yepp";
+
+        FooBarBaz<Gen> fooBarBaz = new FooBarBaz<>();
+        fooBarBaz.foo = "foo0";
+        fooBarBaz.bar = 0L;
+        fooBarBaz.baz = true;
+        fooBarBaz.gen = gen;
+
+        DocumentContext context = using(GSON_CONFIGURATION).parse(fooBarBaz);
+        assertThat((Object) context.json()).isInstanceOf(JsonElement.class);
+
+        assertThat(context.read("$.foo", String.class)).isEqualTo("foo0");
+        assertThat(context.read("$.bar", Long.class)).isZero();
+        assertThat(context.read("$.baz", Boolean.class)).isTrue();
+        assertThat(context.read("$.gen.eric", String.class)).isEqualTo("yepp");
+    }
 
     public static class FooBarBaz<T> {
         public T gen;
