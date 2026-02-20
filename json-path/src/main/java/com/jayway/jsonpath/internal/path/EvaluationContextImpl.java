@@ -119,7 +119,7 @@ public class EvaluationContextImpl implements EvaluationContext {
 
     public Collection<PathRef> updateOperations(){
 
-        Collections.sort(updateOperations);
+        Collections.reverse(updateOperations);
 
         return Collections.unmodifiableCollection(updateOperations);
     }
