@@ -323,4 +323,27 @@ public class PathCompilerTest {
     public void property_must_be_separated_by_commas() {
         assertThrows(InvalidPathException.class, () -> compile("$['aaa'}'bbb']"));
     }
+
+    @Test
+    public void property_with_escape_characters() {
+        String json = "{\n"
+                + "    \"a']['b\": 1,\n"
+                + "    \"\\\\']['b\": 2\n"
+                + "}";
+        DocumentContext parse = JsonPath.parse(json);
+
+        JsonPath compile1 = JsonPath.compile("$['a\\'][\\'b']");
+        int result1 = parse.read(compile1);
+        assertThat(result1).isEqualTo(1);
+
+        JsonPath compile2 = JsonPath.compile("$['\\\\\\'][\\'b']");
+        int result2 = parse.read(compile2);
+        assertThat(result2).isEqualTo(2);
+
+        // not "$['a']['b']"
+        assertThat(compile("$['a\\'][\\'b']").toString()).isEqualTo("$['a\\'][\\'b']");
+
+        // not "$['\']['b']"
+        assertThat(compile("$['\\\\\\'][\\'b']").toString()).isEqualTo("$['\\\\\\'][\\'b']");
+    }
 }
