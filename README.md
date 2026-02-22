@@ -14,12 +14,15 @@ Getting Started
 
 JsonPath is available at the Central Maven Repository. Maven users add this to your POM.
 
+> [!NOTE]  
+> Version 3.0.0 Uses Java 17 baseline to support Jackson 3
+
 ```xml
 
 <dependency>
     <groupId>com.jayway.jsonpath</groupId>
     <artifactId>json-path</artifactId>
-    <version>2.10.0</version>
+    <version>3.0.0</version>
 </dependency>
 ```
 
@@ -233,7 +236,8 @@ String json = "{\"date_as_long\" : 1411455611975}";
 Date date = JsonPath.parse(json).read("$['date_as_long']", Date.class);
 ```
 
-If you configure JsonPath to use `JacksonMappingProvider`, `Jackson3MappingProvider`, `GsonMappingProvider`, or `JakartaJsonProvider` you can even
+If you configure JsonPath to use `JacksonMappingProvider`, `Jackson3MappingProvider`, `GsonMappingProvider`,
+or `JakartaJsonProvider` you can even
 map your JsonPath output directly into POJO's.
 
 ```java
@@ -466,7 +470,8 @@ Configuration.setDefaults(new Configuration.Defaults() {
 });
 ```
 
-Note that the JacksonJsonProvider requires `com.fasterxml.jackson.core:jackson-databind:2.20.1`, the Jackson3JsonProvider requires `tools.jackson.core:jackson-databind:3.0.3` and the GsonJsonProvider
+Note that the JacksonJsonProvider requires `com.fasterxml.jackson.core:jackson-databind:2.20.1`, the
+Jackson3JsonProvider requires `tools.jackson.core:jackson-databind:3.0.3` and the GsonJsonProvider
 requires `com.google.code.gson:gson:2.3.1` on your classpath.
 
 Both of Jakarta EE 9 [JSON-P (JSR-342)](https://javaee.github.io/jsonp/) and [JSON-B (JSR-367)](http://json-b.net/)
