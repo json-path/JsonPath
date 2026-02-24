@@ -170,7 +170,17 @@ public interface ValueNodes {
         }
 
         public boolean isEmpty(Predicate.PredicateContext ctx) {
-            if (isArray(ctx) || isMap(ctx)) return ((Collection<?>) parse(ctx)).size() == 0;
+            if (isArray(ctx) || isMap(ctx)) {
+                Object parsedObj = parse(ctx);
+                if (parsedObj instanceof Collection) {
+                    return ((Collection<?>) parsedObj).size() == 0;
+                } else if (parsedObj instanceof Map) {
+                    return ((Map<?, ?>) parsedObj).isEmpty();
+                } else {
+                    throw new IllegalArgumentException("Expected a Collection or Map object, but got " +
+                            parsedObj.getClass().getSimpleName());
+                }
+            }
             else if((parse(ctx) instanceof String)) return ((String)parse(ctx)).length() == 0;
             return true;
         }
