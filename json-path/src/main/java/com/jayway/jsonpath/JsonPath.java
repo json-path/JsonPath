@@ -96,7 +96,7 @@ public class JsonPath {
         notNull(jsonPath, "path can not be null");
         this.path = PathCompiler.compile(jsonPath, filters);
     }
-
+    
     /**
      * Returns the string representation of this JsonPath
      *
@@ -104,6 +104,14 @@ public class JsonPath {
      */
     public String getPath() {
         return this.path.toString();
+    }
+    
+    /**
+     * Gets the internal path implementation. For advanced use cases.
+     * @return the path implementation
+     */
+    public Path getPathImpl() {
+    	return path;
     }
 
     /**

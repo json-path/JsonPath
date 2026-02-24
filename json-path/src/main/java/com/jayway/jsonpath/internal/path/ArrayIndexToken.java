@@ -14,9 +14,9 @@
  */
 package com.jayway.jsonpath.internal.path;
 
-import com.jayway.jsonpath.internal.PathRef;
+import java.util.List;
 
-import static java.lang.String.format;
+import com.jayway.jsonpath.internal.PathRef;
 
 public class ArrayIndexToken extends ArrayPathToken {
 
@@ -48,5 +48,8 @@ public class ArrayIndexToken extends ArrayPathToken {
     public boolean isTokenDefinite() {
         return arrayIndexOperation.isSingleIndexOperation();
     }
-
+    
+    public List<Integer> getIndexes() {
+    	return arrayIndexOperation.indexes();
+    }
 }
