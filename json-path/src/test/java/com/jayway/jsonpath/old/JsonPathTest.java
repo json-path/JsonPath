@@ -1,7 +1,12 @@
 package com.jayway.jsonpath.old;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.jayway.jsonpath.*;
 import com.jayway.jsonpath.internal.path.PathCompiler;
+import com.jayway.jsonpath.spi.json.JacksonJsonNodeJsonProvider;
+import com.jayway.jsonpath.spi.mapper.JacksonMappingProvider;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
 
@@ -320,6 +325,19 @@ public class JsonPathTest extends BaseTest {
     //see https://github.com/json-path/JsonPath/issues/428
     public void prevent_stack_overflow_error_when_unclosed_property() {
         assertThrows(InvalidPathException.class, () -> JsonPath.compile("$['boo','foo][?(@ =~ /bar/)]"));
+    }
+
+    @Test
+    //see https://github.com/json-path/JsonPath/issues/1039
+    public void prevent_class_cast_exception_when_path_is_missing() throws JsonProcessingException {
+        ObjectMapper objectMapper = new ObjectMapper();
+        ObjectNode document = (ObjectNode) objectMapper.readTree(DOCUMENT);
+        DocumentContext context = JsonPath.using(Configuration.builder()
+          .jsonProvider(new JacksonJsonNodeJsonProvider(objectMapper))
+          .mappingProvider(new JacksonMappingProvider(objectMapper))
+          .options(Option.SUPPRESS_EXCEPTIONS)
+          .build()).parse(document);
+        context.delete(JsonPath.compile("$.notExisting"));
     }
 
 }

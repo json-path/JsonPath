@@ -222,7 +222,7 @@ public class JsonPath {
         if (evaluationContext.getPathList().isEmpty()) {
             boolean optSuppressExceptions = configuration.containsOption(Option.SUPPRESS_EXCEPTIONS);
             if (optSuppressExceptions) {
-                return handleMissingPathInContext(configuration);
+                return resultByConfiguration(handleMissingPathInContext(configuration), configuration, evaluationContext);
             } else {
                 throw new PathNotFoundException();
             }
@@ -250,7 +250,7 @@ public class JsonPath {
         if (evaluationContext.getPathList().isEmpty()) {
             boolean optSuppressExceptions = configuration.containsOption(Option.SUPPRESS_EXCEPTIONS);
             if (optSuppressExceptions) {
-                return handleMissingPathInContext(configuration);
+                return resultByConfiguration(handleMissingPathInContext(configuration), configuration, evaluationContext);
             } else {
                 throw new PathNotFoundException();
             }
@@ -277,7 +277,7 @@ public class JsonPath {
         if (evaluationContext.getPathList().isEmpty()) {
             boolean optSuppressExceptions = configuration.containsOption(Option.SUPPRESS_EXCEPTIONS);
             if (optSuppressExceptions) {
-                return handleMissingPathInContext(configuration);
+                return resultByConfiguration(handleMissingPathInContext(configuration), configuration, evaluationContext);
             } else {
                 throw new PathNotFoundException();
             }
@@ -304,7 +304,7 @@ public class JsonPath {
         if (evaluationContext.getPathList().isEmpty()) {
             boolean optSuppressExceptions = configuration.containsOption(Option.SUPPRESS_EXCEPTIONS);
             if (optSuppressExceptions) {
-                return handleMissingPathInContext(configuration);
+                return resultByConfiguration(handleMissingPathInContext(configuration), configuration, evaluationContext);
             } else {
                 throw new PathNotFoundException();
             }
@@ -333,7 +333,7 @@ public class JsonPath {
         if (evaluationContext.getPathList().isEmpty()) {
             boolean optSuppressExceptions = configuration.containsOption(Option.SUPPRESS_EXCEPTIONS);
             if (optSuppressExceptions) {
-                return handleMissingPathInContext(configuration);
+                return resultByConfiguration(handleMissingPathInContext(configuration), configuration, evaluationContext);
             } else {
                 throw new PathNotFoundException();
             }
