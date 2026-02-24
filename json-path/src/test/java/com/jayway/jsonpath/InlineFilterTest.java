@@ -176,6 +176,47 @@ public class InlineFilterTest extends BaseTest {
     }
 
     @Test
+    public void dynamic_patterns_can_be_evaluated() {
+        String json = "{\n" +
+                "   \"pattern\": \"business\",\n" +
+                "   \"tags\": [\"business\", \"info\"]\n" +
+                "}";
+
+        List<String> result = JsonPath.parse(json).read("$.tags[?(@ =~ $.pattern)]");
+        assertThat(result).containsExactly("business");
+    }
+
+    @Test
+    public void dynamic_patterns_use_cache_during_evaluation() {
+        String json = "{\n" +
+                "   \"pattern\": \"test.*\",\n" +
+                "   \"items\": [\"test1\", \"test2\", \"other\", \"test3\"]\n" +
+                "}";
+
+        List<String> result = JsonPath.parse(json).read("$.items[?(@ =~ $.pattern)]");
+        assertThat(result).containsExactly("test1", "test2", "test3");
+    }
+
+    @Test
+    public void dynamic_patterns_do_not_share_cache_between_executions() {
+        String json1 = "{\n" +
+                "   \"pattern\": \"foo\",\n" +
+                "   \"items\": [\"foo\", \"bar\"]\n" +
+                "}";
+
+        String json2 = "{\n" +
+                "   \"pattern\": \"bar\",\n" +
+                "   \"items\": [\"foo\", \"bar\"]\n" +
+                "}";
+
+        List<String> result1 = JsonPath.parse(json1).read("$.items[?(@ =~ $.pattern)]");
+        assertThat(result1).containsExactly("foo");
+
+        List<String> result2 = JsonPath.parse(json2).read("$.items[?(@ =~ $.pattern)]");
+        assertThat(result2).containsExactly("bar");
+    }
+
+    @Test
     public void negate_exists_check() {
         List<String> hasIsbn = JsonPath.parse(JSON_DOCUMENT).read("$.store.book[?(@.isbn)].author");
         assertThat(hasIsbn).containsExactly("Herman Melville", "J. R. R. Tolkien");

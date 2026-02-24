@@ -2,6 +2,7 @@ package com.jayway.jsonpath.internal.filter;
 
 import com.jayway.jsonpath.JsonPathException;
 import com.jayway.jsonpath.Predicate;
+import com.jayway.jsonpath.internal.path.PredicateContextImpl;
 
 import java.util.HashMap;
 import java.util.Iterator;
@@ -253,23 +254,51 @@ public class EvaluatorFactory {
     private static class RegexpEvaluator implements Evaluator {
         @Override
         public boolean evaluate(ValueNode left, ValueNode right, Predicate.PredicateContext ctx) {
-            if(!(left.isPatternNode() ^ right.isPatternNode())){
-                return false;
+            if(left.isPatternNode() ^ right.isPatternNode()){
+                if (left.isPatternNode()) {
+                    if (right.isValueListNode() || (right.isJsonNode() && right.asJsonNode().isArray(ctx))) {
+                        return matchesAny(left.asPatternNode(), right.asJsonNode().asValueListNode(ctx));
+                    } else {
+                        return matches(left.asPatternNode(), getInput(right));
+                    }
+                } else {
+                    if (left.isValueListNode() || (left.isJsonNode() && left.asJsonNode().isArray(ctx))) {
+                        return matchesAny(right.asPatternNode(), left.asJsonNode().asValueListNode(ctx));
+                    } else {
+                        return matches(right.asPatternNode(), getInput(left));
+                    }
+                }
             }
 
-            if (left.isPatternNode()) {
-                if (right.isValueListNode() || (right.isJsonNode() && right.asJsonNode().isArray(ctx))) {
-                    return matchesAny(left.asPatternNode(), right.asJsonNode().asValueListNode(ctx));
-                } else {
-                    return matches(left.asPatternNode(), getInput(right));
-                }
-            } else {
-                if (left.isValueListNode() || (left.isJsonNode() && left.asJsonNode().isArray(ctx))) {
-                    return matchesAny(right.asPatternNode(), left.asJsonNode().asValueListNode(ctx));
-                } else {
-                    return matches(right.asPatternNode(), getInput(left));
+            if(!left.isPatternNode() && !right.isPatternNode()){
+                String leftStr = getInput(left);
+                String rightStr = getInput(right);
+
+                if (!leftStr.isEmpty() && !rightStr.isEmpty()) {
+                    try {
+                        Pattern pattern;
+
+                        if (ctx instanceof PredicateContextImpl) {
+                            PredicateContextImpl ctxi = (PredicateContextImpl) ctx;
+                            HashMap<String, Pattern> cache = ctxi.compiledPatternCache();
+
+                            pattern = cache.get(rightStr);
+                            if (pattern == null) {
+                                pattern = Pattern.compile(rightStr);
+                                cache.put(rightStr, pattern);
+                            }
+                        } else {
+                            pattern = Pattern.compile(rightStr);
+                        }
+
+                        return pattern.matcher(leftStr).matches();
+                    } catch (Exception e) {
+                        return false;
+                    }
                 }
             }
+
+            return false;
         }
 
         private boolean matches(PatternNode patternNode, String inputToMatch) {
