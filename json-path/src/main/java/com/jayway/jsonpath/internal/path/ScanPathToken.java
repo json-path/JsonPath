@@ -15,7 +15,7 @@
 package com.jayway.jsonpath.internal.path;
 
 import com.jayway.jsonpath.Option;
-import com.jayway.jsonpath.internal.PathRef;
+import com.jayway.jsonpath.PathRef;
 import com.jayway.jsonpath.spi.json.JsonProvider;
 
 import java.util.Collection;

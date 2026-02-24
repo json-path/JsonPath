@@ -1,10 +1,10 @@
 package com.jayway.jsonpath.internal.function.text;
 
-import com.jayway.jsonpath.internal.EvaluationContext;
-import com.jayway.jsonpath.internal.Path;
-import com.jayway.jsonpath.internal.PathRef;
-import com.jayway.jsonpath.internal.function.Parameter;
-import com.jayway.jsonpath.internal.function.PathFunction;
+import com.jayway.jsonpath.EvaluationContext;
+import com.jayway.jsonpath.Path;
+import com.jayway.jsonpath.PathRef;
+import com.jayway.jsonpath.spi.function.Parameter;
+import com.jayway.jsonpath.spi.function.PathFunction;
 import com.jayway.jsonpath.internal.path.CompiledPath;
 import com.jayway.jsonpath.internal.path.PathToken;
 import com.jayway.jsonpath.internal.path.RootPathToken;

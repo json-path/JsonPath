@@ -19,10 +19,11 @@ import com.jayway.jsonpath.EvaluationListener;
 import com.jayway.jsonpath.Option;
 import com.jayway.jsonpath.PathNotFoundException;
 import com.jayway.jsonpath.internal.EvaluationAbortException;
-import com.jayway.jsonpath.internal.EvaluationContext;
-import com.jayway.jsonpath.internal.Path;
-import com.jayway.jsonpath.internal.PathRef;
+import com.jayway.jsonpath.EvaluationContext;
+import com.jayway.jsonpath.Path;
+import com.jayway.jsonpath.PathRef;
 import com.jayway.jsonpath.spi.json.JsonProvider;
+import com.jayway.jsonpath.spi.function.PathFunctionProvider;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -98,6 +99,7 @@ public class EvaluationContextImpl implements EvaluationContext {
         }
     }
 
+    public PathFunctionProvider functionProvider() { return configuration.pathFunctionProvider(); }
 
     public JsonProvider jsonProvider() {
         return configuration.jsonProvider();

@@ -1,4 +1,4 @@
-package com.jayway.jsonpath.internal.function;
+package com.jayway.jsonpath.spi.function;
 
 /**
  * Created by mgreenwood on 12/11/15.
