@@ -61,6 +61,17 @@ public interface ReadContext {
     /**
      * Reads the given path from this context
      *
+     * @param path    path to read
+     * @param typeRef  expected return type (will try to map)
+     * @param filters filters
+     * @param <T>
+     * @return result
+     */
+    <T> T read(String path, TypeRef<T> typeRef, Predicate... filters);
+
+    /**
+     * Reads the given path from this context
+     *
      * @param path path to apply
      * @param <T>
      * @return result
