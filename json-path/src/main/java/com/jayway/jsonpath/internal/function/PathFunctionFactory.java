@@ -14,7 +14,7 @@ import com.jayway.jsonpath.internal.function.sequence.Last;
 import com.jayway.jsonpath.internal.function.text.Concatenate;
 import com.jayway.jsonpath.internal.function.text.Length;
 
-import java.util.Collections;
+import java.io.InvalidClassException;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -28,7 +28,7 @@ import java.util.Map;
  */
 public class PathFunctionFactory {
 
-    public static final Map<String, Class> FUNCTIONS;
+    private static final Map<String, Class> FUNCTIONS;
 
     static {
         // New functions should be added here and ensure the name is not overridden
@@ -56,7 +56,7 @@ public class PathFunctionFactory {
         map.put("index", Index.class);
 
 
-        FUNCTIONS = Collections.unmodifiableMap(map);
+        FUNCTIONS = map;
     }
 
     /**
@@ -84,5 +84,15 @@ public class PathFunctionFactory {
                 throw new InvalidPathException("Function of name: " + name + " cannot be created", e);
             }
         }
+    }
+
+    public static void addCustomFunction(String name,Class function) throws InvalidClassException {
+        if(FUNCTIONS.containsKey(name)){
+            throw new InvalidPathException("Function with name: " + name + " already exists");
+        }
+        if (!PathFunction.class.isAssignableFrom(function)){
+            throw new InvalidClassException("Function with name: " + name + "must be a instance of PathFunction class");
+        }
+        FUNCTIONS.put(name,function);
     }
 }
