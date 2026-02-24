@@ -24,6 +24,7 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
+import java.util.Collections;
 
 import static com.jayway.jsonpath.Option.ALWAYS_RETURN_LIST;
 import static com.jayway.jsonpath.Option.AS_PATH_LIST;
@@ -749,7 +750,7 @@ public class JsonPath {
         boolean optAsPathList = configuration.containsOption(AS_PATH_LIST);
         boolean optAlwaysReturnList = configuration.containsOption(Option.ALWAYS_RETURN_LIST);
         if (optAsPathList) {
-            return (T) configuration.jsonProvider().createArray();
+            return (T) Collections.emptyList();
         } else {
             if (optAlwaysReturnList) {
                 return (T) configuration.jsonProvider().createArray();
