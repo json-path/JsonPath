@@ -2,6 +2,7 @@ package com.jayway.jsonpath.internal.function;
 
 import com.jayway.jsonpath.Configuration;
 import com.jayway.jsonpath.Configurations;
+import com.jayway.jsonpath.Option;
 import net.minidev.json.JSONArray;
 import org.junit.jupiter.api.Test;
 
@@ -106,4 +107,16 @@ public class JSONEntityPathFunctionTest extends BaseFunctionTest {
         verifyFunction(conf, path, BATCH_JSON, values);
     }
 
+
+
+    @Test
+    public void testParameterJoinFunctionCall() {
+        Configuration configuration = Configuration.builder().options(Option.DEFAULT_PATH_LEAF_TO_NULL, Option.SUPPRESS_EXCEPTIONS).build();
+        verifyFunction(configuration, "$.text.join()", TEXT_SERIES, "a,b,c,d,e,f");
+        verifyFunction(configuration, "$.text.join(\"|\")", TEXT_SERIES, "a|b|c|d|e|f");
+        verifyFunction(configuration, "$.join($.batches.results[*].productId)", BATCH_JSON, "23,23");
+        verifyFunction(configuration, "$.join(\" _ \",$.batches.results[*].values[?(@ > 10)])", BATCH_JSON, "45 _ 34 _ 23 _ 52 _ 12 _ 11 _ 18 _ 22");
+        verifyFunction(configuration, "$.join(\" \",$.batches.results[*].values[?(@ < 10)], $.batches.results[*].productId)", BATCH_JSON, "2 3 5 4 3 2 1 3 1 23 23");
+        verifyFunction(configuration, "$.batches.results.join(\" \", $.productId, $.values[?(@ < 10)])", BATCH_JSON, "23 23 2 3 5 4 3 2 1 3 1");
+    }
 }
