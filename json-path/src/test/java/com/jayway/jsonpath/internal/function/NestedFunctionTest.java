@@ -75,6 +75,14 @@ public class NestedFunctionTest extends BaseFunctionTest {
 
     @ParameterizedTest
     @MethodSource("configurations")
+    public void testMultipleCall(Configuration conf) {
+        verifyTextFunction(conf, "$.concat($.text[0], $.concat( $.concat($.text[3], \"-1\"), $.concat($.text[4], \"-1\")))", "ad-1e-1");
+    }
+
+
+
+    @ParameterizedTest
+    @MethodSource("configurations")
     public void testStringAndNumberConcat(Configuration conf) {
         verifyTextAndNumberFunction(conf, "$.concat($.text[0], $.numbers[0])", "a1");
     }
