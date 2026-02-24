@@ -8,6 +8,8 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.regex.Pattern;
 
+import java.math.BigDecimal;
+
 import static com.jayway.jsonpath.internal.filter.ValueNodes.PatternNode;
 import static com.jayway.jsonpath.internal.filter.ValueNodes.ValueListNode;
 
@@ -102,6 +104,23 @@ public class EvaluatorFactory {
                 return left.asNumberNode().getNumber().compareTo(right.asNumberNode().getNumber()) < 0;
             } if(left.isStringNode() && right.isStringNode()){
                 return left.asStringNode().getString().compareTo(right.asStringNode().getString()) < 0;
+            } if (left.isStringNode() && right.isNumberNode()) {
+                // Try to parse the string as a number for comparison
+                try {
+                    BigDecimal leftAsNumber = new BigDecimal(left.asStringNode().getString());
+                    return leftAsNumber.compareTo(right.asNumberNode().getNumber()) < 0;
+                } catch (NumberFormatException e) {
+                    return left.asStringNode().getString().compareTo(right.asNumberNode().getNumber().toString()) < 0;
+                }
+            }
+            if (left.isNumberNode() && right.isStringNode()) {
+                // Try to parse the string as a number for comparison
+                try {
+                    BigDecimal rightAsNumber = new BigDecimal(right.asStringNode().getString());
+                    return left.asNumberNode().getNumber().compareTo(rightAsNumber) < 0;
+                } catch (NumberFormatException e) {
+                    return left.asNumberNode().getNumber().toString().compareTo(right.asStringNode().getString()) < 0;
+                }
             } if (left.isOffsetDateTimeNode() && right.isOffsetDateTimeNode()){ //workaround for issue: https://github.com/json-path/JsonPath/issues/613
                 return left.asOffsetDateTimeNode().getDate().compareTo(right.asOffsetDateTimeNode().getDate()) < 0;
             }
@@ -116,6 +135,24 @@ public class EvaluatorFactory {
                 return left.asNumberNode().getNumber().compareTo(right.asNumberNode().getNumber()) <= 0;
             } if(left.isStringNode() && right.isStringNode()){
                 return left.asStringNode().getString().compareTo(right.asStringNode().getString()) <= 0;
+            } if (left.isStringNode() && right.isNumberNode()) {
+                // Try to parse the string as a number for comparison
+                try {
+                    BigDecimal leftAsNumber = new BigDecimal(left.asStringNode().getString());
+                    return leftAsNumber.compareTo(right.asNumberNode().getNumber()) <= 0;
+                } catch (NumberFormatException e) {
+                    // If parsing fails, fall back to string comparison
+                    return left.asStringNode().getString().compareTo(right.asNumberNode().getNumber().toString()) <= 0;
+                }
+            } if (left.isNumberNode() && right.isStringNode()) {
+                // Try to parse the string as a number for comparison
+                try {
+                    BigDecimal rightAsNumber = new BigDecimal(right.asStringNode().getString());
+                    return left.asNumberNode().getNumber().compareTo(rightAsNumber) <= 0;
+                } catch (NumberFormatException e) {
+                    // If parsing fails, fall back to string comparison
+                    return left.asNumberNode().getNumber().toString().compareTo(right.asStringNode().getString()) <= 0;
+                }
             } if (left.isOffsetDateTimeNode() && right.isOffsetDateTimeNode()){ //workaround for issue: https://github.com/json-path/JsonPath/issues/613
                 return left.asOffsetDateTimeNode().getDate().compareTo(right.asOffsetDateTimeNode().getDate()) <= 0;
             }
@@ -128,9 +165,25 @@ public class EvaluatorFactory {
         public boolean evaluate(ValueNode left, ValueNode right, Predicate.PredicateContext ctx) {
             if(left.isNumberNode() && right.isNumberNode()){
                 return left.asNumberNode().getNumber().compareTo(right.asNumberNode().getNumber()) > 0;
-            } else if(left.isStringNode() && right.isStringNode()){
+            } if(left.isStringNode() && right.isStringNode()){
                 return left.asStringNode().getString().compareTo(right.asStringNode().getString()) > 0;
-            } else if (left.isOffsetDateTimeNode() && right.isOffsetDateTimeNode()){ //workaround for issue: https://github.com/json-path/JsonPath/issues/613
+            } if (left.isStringNode() && right.isNumberNode()) {
+                // Try to parse the string as a number for comparison
+                try {
+                    BigDecimal leftAsNumber = new BigDecimal(left.asStringNode().getString());
+                    return leftAsNumber.compareTo(right.asNumberNode().getNumber()) > 0;
+                } catch (NumberFormatException e) {
+                    return left.asStringNode().getString().compareTo(right.asNumberNode().getNumber().toString()) > 0;
+                }
+            } if (left.isNumberNode() && right.isStringNode()) {
+                // Try to parse the string as a number for comparison
+                try {
+                    BigDecimal rightAsNumber = new BigDecimal(right.asStringNode().getString());
+                    return left.asNumberNode().getNumber().compareTo(rightAsNumber) > 0;
+                } catch (NumberFormatException e) {
+                    return left.asNumberNode().getNumber().toString().compareTo(right.asStringNode().getString()) > 0;
+                }
+            } if (left.isOffsetDateTimeNode() && right.isOffsetDateTimeNode()){ //workaround for issue: https://github.com/json-path/JsonPath/issues/613
                 return left.asOffsetDateTimeNode().getDate().compareTo(right.asOffsetDateTimeNode().getDate()) > 0;
             }
             return false;
@@ -142,9 +195,25 @@ public class EvaluatorFactory {
         public boolean evaluate(ValueNode left, ValueNode right, Predicate.PredicateContext ctx) {
             if(left.isNumberNode() && right.isNumberNode()){
                 return left.asNumberNode().getNumber().compareTo(right.asNumberNode().getNumber()) >= 0;
-            } else if(left.isStringNode() && right.isStringNode()){
+            } if(left.isStringNode() && right.isStringNode()){
                 return left.asStringNode().getString().compareTo(right.asStringNode().getString()) >= 0;
-            } else if (left.isOffsetDateTimeNode() && right.isOffsetDateTimeNode()){ //workaround for issue: https://github.com/json-path/JsonPath/issues/613
+            } if (left.isStringNode() && right.isNumberNode()) {
+                // Try to parse the string as a number for comparison
+                try {
+                    BigDecimal leftAsNumber = new BigDecimal(left.asStringNode().getString());
+                    return leftAsNumber.compareTo(right.asNumberNode().getNumber()) >= 0;
+                } catch (NumberFormatException e) {
+                    return left.asStringNode().getString().compareTo(right.asNumberNode().getNumber().toString()) >= 0;
+                }
+            } if (left.isNumberNode() && right.isStringNode()) {
+                // Try to parse the string as a number for comparison
+                try {
+                    BigDecimal rightAsNumber = new BigDecimal(right.asStringNode().getString());
+                    return left.asNumberNode().getNumber().compareTo(rightAsNumber) >= 0;
+                } catch (NumberFormatException e) {
+                    return left.asNumberNode().getNumber().toString().compareTo(right.asStringNode().getString()) >= 0;
+                }
+            } if (left.isOffsetDateTimeNode() && right.isOffsetDateTimeNode()){ //workaround for issue: https://github.com/json-path/JsonPath/issues/613
                 return left.asOffsetDateTimeNode().getDate().compareTo(right.asOffsetDateTimeNode().getDate()) >= 0;
             }
             return false;
