@@ -12,6 +12,7 @@ import com.jayway.jsonpath.internal.function.sequence.First;
 import com.jayway.jsonpath.internal.function.sequence.Index;
 import com.jayway.jsonpath.internal.function.sequence.Last;
 import com.jayway.jsonpath.internal.function.text.Concatenate;
+import com.jayway.jsonpath.internal.function.text.Join;
 import com.jayway.jsonpath.internal.function.text.Length;
 
 import java.util.Collections;
@@ -43,6 +44,7 @@ public class PathFunctionFactory {
 
         // Text Functions
         map.put("concat", Concatenate.class);
+        map.put("join", Join.class);
 
         // JSON Entity Functions
         map.put(Length.TOKEN_NAME, Length.class);
