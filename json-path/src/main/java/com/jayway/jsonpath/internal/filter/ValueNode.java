@@ -8,6 +8,8 @@ import com.jayway.jsonpath.internal.path.PathCompiler;
 import net.minidev.json.parser.JSONParser;
 
 import java.time.OffsetDateTime;
+import java.time.ZonedDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.regex.Pattern;
 
 import static com.jayway.jsonpath.internal.filter.ValueNodes.*;
@@ -113,6 +115,13 @@ public abstract class ValueNode {
         throw new InvalidPathException("Expected offsetDateTime node");
     }
 
+    public boolean isDateNode(){
+        return false;
+    }
+
+    public DateNode asDateNode(){
+        throw new InvalidPathException("Expected date node");
+    }
 
     private static boolean isPath(Object o) {
         if(o == null || !(o instanceof String)){
@@ -163,7 +172,7 @@ public abstract class ValueNode {
     //
     //----------------------------------------------------
     public static ValueNode toValueNode(Object o){
-
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd MMM yyyy HH:mm:ss VV");
         if(o == null) return NULL_NODE;
         if(o instanceof ValueNode) return (ValueNode)o;
         if(o instanceof Class) return createClassNode((Class)o);
@@ -175,6 +184,7 @@ public abstract class ValueNode {
         else if(o instanceof Boolean) return createBooleanNode(o.toString());
         else if(o instanceof Pattern) return createPatternNode((Pattern)o);
         else if (o instanceof OffsetDateTime) return createOffsetDateTimeNode(o.toString());  //workaround for issue: https://github.com/json-path/JsonPath/issues/613
+        else if (o instanceof ZonedDateTime) return createDateNode(((ZonedDateTime) o).format(formatter));
         else throw new JsonPathException("Could not determine value type");
 
     }
@@ -220,6 +230,9 @@ public abstract class ValueNode {
         return new OffsetDateTimeNode(charSequence);
     }
 
+    public static DateNode createDateNode(String date) {
+        return new DateNode(date);
+    }
 
     public static UndefinedNode createUndefinedNode() {
         return UNDEFINED;
