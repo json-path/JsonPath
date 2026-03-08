@@ -15,7 +15,13 @@
 package com.jayway.jsonpath;
 
 import com.jayway.jsonpath.internal.DefaultsImpl;
+import com.jayway.jsonpath.spi.json.GsonJsonProvider;
+import com.jayway.jsonpath.spi.json.JacksonJsonProvider;
+import com.jayway.jsonpath.spi.json.JakartaJsonProvider;
 import com.jayway.jsonpath.spi.json.JsonProvider;
+import com.jayway.jsonpath.spi.mapper.GsonMappingProvider;
+import com.jayway.jsonpath.spi.mapper.JacksonMappingProvider;
+import com.jayway.jsonpath.spi.mapper.JakartaMappingProvider;
 import com.jayway.jsonpath.spi.mapper.MappingProvider;
 
 import java.util.*;
@@ -167,6 +173,42 @@ public class Configuration {
     public static Configuration defaultConfiguration() {
         Defaults defaults = getEffectiveDefaults();
         return Configuration.builder().jsonProvider(defaults.jsonProvider()).options(defaults.options()).build();
+    }
+
+    /**
+     * Creates a new configuration that uses Jakarta
+     * @return a new configuration based on Jakarta
+     * @since 2.8.0
+     */
+    public static Configuration jakartaConfiguration() {
+        return Configuration.builder()
+                .jsonProvider(new JakartaJsonProvider())
+                .mappingProvider(new JakartaMappingProvider())
+                .build();
+    }
+
+    /**
+     * Creates a new configuration that uses Jackson
+     * @return a new configuration based on Jackson
+     * @since 2.8.0
+     */
+    public static Configuration jacksonConfiguration() {
+        return Configuration.builder()
+                    .jsonProvider(new JacksonJsonProvider())
+                    .mappingProvider(new JacksonMappingProvider())
+                    .build();
+    }
+
+    /**
+     * Creates a new configuration that uses Gson
+     * @return a new configuration based on Gson
+     * @since 2.8.0
+     */
+    public static Configuration gsonConfiguration() {
+        return Configuration.builder()
+                .jsonProvider(new GsonJsonProvider())
+                .mappingProvider(new GsonMappingProvider())
+                .build();
     }
 
     /**
