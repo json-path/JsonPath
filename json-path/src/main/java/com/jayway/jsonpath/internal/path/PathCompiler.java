@@ -383,7 +383,7 @@ public class PathCompiler {
                     break;
             }
 
-            if (type != null && !(c == COMMA && 0 == groupBrace && 0 == groupBracket && 1 == groupParen)) {
+            if (type != null && !(c == COMMA && 0 == groupBrace && 0 == groupBracket && 1 == groupParen && 0 == groupQuote)) {
                 parameter.append(c);
             }
             priorChar = c;

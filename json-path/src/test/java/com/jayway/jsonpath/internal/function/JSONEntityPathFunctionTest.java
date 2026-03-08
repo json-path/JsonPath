@@ -60,6 +60,15 @@ public class JSONEntityPathFunctionTest extends BaseFunctionTest {
         verifyFunction(conf, "$['text'].length()", TEXT_SERIES, 6);
         verifyFunction(conf, "$['text'].size()", TEXT_SERIES, 6);
     }
+
+    @Test
+    public void testJoinOfTextArray() {
+        verifyFunction(conf, "$.text.join()", TEXT_SERIES, "a,b,c,d,e,f");
+        verifyFunction(conf, "$.text.join(\", \")", TEXT_SERIES, "a, b, c, d, e, f");
+        verifyFunction(conf, "$.text.join(\", \", @..value)", TEXT_JOIN_SERIES, "a, b, c, d, e, f");
+        verifyFunction(conf, "$['text'].join(\"|\", @..value)", TEXT_JOIN_SERIES, "a|b|c|d|e|f");
+    }
+
     @Test
     public void testLengthOfNumberArray() {
         // The length of JSONArray is an integer
