@@ -47,6 +47,9 @@ public class Length implements PathFunction {
             // for length - to the wildcard such that we request all of its children so we can get back an array and
             // take its length.
             Parameter lengthOfParameter = parameters.get(0);
+            if(lengthOfParameter.getPath().isDefinite()){
+                return ctx.configuration().jsonProvider().length(lengthOfParameter.getValue());
+            }
             if (!lengthOfParameter.getPath().isFunctionPath()) {
                 Path path = lengthOfParameter.getPath();
                 if (path instanceof CompiledPath) {
