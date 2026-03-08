@@ -28,7 +28,8 @@ public class ParseContextImpl implements ParseContext {
     @Override
     public DocumentContext parse(Object json) {
         notNull(json, "json object can not be null");
-        return new JsonContext(json, configuration);
+        Object obj = configuration.jsonProvider().parse(json);
+        return new JsonContext(obj, configuration);
     }
 
     @Override
