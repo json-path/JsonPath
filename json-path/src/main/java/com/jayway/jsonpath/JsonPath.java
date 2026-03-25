@@ -515,7 +515,6 @@ public class JsonPath {
         return new JsonPath(jsonPath, filters);
     }
 
-
     // --------------------------------------------------------
     //
     // Static utility functions

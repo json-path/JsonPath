@@ -2,7 +2,7 @@ package com.jayway.jsonpath.internal.filter;
 
 import com.jayway.jsonpath.BaseTest;
 import com.jayway.jsonpath.Predicate;
-import com.jayway.jsonpath.internal.Path;
+import com.jayway.jsonpath.Path;
 import com.jayway.jsonpath.internal.path.CompiledPath;
 import com.jayway.jsonpath.internal.path.PathTokenFactory;
 import org.junit.jupiter.params.ParameterizedTest;

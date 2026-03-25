@@ -1,7 +1,7 @@
 package com.jayway.jsonpath.internal.function.sequence;
 
-import com.jayway.jsonpath.internal.EvaluationContext;
-import com.jayway.jsonpath.internal.function.Parameter;
+import com.jayway.jsonpath.EvaluationContext;
+import com.jayway.jsonpath.spi.function.Parameter;
 
 import java.util.List;
 

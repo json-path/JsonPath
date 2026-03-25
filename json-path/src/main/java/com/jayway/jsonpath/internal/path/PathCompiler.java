@@ -3,16 +3,13 @@ package com.jayway.jsonpath.internal.path;
 import com.jayway.jsonpath.InvalidPathException;
 import com.jayway.jsonpath.Predicate;
 import com.jayway.jsonpath.internal.CharacterIndex;
-import com.jayway.jsonpath.internal.Path;
+import com.jayway.jsonpath.Path;
 import com.jayway.jsonpath.internal.Utils;
 import com.jayway.jsonpath.internal.filter.FilterCompiler;
-import com.jayway.jsonpath.internal.function.ParamType;
-import com.jayway.jsonpath.internal.function.Parameter;
+import com.jayway.jsonpath.spi.function.ParamType;
+import com.jayway.jsonpath.spi.function.Parameter;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.LinkedList;
-import java.util.List;
+import java.util.*;
 
 import static java.lang.Character.isDigit;
 import static java.util.Arrays.asList;

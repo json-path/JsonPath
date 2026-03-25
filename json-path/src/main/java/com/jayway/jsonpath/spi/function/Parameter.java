@@ -1,7 +1,7 @@
-package com.jayway.jsonpath.internal.function;
+package com.jayway.jsonpath.spi.function;
 
-import com.jayway.jsonpath.internal.EvaluationContext;
-import com.jayway.jsonpath.internal.Path;
+import com.jayway.jsonpath.EvaluationContext;
+import com.jayway.jsonpath.Path;
 import com.jayway.jsonpath.internal.function.latebinding.ILateBindingValue;
 
 import java.util.ArrayList;

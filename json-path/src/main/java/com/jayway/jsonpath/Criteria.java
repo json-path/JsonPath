@@ -14,7 +14,6 @@
  */
 package com.jayway.jsonpath;
 
-import com.jayway.jsonpath.internal.Path;
 import com.jayway.jsonpath.internal.Utils;
 import com.jayway.jsonpath.internal.filter.RelationalExpressionNode;
 import com.jayway.jsonpath.internal.filter.RelationalOperator;

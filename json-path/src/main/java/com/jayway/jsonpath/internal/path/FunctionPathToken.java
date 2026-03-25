@@ -1,19 +1,20 @@
 package com.jayway.jsonpath.internal.path;
 
-import com.jayway.jsonpath.internal.Path;
-import com.jayway.jsonpath.internal.PathRef;
-import com.jayway.jsonpath.internal.function.Parameter;
-import com.jayway.jsonpath.internal.function.PathFunction;
-import com.jayway.jsonpath.internal.function.PathFunctionFactory;
+import com.jayway.jsonpath.Path;
+import com.jayway.jsonpath.PathRef;
+import com.jayway.jsonpath.spi.function.Parameter;
+import com.jayway.jsonpath.spi.function.PathFunction;
 import com.jayway.jsonpath.internal.function.latebinding.JsonLateBindingValue;
 import com.jayway.jsonpath.internal.function.latebinding.PathLateBindingValue;
+import com.jayway.jsonpath.spi.function.PathFunctionProvider;
 
 import java.util.List;
+import java.util.Map;
 
 /**
- * Token representing a Function call to one of the functions produced via the FunctionFactory
+ * Token representing a Function call to one of the functions produced via the FunctionProvider
  *
- * @see PathFunctionFactory
+ * @see PathFunctionProvider
  *
  * Created by mattg on 6/27/15.
  */
@@ -22,6 +23,7 @@ public class FunctionPathToken extends PathToken {
     private final String functionName;
     private final String pathFragment;
     private List<Parameter> functionParams;
+    private Map<String, Class<? extends PathFunction>> customFunctions;
 
     public FunctionPathToken(String pathFragment, List<Parameter> parameters) {
         this.pathFragment = pathFragment + ((parameters != null && parameters.size() > 0) ? "(...)" : "()");
@@ -36,7 +38,7 @@ public class FunctionPathToken extends PathToken {
 
     @Override
     public void evaluate(String currentPath, PathRef parent, Object model, EvaluationContextImpl ctx) {
-        PathFunction pathFunction = PathFunctionFactory.newFunction(functionName);
+        PathFunction pathFunction = ctx.functionProvider().newFunction(functionName);
         evaluateParameters(currentPath, parent, model, ctx);
         Object result = pathFunction.invoke(currentPath, parent, model, ctx, functionParams);
         ctx.addResult(currentPath + "." + functionName, parent, result);

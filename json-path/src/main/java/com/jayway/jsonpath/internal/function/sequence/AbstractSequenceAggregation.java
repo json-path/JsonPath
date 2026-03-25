@@ -1,10 +1,10 @@
 package com.jayway.jsonpath.internal.function.sequence;
 
 import com.jayway.jsonpath.JsonPathException;
-import com.jayway.jsonpath.internal.EvaluationContext;
-import com.jayway.jsonpath.internal.PathRef;
-import com.jayway.jsonpath.internal.function.Parameter;
-import com.jayway.jsonpath.internal.function.PathFunction;
+import com.jayway.jsonpath.EvaluationContext;
+import com.jayway.jsonpath.PathRef;
+import com.jayway.jsonpath.spi.function.Parameter;
+import com.jayway.jsonpath.spi.function.PathFunction;
 
 import java.util.ArrayList;
 import java.util.List;

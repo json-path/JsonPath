@@ -14,7 +14,7 @@
  */
 package com.jayway.jsonpath.internal.path;
 
-import com.jayway.jsonpath.internal.PathRef;
+import com.jayway.jsonpath.PathRef;
 
 import static java.lang.String.format;
 

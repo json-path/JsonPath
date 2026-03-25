@@ -1,13 +1,9 @@
-package com.jayway.jsonpath.internal.function;
+package com.jayway.jsonpath.spi.function;
 
 import com.jayway.jsonpath.InvalidPathException;
 import com.jayway.jsonpath.internal.function.json.Append;
 import com.jayway.jsonpath.internal.function.json.KeySetFunction;
-import com.jayway.jsonpath.internal.function.numeric.Average;
-import com.jayway.jsonpath.internal.function.numeric.Max;
-import com.jayway.jsonpath.internal.function.numeric.Min;
-import com.jayway.jsonpath.internal.function.numeric.StandardDeviation;
-import com.jayway.jsonpath.internal.function.numeric.Sum;
+import com.jayway.jsonpath.internal.function.numeric.*;
 import com.jayway.jsonpath.internal.function.sequence.First;
 import com.jayway.jsonpath.internal.function.sequence.Index;
 import com.jayway.jsonpath.internal.function.sequence.Last;
@@ -18,21 +14,12 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
-/**
- * Implements a factory that given a name of the function will return the Function implementation, or null
- * if the value is not obtained.
- *
- * Leverages the function's name in order to determine which function to execute which is maintained internally
- * here via a static map
- *
- */
-public class PathFunctionFactory {
-
-    public static final Map<String, Class> FUNCTIONS;
+public class DefaultPathFunctionProvider implements PathFunctionProvider {
+    public static final Map<String, Class<? extends PathFunction>> DEFAULT_FUNCTIONS;
 
     static {
         // New functions should be added here and ensure the name is not overridden
-        Map<String, Class> map = new HashMap<String, Class>();
+        Map<String, Class<? extends PathFunction>> map = new HashMap<>();
 
         // Math Functions
         map.put("avg", Average.class);
@@ -49,37 +36,24 @@ public class PathFunctionFactory {
         map.put("size", Length.class);
         map.put("append", Append.class);
         map.put("keys", KeySetFunction.class);
-        
+
         // Sequential Functions
         map.put("first", First.class);
         map.put("last", Last.class);
         map.put("index", Index.class);
 
 
-        FUNCTIONS = Collections.unmodifiableMap(map);
+        DEFAULT_FUNCTIONS = Collections.unmodifiableMap(map);
     }
 
-    /**
-     * Returns the function by name or throws InvalidPathException if function not found.
-     *
-     * @see #FUNCTIONS
-     * @see PathFunction
-     *
-     * @param name
-     *      The name of the function
-     *
-     * @return
-     *      The implementation of a function
-     *
-     * @throws InvalidPathException
-     */
-    public static PathFunction newFunction(String name) throws InvalidPathException {
-        Class functionClazz = FUNCTIONS.get(name);
+    @Override
+    public PathFunction newFunction(String name) throws InvalidPathException {
+        Class<? extends PathFunction> functionClazz = DEFAULT_FUNCTIONS.get(name);
         if(functionClazz == null){
             throw new InvalidPathException("Function with name: " + name + " does not exist.");
         } else {
             try {
-                return (PathFunction)functionClazz.newInstance();
+                return functionClazz.getDeclaredConstructor().newInstance();
             } catch (Exception e) {
                 throw new InvalidPathException("Function of name: " + name + " cannot be created", e);
             }

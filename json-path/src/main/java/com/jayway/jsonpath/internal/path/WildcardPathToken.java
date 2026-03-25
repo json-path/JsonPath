@@ -18,9 +18,7 @@ import java.util.Collections;
 
 import com.jayway.jsonpath.Option;
 import com.jayway.jsonpath.PathNotFoundException;
-import com.jayway.jsonpath.internal.PathRef;
-
-import static java.util.Arrays.asList;
+import com.jayway.jsonpath.PathRef;
 
 /**
  *

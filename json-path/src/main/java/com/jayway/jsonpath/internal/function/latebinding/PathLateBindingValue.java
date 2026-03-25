@@ -15,7 +15,7 @@
 package com.jayway.jsonpath.internal.function.latebinding;
 
 import com.jayway.jsonpath.Configuration;
-import com.jayway.jsonpath.internal.Path;
+import com.jayway.jsonpath.Path;
 
 import java.util.Objects;
 

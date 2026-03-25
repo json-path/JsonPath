@@ -521,4 +521,27 @@ CacheProvider.setCache(new Cache() {
 });
 ```
 
+### Path Function Provider SPI
+
+This SPI allows adding, overriding, and removing the path functions available in the JsonPath path.
+Therefore, change the `PathFunctionProvider` of the `Configuration`.
+
+```java
+String json = "...";
+
+Configuration conf = Configuration.defaultConfiguration().pathFunctionProvider(new DefaultPathFunctionProvider() {
+    @Override
+    public PathFunction newFunction(String name) throws InvalidPathException {
+        if (name.equals("toUpperCase")) {
+            return (currentPath, parent, model, ctx, parameters) -> ((String) model).toUpperCase();
+        }
+        
+        // Fall back to default functions
+        return super.newFunction(name);
+    }
+});
+
+JsonPath.using(conf).parse(json).read("$.store.book[0].author.toUpperCase()").toString(); // NIGEL REES
+```
+
 [![Analytics](https://ga-beacon.appspot.com/UA-54945131-1/jsonpath/index)](https://github.com/igrigorik/ga-beacon)
