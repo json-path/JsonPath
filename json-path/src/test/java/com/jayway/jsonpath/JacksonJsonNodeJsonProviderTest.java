@@ -279,4 +279,21 @@ public class JacksonJsonNodeJsonProviderTest extends BaseTest {
       }
     }
 
+
+    // Write operations on a non-matching path used to throw ClassCastException with
+    // SUPPRESS_EXCEPTIONS: handleMissingPathInContext returned jsonProvider.createArray()
+    // (an ArrayNode with this provider) where JsonContext casts the AS_PATH_LIST result
+    // to java.util.List. Root cause of zalando/logbook#1369.
+    @Test
+    public void set_on_non_matching_path_with_suppressed_exceptions_does_not_throw() {
+        Configuration conf = JACKSON_JSON_NODE_CONFIGURATION.addOptions(Option.SUPPRESS_EXCEPTIONS);
+        DocumentContext context = using(conf).parse(JSON_DOCUMENT);
+
+        context.set("$..does-not-exist.value", "XXX");
+        context.delete("$..does-not-exist");
+        context.renameKey("$..does-not-exist", "old", "new");
+
+        assertThat(context.read("$.string-property", String.class)).isEqualTo("string-value");
+    }
+
 }

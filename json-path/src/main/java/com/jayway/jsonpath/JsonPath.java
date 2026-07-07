@@ -24,6 +24,7 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
+import java.util.ArrayList;
 
 import static com.jayway.jsonpath.Option.ALWAYS_RETURN_LIST;
 import static com.jayway.jsonpath.Option.AS_PATH_LIST;
@@ -749,7 +750,13 @@ public class JsonPath {
         boolean optAsPathList = configuration.containsOption(AS_PATH_LIST);
         boolean optAlwaysReturnList = configuration.containsOption(Option.ALWAYS_RETURN_LIST);
         if (optAsPathList) {
-            return (T) configuration.jsonProvider().createArray();
+            // AS_PATH_LIST results are java.util.List<String> path lists (see
+            // resultByConfiguration / EvaluationContextImpl.getPathList), consumed by the
+            // write operations of JsonContext which cast them to List. Returning
+            // jsonProvider.createArray() here broke that contract with document-model
+            // providers whose arrays are not java.util.List (e.g. Jackson's ArrayNode),
+            // throwing ClassCastException on non-matching paths with SUPPRESS_EXCEPTIONS.
+            return (T) new ArrayList<String>();
         } else {
             if (optAlwaysReturnList) {
                 return (T) configuration.jsonProvider().createArray();
