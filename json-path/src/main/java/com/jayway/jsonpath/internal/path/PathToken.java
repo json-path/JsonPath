@@ -133,8 +133,9 @@ public abstract class PathToken {
 
     protected void handleArrayIndex(int index, String currentPath, Object model, EvaluationContextImpl ctx) {
         String evalPath = Utils.concat(currentPath, "[", String.valueOf(index), "]");
-        PathRef pathRef = ctx.forUpdate() ? PathRef.create(model, index) : PathRef.NO_OP;
+        // Normalize negative indices before creating PathRef so set/delete/map match read (#1077)
         int effectiveIndex = index < 0 ? ctx.jsonProvider().length(model) + index : index;
+        PathRef pathRef = ctx.forUpdate() ? PathRef.create(model, effectiveIndex) : PathRef.NO_OP;
         try {
             Object evalHit = ctx.jsonProvider().getArrayIndex(model, effectiveIndex);
             if (isLeaf()) {

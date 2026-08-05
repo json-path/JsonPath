@@ -101,6 +101,32 @@ public class WriteTest extends BaseTest {
     }
 
     @Test
+    public void a_negative_array_index_can_be_updated() {
+        // set/delete/map must resolve $[-1] like read (#1077)
+        DocumentContext ctx = parse("[\"a\",\"b\",\"c\"]");
+        assertThat(ctx.<String>read("$[-1]")).isEqualTo("c");
+
+        ctx.set("$[-1]", "z");
+        assertThat(ctx.<List<String>>json()).containsExactly("a", "b", "z");
+        assertThat(ctx.<String>read("$[-1]")).isEqualTo("z");
+    }
+
+    @Test
+    public void a_negative_array_index_can_be_deleted() {
+        DocumentContext ctx = parse("[\"a\",\"b\",\"c\"]");
+        ctx.delete("$[-1]");
+        assertThat(ctx.<List<String>>json()).containsExactly("a", "b");
+    }
+
+    @Test
+    public void a_negative_array_index_can_be_mapped() {
+        DocumentContext ctx = parse("[\"a\",\"b\",\"c\"]");
+        ctx.map("$[-1]", (currentValue, configuration) -> currentValue + "!");
+        assertThat(ctx.<List<String>>json()).containsExactly("a", "b", "c!");
+        assertThat(ctx.<String>read("$[-1]")).isEqualTo("c!");
+    }
+
+    @Test
     public void an_array_slice_can_be_updated() {
 
         List<String> res = parse(JSON_DOCUMENT).set("$.store.book[0:2]", "a").read("$.store.book[0:2]");
