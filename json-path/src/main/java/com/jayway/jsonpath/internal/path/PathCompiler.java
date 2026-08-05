@@ -290,7 +290,10 @@ public class PathCompiler {
 
         // Parenthesis starts at 1 since we're marking the start of a function call, the close paren will denote the
         // last parameter boundary
-        int groupParen = 1, groupBracket = 0, groupBrace = 0, groupQuote = 0;
+        // quote tracks the active string delimiter (0 when not inside a quoted string) so single- and double-quoted
+        // literals can both be used as JSON parameters without treating the other quote as a terminator.
+        int groupParen = 1, groupBracket = 0, groupBrace = 0;
+        char quote = 0;
         boolean endOfStream = false;
         char priorChar = 0;
         List<Parameter> parameters = new ArrayList<Parameter>();
@@ -305,7 +308,7 @@ public class PathCompiler {
                     continue;
                 }
 
-                if (c == OPEN_BRACE || isDigit(c) || DOUBLE_QUOTE == c || MINUS == c) {
+                if (c == OPEN_BRACE || isDigit(c) || DOUBLE_QUOTE == c || SINGLE_QUOTE == c || MINUS == c) {
                     type = ParamType.JSON;
                 }
                 else if (isPathContext(c)) {
@@ -315,11 +318,13 @@ public class PathCompiler {
 
             switch (c) {
                 case DOUBLE_QUOTE:
-                    if (priorChar != '\\' && groupQuote > 0) {
-                        groupQuote--;
-                    }
-                    else {
-                        groupQuote++;
+                case SINGLE_QUOTE:
+                    if (priorChar != '\\') {
+                        if (quote == 0) {
+                            quote = c;
+                        } else if (quote == c) {
+                            quote = 0;
+                        }
                     }
                     break;
                 case OPEN_PARENTHESIS:
@@ -356,7 +361,7 @@ public class PathCompiler {
                 case COMMA:
                     // In this state we've reach the end of a function parameter and we can pass along the parameter string
                     // to the parser
-                    if ((0 == groupQuote && 0 == groupBrace && 0 == groupBracket
+                    if ((0 == quote && 0 == groupBrace && 0 == groupBracket
                             && ((0 == groupParen && CLOSE_PARENTHESIS == c) || 1 == groupParen))) {
                         endOfStream = (0 == groupParen);
 
@@ -364,8 +369,10 @@ public class PathCompiler {
                             Parameter param = null;
                             switch (type) {
                                 case JSON:
-                                    // parse the json and set the value
-                                    param = new Parameter(parameter.toString());
+                                    // parse the json and set the value.
+                                    // Single-quoted string literals are accepted in path function args
+                                    // (same as filter predicates) but are not valid JSON; normalize them.
+                                    param = new Parameter(normalizeFunctionParameterJson(parameter.toString()));
                                     break;
                                 case PATH:
                                     LinkedList<Predicate> predicates = new LinkedList<>();
@@ -396,6 +403,32 @@ public class PathCompiler {
 
     private boolean isWhitespace(char c) {
         return (c == SPACE || c == TAB || c == LF || c == CR);
+    }
+
+    /**
+     * Convert a path-language single-quoted string literal into a JSON double-quoted string so
+     * providers that require strict JSON (e.g. Jackson) can parse the function parameter.
+     * Non-string JSON tokens (numbers, objects, arrays, double-quoted strings) are left unchanged.
+     */
+    private static String normalizeFunctionParameterJson(String json) {
+        if (json == null) {
+            return null;
+        }
+        int start = 0;
+        int end = json.length();
+        while (start < end && Character.isWhitespace(json.charAt(start))) {
+            start++;
+        }
+        while (end > start && Character.isWhitespace(json.charAt(end - 1))) {
+            end--;
+        }
+        if (end - start >= 2
+                && json.charAt(start) == SINGLE_QUOTE
+                && json.charAt(end - 1) == SINGLE_QUOTE) {
+            String unescaped = Utils.unescape(json.substring(start + 1, end - 1));
+            return DOUBLE_QUOTE + Utils.escape(unescaped, false) + DOUBLE_QUOTE;
+        }
+        return json;
     }
 
     //
