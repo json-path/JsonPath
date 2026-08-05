@@ -86,6 +86,20 @@ public class NestedFunctionTest extends BaseFunctionTest {
         verifyTextFunction(conf, "$.text.concat(\"-\", \"ghijk\")", "abcdef-ghijk");
     }
 
+    /**
+     * Single-quoted string literals in function args should match double-quoted behavior
+     * (same as filter predicates). Regression for https://github.com/json-path/JsonPath/issues/1078
+     */
+    @ParameterizedTest
+    @MethodSource("configurations")
+    public void testStringConcatWithSingleQuotedJSONParameter(Configuration conf) {
+        verifyFunction(conf, "$.concat('hello')", "{}", "hello");
+        verifyTextFunction(conf, "$.text.concat('-', 'ghijk')", "abcdef-ghijk");
+        verifyFunction(conf, "$.concat($.x,'-',$.y)", "{\"x\":\"P\",\"y\":\"Q\"}", "P-Q");
+        // Apostrophe inside double quotes must not break argument grouping
+        verifyFunction(conf, "$.concat(\"it's\")", "{}", "it's");
+    }
+
 
     @ParameterizedTest
     @MethodSource("configurations")
