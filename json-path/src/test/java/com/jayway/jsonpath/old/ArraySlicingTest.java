@@ -86,4 +86,25 @@ public class ArraySlicingTest {
         assertThat(result, Matchers.contains(1, 3, 5));
     }
 
+
+    @Test
+    public void slice_between_with_negative_from() {
+        // Negative "from" must be normalized against the array length, like sliceFrom.
+        // $[-2:4] on a 5-element array -> from index 3, to index 4 -> [3] (#1076).
+        // Previously "from" was not normalized, so the slice looped from -2 and
+        // wrapped around, producing a duplicated/shifted result.
+        List<Integer> result = JsonPath.read("[0, 1, 2, 3, 4]", "$[-2:4]");
+        assertThat(result, Matchers.contains(3));
+    }
+
+    @Test
+    public void slice_between_with_negative_to() {
+        // Negative "to" must be normalized against the array length, like sliceTo.
+        // $[1:-1] on a 5-element array -> from 1, to 4 -> [1, 2, 3] (#1076).
+        // Previously "to" was only clamped via Math.min(length, to), so a negative
+        // "to" made from >= to and returned an empty list.
+        List<Integer> result = JsonPath.read("[0, 1, 2, 3, 4]", "$[1:-1]");
+        assertThat(result, Matchers.contains(1, 2, 3));
+    }
+
 }

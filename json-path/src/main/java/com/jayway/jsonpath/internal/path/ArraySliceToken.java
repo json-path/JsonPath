@@ -69,6 +69,15 @@ public class ArraySliceToken extends ArrayPathToken {
         int from = operation.from();
         int to = operation.to();
 
+        if (from < 0) {
+            //calculate slice start from array length
+            from = length + from;
+        }
+        from = Math.max(0, from);
+        if (to < 0) {
+            //calculate slice end from array length
+            to = length + to;
+        }
         to = Math.min(length, to);
 
         if (from >= to || length == 0) {
