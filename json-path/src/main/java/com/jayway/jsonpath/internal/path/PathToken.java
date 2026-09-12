@@ -36,6 +36,17 @@ public abstract class PathToken {
         upstreamArrayIndex = idx;
     }
 
+    /**
+     * Whether an array element at the given index, reached by a deep scan
+     * iterating an array, satisfies this token's own selection so that its
+     * leaf properties may contribute to the result. Only explicit array
+     * index tokens restrict the selection; wildcard, slice, scan, property
+     * and predicate tokens accept every element.
+     */
+    public boolean acceptsUpstreamArrayIndex(int index) {
+        return true;
+    }
+
     PathToken appendTailToken(PathToken next) {
         this.next = next;
         this.next.prev = this;
@@ -81,8 +92,10 @@ public abstract class PathToken {
             }
             PathRef pathRef = ctx.forUpdate() ? PathRef.create(model, property) : PathRef.NO_OP;
             if (isLeaf()) {
-                String idx = "[" + String.valueOf(upstreamArrayIndex) + "]";
-                if(idx.equals("[-1]") || ctx.getRoot().getTail().prev().getPathFragment().equals(idx)){
+                // A token without a previous link is mounted by a function parameter
+                // evaluation (see Length), so there is no path constraint to apply
+                if (upstreamArrayIndex == -1 || prev() == null
+                        || prev().acceptsUpstreamArrayIndex(upstreamArrayIndex)) {
                     ctx.addResult(evalPath, pathRef, propertyVal);
                 }
             }

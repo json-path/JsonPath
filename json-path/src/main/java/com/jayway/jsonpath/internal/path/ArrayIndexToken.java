@@ -45,6 +45,11 @@ public class ArrayIndexToken extends ArrayPathToken {
     }
 
     @Override
+    public boolean acceptsUpstreamArrayIndex(int index) {
+        return arrayIndexOperation.indexes().contains(index);
+    }
+
+    @Override
     public boolean isTokenDefinite() {
         return arrayIndexOperation.isSingleIndexOperation();
     }

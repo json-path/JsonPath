@@ -128,6 +128,66 @@ public class DeepScanTest extends BaseTest {
     }
 
     @Test
+    public void when_deep_scanning_wildcard_before_leaf_property_works() {
+        Object result = JsonPath.parse(JSON_DOCUMENT).read("$..*.title");
+        assertThat(result).asList().containsExactly(
+                "Sayings of the Century", "Sword of Honour", "Moby Dick", "The Lord of the Rings");
+    }
+
+    @Test
+    public void when_deep_scanning_single_array_index_before_leaf_property_works() {
+        Object result = JsonPath.parse(JSON_DOCUMENT).read("$..[2].author");
+        assertThat(result).asList().containsExactly("Herman Melville");
+    }
+
+    @Test
+    public void when_deep_scanning_multiple_array_indexes_before_leaf_property_works() {
+        Object result = JsonPath.parse(JSON_DOCUMENT).read("$..[0,2].author");
+        assertThat(result).asList().containsExactly("Nigel Rees", "Herman Melville");
+    }
+
+    @Test
+    public void when_deep_scanning_function_parameter_with_scan_wildcard_does_not_throw() {
+        // $..* feeds Length through a wildcard that is mounted on the parameter
+        // path without a previous link; the leaf filter must not dereference it
+        // the function mounts its wildcard on the parameter path without a
+        // previous link, so the leaf filter must not dereference it; the
+        // values match the completed deep scan results after this fix
+        Object result = JsonPath.parse(JSON_DOCUMENT).read("$..*.length()");
+        assertThat(result).isEqualTo(31);
+
+        result = JsonPath.parse(JSON_DOCUMENT).read("$..[0].length()");
+        assertThat(result).isEqualTo(18);
+
+        result = JsonPath.parse(JSON_DOCUMENT).read("$..[*].length()");
+        assertThat(result).isEqualTo(31);
+    }
+
+    @Test
+    public void when_deep_scanning_double_wildcard_after_fix() {
+        // the same fix family: a wildcard fed by a deep scan used to drop
+        // every result, so the second wildcard received nothing
+        Object result = JsonPath.parse(JSON_DOCUMENT).read("$..*.*");
+        assertThat(result).asList().hasSize(31);
+    }
+
+    @Test
+    public void when_deep_scanning_slice_before_leaf_property_accepts_all_elements() {
+        // documented boundary: a slice upstream accepts every fed element, the
+        // exact [from,to) range would need the array length at the leaf
+        Object result = JsonPath.parse(JSON_DOCUMENT).read("$..[1:3].author");
+        assertThat(result).asList().containsExactly(
+                "Nigel Rees", "Evelyn Waugh", "Herman Melville", "J. R. R. Tolkien");
+    }
+
+    @Test
+    public void when_deep_scanning_negative_index_before_leaf_property_returns_empty() {
+        // pre-existing: negative indexes never match the fed element indexes
+        Object result = JsonPath.parse(JSON_DOCUMENT).read("$..[-1].author");
+        assertThat(result).asList().isEmpty();
+    }
+
+    @Test
     public void require_single_property_ok() {
 
         List json = new ArrayList() {{
