@@ -15,6 +15,9 @@
 package com.jayway.jsonpath;
 
 import com.jayway.jsonpath.internal.DefaultsImpl;
+import com.jayway.jsonpath.spi.function.DefaultFunctionProvider;
+import com.jayway.jsonpath.spi.function.FunctionProvider;
+import com.jayway.jsonpath.spi.function.PathFunction;
 import com.jayway.jsonpath.spi.json.JsonProvider;
 import com.jayway.jsonpath.spi.mapper.MappingProvider;
 
@@ -48,18 +51,25 @@ public class Configuration {
 
     private final JsonProvider jsonProvider;
     private final MappingProvider mappingProvider;
+    private final FunctionProvider functionProvider;
     private final Set<Option> options;
     private final Collection<EvaluationListener> evaluationListeners;
 
-    private Configuration(JsonProvider jsonProvider, MappingProvider mappingProvider, EnumSet<Option> options, Collection<EvaluationListener> evaluationListeners) {
+    private Configuration(JsonProvider jsonProvider, MappingProvider mappingProvider, EnumSet<Option> options, Collection<EvaluationListener> evaluationListeners, FunctionProvider functionProvider) {
         notNull(jsonProvider, "jsonProvider can not be null");
         notNull(mappingProvider, "mappingProvider can not be null");
         notNull(options, "setOptions can not be null");
         notNull(evaluationListeners, "evaluationListeners can not be null");
+        notNull(functionProvider, "functionProvider can not be null");
         this.jsonProvider = jsonProvider;
         this.mappingProvider = mappingProvider;
         this.options = Collections.unmodifiableSet(options);
         this.evaluationListeners = Collections.unmodifiableCollection(evaluationListeners);
+        this.functionProvider = functionProvider;
+    }
+
+    private Configuration(JsonProvider jsonProvider, MappingProvider mappingProvider, EnumSet<Option> options, Collection<EvaluationListener> evaluationListeners) {
+        this(jsonProvider, mappingProvider, options, evaluationListeners, getEffectiveDefaults().functionProvider());
     }
 
     /**
@@ -68,7 +78,7 @@ public class Configuration {
      * @return a new configuration
      */
     public Configuration addEvaluationListeners(EvaluationListener... evaluationListener){
-        return Configuration.builder().jsonProvider(jsonProvider).mappingProvider(mappingProvider).options(options).evaluationListener(evaluationListener).build();
+        return Configuration.builder().jsonProvider(jsonProvider).mappingProvider(mappingProvider).functionProvider(functionProvider).options(options).evaluationListener(evaluationListener).build();
     }
 
     /**
@@ -77,7 +87,7 @@ public class Configuration {
      * @return a new configuration
      */
     public Configuration setEvaluationListeners(EvaluationListener... evaluationListener){
-        return Configuration.builder().jsonProvider(jsonProvider).mappingProvider(mappingProvider).options(options).evaluationListener(evaluationListener).build();
+        return Configuration.builder().jsonProvider(jsonProvider).mappingProvider(mappingProvider).functionProvider(functionProvider).options(options).evaluationListener(evaluationListener).build();
     }
 
     /**
@@ -94,7 +104,7 @@ public class Configuration {
      * @return a new configuration
      */
     public Configuration jsonProvider(JsonProvider newJsonProvider) {
-        return Configuration.builder().jsonProvider(newJsonProvider).mappingProvider(mappingProvider).options(options).evaluationListener(evaluationListeners).build();
+        return Configuration.builder().jsonProvider(newJsonProvider).mappingProvider(mappingProvider).functionProvider(functionProvider).options(options).evaluationListener(evaluationListeners).build();
     }
 
     /**
@@ -111,7 +121,7 @@ public class Configuration {
      * @return a new configuration
      */
     public Configuration mappingProvider(MappingProvider newMappingProvider) {
-        return Configuration.builder().jsonProvider(jsonProvider).mappingProvider(newMappingProvider).options(options).evaluationListener(evaluationListeners).build();
+        return Configuration.builder().jsonProvider(jsonProvider).mappingProvider(newMappingProvider).functionProvider(functionProvider).options(options).evaluationListener(evaluationListeners).build();
     }
 
     /**
@@ -123,6 +133,65 @@ public class Configuration {
     }
 
     /**
+     * Creates a new Configuration based on the given {@link com.jayway.jsonpath.spi.function.FunctionProvider}
+     * @param newFunctionProvider function provider to use in new configuration
+     * @return a new configuration
+     */
+    public Configuration functionProvider(FunctionProvider newFunctionProvider) {
+        return Configuration.builder().jsonProvider(jsonProvider).mappingProvider(mappingProvider).functionProvider(newFunctionProvider).options(options).evaluationListener(evaluationListeners).build();
+    }
+
+    /**
+     * Returns {@link com.jayway.jsonpath.spi.function.FunctionProvider} used by this configuration
+     * @return functionProvider used
+     */
+    public FunctionProvider functionProvider() {
+        return functionProvider;
+    }
+
+    /**
+     * Creates a new configuration with the registered custom function by class.
+     * @param name function name
+     * @param functionClass function implementation class
+     * @return a new configuration
+     */
+    public Configuration registerFunction(String name, Class<? extends PathFunction> functionClass) {
+        Map<String, Object> functions = new LinkedHashMap<String, Object>();
+        if (functionProvider instanceof DefaultFunctionProvider) {
+            functions.putAll(((DefaultFunctionProvider) functionProvider).getCustomFunctions());
+        }
+        functions.put(name, functionClass);
+        return Configuration.builder()
+                .jsonProvider(jsonProvider)
+                .mappingProvider(mappingProvider)
+                .functionProvider(new DefaultFunctionProvider(functions))
+                .options(options)
+                .evaluationListener(evaluationListeners)
+                .build();
+    }
+
+    /**
+     * Creates a new configuration with the registered custom function by instance.
+     * @param name function name
+     * @param function function instance
+     * @return a new configuration
+     */
+    public Configuration registerFunction(String name, PathFunction function) {
+        Map<String, Object> functions = new LinkedHashMap<String, Object>();
+        if (functionProvider instanceof DefaultFunctionProvider) {
+            functions.putAll(((DefaultFunctionProvider) functionProvider).getCustomFunctions());
+        }
+        functions.put(name, function);
+        return Configuration.builder()
+                .jsonProvider(jsonProvider)
+                .mappingProvider(mappingProvider)
+                .functionProvider(new DefaultFunctionProvider(functions))
+                .options(options)
+                .evaluationListener(evaluationListeners)
+                .build();
+    }
+
+    /**
      * Creates a new configuration by adding the new options to the options used in this configuration.
      * @param options options to add
      * @return a new configuration
@@ -131,7 +200,7 @@ public class Configuration {
         EnumSet<Option> opts = EnumSet.noneOf(Option.class);
         opts.addAll(this.options);
         opts.addAll(asList(options));
-        return Configuration.builder().jsonProvider(jsonProvider).mappingProvider(mappingProvider).options(opts).evaluationListener(evaluationListeners).build();
+        return Configuration.builder().jsonProvider(jsonProvider).mappingProvider(mappingProvider).functionProvider(functionProvider).options(opts).evaluationListener(evaluationListeners).build();
     }
 
     /**
@@ -140,7 +209,7 @@ public class Configuration {
      * @return the new configuration instance
      */
     public Configuration setOptions(Option... options) {
-        return Configuration.builder().jsonProvider(jsonProvider).mappingProvider(mappingProvider).options(options).evaluationListener(evaluationListeners).build();
+        return Configuration.builder().jsonProvider(jsonProvider).mappingProvider(mappingProvider).functionProvider(functionProvider).options(options).evaluationListener(evaluationListeners).build();
     }
 
     /**
@@ -166,7 +235,12 @@ public class Configuration {
      */
     public static Configuration defaultConfiguration() {
         Defaults defaults = getEffectiveDefaults();
-        return Configuration.builder().jsonProvider(defaults.jsonProvider()).options(defaults.options()).build();
+        return Configuration.builder()
+                .jsonProvider(defaults.jsonProvider())
+                .mappingProvider(defaults.mappingProvider())
+                .functionProvider(defaults.functionProvider())
+                .options(defaults.options())
+                .build();
     }
 
     /**
@@ -184,6 +258,8 @@ public class Configuration {
 
         private JsonProvider jsonProvider;
         private MappingProvider mappingProvider;
+        private FunctionProvider functionProvider;
+        private final Map<String, Object> customFunctions = new LinkedHashMap<String, Object>();
         private EnumSet<Option> options = EnumSet.noneOf(Option.class);
         private Collection<EvaluationListener> evaluationListener = new ArrayList<EvaluationListener>();
 
@@ -194,6 +270,33 @@ public class Configuration {
 
         public ConfigurationBuilder mappingProvider(MappingProvider provider) {
             this.mappingProvider = provider;
+            return this;
+        }
+
+        public ConfigurationBuilder functionProvider(FunctionProvider provider) {
+            this.functionProvider = provider;
+            return this;
+        }
+
+        public ConfigurationBuilder registerFunction(String name, Class<? extends PathFunction> functionClass) {
+            if (name == null || name.trim().isEmpty()) {
+                throw new IllegalArgumentException("Function name cannot be null or empty");
+            }
+            if (functionClass == null) {
+                throw new IllegalArgumentException("Function class cannot be null");
+            }
+            this.customFunctions.put(name, functionClass);
+            return this;
+        }
+
+        public ConfigurationBuilder registerFunction(String name, PathFunction function) {
+            if (name == null || name.trim().isEmpty()) {
+                throw new IllegalArgumentException("Function name cannot be null or empty");
+            }
+            if (function == null) {
+                throw new IllegalArgumentException("Function instance cannot be null");
+            }
+            this.customFunctions.put(name, function);
             return this;
         }
 
@@ -229,7 +332,31 @@ public class Configuration {
                     mappingProvider = defaults.mappingProvider();
                 }
             }
-            return new Configuration(jsonProvider, mappingProvider, options, evaluationListener);
+            if (functionProvider == null) {
+                final Defaults defaults = getEffectiveDefaults();
+                FunctionProvider defaultProvider = defaults.functionProvider();
+                if (!customFunctions.isEmpty()) {
+                    DefaultFunctionProvider provider = new DefaultFunctionProvider(customFunctions);
+                    functionProvider = provider;
+                } else {
+                    functionProvider = defaultProvider != null ? defaultProvider : DefaultFunctionProvider.INSTANCE;
+                }
+            } else if (!customFunctions.isEmpty()) {
+                if (functionProvider instanceof DefaultFunctionProvider) {
+                    DefaultFunctionProvider provider = new DefaultFunctionProvider(((DefaultFunctionProvider) functionProvider).getCustomFunctions());
+                    for (Map.Entry<String, Object> entry : customFunctions.entrySet()) {
+                        if (entry.getValue() instanceof Class) {
+                            @SuppressWarnings("unchecked")
+                            Class<? extends PathFunction> clazz = (Class<? extends PathFunction>) entry.getValue();
+                            provider.register(entry.getKey(), clazz);
+                        } else if (entry.getValue() instanceof PathFunction) {
+                            provider.register(entry.getKey(), (PathFunction) entry.getValue());
+                        }
+                    }
+                    functionProvider = provider;
+                }
+            }
+            return new Configuration(jsonProvider, mappingProvider, options, evaluationListener, functionProvider);
         }
     }
 
@@ -253,6 +380,15 @@ public class Configuration {
          */
         MappingProvider mappingProvider();
 
+        /**
+         * Returns the default {@link com.jayway.jsonpath.spi.function.FunctionProvider}
+         *
+         * @return default function provider
+         */
+        default FunctionProvider functionProvider() {
+            return DefaultFunctionProvider.INSTANCE;
+        }
+
     }
 
     @Override
@@ -260,8 +396,9 @@ public class Configuration {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Configuration that = (Configuration) o;
-        return jsonProvider.getClass() == that.jsonProvider.getClass() &&
-                mappingProvider.getClass() == that.mappingProvider.getClass() &&
-                Objects.equals(options, that.options);
+        return Objects.equals(jsonProvider != null ? jsonProvider.getClass() : null, that.jsonProvider != null ? that.jsonProvider.getClass() : null) &&
+                Objects.equals(mappingProvider != null ? mappingProvider.getClass() : null, that.mappingProvider != null ? that.mappingProvider.getClass() : null) &&
+                Objects.equals(options, that.options) &&
+                Objects.equals(functionProvider, that.functionProvider);
     }
 }

@@ -364,6 +364,12 @@ public class FilterCompiler  {
                     filter.setPosition(closingSquareBracketIndex + 1);
                 }
             }
+            if (filter.inBounds() && filter.currentChar() == OPEN_PARENTHESIS) {
+                int closingParenIndex = filter.indexOfClosingBracket(filter.position(), true, false);
+                if (closingParenIndex != -1) {
+                    filter.setPosition(closingParenIndex + 1);
+                }
+            }
             boolean closingFunctionBracket = (filter.currentChar() == CLOSE_PARENTHESIS && currentCharIsClosingFunctionBracket(begin));
             boolean closingLogicalBracket  = (filter.currentChar() == CLOSE_PARENTHESIS && !closingFunctionBracket);
 

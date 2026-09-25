@@ -3,10 +3,11 @@ package com.jayway.jsonpath.internal.path;
 import com.jayway.jsonpath.internal.Path;
 import com.jayway.jsonpath.internal.PathRef;
 import com.jayway.jsonpath.internal.function.Parameter;
-import com.jayway.jsonpath.internal.function.PathFunction;
 import com.jayway.jsonpath.internal.function.PathFunctionFactory;
 import com.jayway.jsonpath.internal.function.latebinding.JsonLateBindingValue;
 import com.jayway.jsonpath.internal.function.latebinding.PathLateBindingValue;
+import com.jayway.jsonpath.spi.function.FunctionProvider;
+import com.jayway.jsonpath.spi.function.PathFunction;
 
 import java.util.List;
 
@@ -36,7 +37,14 @@ public class FunctionPathToken extends PathToken {
 
     @Override
     public void evaluate(String currentPath, PathRef parent, Object model, EvaluationContextImpl ctx) {
-        PathFunction pathFunction = PathFunctionFactory.newFunction(functionName);
+        FunctionProvider provider = (ctx != null && ctx.configuration() != null) ?
+                ctx.configuration().functionProvider() : null;
+        PathFunction pathFunction = provider != null ?
+                provider.getFunction(functionName) :
+                PathFunctionFactory.newFunction(functionName);
+        if (pathFunction == null) {
+            pathFunction = PathFunctionFactory.newFunction(functionName);
+        }
         evaluateParameters(currentPath, parent, model, ctx);
         Object result = pathFunction.invoke(currentPath, parent, model, ctx, functionParams);
         ctx.addResult(currentPath + "." + functionName, parent, result);
