@@ -120,4 +120,23 @@ public class NumericPathFunctionTest extends BaseFunctionTest {
 //        assertThat(using(conf).parse(NUMBER_SERIES).read("$.numbers.foo()")).isEqualTo(numberSeries);
 //    }
 
+
+    @ParameterizedTest
+    @MethodSource("configurations")
+    public void testStdDevWithLargeOffset(Configuration conf) {
+        Object result = com.jayway.jsonpath.JsonPath.using(conf)
+                .parse("[10000000000,10000000001,10000000002]").read("$.stddev()");
+        Number value = (Number) conf.jsonProvider().unwrap(result);
+        assertEquals(Math.sqrt(2.0 / 3.0), value.doubleValue(), 1e-12);
+    }
+
+    @ParameterizedTest
+    @MethodSource("configurations")
+    public void testStdDevOfIdenticalLargeValues(Configuration conf) {
+        Object result = com.jayway.jsonpath.JsonPath.using(conf)
+                .parse("[1e200,1e200]").read("$.stddev()");
+        Number value = (Number) conf.jsonProvider().unwrap(result);
+        assertEquals(0.0, value.doubleValue(), 0.0);
+    }
+
 }
