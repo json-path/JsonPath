@@ -47,11 +47,12 @@ public class Length implements PathFunction {
             // for length - to the wildcard such that we request all of its children so we can get back an array and
             // take its length.
             Parameter lengthOfParameter = parameters.get(0);
+            PathToken tail = null;
             if (!lengthOfParameter.getPath().isFunctionPath()) {
                 Path path = lengthOfParameter.getPath();
                 if (path instanceof CompiledPath) {
                     RootPathToken root = ((CompiledPath) path).getRoot();
-                    PathToken tail = root.getNext();
+                    tail = root.getNext();
                     while (null != tail && null != tail.getNext()) {
                         tail = tail.getNext();
                     }
@@ -60,9 +61,16 @@ public class Length implements PathFunction {
                     }
                 }
             }
-            Object innerModel = parameters.get(0).getPath().evaluate(model, model, ctx.configuration()).getValue();
-            if (ctx.configuration().jsonProvider().isArray(innerModel)) {
-                return ctx.configuration().jsonProvider().length(innerModel);
+            try {
+                Object innerModel = lengthOfParameter.getPath().evaluate(model, model, ctx.configuration()).getValue();
+                if (ctx.configuration().jsonProvider().isArray(innerModel)) {
+                    return ctx.configuration().jsonProvider().length(innerModel);
+                }
+            } finally {
+                // Remove only the wildcard appended by this invocation, including when evaluation fails.
+                if (null != tail) {
+                    tail.setNext(null);
+                }
             }
         }
         if (ctx.configuration().jsonProvider().isArray(model)) {
