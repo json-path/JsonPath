@@ -118,6 +118,7 @@ public class Parameter {
      *      The value to evaluate.
      */
     public static void consume(Class expectedType, EvaluationContext ctx, Collection collection, Object value) {
+        value = ctx.configuration().jsonProvider().unwrap(value);
         if (ctx.configuration().jsonProvider().isArray(value)) {
             for (Object o : ctx.configuration().jsonProvider().toIterable(value)) {
                 if (o != null && expectedType.isAssignableFrom(o.getClass())) {
