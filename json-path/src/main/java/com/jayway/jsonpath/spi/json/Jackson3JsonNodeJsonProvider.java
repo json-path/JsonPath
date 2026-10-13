@@ -133,7 +133,11 @@ public class Jackson3JsonNodeJsonProvider extends AbstractJsonProvider {
 
     @Override
     public Object getArrayIndex(Object obj, int idx) {
-        return toJsonArray(obj).get(idx);
+        JsonNode value = toJsonArray(obj).get(idx);
+        if (value == null) {
+            throw new IndexOutOfBoundsException("Index: " + idx);
+        }
+        return value;
     }
 
     @Override

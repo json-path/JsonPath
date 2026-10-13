@@ -51,6 +51,48 @@ public class Jackson3JsonNodeJsonProviderTest extends BaseTest {
             "]";
 
     @Test
+    public void missing_array_indexes_are_not_found() {
+        DocumentContext context = using(JACKSON3_JSON_NODE_CONFIGURATION).parse("[1, null]");
+        Assertions.assertThrows(PathNotFoundException.class, () -> context.read("$[2]"));
+        Assertions.assertThrows(PathNotFoundException.class, () -> context.read("$[-3]"));
+
+        DocumentContext empty = using(JACKSON3_JSON_NODE_CONFIGURATION).parse("[]");
+        Assertions.assertThrows(PathNotFoundException.class, () -> empty.read("$[0]"));
+        Assertions.assertThrows(PathNotFoundException.class, () -> empty.read("$[-1]"));
+    }
+
+    @Test
+    public void existing_array_values_are_preserved() {
+        DocumentContext context = using(JACKSON3_JSON_NODE_CONFIGURATION).parse("[1, null]");
+        assertThat(context.<JsonNode>read("$[0]").intValue()).isEqualTo(1);
+        assertThat(context.<JsonNode>read("$[-2]").intValue()).isEqualTo(1);
+        assertThat(context.<JsonNode>read("$[1]").isNull()).isTrue();
+        assertThat(context.<JsonNode>read("$[-1]").isNull()).isTrue();
+    }
+
+    @Test
+    public void missing_array_indexes_can_be_suppressed() {
+        DocumentContext context = using(JACKSON3_JSON_NODE_CONFIGURATION.addOptions(Option.SUPPRESS_EXCEPTIONS))
+                .parse("[null]");
+        assertThat(context.<JsonNode>read("$[1]")).isNull();
+        assertThat(context.<JsonNode>read("$[0]").isNull()).isTrue();
+    }
+
+    @Test
+    public void missing_array_indexes_are_excluded_from_result_lists() {
+        DocumentContext context = using(JACKSON3_JSON_NODE_CONFIGURATION.addOptions(
+                Option.SUPPRESS_EXCEPTIONS, Option.ALWAYS_RETURN_LIST)).parse("[null]");
+        assertThat(context.<ArrayNode>read("$[1]").size()).isZero();
+        ArrayNode existing = context.read("$[0]");
+        assertThat(existing.size()).isEqualTo(1);
+        assertThat(existing.get(0).isNull()).isTrue();
+
+        ArrayNode results = using(JACKSON3_JSON_NODE_CONFIGURATION).parse("[[1], [2, null]]").read("$[*][1]");
+        assertThat(results.size()).isEqualTo(1);
+        assertThat(results.get(0).isNull()).isTrue();
+    }
+
+    @Test
     public void json_can_be_parsed() {
         ObjectNode node = using(JACKSON3_JSON_NODE_CONFIGURATION).parse(JSON_DOCUMENT).read("$");
         assertThat(node.get("string-property").asText()).isEqualTo("string-value");
