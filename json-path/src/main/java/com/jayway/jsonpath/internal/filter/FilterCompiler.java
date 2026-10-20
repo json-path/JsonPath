@@ -47,6 +47,25 @@ public class FilterCompiler  {
     private static final char PATTERN = '/';
     private static final char IGNORE_CASE = 'i';
 
+    /**
+     * Upper bound for the length of a numeric literal inside a filter. The literal is turned into a
+     * {@link java.math.BigDecimal} during compilation, so an arbitrarily long token would let a caller
+     * spend unbounded CPU and memory before any document is evaluated.
+     */
+    private static final int MAX_NUMBER_LITERAL_LENGTH = 1000;
+
+    /**
+     * Signals that a numeric literal exceeds {@link #MAX_NUMBER_LITERAL_LENGTH}. It is an
+     * {@link InvalidPathException} so callers keep seeing the documented exception type, but it is
+     * rethrown by {@link #readExpression()} instead of being handled as "this is not a relational
+     * expression", which would hide the real problem and fail with a confusing message later on.
+     */
+    private static final class NumberLiteralTooLongException extends InvalidPathException {
+        NumberLiteralTooLongException(String message) {
+            super(message);
+        }
+    }
+
     private CharacterIndex filter;
 
     public static Filter compile(String filterString) {
@@ -194,6 +213,9 @@ public class FilterCompiler  {
             ValueNode right = readValueNode();
             return new RelationalExpressionNode(left, operator, right);
         }
+        catch (NumberLiteralTooLongException exc) {
+            throw exc;
+        }
         catch (InvalidPathException exc) {
             filter.setPosition(savepoint);
         }
@@ -327,6 +349,10 @@ public class FilterCompiler  {
 
         while (filter.inBounds() && filter.isNumberCharacter(filter.position())) {
             filter.incrementPosition(1);
+            if (filter.position() - begin > MAX_NUMBER_LITERAL_LENGTH) {
+                throw new NumberLiteralTooLongException(
+                        "Number literal exceeds the maximum allowed length of " + MAX_NUMBER_LITERAL_LENGTH);
+            }
         }
         CharSequence numberLiteral = filter.subSequence(begin, filter.position());
         logger.trace("NumberLiteral from {} to {} -> [{}]", begin, filter.position(), numberLiteral);

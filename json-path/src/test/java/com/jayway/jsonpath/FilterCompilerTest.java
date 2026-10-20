@@ -102,4 +102,22 @@ public class FilterCompilerTest {
             //e.printStackTrace();
         }
     }
+
+    @Test
+    public void number_literal_longer_than_the_limit_is_rejected() {
+        String number = "9".repeat(1001);
+
+        InvalidPathException exception = assertThrows(InvalidPathException.class,
+                () -> compile("[?(@.x == " + number + ")]"));
+
+        assertThat(exception.getMessage()).contains("maximum allowed length");
+    }
+
+    @Test
+    public void number_literal_at_the_limit_is_accepted() {
+        String number = "9".repeat(1000);
+
+        assertThat(compile("[?(@.x == " + number + ")]").toString())
+                .isEqualTo("[?(@['x'] == " + number + ")]");
+    }
 }
