@@ -30,7 +30,7 @@ public abstract class AbstractSequenceAggregation implements PathFunction {
                 return objectList.get(targetIndex);
             } else {
                 int realIndex = objectList.size() + targetIndex;
-                if (realIndex > 0) {
+                if (realIndex >= 0) {
                     return objectList.get(realIndex);
                 } else {
                     throw new JsonPathException("Target index:" + targetIndex + " larger than object count:" + objectList.size());
