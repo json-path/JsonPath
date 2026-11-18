@@ -17,6 +17,7 @@ import com.jayway.jsonpath.internal.function.text.Length;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.function.Supplier;
 
 /**
  * Implements a factory that given a name of the function will return the Function implementation, or null
@@ -29,6 +30,8 @@ import java.util.Map;
 public class PathFunctionFactory {
 
     public static final Map<String, Class> FUNCTIONS;
+
+    private static final Map<String, Supplier<PathFunction>> FUNCTION_SUPPLIERS;
 
     static {
         // New functions should be added here and ensure the name is not overridden
@@ -57,6 +60,22 @@ public class PathFunctionFactory {
 
 
         FUNCTIONS = Collections.unmodifiableMap(map);
+
+        Map<String, Supplier<PathFunction>> suppliers = new HashMap<>();
+        suppliers.put("avg", Average::new);
+        suppliers.put("stddev", StandardDeviation::new);
+        suppliers.put("sum", Sum::new);
+        suppliers.put("min", Min::new);
+        suppliers.put("max", Max::new);
+        suppliers.put("concat", Concatenate::new);
+        suppliers.put(Length.TOKEN_NAME, Length::new);
+        suppliers.put("size", Length::new);
+        suppliers.put("append", Append::new);
+        suppliers.put("keys", KeySetFunction::new);
+        suppliers.put("first", First::new);
+        suppliers.put("last", Last::new);
+        suppliers.put("index", Index::new);
+        FUNCTION_SUPPLIERS = Collections.unmodifiableMap(suppliers);
     }
 
     /**
@@ -74,15 +93,10 @@ public class PathFunctionFactory {
      * @throws InvalidPathException
      */
     public static PathFunction newFunction(String name) throws InvalidPathException {
-        Class functionClazz = FUNCTIONS.get(name);
-        if(functionClazz == null){
+        Supplier<PathFunction> supplier = FUNCTION_SUPPLIERS.get(name);
+        if (supplier == null) {
             throw new InvalidPathException("Function with name: " + name + " does not exist.");
-        } else {
-            try {
-                return (PathFunction)functionClazz.newInstance();
-            } catch (Exception e) {
-                throw new InvalidPathException("Function of name: " + name + " cannot be created", e);
-            }
         }
+        return supplier.get();
     }
 }
