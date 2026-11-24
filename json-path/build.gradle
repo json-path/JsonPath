@@ -23,3 +23,20 @@ dependencies {
 
     testImplementation libs.test
 }
+
+publishing {
+    publications {
+        mavenJava {
+            pom.withXml {
+                def dependenciesNode = asNode().dependencies[0]
+                configurations.compileOnly.allDependencies.each { dependency ->
+                    def dependencyNode = dependenciesNode.appendNode('dependency')
+                    dependencyNode.appendNode('groupId', dependency.group)
+                    dependencyNode.appendNode('artifactId', dependency.name)
+                    dependencyNode.appendNode('version', dependency.version)
+                    dependencyNode.appendNode('optional', 'true')
+                }
+            }
+        }
+    }
+}
