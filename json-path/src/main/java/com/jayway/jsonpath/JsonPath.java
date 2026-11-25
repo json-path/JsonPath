@@ -224,7 +224,7 @@ public class JsonPath {
             if (optSuppressExceptions) {
                 return handleMissingPathInContext(configuration);
             } else {
-                throw new PathNotFoundException();
+                throw new PathNotFoundException("No results for path: " + path.toString());
             }
         }
         for (PathRef updateOperation : evaluationContext.updateOperations()) {
@@ -252,7 +252,7 @@ public class JsonPath {
             if (optSuppressExceptions) {
                 return handleMissingPathInContext(configuration);
             } else {
-                throw new PathNotFoundException();
+                throw new PathNotFoundException("No results for path: " + path.toString());
             }
         }
         for (PathRef updateOperation : evaluationContext.updateOperations()) {
@@ -279,7 +279,7 @@ public class JsonPath {
             if (optSuppressExceptions) {
                 return handleMissingPathInContext(configuration);
             } else {
-                throw new PathNotFoundException();
+                throw new PathNotFoundException("No results for path: " + path.toString());
             }
         }
         for (PathRef updateOperation : evaluationContext.updateOperations()) {
@@ -306,7 +306,7 @@ public class JsonPath {
             if (optSuppressExceptions) {
                 return handleMissingPathInContext(configuration);
             } else {
-                throw new PathNotFoundException();
+                throw new PathNotFoundException("No results for path: " + path.toString());
             }
         }
         for (PathRef updateOperation : evaluationContext.updateOperations()) {
@@ -335,7 +335,7 @@ public class JsonPath {
             if (optSuppressExceptions) {
                 return handleMissingPathInContext(configuration);
             } else {
-                throw new PathNotFoundException();
+                throw new PathNotFoundException("No results for path: " + path.toString());
             }
         }
         for (PathRef updateOperation : evaluationContext.updateOperations()) {
