@@ -508,6 +508,8 @@ public class JsonPath {
      * @param jsonPath to compile
      * @param filters  filters to be applied to the filter place holders  [?] in the path
      * @return compiled JsonPath
+     * @throws InvalidPathException if the path cannot be compiled
+     * @throws IllegalArgumentException if {@code jsonPath} is {@code null} or empty
      */
     public static JsonPath compile(String jsonPath, Predicate... filters) {
         notEmpty(jsonPath, "json can not be null or empty");
